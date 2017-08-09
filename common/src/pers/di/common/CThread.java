@@ -1,0 +1,107 @@
+package pers.di.common;
+
+abstract public class CThread {
+	public CThread()
+	{
+		m_thread = new InThread(this);
+	}
+	
+	abstract public void run();
+		
+	public boolean checkQuit()
+	{
+		return m_thread.checkQuit();
+	}
+	
+	public boolean Wait(long msec)
+	{
+		return m_thread.Wait(msec);
+	}
+	
+	public boolean Notify()
+	{
+		return m_thread.Notify();
+	}
+	
+	public boolean startThread()
+	{
+		return m_thread.startThread();
+	}
+	
+	public boolean stopThread()
+	{
+		return m_thread.stopThread();
+	}
+	
+	public boolean checkRunning()
+	{
+		return m_thread.checkRunning();
+	}
+	
+	public static void sleep(int msec)
+	{
+		try {
+			Thread.sleep(msec);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		};
+	}
+	
+	private InThread m_thread;
+	
+	private class InThread extends Thread
+	{
+		public InThread(CThread cCThread)
+		{
+			m_cCThreadRef = cCThread;
+			m_bQuit = false;
+			m_bRunning = false;
+			m_cCWaitObj = new CWaitObj();
+		}
+		@Override
+        public void run()
+        {
+			m_cCThreadRef.run();
+			m_bRunning = false;
+        }
+		boolean checkQuit()
+		{
+			return m_bQuit;
+		}
+		boolean checkRunning()
+		{
+			return m_bRunning;
+		}
+		boolean Wait(long msec)
+		{
+			m_cCWaitObj.Wait(msec);
+			return true;
+		}
+		boolean Notify()
+		{
+			m_cCWaitObj.Notify();
+			return true;
+		}
+		boolean startThread()
+		{
+			m_bRunning = true;
+			super.start();
+			return true;
+		}
+		boolean stopThread()
+		{
+			m_bQuit = true;
+			m_cCWaitObj.Notify();
+			try {
+				super.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+		private CThread m_cCThreadRef;
+		private boolean m_bQuit;
+		private boolean m_bRunning;
+		private CWaitObj m_cCWaitObj;
+	}
+}

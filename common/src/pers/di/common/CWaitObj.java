@@ -1,0 +1,42 @@
+package pers.di.common;
+
+public class CWaitObj {
+	
+	public CWaitObj()
+	{
+		m_sync = new CSyncObj();
+		m_waitObj = new Object();
+		m_bNotified = false;
+	}
+
+	public boolean Wait(long msec)
+	{
+		try {
+			synchronized(m_waitObj)
+			{
+				if(!m_bNotified)
+				{
+					m_waitObj.wait(msec);
+				}
+				m_bNotified = false;
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	public boolean Notify()
+	{
+		synchronized(m_waitObj)
+		{
+			m_waitObj.notify();
+			m_bNotified = true;
+		}
+		return true;
+	}
+	
+	private CSyncObj m_sync;
+	private Object m_waitObj;
+	private boolean m_bNotified;
+}
