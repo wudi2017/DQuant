@@ -34,6 +34,7 @@ public class CHttp {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			System.out.println("Exception[CHttp]:" + e.getMessage()); 
+			System.out.println("Exception[CHttp] url:" + urlStr); 
 		}    
 		
         //System.out.println(data.toString()); 

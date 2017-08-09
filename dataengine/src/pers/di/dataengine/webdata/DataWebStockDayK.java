@@ -16,12 +16,15 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import pers.di.common.CHttp;
 import pers.di.dataengine.webdata.CommonDef.*;
 
 public class DataWebStockDayK {
@@ -40,71 +43,114 @@ public class DataWebStockDayK {
 		public int error;
 		public List<DayKData> resultList;
 	}
+	
+	/*
+	 * id: 
+	 * 上证指数：999999
+	 * 上海股票：60****
+	 * 深圳股票：00****或30****
+	 * 
+	 * doc: http://blog.csdn.net/xp5xp6/article/details/53121481
+	 * v1.0: url: e.g "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
+	 * v2.0: url: e.g "http://quotes.money.163.com/service/chddata.html?code=0601857&start=20171105&end=20170809&fields=TCLOSE;HIGH;LOW;TOPEN;VOTURNOVER;"
+	 */
 	public static ResultDayKData getDayKData(String id, String begin_date, String end_date)
 	{
 		ResultDayKData cResultDayKData = new ResultDayKData();
-		// http://blog.csdn.net/xp5xp6/article/details/53121481
-		// e.g "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
-		String urlStr = "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?";
-		String tmpId = "";
+		
+		String innerID = "";
 		if(id.startsWith("60") && 6 == id.length())
 		{
-			tmpId = "sh" + id;
+			innerID = "0" + id;
 		}
 		else if((id.startsWith("00") ||  id.startsWith("30")) && 6 == id.length())
 		{
-			tmpId = "sz" + id;
+			innerID = "1" + id;
 		}
-		else if(id.startsWith("99")) // 上证指数
+		else if(id.startsWith("999999")) // 上证指数
 		{
-			tmpId = "sh" + "000001";
+			innerID = "0" + "000001";
 		}
 		else
 		{
 			cResultDayKData.error = -10;
 			return cResultDayKData;
 		}
-		urlStr = urlStr + "symbol=" + tmpId + "&begin_date=" + begin_date + "&end_date=" + end_date;
 		
+		String urlStr = "http://quotes.money.163.com/service/chddata.html?";
+		urlStr = urlStr + "code=" + innerID + "&start=" + begin_date + "&end=" + end_date + "&fields=TOPEN;TCLOSE;LOW;HIGH;VOTURNOVER;";
 		
 		try
 		{
-			URL url = new URL(urlStr);    
-	        HttpURLConnection conn = (HttpURLConnection)url.openConnection();    
-
-	        conn.setConnectTimeout(5*1000);  //设置连接超时间 
-	        conn.setReadTimeout(15*1000); //设置读取超时时间
-	        
-	        //防止屏蔽程序抓取而返回403错误  
-	        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");  
-	        //得到输入流  
-	        InputStream inputStream = conn.getInputStream();   
-	        //获取自己数组  
-	        byte[] getData = readInputStream(inputStream);    
-	        String data = new String(getData, "gbk");  
-	        //System.out.println(data.toString()); 
-//	        //文件保存位置  
-//	        File file = new File("D:/test.txt");      
-//	        FileOutputStream fos = new FileOutputStream(file);       
-//	        fos.write(getData);   
-//	        if(fos!=null){  
-//	            fos.close();    
-//	        }  
-//	        if(inputStream!=null){  
-//	            inputStream.close();  
-//	        }  
-//	        System.out.println("info:"+urlStr+" download success"); 
-	        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	        DocumentBuilder builder = factory.newDocumentBuilder();
-	        StringReader sr = new StringReader(data);
+			String htmlstr = CHttp.getWebData(urlStr);
+			parseHtml2(htmlstr, cResultDayKData);
+		}
+		catch(Exception e)
+		{
+			System.out.println("Exception[WebStockDayK]:" + e.getMessage()); 
+        	cResultDayKData.error = -1;
+        	return cResultDayKData;
+		}
+		
+		Collections.sort(cResultDayKData.resultList);
+		
+		return cResultDayKData;
+	}
+	
+	// for html: "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz002095&scale=240&ma=no&datalen=1023"
+	private static void parseHtml2(String in_str, ResultDayKData out_result)
+	{
+		
+		String[] lines = in_str.split("\n");
+		for(int i=0; i<lines.length; i++)
+		{
+			String line = lines[i];
+			
+			String[] cols = line.split(",");
+			String date = cols[0];
+        	String open = cols[3];
+        	String close = cols[4];
+        	String low = cols[5];
+        	String high = cols[6];
+        	String volume = cols[7];
+        	
+        	if(cols.length < 5 
+        			|| date.length()!="0000-00-00".length())
+        	{
+        		continue;
+        	}
+        	
+        	DayKData cDayKData = new DayKData();
+        	cDayKData.date = date;
+        	cDayKData.open = Float.parseFloat(open);
+        	cDayKData.close = Float.parseFloat(close);
+        	cDayKData.low = Float.parseFloat(low);
+        	cDayKData.high = Float.parseFloat(high);
+        	cDayKData.volume = Float.parseFloat(volume);
+        	
+        	if(0 == Float.compare(0.0f, cDayKData.close))
+        	{
+        		continue;
+        	}
+        	
+        	out_result.resultList.add(cDayKData);
+		}
+	}
+	
+	// for html: "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
+	private static void parseHtml1(String in_str, ResultDayKData out_result)
+	{
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			StringReader sr = new StringReader(in_str);
 	        InputSource is = new InputSource(sr);
 	        Document doc = builder.parse(is);
 	        Element rootElement = doc.getDocumentElement();
 	        // 检查返回数据有效性
 	        if(!rootElement.getTagName().contains("control")) 
 	        {
-	        	cResultDayKData.error = -30;
-	        	return cResultDayKData;
+	        	out_result.error = -30;
 	        }
 
 	        NodeList contents = rootElement.getElementsByTagName("content");
@@ -125,28 +171,11 @@ public class DataWebStockDayK {
 	        	cDayKData.high = Float.parseFloat(high);
 	        	cDayKData.volume = Float.parseFloat(volume);
 	        	
-	        	cResultDayKData.resultList.add(cDayKData);
+	        	out_result.resultList.add(cDayKData);
 	        }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		catch(Exception e)
-		{
-			System.out.println("Exception[WebStockDayK]:" + e.getMessage()); 
-        	cResultDayKData.error = -1;
-        	return cResultDayKData;
-		}
-		
-		Collections.sort(cResultDayKData.resultList);
-		
-		return cResultDayKData;
 	}
-    public static  byte[] readInputStream(InputStream inputStream) throws IOException {    
-        byte[] buffer = new byte[1024];    
-        int len = 0;    
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();    
-        while((len = inputStream.read(buffer)) != -1) {    
-            bos.write(buffer, 0, len);    
-        }    
-        bos.close();    
-        return bos.toByteArray();    
-    }  
 }

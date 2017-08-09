@@ -11,7 +11,7 @@ public class TestDataWebStockDayK {
 
 	public static void main(String[] args){
 		
-		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData("300428", "20150101", "20171001");
+		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData("300428", "20150311", "20170311");
 		
 		if(0 == cResultDayKData.error)
 		{
@@ -19,7 +19,8 @@ public class TestDataWebStockDayK {
 	        {  
 				DayKData cDayKData = cResultDayKData.resultList.get(i);  
 	            System.out.println(cDayKData.date + "," 
-	            		+ cDayKData.open + "," + cDayKData.close);  
+	            		+ cDayKData.open + "," + cDayKData.close
+	            		 + "," + cDayKData.low + "," + cDayKData.high);  
 	        } 
 		}
 		else
