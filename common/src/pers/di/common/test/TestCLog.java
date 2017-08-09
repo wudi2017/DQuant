@@ -13,7 +13,7 @@ import pers.di.common.*;
 public class TestCLog {
 	public static void main(String[] args) {
 		//CLog.config_setLogDir("testlog");
-		CLog.config_setLogCfg("confg", "log_config.xml");
+		CLog.config_setLogCfg("config", "log_config.xml");
 		CLog.config_setLogFile("output", "default.log");
 		CLog.config_setTag("TAG1", true);
 		CLog.config_setTag("TAG2", true);

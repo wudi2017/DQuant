@@ -35,11 +35,6 @@ public class CLog {
 
 	public static void start()
 	{
-		s_strLogDirName = "log";
-		s_strLogName = "default.log";
-		s_strConfig = "config";
-		s_strLogConfigName = "log_config.xml";
-		
 		reloadConfig();
 		
 		if(null == s_qThread)
@@ -235,7 +230,7 @@ public class CLog {
 		s_fmt.format("%s", logstr);
 	}
 	static private Formatter s_fmt = new Formatter(System.out);
-	static private String s_strLogDirName = null;
+	static private String s_strLogDirName = "output";
 	static private String s_strLogName = "default.log";
 	static private String s_strConfig = "config";
 	static private String s_strLogConfigName = "log_config.xml";
