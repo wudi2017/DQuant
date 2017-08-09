@@ -1,4 +1,4 @@
-package pers.di.common.test;
+package pers.di.common_test;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -25,7 +25,7 @@ import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 import org.htmlparser.visitors.HtmlPage;
 
-import pers.di.dataengine.webdata.CommonDef.DividendPayout;
+import pers.di.dataengine.webdata.DataWebCommonDef.DividendPayout;
 
 
 public class DataWebStockDividendPayout {

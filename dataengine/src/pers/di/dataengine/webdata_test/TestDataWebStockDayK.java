@@ -1,17 +1,17 @@
-package pers.di.dataengine.webdata.test;
+package pers.di.dataengine.webdata_test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultDayKData;
-import pers.di.dataengine.webdata.CommonDef.*;
+import pers.di.dataengine.webdata.DataWebCommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockDayK;
 
 public class TestDataWebStockDayK {
 
 	public static void main(String[] args){
 		
-		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData("300428", "20150311", "20170311");
+		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData("300428", "20170311", "20170911");
 		
 		if(0 == cResultDayKData.error)
 		{

@@ -1,4 +1,4 @@
-package pers.di.dataengine.test;
+package pers.di.dataengine_test;
 
 public class TestDataEngine {
 

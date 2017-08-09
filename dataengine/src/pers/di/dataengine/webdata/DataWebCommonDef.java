@@ -1,6 +1,6 @@
 package pers.di.dataengine.webdata;
 
-public class CommonDef {
+public class DataWebCommonDef {
 	
 	/*
 	 * ¹ÉÆ±¼òÏî

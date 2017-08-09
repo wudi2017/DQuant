@@ -1,4 +1,4 @@
-package pers.di.common.test;
+package pers.di.common_test;
 
 import pers.di.common.CHttp;
 import pers.di.common.CLog;

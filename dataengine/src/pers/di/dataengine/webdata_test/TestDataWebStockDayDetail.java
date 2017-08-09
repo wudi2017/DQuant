@@ -1,9 +1,9 @@
-package pers.di.dataengine.webdata.test;
+package pers.di.dataengine.webdata_test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.dataengine.webdata.CommonDef.*;
+import pers.di.dataengine.webdata.DataWebCommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 
