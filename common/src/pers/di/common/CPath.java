@@ -15,6 +15,57 @@ public class CPath {
 		folder.mkdirs();
 		return true;
 	}
+	public static int removeDir(String dirName)
+	{
+		File folder =new File(dirName);
+		if(!folder.exists())      
+		{        
+			return 0;
+		}
+		if(0 == help_deleteFile(folder))
+		{
+			return 0;
+		}
+		if(folder.exists())
+		{
+			return -1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
+	/*
+	 * ********************************************************************
+	 */
+	
+	private static int help_deleteFile(File file) {  
+	    if (file.exists()) 
+	    {
+			if (file.isFile()) 
+			{
+				//是文件  
+			    if(!file.delete()) //删除文件   
+			    {
+			    	return -1;
+			    }
+			} 
+			else if (file.isDirectory()) 
+			{
+				//是一个目录  
+			    File[] files = file.listFiles();//声明目录下所有的文件 files[];  
+			    for (int i = 0;i < files.length;i ++) {//遍历目录下所有的文件  
+			    	help_deleteFile(files[i]);//把每个文件用这个方法进行迭代  
+			    }  
+			    if(!file.delete()) //删除文件夹  
+			    {
+			    	return -1;
+			    }
+			 }  
+	    } 
+	    return 0;
+	}  
 	
 	private static String initOutputDir()
 	{
