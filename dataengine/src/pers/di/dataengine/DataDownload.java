@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Formatter;
 
 import pers.di.common.CPath;
+import pers.di.common.CUtilsDateTime;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK;
@@ -21,13 +22,16 @@ import pers.di.dataengine.webdata.DataWebCommonDef.*;
 
 public class DataDownload {
 	
-	public DataDownload (String dataDir, DataStorage cDataStorage) 
+	public DataDownload (DataStorage cDataStorage) 
 	{
-		s_workDir = dataDir;
 		m_dataStorage = cDataStorage;
-		CPath.createDir(s_workDir);
 	}
 
+	/*
+	 * downloadStockData
+	 * include: dayK,DividendPayout,BaseInfo
+	 * not include: detail
+	 */
 	public static class ResultUpdateStock
 	{
 		public ResultUpdateStock()
@@ -38,7 +42,7 @@ public class DataDownload {
 		public int error;
 		public int updateCnt;
 	}
-	public ResultUpdateStock updateStock(String id)
+	public ResultUpdateStock downloadStockFullData(String id)
 	{
 		ResultUpdateStock cResultUpdateStock = new ResultUpdateStock();
 		
@@ -88,7 +92,7 @@ public class DataDownload {
 					cStockBaseData.allMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.allMarketValue;
 					cStockBaseData.circulatedMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.circulatedMarketValue;
 					cStockBaseData.peRatio = cResultRealTimeInfoMore.realTimeInfoMore.peRatio;
-					m_dataStorage.saveStockBaseData(id, cStockBaseData);
+					m_dataStorage.saveBaseInfo(id, cStockBaseData);
 					
 					// 当前时间在收盘之前，网络数据有效日期为前一天（非周六周日）
 					String webValidLastDate = cResultRealTimeInfoMore.realTimeInfoMore.date;
@@ -236,38 +240,14 @@ public class DataDownload {
 	
 	public int downloadStockDayk(String id)
 	{
-		String stockDataDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stockDataDir)) return -20;
-		
-		String stockDayKFileName = stockDataDir + "/" + s_daykFile;
-		
-		ResultRealTimeInfo cResultRealTimeInfo = DataWebStockRealTimeInfo.getRealTimeInfo(id);
-		if(0 != cResultRealTimeInfo.error) return -20;
-		String curAvailidDate = cResultRealTimeInfo.realTimeInfo.date;
-		String curAvailidTime = cResultRealTimeInfo.realTimeInfo.time;
-		
-		File cfile =new File(stockDayKFileName);
-		//System.out.println("updateStocData_Dayk:" + id);
-		String paramToDate = curAvailidDate.replace("-", "");
-		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData(id, "20080101", paramToDate);
+		String curDate = CUtilsDateTime.GetCurDateStr();
+		String paramToDate = curDate.replace("-", "");
+		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData(id, "20080101", curDate);
 		if(0 == cResultDayKData.error)
 		{
 			try
 			{
-				FileOutputStream cOutputStream = new FileOutputStream(cfile);
-				for(int i = 0; i < cResultDayKData.resultList.size(); i++)  
-		        {  
-					DayKData cDayKData = cResultDayKData.resultList.get(i);  
-//		            System.out.println(cDayKData.date + "," 
-//		            		+ cDayKData.open + "," + cDayKData.close);  
-		            cOutputStream.write((cDayKData.date + ",").getBytes());
-		            cOutputStream.write((cDayKData.open + ",").getBytes());
-		            cOutputStream.write((cDayKData.close + ",").getBytes());
-		            cOutputStream.write((cDayKData.low + ",").getBytes());
-		            cOutputStream.write((cDayKData.high + ",").getBytes());
-		            cOutputStream.write((cDayKData.volume + "\n").getBytes());
-		        } 
-				cOutputStream.close();
+				m_dataStorage.saveDayKData(id, cResultDayKData.resultList);
 			}
 			catch(Exception e)
 			{
@@ -283,27 +263,18 @@ public class DataDownload {
 	}
 	public int downloadBaseInfo(String id)
 	{
-		String stockDataDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stockDataDir)) return -20;
-		
-		String stockBaseInfoFileName = stockDataDir + "/" + s_BaseInfoFile;
-		File cfile =new File(stockBaseInfoFileName);
-		// System.out.println("saveStockBaseData:" + id);
 		try
 		{
 			ResultRealTimeInfoMore cResultRealTimeInfoMore = DataWebStockRealTimeInfo.getRealTimeInfoMore(id);
-			
 			if(0 == cResultRealTimeInfoMore.error)
 			{
-				FileOutputStream cOutputStream = new FileOutputStream(cfile);
-				String s = String.format("%s,%.3f,%.3f,%.3f,%.3f", 
-						cResultRealTimeInfoMore.realTimeInfoMore.name, 
-						cResultRealTimeInfoMore.realTimeInfoMore.curPrice, 
-						cResultRealTimeInfoMore.realTimeInfoMore.allMarketValue, 
-						cResultRealTimeInfoMore.realTimeInfoMore.circulatedMarketValue, 
-						cResultRealTimeInfoMore.realTimeInfoMore.peRatio);
-				cOutputStream.write(s.getBytes());
-				cOutputStream.close();
+				StockBaseInfo cStockBaseInfo = new StockBaseInfo();
+				cStockBaseInfo.name = cResultRealTimeInfoMore.realTimeInfoMore.name;
+				cStockBaseInfo.price = cResultRealTimeInfoMore.realTimeInfoMore.curPrice;
+				cStockBaseInfo.allMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.allMarketValue;
+				cStockBaseInfo.circulatedMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.circulatedMarketValue;
+				cStockBaseInfo.peRatio = cResultRealTimeInfoMore.realTimeInfoMore.peRatio;
+				m_dataStorage.saveBaseInfo(id, cStockBaseInfo);
 			}
 			else
 			{
@@ -319,34 +290,12 @@ public class DataDownload {
 	}
 	public int downloadStockDividendPayout(String id)
 	{
-		String stockDataDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stockDataDir)) return -20;
-		
-		String stockDividendPayoutFileName = stockDataDir + "/" + s_DividendPayoutFile;
-		
-		ResultRealTimeInfo cResultRealTimeInfo = DataWebStockRealTimeInfo.getRealTimeInfo(id);
-		if(0 != cResultRealTimeInfo.error) return -20;
-		String curAvailidDate = cResultRealTimeInfo.realTimeInfo.date;
-		String curAvailidTime = cResultRealTimeInfo.realTimeInfo.time;
-		
-		File cfile =new File(stockDividendPayoutFileName);
-		// System.out.println("updateStocData_DividendPayout:" + id);
 		ResultDividendPayout cResultDividendPayout = DataWebStockDividendPayout.getDividendPayout(id);
 		if(0 == cResultDividendPayout.error)
 		{
 			try
 			{
-				FileOutputStream cOutputStream = new FileOutputStream(cfile);
-				for(int i = 0; i < cResultDividendPayout.resultList.size(); i++)  
-		        {  
-					DividendPayout cDividendPayout = cResultDividendPayout.resultList.get(i);
-					// System.out.println(cDividendPayout.date); 
-					cOutputStream.write((cDividendPayout.date + ",").getBytes());
-					cOutputStream.write((cDividendPayout.songGu + ",").getBytes());
-					cOutputStream.write((cDividendPayout.zhuanGu + ",").getBytes());
-					cOutputStream.write((cDividendPayout.paiXi + "\n").getBytes());
-		        } 
-				cOutputStream.close();
+				m_dataStorage.saveDividendPayout(id, cResultDividendPayout.resultList);
 			}
 			catch(Exception e)
 			{
@@ -366,36 +315,15 @@ public class DataDownload {
 	 * 下载某只股票日内交易数据到本地
 	 * 返回0为成功
 	 */
-	public int downloadStockDataDetail(String id, String date) {
+	public int downloadStockDetail(String id, String date) {
 		s_fmt.format("@downloadStockDataDetail stockID(%s) date(%s)\n",id,date);
-		
-		String stockDataDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stockDataDir)) return -20;
-		
-		String stockDataDetailFileName = stockDataDir + "/" + date + ".txt";
-		
-		ResultRealTimeInfo cResultRealTimeInfo = DataWebStockRealTimeInfo.getRealTimeInfo(id);
-		if(0 != cResultRealTimeInfo.error) return -20;
-		String curAvailidDate = cResultRealTimeInfo.realTimeInfo.date;
-		String curAvailidTime = cResultRealTimeInfo.realTimeInfo.time;
 		
 		ResultDayDetail cResultDayDetail = DataWebStockDayDetail.getDayDetail(id, date);
 		if(0 == cResultDayDetail.error)
 		{
 			try
 			{
-				File cfile =new File(stockDataDetailFileName);
-				FileOutputStream cOutputStream = new FileOutputStream(cfile);
-				for(int i = 0; i < cResultDayDetail.resultList.size(); i++)  
-		        {  
-					DayDetailItem cDayDetailItem = cResultDayDetail.resultList.get(i);  
-//			            System.out.println(cDayDetailItem.time + "," 
-//			            		+ cDayDetailItem.price + "," + cDayDetailItem.volume);  
-					cOutputStream.write((cDayDetailItem.time + ",").getBytes());
-					cOutputStream.write((cDayDetailItem.price + ",").getBytes());
-					cOutputStream.write((cDayDetailItem.volume + "\n").getBytes());
-		        } 
-				cOutputStream.close();
+				m_dataStorage.saveDayDetail(id, date, cResultDayDetail.resultList);
 			}
 			catch(Exception e)
 			{
@@ -411,12 +339,7 @@ public class DataDownload {
 		return 0;
 	}
 	
-	private String s_workDir = "data";
 	private String s_updateFinish = "updateFinish.txt";
-	
-	private String s_daykFile = "dayk.txt";
-	private String s_DividendPayoutFile = "dividendPayout.txt";
-	private String s_BaseInfoFile = "baseInfo.txt";
 	
 	private DataStorage m_dataStorage;
 	

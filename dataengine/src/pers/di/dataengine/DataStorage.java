@@ -7,11 +7,15 @@ import java.io.FileReader;
 import java.util.Formatter;
 import java.util.List;
 
+import pers.di.dataengine.webdata.DataWebStockDayDetail;
+import pers.di.dataengine.webdata.DataWebStockDividendPayout;
+import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.webdata.DataWebCommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.common.CPath;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultDayKData;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
+import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
 public class DataStorage {
 	
@@ -20,25 +24,14 @@ public class DataStorage {
 		s_workDir = dataDir;
 		CPath.createDir(s_workDir);
 	}
-	/*
-	 * 获取某只股票的日K数据
-	 * 只从本地获取
-	 */
+
 	public ResultDayKData getDayKData(String id)
 	{
 		ResultDayKData cResultDayKData = new ResultDayKData();
 		
 		String stockDayKFileName = s_workDir + "/" + id + "/" + s_daykFile;
 		File cfile=new File(stockDayKFileName);
-//		if(!cfile.exists())
-//		{
-//			int iDownload = downloadStockDayk(id);
-//			if(0 != iDownload)
-//			{
-//				cResultDayKData.error = -21;
-//				return cResultDayKData;
-//			}
-//		}
+
 		if(!cfile.exists())
 		{
 			cResultDayKData.error = -10;
@@ -83,6 +76,9 @@ public class DataStorage {
 	}
 	public int saveDayKData(String id, List<DayKData> in_list)
 	{
+		String stockDataDir = s_workDir + "/" + id;
+		if(!CPath.createDir(stockDataDir)) return -10;
+		
 		String stockDayKFileName = s_workDir + "/" + id + "/" + s_daykFile;
 		File cfile=new File(stockDayKFileName);
 		try
@@ -110,10 +106,6 @@ public class DataStorage {
 		return 0;
 	}
 	
-	/*
-	 * 获取某只股票的分红派息数据
-	 * 只从本地获取
-	 */
 	public ResultDividendPayout getDividendPayout(String id)
 	{
 		ResultDividendPayout cResultDividendPayout = new ResultDividendPayout();
@@ -163,11 +155,35 @@ public class DataStorage {
 		}
 		return cResultDividendPayout;
 	}
+	public int saveDividendPayout(String id, List<DividendPayout> in_list)
+	{
+		String stockDataDir = s_workDir + "/" + id;
+		if(!CPath.createDir(stockDataDir)) return -10;
+		
+		String stockDividendPayoutFileName = s_workDir + "/" + id + "/" + s_DividendPayoutFile;
+		File cfile =new File(stockDividendPayoutFileName);
+		try
+		{
+			FileOutputStream cOutputStream = new FileOutputStream(cfile);
+			for(int i = 0; i < in_list.size(); i++)  
+	        {  
+				DividendPayout cDividendPayout = in_list.get(i);
+				// System.out.println(cDividendPayout.date); 
+				cOutputStream.write((cDividendPayout.date + ",").getBytes());
+				cOutputStream.write((cDividendPayout.songGu + ",").getBytes());
+				cOutputStream.write((cDividendPayout.zhuanGu + ",").getBytes());
+				cOutputStream.write((cDividendPayout.paiXi + "\n").getBytes());
+	        } 
+			cOutputStream.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage()); 
+			return -1;
+		}
+		return 0;
+	}
 	
-	/*
-	 * 获取某股票日内交易明细
-	 * 如果本地有数据从本地获取，否则从网络下载后再从本地获取
-	 */
 	public ResultDayDetail getDayDetail(String id, String date)
 	{
 		ResultDayDetail cResultDayDetail = new ResultDayDetail();
@@ -210,23 +226,25 @@ public class DataStorage {
 		}
 		return cResultDayDetail;
 	}
-	
-	public int saveStockBaseData(String id, StockBaseInfo baseData) 
+	public int saveDayDetail(String id, String date, List<DayDetailItem> in_list)
 	{
 		String stockDataDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stockDataDir)) return -10;
 		
-		String stockBaseInfoFileName = stockDataDir + "/" + s_BaseInfoFile;
-		
-		File cfile =new File(stockBaseInfoFileName);
-		// System.out.println("saveStockBaseData:" + id);
+		String stockDataDetailFileName = s_workDir + "/" + id + "/" + date + ".txt";
 		try
 		{
+			File cfile =new File(stockDataDetailFileName);
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
-			String s = String.format("%s,%.3f,%.3f,%.3f,%.3f", 
-					baseData.name, baseData.price, 
-					baseData.allMarketValue, baseData.circulatedMarketValue, baseData.peRatio);
-			cOutputStream.write(s.getBytes());
+			for(int i = 0; i < in_list.size(); i++)  
+	        {  
+				DayDetailItem cDayDetailItem = in_list.get(i);  
+//			            System.out.println(cDayDetailItem.time + "," 
+//			            		+ cDayDetailItem.price + "," + cDayDetailItem.volume);  
+				cOutputStream.write((cDayDetailItem.time + ",").getBytes());
+				cOutputStream.write((cDayDetailItem.price + ",").getBytes());
+				cOutputStream.write((cDayDetailItem.volume + "\n").getBytes());
+	        } 
 			cOutputStream.close();
 		}
 		catch(Exception e)
@@ -234,13 +252,10 @@ public class DataStorage {
 			System.out.println(e.getMessage()); 
 			return -1;
 		}
+
 		return 0;
 	}
 	
-	/*
-	 * 获取某只股票的基本信息
-	 * 只从本地获取
-	 */
 	public static class ResultStockBaseData
 	{
 		public ResultStockBaseData()
@@ -288,6 +303,31 @@ public class DataStorage {
 			return cResultStockBaseData;
 		}
 		return cResultStockBaseData;
+	}
+	public int saveBaseInfo(String id, StockBaseInfo baseData) 
+	{
+		String stockDataDir = s_workDir + "/" + id;
+		if(!CPath.createDir(stockDataDir)) return -10;
+		
+		String stockBaseInfoFileName = stockDataDir + "/" + s_BaseInfoFile;
+		
+		File cfile =new File(stockBaseInfoFileName);
+		// System.out.println("saveStockBaseData:" + id);
+		try
+		{
+			FileOutputStream cOutputStream = new FileOutputStream(cfile);
+			String s = String.format("%s,%.3f,%.3f,%.3f,%.3f", 
+					baseData.name, baseData.price, 
+					baseData.allMarketValue, baseData.circulatedMarketValue, baseData.peRatio);
+			cOutputStream.write(s.getBytes());
+			cOutputStream.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage()); 
+			return -1;
+		}
+		return 0;
 	}
 	
 	private String s_workDir = "data";
