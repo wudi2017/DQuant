@@ -4,7 +4,7 @@ import pers.di.dataengine.DataEngine;
 
 public class TestDataEngine {
 	public static void main(String[] args) {
-		DataEngine.instance().initialize("Data");
+		DataEngine.instance().initialize("data");
 		DataEngine.instance().updateLocalAllStockData();
 	}
 }

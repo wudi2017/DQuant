@@ -242,7 +242,7 @@ public class DataDownload {
 	{
 		String curDate = CUtilsDateTime.GetCurDateStr();
 		String paramToDate = curDate.replace("-", "");
-		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData(id, "20080101", curDate);
+		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData(id, "20080101", paramToDate);
 		if(0 == cResultDayKData.error)
 		{
 			try
