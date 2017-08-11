@@ -15,7 +15,7 @@ import pers.di.dataengine.webdata.DataWebStockAllList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK;
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultDayKData;
+import pers.di.dataengine.webdata.DataWebStockDayK.ResultKData;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
@@ -51,11 +51,11 @@ public class DataDownload {
 		String newestDate = "";
 		if(0 == cResultUpdateStockShangZhi.error)
 		{
-			ResultDayKData cResultDayKData = m_dataStorage.getDayKData(ShangZhiId);
+			ResultKData cResultKData = m_dataStorage.getKData(ShangZhiId);
 			
-			if(0 == cResultDayKData.error && cResultDayKData.resultList.size() > 0)
+			if(0 == cResultKData.error && cResultKData.resultList.size() > 0)
 			{
-				newestDate = cResultDayKData.resultList.get(cResultDayKData.resultList.size()-1).date;
+				newestDate = cResultKData.resultList.get(cResultKData.resultList.size()-1).date;
 			}
 			
 			s_fmt.format("update success: %s (%s) item:%d date:%s\n", ShangZhiId, ShangZhiName, cResultUpdateStockShangZhi.updateCnt, newestDate);
@@ -80,10 +80,10 @@ public class DataDownload {
 	           
 				if(0 == cResultUpdateStock.error)
 				{
-					ResultDayKData cResultDayKDataQFQ = m_dataStorage.getDayKData(stockID);
-		    		if(0 == cResultDayKDataQFQ.error && cResultDayKDataQFQ.resultList.size() > 0)
+					ResultKData cResultKDataQFQ = m_dataStorage.getKData(stockID);
+		    		if(0 == cResultKDataQFQ.error && cResultKDataQFQ.resultList.size() > 0)
 		    		{
-		    			String stockNewestDate = cResultDayKDataQFQ.resultList.get(cResultDayKDataQFQ.resultList.size()-1).date;
+		    			String stockNewestDate = cResultKDataQFQ.resultList.get(cResultKDataQFQ.resultList.size()-1).date;
 		    			s_fmt.format("update success: %s (%s) item:%d date:%s\n", cStockSimpleItem.id, cStockSimpleItem.name, cResultUpdateStock.updateCnt, stockNewestDate);
 		    		}
 		            else
@@ -155,17 +155,17 @@ public class DataDownload {
 		// System.out.println("CurrentValidDate:" + curValiddateStr);
 		
 		// 获取本地日k数据与分红派息数据
-		ResultDayKData cResultDayKDataLocal = m_dataStorage.getDayKData(id);
+		ResultKData cResultKDataLocal = m_dataStorage.getKData(id);
 		ResultDividendPayout cResultDividendPayout = m_dataStorage.getDividendPayout(id);
-		if(0 == cResultDayKDataLocal.error 
+		if(0 == cResultKDataLocal.error 
 			&& 0 == cResultDividendPayout.error 
-			&& cResultDayKDataLocal.resultList.size() != 0 
+			&& cResultKDataLocal.resultList.size() != 0 
 			/*&& retListLocalDividend.size() != 0 */)
 		// 本地有日K数据
 		{
 			// 获取本地数据最后日期
-			DayKData cDayKDataLast = cResultDayKDataLocal.resultList.get(cResultDayKDataLocal.resultList.size()-1);
-			String localDataLastDate = cDayKDataLast.date; 
+			KData cKDataLast = cResultKDataLocal.resultList.get(cResultKDataLocal.resultList.size()-1);
+			String localDataLastDate = cKDataLast.date; 
 			//System.out.println("localDataLastDate:" + localDataLastDate);
 			
 			// 如果当前日期大于本地最后数据日期，需要继续检测
@@ -211,7 +211,7 @@ public class DataDownload {
 					// System.out.println("webValidLastDate:" + webValidLastDate);
 					
 					// 网络数据有效日期比本地数据新，需要追加更新
-					if(webValidLastDate.compareTo(cDayKDataLast.date) > 0)
+					if(webValidLastDate.compareTo(cKDataLast.date) > 0)
 					{
 						// 计算从网络需要获取哪一段时间数据
 						int year = Integer.parseInt(localDataLastDate.split("-")[0]);
@@ -227,19 +227,19 @@ public class DataDownload {
 						//System.out.println("toDateStr:" + toDateStr);
 						
 						// 获取网络日K数据
-						ResultDayKData cResultDayKDataMore = DataWebStockDayK.getDayKData(id, fromDateStr, toDateStr);
-						if(0 == cResultDayKDataMore.error)
+						ResultKData cResultKDataMore = DataWebStockDayK.getKData(id, fromDateStr, toDateStr);
+						if(0 == cResultKDataMore.error)
 						// 新增日K数据获取成功
 						{
 							// 向本地数据列表中追加新的更新数据
-							for(int i = 0; i < cResultDayKDataMore.resultList.size(); i++)  
+							for(int i = 0; i < cResultKDataMore.resultList.size(); i++)  
 					        {  
-								DayKData cDayKData = cResultDayKDataMore.resultList.get(i);  
-								cResultDayKDataLocal.resultList.add(cDayKData);
+								KData cKData = cResultKDataMore.resultList.get(i);  
+								cResultKDataLocal.resultList.add(cKData);
 					        } 
 							// 追加后的本地列表日K数据保存至本地
-							int retsetDayKData = m_dataStorage.saveDayKData(id, cResultDayKDataLocal.resultList);
-							if(0 == retsetDayKData)
+							int retsetKData = m_dataStorage.saveKData(id, cResultKDataLocal.resultList);
+							if(0 == retsetKData)
 							// 保存成功
 							{
 								// 更新复权因子数据
@@ -247,7 +247,7 @@ public class DataDownload {
 								{
 									// 追加成功
 									cResultUpdateStock.error = 0;
-									cResultUpdateStock.updateCnt = cResultDayKDataMore.resultList.size();
+									cResultUpdateStock.updateCnt = cResultKDataMore.resultList.size();
 									return cResultUpdateStock;
 								}
 								else
@@ -305,12 +305,12 @@ public class DataDownload {
 					&& 0 == retdownloadBaseInfo)
 			// 下载日K，分红派息，基本信息 成功
 			{
-				ResultDayKData cResultDayKDataLocalNew = m_dataStorage.getDayKData(id);
-				if(cResultDayKDataLocalNew.error == 0)
+				ResultKData cResultKDataLocalNew = m_dataStorage.getKData(id);
+				if(cResultKDataLocalNew.error == 0)
 				{
 					//最新数据下载成功返回天数
 					cResultUpdateStock.error = 0;
-					cResultUpdateStock.updateCnt = cResultDayKDataLocalNew.resultList.size();
+					cResultUpdateStock.updateCnt = cResultKDataLocalNew.resultList.size();
 					return cResultUpdateStock;
 				}
 				else
@@ -332,12 +332,12 @@ public class DataDownload {
 	{
 		String curDate = CUtilsDateTime.GetCurDateStr();
 		String paramToDate = curDate.replace("-", "");
-		ResultDayKData cResultDayKData = DataWebStockDayK.getDayKData(id, "20080101", paramToDate);
-		if(0 == cResultDayKData.error)
+		ResultKData cResultKData = DataWebStockDayK.getKData(id, "20080101", paramToDate);
+		if(0 == cResultKData.error)
 		{
 			try
 			{
-				m_dataStorage.saveDayKData(id, cResultDayKData.resultList);
+				m_dataStorage.saveKData(id, cResultKData.resultList);
 			}
 			catch(Exception e)
 			{
@@ -347,7 +347,7 @@ public class DataDownload {
 		}
 		else
 		{
-			System.out.println("ERROR:" + cResultDayKData.error);
+			System.out.println("ERROR:" + cResultKData.error);
 		}
 		return 0;
 	}

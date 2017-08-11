@@ -33,15 +33,15 @@ public class DataWebStockDayK {
 	 * 传入999999代表上证指数
 	 * 返回0为成功，其他值为失败
 	 */
-	public static class ResultDayKData
+	public static class ResultKData
 	{
-		public ResultDayKData()
+		public ResultKData()
 		{
 			error = 0;
-			resultList = new ArrayList<DayKData>();
+			resultList = new ArrayList<KData>();
 		}
 		public int error;
-		public List<DayKData> resultList;
+		public List<KData> resultList;
 	}
 	
 	/*
@@ -54,9 +54,9 @@ public class DataWebStockDayK {
 	 * v1.0: url: e.g "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
 	 * v2.0: url: e.g "http://quotes.money.163.com/service/chddata.html?code=0601857&start=20171105&end=20170809&fields=TCLOSE;HIGH;LOW;TOPEN;VOTURNOVER;"
 	 */
-	public static ResultDayKData getDayKData(String id, String begin_date, String end_date)
+	public static ResultKData getKData(String id, String begin_date, String end_date)
 	{
-		ResultDayKData cResultDayKData = new ResultDayKData();
+		ResultKData cResultKData = new ResultKData();
 		
 		String innerID = "";
 		if(id.startsWith("60") && 6 == id.length())
@@ -73,8 +73,8 @@ public class DataWebStockDayK {
 		}
 		else
 		{
-			cResultDayKData.error = -10;
-			return cResultDayKData;
+			cResultKData.error = -10;
+			return cResultKData;
 		}
 		
 		String urlStr = "http://quotes.money.163.com/service/chddata.html?";
@@ -83,22 +83,22 @@ public class DataWebStockDayK {
 		try
 		{
 			String htmlstr = CHttp.getWebData(urlStr);
-			parseHtml2(htmlstr, cResultDayKData);
+			parseHtml2(htmlstr, cResultKData);
 		}
 		catch(Exception e)
 		{
 			System.out.println("Exception[WebStockDayK]:" + e.getMessage()); 
-        	cResultDayKData.error = -1;
-        	return cResultDayKData;
+        	cResultKData.error = -1;
+        	return cResultKData;
 		}
 		
-		Collections.sort(cResultDayKData.resultList);
+		Collections.sort(cResultKData.resultList);
 		
-		return cResultDayKData;
+		return cResultKData;
 	}
 	
 	// for html: "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz002095&scale=240&ma=no&datalen=1023"
-	private static void parseHtml2(String in_str, ResultDayKData out_result)
+	private static void parseHtml2(String in_str, ResultKData out_result)
 	{
 		
 		String[] lines = in_str.split("\n");
@@ -120,25 +120,25 @@ public class DataWebStockDayK {
         		continue;
         	}
         	
-        	DayKData cDayKData = new DayKData();
-        	cDayKData.date = date;
-        	cDayKData.open = Float.parseFloat(open);
-        	cDayKData.close = Float.parseFloat(close);
-        	cDayKData.low = Float.parseFloat(low);
-        	cDayKData.high = Float.parseFloat(high);
-        	cDayKData.volume = Float.parseFloat(volume);
+        	KData cKData = new KData();
+        	cKData.date = date;
+        	cKData.open = Float.parseFloat(open);
+        	cKData.close = Float.parseFloat(close);
+        	cKData.low = Float.parseFloat(low);
+        	cKData.high = Float.parseFloat(high);
+        	cKData.volume = Float.parseFloat(volume);
         	
-        	if(0 == Float.compare(0.0f, cDayKData.close))
+        	if(0 == Float.compare(0.0f, cKData.close))
         	{
         		continue;
         	}
         	
-        	out_result.resultList.add(cDayKData);
+        	out_result.resultList.add(cKData);
 		}
 	}
 	
 	// for html: "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
-	private static void parseHtml1(String in_str, ResultDayKData out_result)
+	private static void parseHtml1(String in_str, ResultKData out_result)
 	{
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -156,7 +156,7 @@ public class DataWebStockDayK {
 	        NodeList contents = rootElement.getElementsByTagName("content");
 	        int lenList = contents.getLength();
 	        for (int i = 0; i < lenList; i++) {
-	        	DayKData cDayKData = new DayKData();
+	        	KData cKData = new KData();
 	        	Node cnode = contents.item(i);
 	        	String date = ((Element)cnode).getAttribute("d");
 	        	String open = ((Element)cnode).getAttribute("o");
@@ -164,14 +164,14 @@ public class DataWebStockDayK {
 	        	String close = ((Element)cnode).getAttribute("c");
 	        	String low = ((Element)cnode).getAttribute("l");
 	        	String volume = ((Element)cnode).getAttribute("v");
-	        	cDayKData.date = date;
-	        	cDayKData.open = Float.parseFloat(open);
-	        	cDayKData.close = Float.parseFloat(close);
-	        	cDayKData.low = Float.parseFloat(low);
-	        	cDayKData.high = Float.parseFloat(high);
-	        	cDayKData.volume = Float.parseFloat(volume);
+	        	cKData.date = date;
+	        	cKData.open = Float.parseFloat(open);
+	        	cKData.close = Float.parseFloat(close);
+	        	cKData.low = Float.parseFloat(low);
+	        	cKData.high = Float.parseFloat(high);
+	        	cKData.volume = Float.parseFloat(volume);
 	        	
-	        	out_result.resultList.add(cDayKData);
+	        	out_result.resultList.add(cKData);
 	        }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

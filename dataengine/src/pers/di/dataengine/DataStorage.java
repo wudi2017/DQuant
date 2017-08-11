@@ -16,7 +16,7 @@ import pers.di.dataengine.webdata.DataWebCommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.common.CPath;
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultDayKData;
+import pers.di.dataengine.webdata.DataWebStockDayK.ResultKData;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
@@ -28,17 +28,17 @@ public class DataStorage {
 		CPath.createDir(s_workDir);
 	}
 
-	public ResultDayKData getDayKData(String id)
+	public ResultKData getKData(String id)
 	{
-		ResultDayKData cResultDayKData = new ResultDayKData();
+		ResultKData cResultKData = new ResultKData();
 		
 		String stockDayKFileName = s_workDir + "/" + id + "/" + s_daykFile;
 		File cfile=new File(stockDayKFileName);
 
 		if(!cfile.exists())
 		{
-			cResultDayKData.error = -10;
-			return cResultDayKData;
+			cResultKData.error = -10;
+			return cResultKData;
 		}
 		
 		try
@@ -54,16 +54,16 @@ public class DataStorage {
 //                	System.out.println("line " + line + ": " + tempString);
 //                }
                 
-            	DayKData cDayKData = new DayKData();
+            	KData cKData = new KData();
             	String[] cols = tempString.split(",");
             	
-            	cDayKData.date = cols[0];
-	        	cDayKData.open = Float.parseFloat(cols[1]);
-	        	cDayKData.close = Float.parseFloat(cols[2]);
-	        	cDayKData.low = Float.parseFloat(cols[3]);
-	        	cDayKData.high = Float.parseFloat(cols[4]);
-	        	cDayKData.volume = Float.parseFloat(cols[5]);
-	        	cResultDayKData.resultList.add(cDayKData);
+            	cKData.date = cols[0];
+	        	cKData.open = Float.parseFloat(cols[1]);
+	        	cKData.close = Float.parseFloat(cols[2]);
+	        	cKData.low = Float.parseFloat(cols[3]);
+	        	cKData.high = Float.parseFloat(cols[4]);
+	        	cKData.volume = Float.parseFloat(cols[5]);
+	        	cResultKData.resultList.add(cKData);
 	        	
                 line++;
             }
@@ -72,12 +72,12 @@ public class DataStorage {
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			cResultDayKData.error = -1;
-			return cResultDayKData;
+			cResultKData.error = -1;
+			return cResultKData;
 		}
-		return cResultDayKData;
+		return cResultKData;
 	}
-	public int saveDayKData(String id, List<DayKData> in_list)
+	public int saveKData(String id, List<KData> in_list)
 	{
 		String stockDataDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stockDataDir)) return -10;
@@ -89,15 +89,15 @@ public class DataStorage {
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
 			for(int i = 0; i < in_list.size(); i++)  
 	        {  
-				DayKData cDayKData = in_list.get(i);  
-//		            System.out.println(cDayKData.date + "," 
-//		            		+ cDayKData.open + "," + cDayKData.close);  
-	            cOutputStream.write((cDayKData.date + ",").getBytes());
-	            cOutputStream.write((cDayKData.open + ",").getBytes());
-	            cOutputStream.write((cDayKData.close + ",").getBytes());
-	            cOutputStream.write((cDayKData.low + ",").getBytes());
-	            cOutputStream.write((cDayKData.high + ",").getBytes());
-	            cOutputStream.write((cDayKData.volume + "\n").getBytes());
+				KData cKData = in_list.get(i);  
+//		            System.out.println(cKData.date + "," 
+//		            		+ cKData.open + "," + cKData.close);  
+	            cOutputStream.write((cKData.date + ",").getBytes());
+	            cOutputStream.write((cKData.open + ",").getBytes());
+	            cOutputStream.write((cKData.close + ",").getBytes());
+	            cOutputStream.write((cKData.low + ",").getBytes());
+	            cOutputStream.write((cKData.high + ",").getBytes());
+	            cOutputStream.write((cKData.volume + "\n").getBytes());
 	        } 
 			cOutputStream.close();
 		}
@@ -207,7 +207,7 @@ public class DataStorage {
 			String tempString = null;
             while ((tempString = reader.readLine()) != null) {
                 // System.out.println("line " + line + ": " + tempString);
-            	DayKData cDayKData = new DayKData();
+            	KData cKData = new KData();
             	String[] cols = tempString.split(",");
 
             	DayDetailItem cDayDetailItem = new DayDetailItem();
