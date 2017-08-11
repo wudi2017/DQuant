@@ -2,8 +2,10 @@ package pers.di.dataengine;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.Formatter;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.webdata.DataWebCommonDef.*;
+import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.common.CPath;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultDayKData;
@@ -328,6 +331,103 @@ public class DataStorage {
 			return -1;
 		}
 		return 0;
+	}
+	
+	
+	public static class ResultAllStockFullDataTimestamps
+	{
+		public ResultAllStockFullDataTimestamps()
+		{
+			error = 0;
+			date = "0000-00-00";
+		}
+		public int error;
+		public String date;
+	}
+	public ResultAllStockFullDataTimestamps getAllStockFullDataTimestamps()
+	{
+		ResultAllStockFullDataTimestamps cResultUpdatedStocksDate = new ResultAllStockFullDataTimestamps();
+		
+		String dateStr = null;
+		String allStockFullDataTimestampsFile = s_workDir + "/" + s_updateFinish;
+
+		File cfile=new File(allStockFullDataTimestampsFile);
+		if(!cfile.exists()) 
+		{
+			cResultUpdatedStocksDate.error = -10;
+			return cResultUpdatedStocksDate;
+		}
+		
+		try
+		{
+			String encoding = "utf-8";
+			InputStreamReader read = new InputStreamReader(new FileInputStream(cfile),encoding);
+            BufferedReader bufferedReader = new BufferedReader(read);
+            String lineTxt = bufferedReader.readLine();
+            lineTxt = lineTxt.trim().replace("\n", "");
+            if(lineTxt.length() == "0000-00-00".length())
+            {
+            	cResultUpdatedStocksDate.date = lineTxt;
+            }
+            read.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage()); 
+			cResultUpdatedStocksDate.error = -1;
+		}
+		return cResultUpdatedStocksDate;
+	}
+	public boolean saveAllStockFullDataTimestamps(String dateStr)
+	{
+		String allStockFullDataTimestampsFile = s_workDir + "/" + s_updateFinish;
+	
+		File cfile =new File(allStockFullDataTimestampsFile);
+		try
+		{
+			FileOutputStream cOutputStream = new FileOutputStream(cfile);
+	        cOutputStream.write(dateStr.getBytes());
+			cOutputStream.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage()); 
+			return false;
+		}
+		return true;
+	}
+	
+	
+	public ResultAllStockList getLocalAllStock()
+	{
+		ResultAllStockList cResultAllStockList = new ResultAllStockList();
+		
+		List<StockSimpleItem> retListAll = cResultAllStockList.resultList;
+			
+		// emu local
+		File root = new File(s_workDir);
+		File[] fs = root.listFiles();
+		if(fs == null)
+		{
+			s_fmt.format("[ERROR] not found dir:data\n");
+			cResultAllStockList.error = -10;
+			return cResultAllStockList;
+		}
+		for(int i=0; i<fs.length; i++){
+			if(fs[i].isDirectory()){
+				String dirName = fs[i].getName();
+				if(dirName.length()==6 
+					&& (dirName.startsWith("6") || dirName.startsWith("3") || dirName.startsWith("0"))
+						)
+				{
+					StockSimpleItem cStockSimpleItem = new StockSimpleItem();
+					cStockSimpleItem.id = dirName;
+					retListAll.add(cStockSimpleItem);
+				}
+				
+			}
+		}
+		return cResultAllStockList;
 	}
 	
 	private String s_workDir = "data";

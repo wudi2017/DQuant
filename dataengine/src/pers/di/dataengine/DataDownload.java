@@ -9,6 +9,9 @@ import java.util.Formatter;
 
 import pers.di.common.CPath;
 import pers.di.common.CUtilsDateTime;
+import pers.di.dataengine.DataDownload.ResultUpdateStock;
+import pers.di.dataengine.DataStorage.ResultAllStockFullDataTimestamps;
+import pers.di.dataengine.webdata.DataWebStockAllList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK;
@@ -19,6 +22,7 @@ import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfoMore;
 import pers.di.dataengine.webdata.DataWebCommonDef.*;
+import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 
 public class DataDownload {
 	
@@ -26,6 +30,92 @@ public class DataDownload {
 	{
 		m_dataStorage = cDataStorage;
 	}
+	
+	public int downloadAllStockFullData(String dateStr)
+	{
+		ResultAllStockFullDataTimestamps cResultUpdatedStocksDate = m_dataStorage.getAllStockFullDataTimestamps();
+		if(0 == cResultUpdatedStocksDate.error)
+		{
+			if(cResultUpdatedStocksDate.date.compareTo(dateStr) >= 0)
+			{
+				s_fmt.format("update success! (current is newest, local: %s)\n", cResultUpdatedStocksDate.date);
+				return 0;
+			}
+		}
+		
+		// 更新指数k
+		String ShangZhiId = "999999";
+		String ShangZhiName = "上阵指数";
+		
+		ResultUpdateStock cResultUpdateStockShangZhi = this.downloadStockFullData(ShangZhiId);
+		String newestDate = "";
+		if(0 == cResultUpdateStockShangZhi.error)
+		{
+			ResultDayKData cResultDayKData = m_dataStorage.getDayKData(ShangZhiId);
+			
+			if(0 == cResultDayKData.error && cResultDayKData.resultList.size() > 0)
+			{
+				newestDate = cResultDayKData.resultList.get(cResultDayKData.resultList.size()-1).date;
+			}
+			
+			s_fmt.format("update success: %s (%s) item:%d date:%s\n", ShangZhiId, ShangZhiName, cResultUpdateStockShangZhi.updateCnt, newestDate);
+		}
+		else
+		{
+			s_fmt.format("update ERROR: %s error(%d)\n", ShangZhiId, cResultUpdateStockShangZhi.error);
+		}
+		
+		
+		// 更新所有k
+		ResultAllStockList cResultAllStockList = DataWebStockAllList.getAllStockList();
+		if(0 == cResultAllStockList.error)
+		{
+			for(int i = 0; i < cResultAllStockList.resultList.size(); i++)  
+	        {  
+				StockSimpleItem cStockSimpleItem = cResultAllStockList.resultList.get(i);
+				
+				String stockID = cStockSimpleItem.id;
+				
+				ResultUpdateStock cResultUpdateStock = this.downloadStockFullData(stockID);
+	           
+				if(0 == cResultUpdateStock.error)
+				{
+					ResultDayKData cResultDayKDataQFQ = m_dataStorage.getDayKData(stockID);
+		    		if(0 == cResultDayKDataQFQ.error && cResultDayKDataQFQ.resultList.size() > 0)
+		    		{
+		    			String stockNewestDate = cResultDayKDataQFQ.resultList.get(cResultDayKDataQFQ.resultList.size()-1).date;
+		    			s_fmt.format("update success: %s (%s) item:%d date:%s\n", cStockSimpleItem.id, cStockSimpleItem.name, cResultUpdateStock.updateCnt, stockNewestDate);
+		    		}
+		            else
+		            {
+		            	s_fmt.format("update ERROR: %s (%s) error(%d)\n", cStockSimpleItem.id, cStockSimpleItem.name, cResultUpdateStock.error);
+		            }
+				}
+				else
+				{
+					s_fmt.format("update ERROR: %s error(%d)\n", cStockSimpleItem.id, cResultUpdateStock.error);
+				}   
+				
+	        } 
+			System.out.println("update finish, count:" + cResultAllStockList.resultList.size()); 
+		}
+		else
+		{
+			System.out.println("ERROR:" + cResultAllStockList.error);
+		}
+		
+		if(newestDate.length() == "0000-00-00".length())
+		{
+			m_dataStorage.saveAllStockFullDataTimestamps(newestDate);
+		}
+		else
+		{
+			System.out.println("ERROR:" + "updateStocksFinish failed!");
+		}
+		
+		return 0;
+	}
+	
 
 	/*
 	 * downloadStockData
