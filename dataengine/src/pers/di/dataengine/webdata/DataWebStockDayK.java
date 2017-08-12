@@ -25,7 +25,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import pers.di.common.CHttp;
-import pers.di.dataengine.webdata.DataWebCommonDef.*;
+import pers.di.dataengine.webdata.CommonDef.*;
 
 public class DataWebStockDayK {
 	/*

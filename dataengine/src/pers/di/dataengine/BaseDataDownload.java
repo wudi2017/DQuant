@@ -9,8 +9,8 @@ import java.util.Formatter;
 
 import pers.di.common.CPath;
 import pers.di.common.CUtilsDateTime;
-import pers.di.dataengine.DataDownload.ResultUpdateStock;
-import pers.di.dataengine.DataStorage.ResultAllStockFullDataTimestamps;
+import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
+import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.webdata.DataWebStockAllList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
@@ -21,19 +21,19 @@ import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayou
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfoMore;
-import pers.di.dataengine.webdata.DataWebCommonDef.*;
+import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 
-public class DataDownload {
+public class BaseDataDownload {
 	
-	public DataDownload (DataStorage cDataStorage) 
+	public BaseDataDownload (BaseDataStorage cBaseDataStorage) 
 	{
-		m_dataStorage = cDataStorage;
+		m_baseDataStorage = cBaseDataStorage;
 	}
 	
 	public int downloadAllStockFullData(String dateStr)
 	{
-		ResultAllStockFullDataTimestamps cResultUpdatedStocksDate = m_dataStorage.getAllStockFullDataTimestamps();
+		ResultAllStockFullDataTimestamps cResultUpdatedStocksDate = m_baseDataStorage.getAllStockFullDataTimestamps();
 		if(0 == cResultUpdatedStocksDate.error)
 		{
 			if(cResultUpdatedStocksDate.date.compareTo(dateStr) >= 0)
@@ -51,7 +51,7 @@ public class DataDownload {
 		String newestDate = "";
 		if(0 == cResultUpdateStockShangZhi.error)
 		{
-			ResultKData cResultKData = m_dataStorage.getKData(ShangZhiId);
+			ResultKData cResultKData = m_baseDataStorage.getKData(ShangZhiId);
 			
 			if(0 == cResultKData.error && cResultKData.resultList.size() > 0)
 			{
@@ -80,7 +80,7 @@ public class DataDownload {
 	           
 				if(0 == cResultUpdateStock.error)
 				{
-					ResultKData cResultKDataQFQ = m_dataStorage.getKData(stockID);
+					ResultKData cResultKDataQFQ = m_baseDataStorage.getKData(stockID);
 		    		if(0 == cResultKDataQFQ.error && cResultKDataQFQ.resultList.size() > 0)
 		    		{
 		    			String stockNewestDate = cResultKDataQFQ.resultList.get(cResultKDataQFQ.resultList.size()-1).date;
@@ -106,7 +106,7 @@ public class DataDownload {
 		
 		if(newestDate.length() == "0000-00-00".length())
 		{
-			m_dataStorage.saveAllStockFullDataTimestamps(newestDate);
+			m_baseDataStorage.saveAllStockFullDataTimestamps(newestDate);
 		}
 		else
 		{
@@ -155,8 +155,8 @@ public class DataDownload {
 		// System.out.println("CurrentValidDate:" + curValiddateStr);
 		
 		// 获取本地日k数据与分红派息数据
-		ResultKData cResultKDataLocal = m_dataStorage.getKData(id);
-		ResultDividendPayout cResultDividendPayout = m_dataStorage.getDividendPayout(id);
+		ResultKData cResultKDataLocal = m_baseDataStorage.getKData(id);
+		ResultDividendPayout cResultDividendPayout = m_baseDataStorage.getDividendPayout(id);
 		if(0 == cResultKDataLocal.error 
 			&& 0 == cResultDividendPayout.error 
 			&& cResultKDataLocal.resultList.size() != 0 
@@ -182,7 +182,7 @@ public class DataDownload {
 					cStockBaseData.allMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.allMarketValue;
 					cStockBaseData.circulatedMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.circulatedMarketValue;
 					cStockBaseData.peRatio = cResultRealTimeInfoMore.realTimeInfoMore.peRatio;
-					m_dataStorage.saveBaseInfo(id, cStockBaseData);
+					m_baseDataStorage.saveBaseInfo(id, cStockBaseData);
 					
 					// 当前时间在收盘之前，网络数据有效日期为前一天（非周六周日）
 					String webValidLastDate = cResultRealTimeInfoMore.realTimeInfoMore.date;
@@ -238,7 +238,7 @@ public class DataDownload {
 								cResultKDataLocal.resultList.add(cKData);
 					        } 
 							// 追加后的本地列表日K数据保存至本地
-							int retsetKData = m_dataStorage.saveKData(id, cResultKDataLocal.resultList);
+							int retsetKData = m_baseDataStorage.saveKData(id, cResultKDataLocal.resultList);
 							if(0 == retsetKData)
 							// 保存成功
 							{
@@ -305,7 +305,7 @@ public class DataDownload {
 					&& 0 == retdownloadBaseInfo)
 			// 下载日K，分红派息，基本信息 成功
 			{
-				ResultKData cResultKDataLocalNew = m_dataStorage.getKData(id);
+				ResultKData cResultKDataLocalNew = m_baseDataStorage.getKData(id);
 				if(cResultKDataLocalNew.error == 0)
 				{
 					//最新数据下载成功返回天数
@@ -337,7 +337,7 @@ public class DataDownload {
 		{
 			try
 			{
-				m_dataStorage.saveKData(id, cResultKData.resultList);
+				m_baseDataStorage.saveKData(id, cResultKData.resultList);
 			}
 			catch(Exception e)
 			{
@@ -364,7 +364,7 @@ public class DataDownload {
 				cStockBaseInfo.allMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.allMarketValue;
 				cStockBaseInfo.circulatedMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.circulatedMarketValue;
 				cStockBaseInfo.peRatio = cResultRealTimeInfoMore.realTimeInfoMore.peRatio;
-				m_dataStorage.saveBaseInfo(id, cStockBaseInfo);
+				m_baseDataStorage.saveBaseInfo(id, cStockBaseInfo);
 			}
 			else
 			{
@@ -385,7 +385,7 @@ public class DataDownload {
 		{
 			try
 			{
-				m_dataStorage.saveDividendPayout(id, cResultDividendPayout.resultList);
+				m_baseDataStorage.saveDividendPayout(id, cResultDividendPayout.resultList);
 			}
 			catch(Exception e)
 			{
@@ -413,7 +413,7 @@ public class DataDownload {
 		{
 			try
 			{
-				m_dataStorage.saveDayDetail(id, date, cResultDayDetail.resultList);
+				m_baseDataStorage.saveDayDetail(id, date, cResultDayDetail.resultList);
 			}
 			catch(Exception e)
 			{
@@ -431,7 +431,7 @@ public class DataDownload {
 	
 	private String s_updateFinish = "updateFinish.txt";
 	
-	private DataStorage m_dataStorage;
+	private BaseDataStorage m_baseDataStorage;
 	
 	private Formatter s_fmt = new Formatter(System.out);
 }

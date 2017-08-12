@@ -3,7 +3,7 @@ package pers.di.dataengine.webdata_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.dataengine.webdata.DataWebCommonDef.*;
+import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 

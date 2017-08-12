@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKData;
-import pers.di.dataengine.webdata.DataWebCommonDef.*;
+import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockDayK;
 
 public class TestDataWebStockDayK {

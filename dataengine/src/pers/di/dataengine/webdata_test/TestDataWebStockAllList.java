@@ -3,7 +3,7 @@ package pers.di.dataengine.webdata_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.dataengine.webdata.DataWebCommonDef.StockSimpleItem;
+import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 

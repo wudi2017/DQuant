@@ -1,11 +1,11 @@
 package pers.di.dataengine_test;
 
-import pers.di.dataengine.DataDownload;
-import pers.di.dataengine.DataStorage;
+import pers.di.dataengine.BaseDataDownload;
+import pers.di.dataengine.BaseDataStorage;
 
 public class TestDataDownload {
 	public static void main(String[] args) {
-		DataDownload cDataDownload = new DataDownload(new DataStorage("data"));
-		cDataDownload.downloadStockFullData("300165");
+		BaseDataDownload cBaseDataDownload = new BaseDataDownload(new BaseDataStorage("data"));
+		cBaseDataDownload.downloadStockFullData("300165");
 	}
 }

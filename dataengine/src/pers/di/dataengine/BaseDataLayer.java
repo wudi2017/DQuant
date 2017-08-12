@@ -4,47 +4,68 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import pers.di.dataengine.DataDownload.ResultUpdateStock;
-import pers.di.dataengine.DataStorage.ResultStockBaseData;
-import pers.di.dataengine.webdata.DataWebCommonDef.KData;
-import pers.di.dataengine.webdata.DataWebCommonDef.DayDetailItem;
-import pers.di.dataengine.webdata.DataWebCommonDef.DividendPayout;
-import pers.di.dataengine.webdata.DataWebCommonDef.StockSimpleItem;
-import pers.di.dataengine.webdata.DataWebStockAllList;
+import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
+import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
+import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
+import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKData;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 
-public class DataEngine {
-	private static DataEngine s_instance = new DataEngine();  
-	private DataEngine () 
+/*
+ * 股票基础数据层
+ */
+public class BaseDataLayer { 
+	public BaseDataLayer (String workDir) 
 	{
-		
-	}
-	public static DataEngine instance() {  
-		return s_instance;  
-	}  
-	
-	public int initialize(String workDir)
-	{
-		m_cDataStorage = new DataStorage(workDir);
-		m_cDataDownload = new DataDownload(m_cDataStorage);
-		return 0;
-	}
-	
-	public int updateLocalAllStockData(String dateStr)
-	{
-		return m_cDataDownload.downloadAllStockFullData(dateStr);
+		m_cBaseDataStorage = new BaseDataStorage(workDir);
+		m_cBaseDataDownload = new BaseDataDownload(m_cBaseDataStorage);
 	}
 	
 	/*
-	 * 前复权日k
+	 * 更新所有股票数据到指定日期
+	 * 参数
+	 *     dateStr： 指定日期 
+	 */
+	public int updateLocalAllStockData(String dateStr)
+	{
+		return m_cBaseDataDownload.downloadAllStockFullData(dateStr);
+	}
+	
+	public ResultUpdateStock updateLocaStockData(String stockId)
+	{
+		return m_cBaseDataDownload.downloadStockFullData(stockId);
+	}
+	
+	public ResultKData getDayKData(String id)
+	{
+		return m_cBaseDataStorage.getKData(id);
+	}
+	
+	/*
+	 * 获取本地总体数据更新时间
+	 */
+	public ResultAllStockFullDataTimestamps getAllStockFullDataTimestamps()
+	{
+		return m_cBaseDataStorage.getAllStockFullDataTimestamps();
+	}
+	
+	/*
+	 * 获取本地股票列表
+	 */
+	public ResultAllStockList getLocalAllStock()
+	{
+		return m_cBaseDataStorage.getLocalAllStock();
+	}
+	
+	/*
+	 * 获取前复权日k
 	 */
 	public ResultKData getDayKDataForwardAdjusted(String id)
 	{
-		ResultKData cResultKData = m_cDataStorage.getKData(id);
-		ResultDividendPayout cResultDividendPayout = m_cDataStorage.getDividendPayout(id);
+		ResultKData cResultKData = m_cBaseDataStorage.getKData(id);
+		ResultDividendPayout cResultDividendPayout = m_cBaseDataStorage.getDividendPayout(id);
 		if(0 != cResultKData.error || 0 != cResultDividendPayout.error) 
 		{
 			cResultKData.error = -10;
@@ -89,12 +110,12 @@ public class DataEngine {
 	}
 	
 	/*
-	 * 后复权日k
+	 * 获取后复权日k
 	 */
 	public ResultKData getDayKDataBackwardAdjusted(String id)
 	{
-		ResultKData cResultKData = m_cDataStorage.getKData(id);
-		ResultDividendPayout cResultDividendPayout = m_cDataStorage.getDividendPayout(id);
+		ResultKData cResultKData = m_cBaseDataStorage.getKData(id);
+		ResultDividendPayout cResultDividendPayout = m_cBaseDataStorage.getDividendPayout(id);
 		if(0 != cResultKData.error || 0 != cResultDividendPayout.error) 
 		{
 			cResultKData.error = -10;
@@ -140,6 +161,7 @@ public class DataEngine {
 		return cResultKData;
 	}
 	
+	
 	public static class ResultMinKDataOneDay
 	{
 		public ResultMinKDataOneDay()
@@ -150,17 +172,20 @@ public class DataEngine {
 		public int error;
 		public List<KData> KDataList;
 	}
+	/*
+	 * 获取5分钟级别K
+	 */
 	public ResultMinKDataOneDay get5MinKDataOneDay(String id, String date)
 	{
 		ResultMinKDataOneDay cResultMinKDataOneDay = new ResultMinKDataOneDay();
 		
-		ResultDayDetail cResultDayDetail = m_cDataStorage.getDayDetail(id, date);
+		ResultDayDetail cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
 		
 		// 如果本地不存在，下载后获取
 		if(0 != cResultDayDetail.error)
 		{
-			m_cDataDownload.downloadStockDetail(id, date);
-			cResultDayDetail = m_cDataStorage.getDayDetail(id, date);
+			m_cBaseDataDownload.downloadStockDetail(id, date);
+			cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
 		}
 				
 		if(0 == cResultDayDetail.error && cResultDayDetail.resultList.size() != 0)
@@ -326,17 +351,20 @@ public class DataEngine {
 		return cResultMinKDataOneDay;
 	}
 	
+	/*
+	 * 获取1分钟级别K
+	 */
 	public ResultMinKDataOneDay get1MinKDataOneDay(String id, String date)
 	{
 		ResultMinKDataOneDay cResultMinKDataOneDay = new ResultMinKDataOneDay();
 		
-		ResultDayDetail cResultDayDetail = m_cDataStorage.getDayDetail(id, date);
+		ResultDayDetail cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
 		
 		// 如果本地不存在，下载后获取
 		if(0 != cResultDayDetail.error)
 		{
-			m_cDataDownload.downloadStockDetail(id, date);
-			cResultDayDetail = m_cDataStorage.getDayDetail(id, date);
+			m_cBaseDataDownload.downloadStockDetail(id, date);
+			cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
 		}
 		
 		if(0 == cResultDayDetail.error && cResultDayDetail.resultList.size() != 0)
@@ -503,6 +531,9 @@ public class DataEngine {
 		return cResultMinKDataOneDay;
 	}
 	
+	/*
+	 * 获取1分钟级别K
+	 */
 	public List<StockSimpleItem> getRandomStockSimpleItem(int count)
 	{
 		List<StockSimpleItem> retList = new ArrayList<StockSimpleItem>();
@@ -562,7 +593,7 @@ public class DataEngine {
 	public int checkStockData(String stockID)
 	{
 		// 检查基本信息
-		ResultStockBaseData cResultStockBaseData = m_cDataStorage.getBaseInfo(stockID);
+		ResultStockBaseData cResultStockBaseData = m_cBaseDataStorage.getBaseInfo(stockID);
 		if(0 != cResultStockBaseData.error 
 				|| cResultStockBaseData.stockBaseInfo.name.length() <= 0)
 		{
@@ -637,8 +668,8 @@ public class DataEngine {
 		return 0;
 	}
 	
-	private DataDownload m_cDataDownload;
-	private DataStorage m_cDataStorage;
+	private BaseDataDownload m_cBaseDataDownload;
+	private BaseDataStorage m_cBaseDataStorage;
 	
 	public static Random random = new Random();
 	public static Formatter fmt = new Formatter(System.out);

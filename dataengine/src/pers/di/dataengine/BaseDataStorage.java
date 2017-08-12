@@ -12,7 +12,7 @@ import java.util.List;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
-import pers.di.dataengine.webdata.DataWebCommonDef.*;
+import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.common.CPath;
@@ -20,9 +20,9 @@ import pers.di.dataengine.webdata.DataWebStockDayK.ResultKData;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
-public class DataStorage {
+public class BaseDataStorage {
 	
-	public DataStorage(String dataDir) 
+	public BaseDataStorage(String dataDir) 
 	{
 		s_workDir = dataDir;
 		CPath.createDir(s_workDir);

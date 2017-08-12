@@ -19,7 +19,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import pers.di.dataengine.webdata.DataWebCommonDef.DayDetailItem;
+import pers.di.dataengine.webdata.CommonDef.*;
 
 public class DataWebStockDayDetail {
 	/*

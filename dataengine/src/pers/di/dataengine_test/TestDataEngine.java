@@ -1,10 +1,10 @@
 package pers.di.dataengine_test;
 
-import pers.di.dataengine.DataEngine;
+import pers.di.dataengine.BaseDataLayer;
 
 public class TestDataEngine {
 	public static void main(String[] args) {
-		DataEngine.instance().initialize("data");
-		DataEngine.instance().updateLocalAllStockData("2017-08-10");
+		BaseDataLayer cBaseDataLayer = new BaseDataLayer("data");
+		cBaseDataLayer.updateLocalAllStockData("2017-08-10");
 	}
 }
