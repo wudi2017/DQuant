@@ -29,17 +29,6 @@ public class DataWebStockRealTimeInfo {
 		public RealTimeInfo realTimeInfo;
 	}
 	
-	public static class ResultRealTimeInfoMore
-	{
-		public ResultRealTimeInfoMore()
-		{
-			error = 0;
-			realTimeInfoMore = new RealTimeInfoMore();
-		}
-		public int error;
-		public RealTimeInfoMore realTimeInfoMore;
-	}
-	
 	/*
 	 * 从网络获取某只股票当前信息（基本：名字 日期 时间 价格）
 	 * 返回0为成功，其他值为失败
@@ -106,86 +95,6 @@ public class DataWebStockRealTimeInfo {
 			return cResultRealTimeInfo;
         }  
 		return cResultRealTimeInfo;
-	}
-	/*
-	 * 从网络获取某只股票更多当前信息（基本信息，总市值，流通市值，市盈率）
-	 * 返回0为成功，其他值为失败
-	 */
-	public static ResultRealTimeInfoMore getRealTimeInfoMore(String id)
-	{
-		ResultRealTimeInfoMore cResultRealTimeInfoMore = new ResultRealTimeInfoMore();
-		
-		// get base info
-		ResultRealTimeInfo cResultRealTimeInfoBase = getRealTimeInfo(id);
-		if(0 != cResultRealTimeInfoBase.error) 
-		{
-			cResultRealTimeInfoMore.error = -2;
-			return cResultRealTimeInfoMore;
-		}
-		
-		cResultRealTimeInfoMore.realTimeInfoMore.name = cResultRealTimeInfoBase.realTimeInfo.name;
-		cResultRealTimeInfoMore.realTimeInfoMore.date = cResultRealTimeInfoBase.realTimeInfo.date;
-		cResultRealTimeInfoMore.realTimeInfoMore.time = cResultRealTimeInfoBase.realTimeInfo.time;
-		cResultRealTimeInfoMore.realTimeInfoMore.curPrice = cResultRealTimeInfoBase.realTimeInfo.curPrice;
-		
-		
-		// e.g http://qt.gtimg.cn/q=sz000858
-		String urlStr = "http://qt.gtimg.cn/q=";
-		String tmpId = "";
-		if(id.startsWith("60") && 6 == id.length())
-		{
-			tmpId = "sh" + id;
-		}
-		else if((id.startsWith("00") ||  id.startsWith("30")) && 6 == id.length())
-		{
-			tmpId = "sz" + id;
-		}
-		else if(id.startsWith("99")) // 上证指数
-		{
-			tmpId = "sh" + "000001"; // 上证指数没有更多基本信息
-			cResultRealTimeInfoMore.error = 0;
-			return cResultRealTimeInfoMore;
-		}
-		else
-		{
-			cResultRealTimeInfoMore.error = -10;
-			return cResultRealTimeInfoMore;
-		}
-		urlStr = urlStr + tmpId;
-		
-		try{  
-			
-			URL url = new URL(urlStr);    
-	        HttpURLConnection conn = (HttpURLConnection)url.openConnection();    
-
-	        conn.setConnectTimeout(5*1000);  //设置连接超时间 
-	        conn.setReadTimeout(15*1000); //设置读取超时时间
-	        
-	        //防止屏蔽程序抓取而返回403错误  
-	        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");  
-			InputStream inputStream = conn.getInputStream(); 
-			byte[] getData = readInputStream(inputStream); 
-			String data = new String(getData, "gbk");  
-			//System.out.println(data);     
-			String[] cells = data.split("~");
-//			for(int i =0; i< cells.length; i++)
-//			{
-//				System.out.println(cells[i]);
-//			}
-			cResultRealTimeInfoMore.realTimeInfoMore.allMarketValue = Float.parseFloat(cells[45]); //总市值
-			cResultRealTimeInfoMore.realTimeInfoMore.circulatedMarketValue = Float.parseFloat(cells[44]); // 流通市值
-			if(cells[39].length() != 0)
-				cResultRealTimeInfoMore.realTimeInfoMore.peRatio = Float.parseFloat(cells[39]); //市盈率
-			else
-				cResultRealTimeInfoMore.realTimeInfoMore.peRatio = 0.0f;
-			
-        }catch (Exception e) {  
-        	System.out.println("Exception[getRealTimeInfoMore]:" + e.getMessage()); 
-            // TODO: handle exception  
-			cResultRealTimeInfoMore.error = -1;
-        	return cResultRealTimeInfoMore;
-        }  
-		return cResultRealTimeInfoMore;
 	}
 	
     public static  byte[] readInputStream(InputStream inputStream) throws IOException {    

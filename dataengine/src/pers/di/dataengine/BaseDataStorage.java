@@ -210,12 +210,12 @@ public class BaseDataStorage {
             	KData cKData = new KData();
             	String[] cols = tempString.split(",");
 
-            	DayDetailItem cDayDetailItem = new DayDetailItem();
-	        	cDayDetailItem.time = cols[0];
-	        	cDayDetailItem.price = Float.parseFloat(cols[1]);
-	        	cDayDetailItem.volume = Float.parseFloat(cols[2]);
+            	TData cTData = new TData();
+	        	cTData.time = cols[0];
+	        	cTData.price = Float.parseFloat(cols[1]);
+	        	cTData.volume = Float.parseFloat(cols[2]);
 	        	
-	        	cResultDayDetail.resultList.add(cDayDetailItem);
+	        	cResultDayDetail.resultList.add(cTData);
 	        	
                 line++;
             }
@@ -229,7 +229,7 @@ public class BaseDataStorage {
 		}
 		return cResultDayDetail;
 	}
-	public int saveDayDetail(String id, String date, List<DayDetailItem> in_list)
+	public int saveDayDetail(String id, String date, List<TData> in_list)
 	{
 		String stockDataDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stockDataDir)) return -10;
@@ -241,12 +241,12 @@ public class BaseDataStorage {
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
 			for(int i = 0; i < in_list.size(); i++)  
 	        {  
-				DayDetailItem cDayDetailItem = in_list.get(i);  
-//			            System.out.println(cDayDetailItem.time + "," 
-//			            		+ cDayDetailItem.price + "," + cDayDetailItem.volume);  
-				cOutputStream.write((cDayDetailItem.time + ",").getBytes());
-				cOutputStream.write((cDayDetailItem.price + ",").getBytes());
-				cOutputStream.write((cDayDetailItem.volume + "\n").getBytes());
+				TData cTData = in_list.get(i);  
+//			            System.out.println(cTData.time + "," 
+//			            		+ cTData.price + "," + cTData.volume);  
+				cOutputStream.write((cTData.time + ",").getBytes());
+				cOutputStream.write((cTData.price + ",").getBytes());
+				cOutputStream.write((cTData.volume + "\n").getBytes());
 	        } 
 			cOutputStream.close();
 		}
@@ -290,10 +290,11 @@ public class BaseDataStorage {
             	String[] cols = tempString.split(",");
             	
             	cResultStockBaseData.stockBaseInfo.name = cols[0];
-            	cResultStockBaseData.stockBaseInfo.price = Float.parseFloat(cols[1]);
-            	cResultStockBaseData.stockBaseInfo.allMarketValue = Float.parseFloat(cols[2]);
-            	cResultStockBaseData.stockBaseInfo.circulatedMarketValue = Float.parseFloat(cols[3]);
-            	cResultStockBaseData.stockBaseInfo.peRatio = Float.parseFloat(cols[4]);
+            	cResultStockBaseData.stockBaseInfo.date = cols[1];
+            	cResultStockBaseData.stockBaseInfo.time = cols[2];
+            	cResultStockBaseData.stockBaseInfo.allMarketValue = Float.parseFloat(cols[3]);
+            	cResultStockBaseData.stockBaseInfo.circulatedMarketValue = Float.parseFloat(cols[4]);
+            	cResultStockBaseData.stockBaseInfo.peRatio = Float.parseFloat(cols[5]);
 
                 break;
             }
@@ -319,8 +320,8 @@ public class BaseDataStorage {
 		try
 		{
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
-			String s = String.format("%s,%.3f,%.3f,%.3f,%.3f", 
-					baseData.name, baseData.price, 
+			String s = String.format("%s,%s,%s,%.3f,%.3f,%.3f", 
+					baseData.name,baseData.date,baseData.time,
 					baseData.allMarketValue, baseData.circulatedMarketValue, baseData.peRatio);
 			cOutputStream.write(s.getBytes());
 			cOutputStream.close();
@@ -402,7 +403,7 @@ public class BaseDataStorage {
 	{
 		ResultAllStockList cResultAllStockList = new ResultAllStockList();
 		
-		List<StockSimpleItem> retListAll = cResultAllStockList.resultList;
+		List<StockItem> retListAll = cResultAllStockList.resultList;
 			
 		// emu local
 		File root = new File(s_workDir);
@@ -420,9 +421,9 @@ public class BaseDataStorage {
 					&& (dirName.startsWith("6") || dirName.startsWith("3") || dirName.startsWith("0"))
 						)
 				{
-					StockSimpleItem cStockSimpleItem = new StockSimpleItem();
-					cStockSimpleItem.id = dirName;
-					retListAll.add(cStockSimpleItem);
+					StockItem cStockItem = new StockItem();
+					cStockItem.id = dirName;
+					retListAll.add(cStockItem);
 				}
 				
 			}

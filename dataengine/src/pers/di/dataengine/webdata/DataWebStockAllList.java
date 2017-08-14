@@ -22,7 +22,7 @@ import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
-import pers.di.dataengine.webdata.CommonDef.StockSimpleItem;
+import pers.di.dataengine.webdata.CommonDef.StockItem;
 
 
 public class DataWebStockAllList {
@@ -35,10 +35,10 @@ public class DataWebStockAllList {
 		public ResultAllStockList()
 		{
 			error = 0;
-			resultList = new ArrayList<StockSimpleItem>();
+			resultList = new ArrayList<StockItem>();
 		}
 		public int error;
-		public List<StockSimpleItem> resultList;
+		public List<StockItem> resultList;
 	}
 	public static ResultAllStockList getAllStockList()
 	{
@@ -104,7 +104,7 @@ public class DataWebStockAllList {
              		{
                  		// System.out.println(name + "," + id);
                  		allCount++;
-                 		StockSimpleItem cStockItem = new StockSimpleItem();
+                 		StockItem cStockItem = new StockItem();
                  		cStockItem.name = name;
                  		cStockItem.id = id;
                  		cResultAllStockList.resultList.add(cStockItem);
@@ -131,10 +131,10 @@ public class DataWebStockAllList {
 		public ResultRandomStock()
 		{
 			error = 0;
-			resultList = new ArrayList<StockSimpleItem>();
+			resultList = new ArrayList<StockItem>();
 		}
 		public int error;
-		public List<StockSimpleItem> resultList;
+		public List<StockItem> resultList;
 	}
 	public static ResultRandomStock getRandomStock(int count)
 	{
@@ -147,7 +147,7 @@ public class DataWebStockAllList {
 			{
 				for(int i = 0; i < count; i++)  
 		        {  
-					StockSimpleItem cStockItem = popRandomStock(cResultAllStockList.resultList);
+					StockItem cStockItem = popRandomStock(cResultAllStockList.resultList);
 					cResultRandomStock.resultList.add(cStockItem);
 		        } 
 			}
@@ -158,13 +158,13 @@ public class DataWebStockAllList {
 		return cResultRandomStock;
 	}
 	
-	private static StockSimpleItem popRandomStock(List<StockSimpleItem> in_list)
+	private static StockItem popRandomStock(List<StockItem> in_list)
 	{
 		if(in_list.size() == 0) return null;
 		
 		int randomInt = Math.abs(random.nextInt());
 		int randomIndex = randomInt % in_list.size();
-		StockSimpleItem cStockItem = new  StockSimpleItem(in_list.get(randomIndex));
+		StockItem cStockItem = new  StockItem(in_list.get(randomIndex));
 		in_list.remove(randomIndex);
 		return cStockItem;
 	}

@@ -5,6 +5,7 @@ import java.util.*;
 import pers.di.common.*;
 import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
 import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
+import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
 import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 
@@ -150,9 +151,9 @@ public class StockDataEngine {
 	 * 不保证是最新（依赖于数据更新）
 	 * 此接口带有数据缓存机制
 	 */
-	public static class ResultLatestStockInfo
+	public static class ResultLatestStockBaseInfo
 	{
-		public ResultLatestStockInfo()
+		public ResultLatestStockBaseInfo()
 		{
 			error = -1000;
 			stockInfo = new StockBaseInfo();
@@ -160,22 +161,21 @@ public class StockDataEngine {
 		public int error;
 		public StockBaseInfo stockInfo;
 	}
-	public ResultLatestStockInfo getLatestStockInfo(String id)
+	public ResultLatestStockBaseInfo getLatestStockBaseInfo(String id)
 	{
-		ResultLatestStockInfo cResultLatestStockInfo = new ResultLatestStockInfo();
+		ResultLatestStockBaseInfo cResultLatestStockBaseInfo = new ResultLatestStockBaseInfo();
 		
 		// 首次进行缓存
-		if(null == m_cCache.latestStockInfo || !m_cCache.latestStockInfo.containsKey(id))
+		if(null == m_cCache.latestStockBaseInfo || !m_cCache.latestStockBaseInfo.containsKey(id))
 		{
-			if(null == m_cCache.latestStockInfo)
+			if(null == m_cCache.latestStockBaseInfo)
 			{
-				m_cCache.latestStockInfo = new HashMap<String,StockBaseInfo>();
+				m_cCache.latestStockBaseInfo = new HashMap<String,StockBaseInfo>();
 			}
 			
 			StockBaseInfo cStockInfo = new StockBaseInfo();
-			cStockInfo. = id;
 			
-			ResultStockBaseData cResultStockBaseData = DataEngine.getBaseInfo(id);
+			ResultStockBaseData cResultStockBaseData = m_cBaseDataLayer.getBaseInfo(id);
 			
 			if(0 == cResultStockBaseData.error)
 			{
@@ -184,7 +184,7 @@ public class StockDataEngine {
 				cStockInfo.circulatedMarketValue = cResultStockBaseData.stockBaseInfo.circulatedMarketValue; 
 				cStockInfo.peRatio = cResultStockBaseData.stockBaseInfo.peRatio;
 				
-				m_cache_latestStockInfo.put(id, cStockInfo);
+				m_cCache.latestStockBaseInfo.put(id, cStockInfo);
 			}
 			else
 			{
@@ -193,17 +193,17 @@ public class StockDataEngine {
 		}
 			
 		// 从缓存中取数据
-		if(null != m_cache_latestStockInfo && m_cache_latestStockInfo.containsKey(id))
+		if(null != m_cCache.latestStockBaseInfo && m_cCache.latestStockBaseInfo.containsKey(id))
 		{
-			cResultLatestStockInfo.error = 0;
-			cResultLatestStockInfo.stockInfo = m_cache_latestStockInfo.get(id);
+			cResultLatestStockBaseInfo.error = 0;
+			cResultLatestStockBaseInfo.stockInfo = m_cCache.latestStockBaseInfo.get(id);
 		}
 		else
 		{
-			cResultLatestStockInfo.error = -1;
+			cResultLatestStockBaseInfo.error = -1;
 		}
 		
-		return cResultLatestStockInfo;
+		return cResultLatestStockBaseInfo;
 	}
 	
 	

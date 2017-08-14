@@ -12,6 +12,8 @@ import pers.di.common.CUtilsDateTime;
 import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
 import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.webdata.DataWebStockAllList;
+import pers.di.dataengine.webdata.DataWebStockBaseInfo;
+import pers.di.dataengine.webdata.DataWebStockBaseInfo.ResultStockBaseInfo;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK;
@@ -20,7 +22,6 @@ import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfoMore;
 import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 
@@ -72,9 +73,9 @@ public class BaseDataDownload {
 		{
 			for(int i = 0; i < cResultAllStockList.resultList.size(); i++)  
 	        {  
-				StockSimpleItem cStockSimpleItem = cResultAllStockList.resultList.get(i);
+				StockItem cStockItem = cResultAllStockList.resultList.get(i);
 				
-				String stockID = cStockSimpleItem.id;
+				String stockID = cStockItem.id;
 				
 				ResultUpdateStock cResultUpdateStock = this.downloadStockFullData(stockID);
 	           
@@ -84,16 +85,16 @@ public class BaseDataDownload {
 		    		if(0 == cResultKDataQFQ.error && cResultKDataQFQ.resultList.size() > 0)
 		    		{
 		    			String stockNewestDate = cResultKDataQFQ.resultList.get(cResultKDataQFQ.resultList.size()-1).date;
-		    			s_fmt.format("update success: %s (%s) item:%d date:%s\n", cStockSimpleItem.id, cStockSimpleItem.name, cResultUpdateStock.updateCnt, stockNewestDate);
+		    			s_fmt.format("update success: %s (%s) item:%d date:%s\n", cStockItem.id, cStockItem.name, cResultUpdateStock.updateCnt, stockNewestDate);
 		    		}
 		            else
 		            {
-		            	s_fmt.format("update ERROR: %s (%s) error(%d)\n", cStockSimpleItem.id, cStockSimpleItem.name, cResultUpdateStock.error);
+		            	s_fmt.format("update ERROR: %s (%s) error(%d)\n", cStockItem.id, cStockItem.name, cResultUpdateStock.error);
 		            }
 				}
 				else
 				{
-					s_fmt.format("update ERROR: %s error(%d)\n", cStockSimpleItem.id, cResultUpdateStock.error);
+					s_fmt.format("update ERROR: %s error(%d)\n", cStockItem.id, cResultUpdateStock.error);
 				}   
 				
 	        } 
@@ -172,28 +173,27 @@ public class BaseDataDownload {
 			if(curValiddateStr.compareTo(localDataLastDate) > 0)
 			{
 				// 获取当前更多实时信息
-				ResultRealTimeInfoMore cResultRealTimeInfoMore = DataWebStockRealTimeInfo.getRealTimeInfoMore(id);
-				if(0 == cResultRealTimeInfoMore.error)
+				ResultStockBaseInfo cResultStockBaseInfo = DataWebStockBaseInfo.getStockBaseInfo(id);
+				if(0 == cResultStockBaseInfo.error)
 				{
 					// 保存股票基本信息
 					StockBaseInfo cStockBaseData = new StockBaseInfo();
-					cStockBaseData.name = cResultRealTimeInfoMore.realTimeInfoMore.name;
-					cStockBaseData.price = cResultRealTimeInfoMore.realTimeInfoMore.curPrice;
-					cStockBaseData.allMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.allMarketValue;
-					cStockBaseData.circulatedMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.circulatedMarketValue;
-					cStockBaseData.peRatio = cResultRealTimeInfoMore.realTimeInfoMore.peRatio;
+					cStockBaseData.name = cResultStockBaseInfo.stockBaseInfo.name;
+					cStockBaseData.allMarketValue = cResultStockBaseInfo.stockBaseInfo.allMarketValue;
+					cStockBaseData.circulatedMarketValue = cResultStockBaseInfo.stockBaseInfo.circulatedMarketValue;
+					cStockBaseData.peRatio = cResultStockBaseInfo.stockBaseInfo.peRatio;
 					m_baseDataStorage.saveBaseInfo(id, cStockBaseData);
 					
 					// 当前时间在收盘之前，网络数据有效日期为前一天（非周六周日）
-					String webValidLastDate = cResultRealTimeInfoMore.realTimeInfoMore.date;
-					if(cResultRealTimeInfoMore.realTimeInfoMore.time.compareTo("15:00:00") < 0)
+					String webValidLastDate = cResultStockBaseInfo.stockBaseInfo.date;
+					if(cResultStockBaseInfo.stockBaseInfo.time.compareTo("15:00:00") < 0)
 					{
-						int year = Integer.parseInt(cResultRealTimeInfoMore.realTimeInfoMore.date.split("-")[0]);
-						int month = Integer.parseInt(cResultRealTimeInfoMore.realTimeInfoMore.date.split("-")[1]);
-						int day = Integer.parseInt(cResultRealTimeInfoMore.realTimeInfoMore.date.split("-")[2]);
-						int hour = Integer.parseInt(cResultRealTimeInfoMore.realTimeInfoMore.time.split(":")[0]);
-						int min = Integer.parseInt(cResultRealTimeInfoMore.realTimeInfoMore.time.split(":")[1]);
-						int sec = Integer.parseInt(cResultRealTimeInfoMore.realTimeInfoMore.time.split(":")[2]);
+						int year = Integer.parseInt(cResultStockBaseInfo.stockBaseInfo.date.split("-")[0]);
+						int month = Integer.parseInt(cResultStockBaseInfo.stockBaseInfo.date.split("-")[1]);
+						int day = Integer.parseInt(cResultStockBaseInfo.stockBaseInfo.date.split("-")[2]);
+						int hour = Integer.parseInt(cResultStockBaseInfo.stockBaseInfo.time.split(":")[0]);
+						int min = Integer.parseInt(cResultStockBaseInfo.stockBaseInfo.time.split(":")[1]);
+						int sec = Integer.parseInt(cResultStockBaseInfo.stockBaseInfo.time.split(":")[2]);
 						Calendar cal0 = Calendar.getInstance();
 						cal0.set(year, month-1, day, hour, min, sec);
 						// 获取上一个非周末的日期
@@ -355,16 +355,10 @@ public class BaseDataDownload {
 	{
 		try
 		{
-			ResultRealTimeInfoMore cResultRealTimeInfoMore = DataWebStockRealTimeInfo.getRealTimeInfoMore(id);
-			if(0 == cResultRealTimeInfoMore.error)
+			ResultStockBaseInfo cResultStockBaseInfo = DataWebStockBaseInfo.getStockBaseInfo(id);
+			if(0 == cResultStockBaseInfo.error)
 			{
-				StockBaseInfo cStockBaseInfo = new StockBaseInfo();
-				cStockBaseInfo.name = cResultRealTimeInfoMore.realTimeInfoMore.name;
-				cStockBaseInfo.price = cResultRealTimeInfoMore.realTimeInfoMore.curPrice;
-				cStockBaseInfo.allMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.allMarketValue;
-				cStockBaseInfo.circulatedMarketValue = cResultRealTimeInfoMore.realTimeInfoMore.circulatedMarketValue;
-				cStockBaseInfo.peRatio = cResultRealTimeInfoMore.realTimeInfoMore.peRatio;
-				m_baseDataStorage.saveBaseInfo(id, cStockBaseInfo);
+				m_baseDataStorage.saveBaseInfo(id, cResultStockBaseInfo.stockBaseInfo);
 			}
 			else
 			{

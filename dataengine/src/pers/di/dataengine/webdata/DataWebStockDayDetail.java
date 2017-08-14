@@ -31,10 +31,10 @@ public class DataWebStockDayDetail {
 		public ResultDayDetail()
 		{
 			error = 0;
-			resultList = new ArrayList<DayDetailItem>();
+			resultList = new ArrayList<TData>();
 		}
 		public int error;
-		public List<DayDetailItem> resultList;
+		public List<TData> resultList;
 	}
 	public static ResultDayDetail getDayDetail(String id, String date)
 	{
@@ -81,12 +81,12 @@ public class DataWebStockDayDetail {
 	        	String line = lines[i].trim();
 	        	String[] cols = line.split("\t");
 	        	
-	        	DayDetailItem cDayDetailItem = new DayDetailItem();
-	        	cDayDetailItem.time = cols[0];
-	        	cDayDetailItem.price = Float.parseFloat(cols[1]);
-	        	cDayDetailItem.volume = Float.parseFloat(cols[3]);
+	        	TData cTData = new TData();
+	        	cTData.time = cols[0];
+	        	cTData.price = Float.parseFloat(cols[1]);
+	        	cTData.volume = Float.parseFloat(cols[3]);
 	        	
-	        	cResultDayDetail.resultList.add(cDayDetailItem);
+	        	cResultDayDetail.resultList.add(cTData);
 	        }
 	        
 	        if(cResultDayDetail.resultList.size() <= 0) 

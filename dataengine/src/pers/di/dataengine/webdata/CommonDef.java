@@ -6,18 +6,18 @@ public class CommonDef {
 	 * 股票简项
 	 * id-名称
 	 */
-	public static class StockSimpleItem
+	public static class StockItem
 	{
-		public StockSimpleItem(){}
-		public StockSimpleItem(String in_id, String in_name)
+		public StockItem(){}
+		public StockItem(String in_id, String in_name)
 		{
 			id = in_id;
 			name = in_name;
 		}
-		public StockSimpleItem(StockSimpleItem cStockSimpleItem)
+		public StockItem(StockItem cStockItem)
 		{
-			name = cStockSimpleItem.name;
-			id = cStockSimpleItem.id;
+			name = cStockItem.name;
+			id = cStockItem.id;
 		}
 		public String name;
 		public String id;
@@ -27,7 +27,7 @@ public class CommonDef {
 	 * 日内交易明细
 	 * 时间-价格-成交量
 	 */
-	public static class DayDetailItem implements Comparable
+	public static class TData implements Comparable
 	{
 		public String time;
 		public float price;
@@ -35,7 +35,7 @@ public class CommonDef {
 		@Override
 		public int compareTo(Object o) {
 			// TODO Auto-generated method stub
-			DayDetailItem sdto = (DayDetailItem)o;
+			TData sdto = (TData)o;
 		    return this.time.compareTo(sdto.time);
 		}
 	}
@@ -142,18 +142,7 @@ public class CommonDef {
 			}
 		}
 	}
-	/*
-	 * 股票实时信息（更多信息）
-	 * 股票实时信息 +　总市值，流通市值，市盈率
-	 */
-	public static class RealTimeInfoMore extends RealTimeInfo
-	{
-		public float allMarketValue; //总市值
-		public float circulatedMarketValue; // 流通市值
-		public float peRatio; //市盈率
-	}
-	
-	
+
 	/*
 	 * 股票基本信息
 	 * 名字-当前价-总市值-流通市值-市盈率等（将来扩展为行业等）
@@ -161,14 +150,16 @@ public class CommonDef {
 	public static class StockBaseInfo
 	{
 		public String name;
-		public float price; // 元
+		public String date;
+		public String time;
 		public float allMarketValue; // 亿
 		public float circulatedMarketValue; // 亿
 		public float peRatio;
 		public StockBaseInfo()
 		{
 			name = "";
-			price = 0.0f;
+			date = "0000-00-00";
+			time = "00:00:00";
 			allMarketValue = 0.0f;
 			circulatedMarketValue = 0.0f;
 			peRatio = 0.0f;
@@ -176,7 +167,8 @@ public class CommonDef {
 		public void CopyFrom(StockBaseInfo cCopyFromObj)
 		{
 			name = cCopyFromObj.name;
-			price = cCopyFromObj.price;
+			date = cCopyFromObj.date;
+			time = cCopyFromObj.time;
 			allMarketValue = cCopyFromObj.allMarketValue;
 			circulatedMarketValue = cCopyFromObj.circulatedMarketValue;
 			peRatio = cCopyFromObj.peRatio;

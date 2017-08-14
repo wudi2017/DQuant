@@ -15,8 +15,8 @@ public class TestDataWebStockAllList {
 		{
 			for(int i = 0; i < cResultAllStockList.resultList.size(); i++)  
 	        {  
-				StockSimpleItem cStockSimpleItem = cResultAllStockList.resultList.get(i);  
-	            System.out.println(cStockSimpleItem.name + "," + cStockSimpleItem.id);  
+				StockItem cStockItem = cResultAllStockList.resultList.get(i);  
+	            System.out.println(cStockItem.name + "," + cStockItem.id);  
 	        } 
 			System.out.println("count:" + cResultAllStockList.resultList.size()); 
 		}

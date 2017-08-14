@@ -17,5 +17,5 @@ public class StockDataEngineCache {
 	// 本地股票列表缓存
 	public List<String> AllStockID = null;
 	// 本地股票最新基本信息缓存
-	public Map<String,StockBaseInfo> latestStockInfo = null;
+	public Map<String,StockBaseInfo> latestStockBaseInfo = null;
 }

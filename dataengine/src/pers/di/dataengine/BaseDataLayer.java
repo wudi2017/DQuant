@@ -32,24 +32,20 @@ public class BaseDataLayer {
 	{
 		return m_cBaseDataDownload.downloadAllStockFullData(dateStr);
 	}
+	// 获取本地总体数据更新时间
+	public ResultAllStockFullDataTimestamps getAllStockFullDataTimestamps()
+	{
+		return m_cBaseDataStorage.getAllStockFullDataTimestamps();
+	}
 	
+	/*
+	 * 更新某一只股票
+	 */
 	public ResultUpdateStock updateLocaStockData(String stockId)
 	{
 		return m_cBaseDataDownload.downloadStockFullData(stockId);
 	}
 	
-	public ResultKData getDayKData(String id)
-	{
-		return m_cBaseDataStorage.getKData(id);
-	}
-	
-	/*
-	 * 获取本地总体数据更新时间
-	 */
-	public ResultAllStockFullDataTimestamps getAllStockFullDataTimestamps()
-	{
-		return m_cBaseDataStorage.getAllStockFullDataTimestamps();
-	}
 	
 	/*
 	 * 获取本地股票列表
@@ -57,6 +53,22 @@ public class BaseDataLayer {
 	public ResultAllStockList getLocalAllStock()
 	{
 		return m_cBaseDataStorage.getLocalAllStock();
+	}
+	
+	/*
+	 * 获取某只股票基础信息
+	 */
+	public ResultStockBaseData getBaseInfo(String id) 
+	{
+		return m_cBaseDataStorage.getBaseInfo(id);
+	}
+	
+	/*
+	 * 获取某只股票日K
+	 */
+	public ResultKData getDayKData(String id)
+	{
+		return m_cBaseDataStorage.getKData(id);
 	}
 	
 	/*
@@ -219,18 +231,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec093000 + i5Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<DayDetailItem> tmpList = new ArrayList<DayDetailItem>();
+    			List<TData> tmpList = new ArrayList<TData>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				DayDetailItem cDayDetailItem = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cDayDetailItem.time + "," 
-//    	            		+ cDayDetailItem.price + "," + cDayDetailItem.volume);  
-    	            int iSec = Integer.parseInt(cDayDetailItem.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cDayDetailItem.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cDayDetailItem.time.split(":")[2]);
+    				TData cTData = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTData.time + "," 
+//    	            		+ cTData.price + "," + cTData.volume);  
+    	            int iSec = Integer.parseInt(cTData.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTData.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTData.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cDayDetailItem);
+    	            	tmpList.add(cTData);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -244,18 +256,18 @@ public class BaseDataLayer {
     			float K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				DayDetailItem cDayDetailItem = tmpList.get(k);  
+    				TData cTData = tmpList.get(k);  
     				if(0 == k) {
-    					K5MinOpen = cDayDetailItem.price;
-    					K5MinClose = cDayDetailItem.price;
-    					K5MinLow = cDayDetailItem.price;
-    					K5MinHigh = cDayDetailItem.price;
+    					K5MinOpen = cTData.price;
+    					K5MinClose = cTData.price;
+    					K5MinLow = cTData.price;
+    					K5MinHigh = cTData.price;
     				}
-    				if(tmpList.size()-1 == k) K5MinClose = cDayDetailItem.price;
-    				if(cDayDetailItem.price > K5MinHigh) K5MinHigh = cDayDetailItem.price;
-    				if(cDayDetailItem.price < K5MinLow) K5MinLow = cDayDetailItem.price;
-    				K5MinVolume = K5MinVolume + cDayDetailItem.volume;
-    				//System.out.println(cDayDetailItem.time);
+    				if(tmpList.size()-1 == k) K5MinClose = cTData.price;
+    				if(cTData.price > K5MinHigh) K5MinHigh = cTData.price;
+    				if(cTData.price < K5MinLow) K5MinLow = cTData.price;
+    				K5MinVolume = K5MinVolume + cTData.volume;
+    				//System.out.println(cTData.time);
     			}
     			KData cKData = new KData();
     			cKData.time = StdEndTimeStr;
@@ -291,18 +303,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec130000 + i5Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<DayDetailItem> tmpList = new ArrayList<DayDetailItem>();
+    			List<TData> tmpList = new ArrayList<TData>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				DayDetailItem cDayDetailItem = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cDayDetailItem.time + "," 
-//    	            		+ cDayDetailItem.price + "," + cDayDetailItem.volume);  
-    	            int iSec = Integer.parseInt(cDayDetailItem.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cDayDetailItem.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cDayDetailItem.time.split(":")[2]);
+    				TData cTData = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTData.time + "," 
+//    	            		+ cTData.price + "," + cTData.volume);  
+    	            int iSec = Integer.parseInt(cTData.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTData.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTData.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cDayDetailItem);
+    	            	tmpList.add(cTData);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -316,18 +328,18 @@ public class BaseDataLayer {
     			float K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				DayDetailItem cDayDetailItem = tmpList.get(k);  
+    				TData cTData = tmpList.get(k);  
     				if(0 == k) {
-    					K5MinOpen = cDayDetailItem.price;
-    					K5MinClose = cDayDetailItem.price;
-    					K5MinLow = cDayDetailItem.price;
-    					K5MinHigh = cDayDetailItem.price;
+    					K5MinOpen = cTData.price;
+    					K5MinClose = cTData.price;
+    					K5MinLow = cTData.price;
+    					K5MinHigh = cTData.price;
     				}
-    				if(tmpList.size()-1 == k) K5MinClose = cDayDetailItem.price;
-    				if(cDayDetailItem.price > K5MinHigh) K5MinHigh = cDayDetailItem.price;
-    				if(cDayDetailItem.price < K5MinLow) K5MinLow = cDayDetailItem.price;
-    				K5MinVolume = K5MinVolume + cDayDetailItem.volume;
-    				//System.out.println(cDayDetailItem.time);
+    				if(tmpList.size()-1 == k) K5MinClose = cTData.price;
+    				if(cTData.price > K5MinHigh) K5MinHigh = cTData.price;
+    				if(cTData.price < K5MinLow) K5MinLow = cTData.price;
+    				K5MinVolume = K5MinVolume + cTData.volume;
+    				//System.out.println(cTData.time);
     			}
     			KData cKData = new KData();
     			cKData.time = StdEndTimeStr;
@@ -399,18 +411,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec093000 + i1Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<DayDetailItem> tmpList = new ArrayList<DayDetailItem>();
+    			List<TData> tmpList = new ArrayList<TData>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				DayDetailItem cDayDetailItem = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cDayDetailItem.time + "," 
-//    	            		+ cDayDetailItem.price + "," + cDayDetailItem.volume);  
-    	            int iSec = Integer.parseInt(cDayDetailItem.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cDayDetailItem.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cDayDetailItem.time.split(":")[2]);
+    				TData cTData = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTData.time + "," 
+//    	            		+ cTData.price + "," + cTData.volume);  
+    	            int iSec = Integer.parseInt(cTData.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTData.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTData.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cDayDetailItem);
+    	            	tmpList.add(cTData);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -424,18 +436,18 @@ public class BaseDataLayer {
     			float K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				DayDetailItem cDayDetailItem = tmpList.get(k);  
+    				TData cTData = tmpList.get(k);  
     				if(0 == k) {
-    					K1MinOpen = cDayDetailItem.price;
-    					K1MinClose = cDayDetailItem.price;
-    					K1MinLow = cDayDetailItem.price;
-    					K1MinHigh = cDayDetailItem.price;
+    					K1MinOpen = cTData.price;
+    					K1MinClose = cTData.price;
+    					K1MinLow = cTData.price;
+    					K1MinHigh = cTData.price;
     				}
-    				if(tmpList.size()-1 == k) K1MinClose = cDayDetailItem.price;
-    				if(cDayDetailItem.price > K1MinHigh) K1MinHigh = cDayDetailItem.price;
-    				if(cDayDetailItem.price < K1MinLow) K1MinLow = cDayDetailItem.price;
-    				K1MinVolume = K1MinVolume + cDayDetailItem.volume;
-    				//System.out.println(cDayDetailItem.time);
+    				if(tmpList.size()-1 == k) K1MinClose = cTData.price;
+    				if(cTData.price > K1MinHigh) K1MinHigh = cTData.price;
+    				if(cTData.price < K1MinLow) K1MinLow = cTData.price;
+    				K1MinVolume = K1MinVolume + cTData.volume;
+    				//System.out.println(cTData.time);
     			}
     			KData cKData = new KData();
     			cKData.time = StdEndTimeStr;
@@ -471,18 +483,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec130000 + i1Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<DayDetailItem> tmpList = new ArrayList<DayDetailItem>();
+    			List<TData> tmpList = new ArrayList<TData>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				DayDetailItem cDayDetailItem = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cDayDetailItem.time + "," 
-//    	            		+ cDayDetailItem.price + "," + cDayDetailItem.volume);  
-    	            int iSec = Integer.parseInt(cDayDetailItem.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cDayDetailItem.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cDayDetailItem.time.split(":")[2]);
+    				TData cTData = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTData.time + "," 
+//    	            		+ cTData.price + "," + cTData.volume);  
+    	            int iSec = Integer.parseInt(cTData.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTData.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTData.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cDayDetailItem);
+    	            	tmpList.add(cTData);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -496,18 +508,18 @@ public class BaseDataLayer {
     			float K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				DayDetailItem cDayDetailItem = tmpList.get(k);  
+    				TData cTData = tmpList.get(k);  
     				if(0 == k) {
-    					K1MinOpen = cDayDetailItem.price;
-    					K1MinClose = cDayDetailItem.price;
-    					K1MinLow = cDayDetailItem.price;
-    					K1MinHigh = cDayDetailItem.price;
+    					K1MinOpen = cTData.price;
+    					K1MinClose = cTData.price;
+    					K1MinLow = cTData.price;
+    					K1MinHigh = cTData.price;
     				}
-    				if(tmpList.size()-1 == k) K1MinClose = cDayDetailItem.price;
-    				if(cDayDetailItem.price > K1MinHigh) K1MinHigh = cDayDetailItem.price;
-    				if(cDayDetailItem.price < K1MinLow) K1MinLow = cDayDetailItem.price;
-    				K1MinVolume = K1MinVolume + cDayDetailItem.volume;
-    				//System.out.println(cDayDetailItem.time);
+    				if(tmpList.size()-1 == k) K1MinClose = cTData.price;
+    				if(cTData.price > K1MinHigh) K1MinHigh = cTData.price;
+    				if(cTData.price < K1MinLow) K1MinLow = cTData.price;
+    				K1MinVolume = K1MinVolume + cTData.volume;
+    				//System.out.println(cTData.time);
     			}
     			KData cKData = new KData();
     			cKData.time = StdEndTimeStr;
@@ -531,15 +543,12 @@ public class BaseDataLayer {
 		return cResultMinKDataOneDay;
 	}
 	
-	/*
-	 * 获取1分钟级别K
-	 */
-	public List<StockSimpleItem> getRandomStockSimpleItem(int count)
+	public List<StockItem> getRandomStockItem(int count)
 	{
-		List<StockSimpleItem> retList = new ArrayList<StockSimpleItem>();
+		List<StockItem> retList = new ArrayList<StockItem>();
 		if(0 != count)
 		{
-			List<StockSimpleItem> retListAll = new ArrayList<StockSimpleItem>();
+			List<StockItem> retListAll = new ArrayList<StockItem>();
 			
 			// emu local
 			File root = new File("data");
@@ -556,9 +565,9 @@ public class BaseDataLayer {
 						&& (dirName.startsWith("6") || dirName.startsWith("3") || dirName.startsWith("0"))
 							)
 					{
-						StockSimpleItem cStockSimpleItem = new StockSimpleItem();
-						cStockSimpleItem.id = dirName;
-						retListAll.add(cStockSimpleItem);
+						StockItem cStockItem = new StockItem();
+						cStockItem.id = dirName;
+						retListAll.add(cStockItem);
 					}
 					
 				}
@@ -568,22 +577,22 @@ public class BaseDataLayer {
 			{
 				for(int i = 0; i < count; i++)  
 		        {  
-					StockSimpleItem cStockSimpleItem = popRandomStock(retListAll);
-					retList.add(cStockSimpleItem);
+					StockItem cStockItem = popRandomStock(retListAll);
+					retList.add(cStockItem);
 		        } 
 			}
 		}
 		return retList;
 	}
-	private StockSimpleItem popRandomStock(List<StockSimpleItem> in_list)
+	private StockItem popRandomStock(List<StockItem> in_list)
 	{
 		if(in_list.size() == 0) return null;
 		
 		int randomInt = Math.abs(random.nextInt());
 		int randomIndex = randomInt % in_list.size();
-		StockSimpleItem cStockSimpleItem = new  StockSimpleItem(in_list.get(randomIndex));
+		StockItem cStockItem = new  StockItem(in_list.get(randomIndex));
 		in_list.remove(randomIndex);
-		return cStockSimpleItem;
+		return cStockItem;
 	}
 	
 	/*
