@@ -11,4 +11,12 @@ public class CTypeDefine {
 		public float value;
 	}
 	
+	public static class RefInt
+	{
+		public RefInt()
+		{
+			value = 0;
+		}
+		public int value;
+	}
 }

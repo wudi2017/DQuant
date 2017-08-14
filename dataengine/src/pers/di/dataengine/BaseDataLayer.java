@@ -10,7 +10,7 @@ import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
 import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultKData;
+import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 
 /*
@@ -28,7 +28,7 @@ public class BaseDataLayer {
 	 * 参数
 	 *     dateStr： 指定日期 
 	 */
-	public int updateLocalAllStockData(String dateStr)
+	public int updateLocalAllStocKLine(String dateStr)
 	{
 		return m_cBaseDataDownload.downloadAllStockFullData(dateStr);
 	}
@@ -41,7 +41,7 @@ public class BaseDataLayer {
 	/*
 	 * 更新某一只股票
 	 */
-	public ResultUpdateStock updateLocaStockData(String stockId)
+	public ResultUpdateStock updateLocaStocKLine(String stockId)
 	{
 		return m_cBaseDataDownload.downloadStockFullData(stockId);
 	}
@@ -66,23 +66,23 @@ public class BaseDataLayer {
 	/*
 	 * 获取某只股票日K
 	 */
-	public ResultKData getDayKData(String id)
+	public ResultKLine getDayKLine(String id)
 	{
-		return m_cBaseDataStorage.getKData(id);
+		return m_cBaseDataStorage.getKLine(id);
 	}
 	
 	/*
 	 * 获取前复权日k
 	 */
-	public ResultKData getDayKDataForwardAdjusted(String id)
+	public ResultKLine getDayKLineForwardAdjusted(String id)
 	{
-		ResultKData cResultKData = m_cBaseDataStorage.getKData(id);
+		ResultKLine cResultKLine = m_cBaseDataStorage.getKLine(id);
 		ResultDividendPayout cResultDividendPayout = m_cBaseDataStorage.getDividendPayout(id);
-		if(0 != cResultKData.error || 0 != cResultDividendPayout.error) 
+		if(0 != cResultKLine.error || 0 != cResultDividendPayout.error) 
 		{
-			cResultKData.error = -10;
-			cResultKData.resultList.clear();
-			return cResultKData;
+			cResultKLine.error = -10;
+			cResultKLine.resultList.clear();
+			return cResultKLine;
 		}
 		
 		for(int i = 0; i < cResultDividendPayout.resultList.size() ; i++)  
@@ -96,43 +96,43 @@ public class BaseDataLayer {
 			float unitMoreGuRatio = (cDividendPayout.songGu + cDividendPayout.zhuanGu + 10)/10;
 			float unitPaiXi = cDividendPayout.paiXi/10;
 			
-			for(int j = cResultKData.resultList.size() -1; j >= 0 ; j--)
+			for(int j = cResultKLine.resultList.size() -1; j >= 0 ; j--)
 			{
-				KData cKData = cResultKData.resultList.get(j); 
+				KLine cKLine = cResultKLine.resultList.get(j); 
 				
-				if(cKData.date.compareTo(cDividendPayout.date) < 0) // 股票日期小于分红派息日期时，进行重新计算
+				if(cKLine.date.compareTo(cDividendPayout.date) < 0) // 股票日期小于分红派息日期时，进行重新计算
 				{
-					cKData.open = (cKData.open - unitPaiXi)/unitMoreGuRatio;
-					//cKData.open = (int)(cKData.open*1000)/(float)1000.0;
+					cKLine.open = (cKLine.open - unitPaiXi)/unitMoreGuRatio;
+					//cKLine.open = (int)(cKLine.open*1000)/(float)1000.0;
 					
-//					System.out.println("date " + cKData.date + " " + cKData.open );
+//					System.out.println("date " + cKLine.date + " " + cKLine.open );
 					
-					cKData.close = (cKData.close - unitPaiXi)/unitMoreGuRatio;
-					//cKData.close = (int)(cKData.close*1000)/(float)1000.0;
+					cKLine.close = (cKLine.close - unitPaiXi)/unitMoreGuRatio;
+					//cKLine.close = (int)(cKLine.close*1000)/(float)1000.0;
 					
-					cKData.low = (cKData.low - unitPaiXi)/unitMoreGuRatio;
-					//cKData.low = (int)(cKData.low*1000)/(float)1000.0;
+					cKLine.low = (cKLine.low - unitPaiXi)/unitMoreGuRatio;
+					//cKLine.low = (int)(cKLine.low*1000)/(float)1000.0;
 					
-					cKData.high = (cKData.high - unitPaiXi)/unitMoreGuRatio;
-					//cKData.high = (int)(cKData.high*1000)/(float)1000.0;	
+					cKLine.high = (cKLine.high - unitPaiXi)/unitMoreGuRatio;
+					//cKLine.high = (int)(cKLine.high*1000)/(float)1000.0;	
 				}
 			}
 		}
-		return cResultKData;
+		return cResultKLine;
 	}
 	
 	/*
 	 * 获取后复权日k
 	 */
-	public ResultKData getDayKDataBackwardAdjusted(String id)
+	public ResultKLine getDayKLineBackwardAdjusted(String id)
 	{
-		ResultKData cResultKData = m_cBaseDataStorage.getKData(id);
+		ResultKLine cResultKLine = m_cBaseDataStorage.getKLine(id);
 		ResultDividendPayout cResultDividendPayout = m_cBaseDataStorage.getDividendPayout(id);
-		if(0 != cResultKData.error || 0 != cResultDividendPayout.error) 
+		if(0 != cResultKLine.error || 0 != cResultDividendPayout.error) 
 		{
-			cResultKData.error = -10;
-			cResultKData.resultList.clear();
-			return cResultKData;
+			cResultKLine.error = -10;
+			cResultKLine.resultList.clear();
+			return cResultKLine;
 		}
 		
 		
@@ -147,49 +147,49 @@ public class BaseDataLayer {
 			float unitMoreGuRatio = (cDividendPayout.songGu + cDividendPayout.zhuanGu + 10)/10;
 			float unitPaiXi = cDividendPayout.paiXi/10;
 			
-			for(int j = 0; j< cResultKData.resultList.size(); j++)
+			for(int j = 0; j< cResultKLine.resultList.size(); j++)
 			{
-				KData cKData = cResultKData.resultList.get(j); 
+				KLine cKLine = cResultKLine.resultList.get(j); 
 				
-				if(cKData.date.compareTo(cDividendPayout.date) >= 0) // 股票日期 大于等于分红派息日期时，进行重新计算
+				if(cKLine.date.compareTo(cDividendPayout.date) >= 0) // 股票日期 大于等于分红派息日期时，进行重新计算
 				{
-					cKData.open = cKData.open * unitMoreGuRatio + unitPaiXi;
-					//cKData.open = (int)(cKData.open*1000)/(float)1000.0;
+					cKLine.open = cKLine.open * unitMoreGuRatio + unitPaiXi;
+					//cKLine.open = (int)(cKLine.open*1000)/(float)1000.0;
 					
-//					System.out.println("date " + cKData.date + " " + cKData.open );
+//					System.out.println("date " + cKLine.date + " " + cKLine.open );
 					
-					cKData.close = cKData.close * unitMoreGuRatio + unitPaiXi;
-					//cKData.close = (int)(cKData.close*1000)/(float)1000.0;
+					cKLine.close = cKLine.close * unitMoreGuRatio + unitPaiXi;
+					//cKLine.close = (int)(cKLine.close*1000)/(float)1000.0;
 					
-					cKData.low = cKData.low * unitMoreGuRatio + unitPaiXi;
-					//cKData.low = (int)(cKData.low*1000)/(float)1000.0;
+					cKLine.low = cKLine.low * unitMoreGuRatio + unitPaiXi;
+					//cKLine.low = (int)(cKLine.low*1000)/(float)1000.0;
 					
-					cKData.high = cKData.high * unitMoreGuRatio + unitPaiXi;
-					//cKData.high = (int)(cKData.high*1000)/(float)1000.0;	
+					cKLine.high = cKLine.high * unitMoreGuRatio + unitPaiXi;
+					//cKLine.high = (int)(cKLine.high*1000)/(float)1000.0;	
 				}
 			}
 		}
 		
-		return cResultKData;
+		return cResultKLine;
 	}
 	
 	
-	public static class ResultMinKDataOneDay
+	public static class ResultMinKLineOneDay
 	{
-		public ResultMinKDataOneDay()
+		public ResultMinKLineOneDay()
 		{
 			error = 0;
-			KDataList = new ArrayList<KData>();
+			KLineList = new ArrayList<KLine>();
 		}
 		public int error;
-		public List<KData> KDataList;
+		public List<KLine> KLineList;
 	}
 	/*
 	 * 获取5分钟级别K
 	 */
-	public ResultMinKDataOneDay get5MinKDataOneDay(String id, String date)
+	public ResultMinKLineOneDay get5MinKLineOneDay(String id, String date)
 	{
-		ResultMinKDataOneDay cResultMinKDataOneDay = new ResultMinKDataOneDay();
+		ResultMinKLineOneDay cResultMinKLineOneDay = new ResultMinKLineOneDay();
 		
 		ResultDayDetail cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
 		
@@ -231,18 +231,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec093000 + i5Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TData> tmpList = new ArrayList<TData>();
+    			List<TranDetail> tmpList = new ArrayList<TranDetail>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				TData cTData = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cTData.time + "," 
-//    	            		+ cTData.price + "," + cTData.volume);  
-    	            int iSec = Integer.parseInt(cTData.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTData.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTData.time.split(":")[2]);
+    				TranDetail cTranDetail = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTranDetail.time + "," 
+//    	            		+ cTranDetail.price + "," + cTranDetail.volume);  
+    	            int iSec = Integer.parseInt(cTranDetail.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTranDetail.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTranDetail.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTData);
+    	            	tmpList.add(cTranDetail);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -256,30 +256,30 @@ public class BaseDataLayer {
     			float K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TData cTData = tmpList.get(k);  
+    				TranDetail cTranDetail = tmpList.get(k);  
     				if(0 == k) {
-    					K5MinOpen = cTData.price;
-    					K5MinClose = cTData.price;
-    					K5MinLow = cTData.price;
-    					K5MinHigh = cTData.price;
+    					K5MinOpen = cTranDetail.price;
+    					K5MinClose = cTranDetail.price;
+    					K5MinLow = cTranDetail.price;
+    					K5MinHigh = cTranDetail.price;
     				}
-    				if(tmpList.size()-1 == k) K5MinClose = cTData.price;
-    				if(cTData.price > K5MinHigh) K5MinHigh = cTData.price;
-    				if(cTData.price < K5MinLow) K5MinLow = cTData.price;
-    				K5MinVolume = K5MinVolume + cTData.volume;
-    				//System.out.println(cTData.time);
+    				if(tmpList.size()-1 == k) K5MinClose = cTranDetail.price;
+    				if(cTranDetail.price > K5MinHigh) K5MinHigh = cTranDetail.price;
+    				if(cTranDetail.price < K5MinLow) K5MinLow = cTranDetail.price;
+    				K5MinVolume = K5MinVolume + cTranDetail.volume;
+    				//System.out.println(cTranDetail.time);
     			}
-    			KData cKData = new KData();
-    			cKData.time = StdEndTimeStr;
-    			cKData.open = K5MinOpen;
-    			cKData.close = K5MinClose;
-    			cKData.low = K5MinLow;
-    			cKData.high = K5MinHigh;
-    			cKData.volume = K5MinVolume;
+    			KLine cKLine = new KLine();
+    			cKLine.time = StdEndTimeStr;
+    			cKLine.open = K5MinOpen;
+    			cKLine.close = K5MinClose;
+    			cKLine.low = K5MinLow;
+    			cKLine.high = K5MinHigh;
+    			cKLine.volume = K5MinVolume;
     			tmpList.clear();
-    			cResultMinKDataOneDay.KDataList.add(cKData);
-    			//System.out.println("cKData.datetime:" + cKData.datetime);
-    			preClosePrice = cKData.close;
+    			cResultMinKLineOneDay.KLineList.add(cKLine);
+    			//System.out.println("cKLine.datetime:" + cKLine.datetime);
+    			preClosePrice = cKLine.close;
             }
             // add 下午
             for(int i = 0; i < 24; i++)
@@ -303,18 +303,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec130000 + i5Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TData> tmpList = new ArrayList<TData>();
+    			List<TranDetail> tmpList = new ArrayList<TranDetail>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				TData cTData = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cTData.time + "," 
-//    	            		+ cTData.price + "," + cTData.volume);  
-    	            int iSec = Integer.parseInt(cTData.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTData.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTData.time.split(":")[2]);
+    				TranDetail cTranDetail = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTranDetail.time + "," 
+//    	            		+ cTranDetail.price + "," + cTranDetail.volume);  
+    	            int iSec = Integer.parseInt(cTranDetail.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTranDetail.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTranDetail.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTData);
+    	            	tmpList.add(cTranDetail);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -328,47 +328,47 @@ public class BaseDataLayer {
     			float K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TData cTData = tmpList.get(k);  
+    				TranDetail cTranDetail = tmpList.get(k);  
     				if(0 == k) {
-    					K5MinOpen = cTData.price;
-    					K5MinClose = cTData.price;
-    					K5MinLow = cTData.price;
-    					K5MinHigh = cTData.price;
+    					K5MinOpen = cTranDetail.price;
+    					K5MinClose = cTranDetail.price;
+    					K5MinLow = cTranDetail.price;
+    					K5MinHigh = cTranDetail.price;
     				}
-    				if(tmpList.size()-1 == k) K5MinClose = cTData.price;
-    				if(cTData.price > K5MinHigh) K5MinHigh = cTData.price;
-    				if(cTData.price < K5MinLow) K5MinLow = cTData.price;
-    				K5MinVolume = K5MinVolume + cTData.volume;
-    				//System.out.println(cTData.time);
+    				if(tmpList.size()-1 == k) K5MinClose = cTranDetail.price;
+    				if(cTranDetail.price > K5MinHigh) K5MinHigh = cTranDetail.price;
+    				if(cTranDetail.price < K5MinLow) K5MinLow = cTranDetail.price;
+    				K5MinVolume = K5MinVolume + cTranDetail.volume;
+    				//System.out.println(cTranDetail.time);
     			}
-    			KData cKData = new KData();
-    			cKData.time = StdEndTimeStr;
-    			cKData.open = K5MinOpen;
-    			cKData.close = K5MinClose;
-    			cKData.low = K5MinLow;
-    			cKData.high = K5MinHigh;
-    			cKData.volume = K5MinVolume;
+    			KLine cKLine = new KLine();
+    			cKLine.time = StdEndTimeStr;
+    			cKLine.open = K5MinOpen;
+    			cKLine.close = K5MinClose;
+    			cKLine.low = K5MinLow;
+    			cKLine.high = K5MinHigh;
+    			cKLine.volume = K5MinVolume;
     			tmpList.clear();
-    			cResultMinKDataOneDay.KDataList.add(cKData);
-    			//System.out.println("cKData.datetime:" + cKData.datetime);
-    			preClosePrice = cKData.close;
+    			cResultMinKLineOneDay.KLineList.add(cKLine);
+    			//System.out.println("cKLine.datetime:" + cKLine.datetime);
+    			preClosePrice = cKLine.close;
             }
 		}
 		else
 		{
-			System.out.println("[ERROR] get5MinKDataOneDay: " + id + " # " + date);
-			cResultMinKDataOneDay.error = -10;
-			return cResultMinKDataOneDay;
+			System.out.println("[ERROR] get5MinKLineOneDay: " + id + " # " + date);
+			cResultMinKLineOneDay.error = -10;
+			return cResultMinKLineOneDay;
 		}
-		return cResultMinKDataOneDay;
+		return cResultMinKLineOneDay;
 	}
 	
 	/*
 	 * 获取1分钟级别K
 	 */
-	public ResultMinKDataOneDay get1MinKDataOneDay(String id, String date)
+	public ResultMinKLineOneDay get1MinKLineOneDay(String id, String date)
 	{
-		ResultMinKDataOneDay cResultMinKDataOneDay = new ResultMinKDataOneDay();
+		ResultMinKLineOneDay cResultMinKLineOneDay = new ResultMinKLineOneDay();
 		
 		ResultDayDetail cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
 		
@@ -411,18 +411,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec093000 + i1Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TData> tmpList = new ArrayList<TData>();
+    			List<TranDetail> tmpList = new ArrayList<TranDetail>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				TData cTData = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cTData.time + "," 
-//    	            		+ cTData.price + "," + cTData.volume);  
-    	            int iSec = Integer.parseInt(cTData.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTData.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTData.time.split(":")[2]);
+    				TranDetail cTranDetail = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTranDetail.time + "," 
+//    	            		+ cTranDetail.price + "," + cTranDetail.volume);  
+    	            int iSec = Integer.parseInt(cTranDetail.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTranDetail.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTranDetail.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTData);
+    	            	tmpList.add(cTranDetail);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -436,30 +436,30 @@ public class BaseDataLayer {
     			float K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TData cTData = tmpList.get(k);  
+    				TranDetail cTranDetail = tmpList.get(k);  
     				if(0 == k) {
-    					K1MinOpen = cTData.price;
-    					K1MinClose = cTData.price;
-    					K1MinLow = cTData.price;
-    					K1MinHigh = cTData.price;
+    					K1MinOpen = cTranDetail.price;
+    					K1MinClose = cTranDetail.price;
+    					K1MinLow = cTranDetail.price;
+    					K1MinHigh = cTranDetail.price;
     				}
-    				if(tmpList.size()-1 == k) K1MinClose = cTData.price;
-    				if(cTData.price > K1MinHigh) K1MinHigh = cTData.price;
-    				if(cTData.price < K1MinLow) K1MinLow = cTData.price;
-    				K1MinVolume = K1MinVolume + cTData.volume;
-    				//System.out.println(cTData.time);
+    				if(tmpList.size()-1 == k) K1MinClose = cTranDetail.price;
+    				if(cTranDetail.price > K1MinHigh) K1MinHigh = cTranDetail.price;
+    				if(cTranDetail.price < K1MinLow) K1MinLow = cTranDetail.price;
+    				K1MinVolume = K1MinVolume + cTranDetail.volume;
+    				//System.out.println(cTranDetail.time);
     			}
-    			KData cKData = new KData();
-    			cKData.time = StdEndTimeStr;
-    			cKData.open = K1MinOpen;
-    			cKData.close = K1MinClose;
-    			cKData.low = K1MinLow;
-    			cKData.high = K1MinHigh;
-    			cKData.volume = K1MinVolume;
+    			KLine cKLine = new KLine();
+    			cKLine.time = StdEndTimeStr;
+    			cKLine.open = K1MinOpen;
+    			cKLine.close = K1MinClose;
+    			cKLine.low = K1MinLow;
+    			cKLine.high = K1MinHigh;
+    			cKLine.volume = K1MinVolume;
     			tmpList.clear();
-    			cResultMinKDataOneDay.KDataList.add(cKData);
-    			//System.out.println("cExKData.datetime:" + cExKData.datetime);
-    			preClosePrice = cKData.close;
+    			cResultMinKLineOneDay.KLineList.add(cKLine);
+    			//System.out.println("cExKLine.datetime:" + cExKLine.datetime);
+    			preClosePrice = cKLine.close;
             }
             // add 下午
             for(int i = 0; i < 120; i++)
@@ -483,18 +483,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec130000 + i1Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TData> tmpList = new ArrayList<TData>();
+    			List<TranDetail> tmpList = new ArrayList<TranDetail>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				TData cTData = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cTData.time + "," 
-//    	            		+ cTData.price + "," + cTData.volume);  
-    	            int iSec = Integer.parseInt(cTData.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTData.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTData.time.split(":")[2]);
+    				TranDetail cTranDetail = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTranDetail.time + "," 
+//    	            		+ cTranDetail.price + "," + cTranDetail.volume);  
+    	            int iSec = Integer.parseInt(cTranDetail.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTranDetail.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTranDetail.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTData);
+    	            	tmpList.add(cTranDetail);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -508,39 +508,39 @@ public class BaseDataLayer {
     			float K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TData cTData = tmpList.get(k);  
+    				TranDetail cTranDetail = tmpList.get(k);  
     				if(0 == k) {
-    					K1MinOpen = cTData.price;
-    					K1MinClose = cTData.price;
-    					K1MinLow = cTData.price;
-    					K1MinHigh = cTData.price;
+    					K1MinOpen = cTranDetail.price;
+    					K1MinClose = cTranDetail.price;
+    					K1MinLow = cTranDetail.price;
+    					K1MinHigh = cTranDetail.price;
     				}
-    				if(tmpList.size()-1 == k) K1MinClose = cTData.price;
-    				if(cTData.price > K1MinHigh) K1MinHigh = cTData.price;
-    				if(cTData.price < K1MinLow) K1MinLow = cTData.price;
-    				K1MinVolume = K1MinVolume + cTData.volume;
-    				//System.out.println(cTData.time);
+    				if(tmpList.size()-1 == k) K1MinClose = cTranDetail.price;
+    				if(cTranDetail.price > K1MinHigh) K1MinHigh = cTranDetail.price;
+    				if(cTranDetail.price < K1MinLow) K1MinLow = cTranDetail.price;
+    				K1MinVolume = K1MinVolume + cTranDetail.volume;
+    				//System.out.println(cTranDetail.time);
     			}
-    			KData cKData = new KData();
-    			cKData.time = StdEndTimeStr;
-    			cKData.open = K1MinOpen;
-    			cKData.close = K1MinClose;
-    			cKData.low = K1MinLow;
-    			cKData.high = K1MinHigh;
-    			cKData.volume = K1MinVolume;
+    			KLine cKLine = new KLine();
+    			cKLine.time = StdEndTimeStr;
+    			cKLine.open = K1MinOpen;
+    			cKLine.close = K1MinClose;
+    			cKLine.low = K1MinLow;
+    			cKLine.high = K1MinHigh;
+    			cKLine.volume = K1MinVolume;
     			tmpList.clear();
-    			cResultMinKDataOneDay.KDataList.add(cKData);
-    			//System.out.println("cExKData.datetime:" + cExKData.datetime);
-    			preClosePrice = cKData.close;
+    			cResultMinKLineOneDay.KLineList.add(cKLine);
+    			//System.out.println("cExKLine.datetime:" + cExKLine.datetime);
+    			preClosePrice = cKLine.close;
             }
 		}
 		else
 		{
-			System.out.println("[ERROR] get1MinKDataOneDay: " + id + " # " + date);
-			cResultMinKDataOneDay.error = -10;
-			return cResultMinKDataOneDay;
+			System.out.println("[ERROR] get1MinKLineOneDay: " + id + " # " + date);
+			cResultMinKLineOneDay.error = -10;
+			return cResultMinKLineOneDay;
 		}
-		return cResultMinKDataOneDay;
+		return cResultMinKLineOneDay;
 	}
 	
 	public List<StockItem> getRandomStockItem(int count)
@@ -599,7 +599,7 @@ public class BaseDataLayer {
 	 * 校验股票数据,检查股票数据错误
 	 * 成功返回0
 	 */
-	public int checkStockData(String stockID)
+	public int checkStocKLine(String stockID)
 	{
 		// 检查基本信息
 		ResultStockBaseData cResultStockBaseData = m_cBaseDataStorage.getBaseInfo(stockID);
@@ -610,24 +610,24 @@ public class BaseDataLayer {
 		}
 		
 		// 检查前复权日K
-		ResultKData cResultKData = this.getDayKDataForwardAdjusted(stockID);
-		if(0 != cResultKData.error 
-				|| cResultKData.resultList.size() <= 0)
+		ResultKLine cResultKLine = this.getDayKLineForwardAdjusted(stockID);
+		if(0 != cResultKLine.error 
+				|| cResultKLine.resultList.size() <= 0)
 		{
 			return -2;
 		}
 		
 		// 检查前复权日K涨跌幅度, 近若干天没有问题就算没有问题
-		int iBeginCheck = cResultKData.resultList.size() - 500;
+		int iBeginCheck = cResultKLine.resultList.size() - 500;
 		if(iBeginCheck<=0) iBeginCheck = 0;
-		for(int i=iBeginCheck; i < cResultKData.resultList.size()-1; i++)  
+		for(int i=iBeginCheck; i < cResultKLine.resultList.size()-1; i++)  
         {  
-			KData cKData = cResultKData.resultList.get(i);  
-			KData cKDataNext = cResultKData.resultList.get(i+1);  
-            float close = cKData.close;
-            float nextHigh = cKDataNext.high;
-            float nextLow = cKDataNext.low;
-            float nextClose = cKDataNext.close;
+			KLine cKLine = cResultKLine.resultList.get(i);  
+			KLine cKLineNext = cResultKLine.resultList.get(i+1);  
+            float close = cKLine.close;
+            float nextHigh = cKLineNext.high;
+            float nextLow = cKLineNext.low;
+            float nextClose = cKLineNext.close;
             float fHighper = Math.abs((nextHigh-close)/close);
             float fLowper = Math.abs((nextLow-close)/close);
             float fCloseper = Math.abs((nextClose-close)/close);
@@ -635,7 +635,7 @@ public class BaseDataLayer {
         	{
             	// 数据有中间丢失天的情况，排除这种错误
             	// 获取当前有效日期，下一个交易日（非周六周日）
-            	String CurrentDate = cKData.date;
+            	String CurrentDate = cKLine.date;
             	Calendar c = Calendar.getInstance();  
                 Date date = null;  
                 try {  
@@ -654,17 +654,17 @@ public class BaseDataLayer {
         		Date nextValiddate = c.getTime();
         		String curValiddateStr = new SimpleDateFormat("yyyy-MM-dd").format(nextValiddate);
         		
-        		if(cKDataNext.date.compareTo(curValiddateStr) > 0)
+        		if(cKLineNext.date.compareTo(curValiddateStr) > 0)
         		{
         			// 此种情况允许错误，中间缺失了几天数据
-//        			System.out.println("Warnning: Check getKDataQianFuQuan NG(miss data)! id:" + stockID
-//                			+ " date:" + cKData.date);
+//        			System.out.println("Warnning: Check getKLineQianFuQuan NG(miss data)! id:" + stockID
+//                			+ " date:" + cKLine.date);
         		}
         		else
         		{
         			// 中间未缺失数据，但出现了偏差过大啊，属于错误
-                	System.out.println("Warnning: Check getKDataQianFuQuan error! id:" + stockID
-                			+ " date:" + cKData.date);
+                	System.out.println("Warnning: Check getKLineQianFuQuan error! id:" + stockID
+                			+ " date:" + cKLine.date);
                 	System.out.println("close:" + close);
                 	System.out.println("nextHigh:" + nextHigh);
                 	System.out.println("fHighper:" + fHighper);

@@ -3,7 +3,7 @@ package pers.di.dataengine.webdata_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultKData;
+import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockDayK;
 
@@ -11,21 +11,21 @@ public class TestDataWebStockDayK {
 
 	public static void main(String[] args){
 		
-		ResultKData cResultKData = DataWebStockDayK.getKData("300428", "20170311", "20170911");
+		ResultKLine cResultKLine = DataWebStockDayK.getKLine("300428", "20170311", "20170911");
 		
-		if(0 == cResultKData.error)
+		if(0 == cResultKLine.error)
 		{
-			for(int i = 0; i < cResultKData.resultList.size(); i++)  
+			for(int i = 0; i < cResultKLine.resultList.size(); i++)  
 	        {  
-				KData cKData = cResultKData.resultList.get(i);  
-	            System.out.println(cKData.date + "," 
-	            		+ cKData.open + "," + cKData.close
-	            		 + "," + cKData.low + "," + cKData.high);  
+				KLine cKLine = cResultKLine.resultList.get(i);  
+	            System.out.println(cKLine.date + "," 
+	            		+ cKLine.open + "," + cKLine.close
+	            		 + "," + cKLine.low + "," + cKLine.high);  
 	        } 
 		}
 		else
 		{
-			System.out.println("ERROR:" + cResultKData.error);
+			System.out.println("ERROR:" + cResultKLine.error);
 		}
 	}
 

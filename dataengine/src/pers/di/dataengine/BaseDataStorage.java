@@ -16,7 +16,7 @@ import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.common.CPath;
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultKData;
+import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
@@ -28,17 +28,17 @@ public class BaseDataStorage {
 		CPath.createDir(s_workDir);
 	}
 
-	public ResultKData getKData(String id)
+	public ResultKLine getKLine(String id)
 	{
-		ResultKData cResultKData = new ResultKData();
+		ResultKLine cResultKLine = new ResultKLine();
 		
 		String stockDayKFileName = s_workDir + "/" + id + "/" + s_daykFile;
 		File cfile=new File(stockDayKFileName);
 
 		if(!cfile.exists())
 		{
-			cResultKData.error = -10;
-			return cResultKData;
+			cResultKLine.error = -10;
+			return cResultKLine;
 		}
 		
 		try
@@ -54,16 +54,16 @@ public class BaseDataStorage {
 //                	System.out.println("line " + line + ": " + tempString);
 //                }
                 
-            	KData cKData = new KData();
+            	KLine cKLine = new KLine();
             	String[] cols = tempString.split(",");
             	
-            	cKData.date = cols[0];
-	        	cKData.open = Float.parseFloat(cols[1]);
-	        	cKData.close = Float.parseFloat(cols[2]);
-	        	cKData.low = Float.parseFloat(cols[3]);
-	        	cKData.high = Float.parseFloat(cols[4]);
-	        	cKData.volume = Float.parseFloat(cols[5]);
-	        	cResultKData.resultList.add(cKData);
+            	cKLine.date = cols[0];
+	        	cKLine.open = Float.parseFloat(cols[1]);
+	        	cKLine.close = Float.parseFloat(cols[2]);
+	        	cKLine.low = Float.parseFloat(cols[3]);
+	        	cKLine.high = Float.parseFloat(cols[4]);
+	        	cKLine.volume = Float.parseFloat(cols[5]);
+	        	cResultKLine.resultList.add(cKLine);
 	        	
                 line++;
             }
@@ -72,15 +72,15 @@ public class BaseDataStorage {
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			cResultKData.error = -1;
-			return cResultKData;
+			cResultKLine.error = -1;
+			return cResultKLine;
 		}
-		return cResultKData;
+		return cResultKLine;
 	}
-	public int saveKData(String id, List<KData> in_list)
+	public int saveKLine(String id, List<KLine> in_list)
 	{
-		String stockDataDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stockDataDir)) return -10;
+		String stocKLineDir = s_workDir + "/" + id;
+		if(!CPath.createDir(stocKLineDir)) return -10;
 		
 		String stockDayKFileName = s_workDir + "/" + id + "/" + s_daykFile;
 		File cfile=new File(stockDayKFileName);
@@ -89,15 +89,15 @@ public class BaseDataStorage {
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
 			for(int i = 0; i < in_list.size(); i++)  
 	        {  
-				KData cKData = in_list.get(i);  
-//		            System.out.println(cKData.date + "," 
-//		            		+ cKData.open + "," + cKData.close);  
-	            cOutputStream.write((cKData.date + ",").getBytes());
-	            cOutputStream.write((cKData.open + ",").getBytes());
-	            cOutputStream.write((cKData.close + ",").getBytes());
-	            cOutputStream.write((cKData.low + ",").getBytes());
-	            cOutputStream.write((cKData.high + ",").getBytes());
-	            cOutputStream.write((cKData.volume + "\n").getBytes());
+				KLine cKLine = in_list.get(i);  
+//		            System.out.println(cKLine.date + "," 
+//		            		+ cKLine.open + "," + cKLine.close);  
+	            cOutputStream.write((cKLine.date + ",").getBytes());
+	            cOutputStream.write((cKLine.open + ",").getBytes());
+	            cOutputStream.write((cKLine.close + ",").getBytes());
+	            cOutputStream.write((cKLine.low + ",").getBytes());
+	            cOutputStream.write((cKLine.high + ",").getBytes());
+	            cOutputStream.write((cKLine.volume + "\n").getBytes());
 	        } 
 			cOutputStream.close();
 		}
@@ -160,8 +160,8 @@ public class BaseDataStorage {
 	}
 	public int saveDividendPayout(String id, List<DividendPayout> in_list)
 	{
-		String stockDataDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stockDataDir)) return -10;
+		String stocKLineDir = s_workDir + "/" + id;
+		if(!CPath.createDir(stocKLineDir)) return -10;
 		
 		String stockDividendPayoutFileName = s_workDir + "/" + id + "/" + s_DividendPayoutFile;
 		File cfile =new File(stockDividendPayoutFileName);
@@ -191,8 +191,8 @@ public class BaseDataStorage {
 	{
 		ResultDayDetail cResultDayDetail = new ResultDayDetail();
 				
-		String stockDataDetailFileName = s_workDir + "/" + id + "/" + date + ".txt";
-		File cfile=new File(stockDataDetailFileName);
+		String stocKLineDetailFileName = s_workDir + "/" + id + "/" + date + ".txt";
+		File cfile=new File(stocKLineDetailFileName);
 
 		if(!cfile.exists()) 
 		{
@@ -207,15 +207,15 @@ public class BaseDataStorage {
 			String tempString = null;
             while ((tempString = reader.readLine()) != null) {
                 // System.out.println("line " + line + ": " + tempString);
-            	KData cKData = new KData();
+            	KLine cKLine = new KLine();
             	String[] cols = tempString.split(",");
 
-            	TData cTData = new TData();
-	        	cTData.time = cols[0];
-	        	cTData.price = Float.parseFloat(cols[1]);
-	        	cTData.volume = Float.parseFloat(cols[2]);
+            	TranDetail cTranDetail = new TranDetail();
+	        	cTranDetail.time = cols[0];
+	        	cTranDetail.price = Float.parseFloat(cols[1]);
+	        	cTranDetail.volume = Float.parseFloat(cols[2]);
 	        	
-	        	cResultDayDetail.resultList.add(cTData);
+	        	cResultDayDetail.resultList.add(cTranDetail);
 	        	
                 line++;
             }
@@ -229,24 +229,24 @@ public class BaseDataStorage {
 		}
 		return cResultDayDetail;
 	}
-	public int saveDayDetail(String id, String date, List<TData> in_list)
+	public int saveDayDetail(String id, String date, List<TranDetail> in_list)
 	{
-		String stockDataDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stockDataDir)) return -10;
+		String stocKLineDir = s_workDir + "/" + id;
+		if(!CPath.createDir(stocKLineDir)) return -10;
 		
-		String stockDataDetailFileName = s_workDir + "/" + id + "/" + date + ".txt";
+		String stocKLineDetailFileName = s_workDir + "/" + id + "/" + date + ".txt";
 		try
 		{
-			File cfile =new File(stockDataDetailFileName);
+			File cfile =new File(stocKLineDetailFileName);
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
 			for(int i = 0; i < in_list.size(); i++)  
 	        {  
-				TData cTData = in_list.get(i);  
-//			            System.out.println(cTData.time + "," 
-//			            		+ cTData.price + "," + cTData.volume);  
-				cOutputStream.write((cTData.time + ",").getBytes());
-				cOutputStream.write((cTData.price + ",").getBytes());
-				cOutputStream.write((cTData.volume + "\n").getBytes());
+				TranDetail cTranDetail = in_list.get(i);  
+//			            System.out.println(cTranDetail.time + "," 
+//			            		+ cTranDetail.price + "," + cTranDetail.volume);  
+				cOutputStream.write((cTranDetail.time + ",").getBytes());
+				cOutputStream.write((cTranDetail.price + ",").getBytes());
+				cOutputStream.write((cTranDetail.volume + "\n").getBytes());
 	        } 
 			cOutputStream.close();
 		}
@@ -310,10 +310,10 @@ public class BaseDataStorage {
 	}
 	public int saveBaseInfo(String id, StockBaseInfo baseData) 
 	{
-		String stockDataDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stockDataDir)) return -10;
+		String stocKLineDir = s_workDir + "/" + id;
+		if(!CPath.createDir(stocKLineDir)) return -10;
 		
-		String stockBaseInfoFileName = stockDataDir + "/" + s_BaseInfoFile;
+		String stockBaseInfoFileName = stocKLineDir + "/" + s_BaseInfoFile;
 		
 		File cfile =new File(stockBaseInfoFileName);
 		// System.out.println("saveStockBaseData:" + id);

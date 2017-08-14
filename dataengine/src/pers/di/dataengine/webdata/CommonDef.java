@@ -27,7 +27,7 @@ public class CommonDef {
 	 * 日内交易明细
 	 * 时间-价格-成交量
 	 */
-	public static class TData implements Comparable
+	public static class TranDetail implements Comparable
 	{
 		public String time;
 		public float price;
@@ -35,9 +35,26 @@ public class CommonDef {
 		@Override
 		public int compareTo(Object o) {
 			// TODO Auto-generated method stub
-			TData sdto = (TData)o;
+			TranDetail sdto = (TranDetail)o;
 		    return this.time.compareTo(sdto.time);
 		}
+	}
+	
+	public static class StockTime {
+		
+		public StockTime()
+		{
+		}
+		
+		public void CopyFrom(StockTime fromObj)
+		{
+			this.time = fromObj.time;
+			this.price = fromObj.price;
+		}
+		
+		public String time;
+		
+		public Float price;
 	}
 	
 	/*
@@ -45,7 +62,7 @@ public class CommonDef {
 	 * 时间 date time 代表时间段结束时间点
 	 * 日期-开盘价-收盘价-最低价-最高价-成交量
 	 */
-	public static class KData implements Comparable
+	public static class KLine implements Comparable
 	{
 		// 2015-09-18 or null
 		public String date;
@@ -56,10 +73,27 @@ public class CommonDef {
 		public float low;
 		public float high;
 		public float volume;
+		
+		public float midle()
+		{
+			return (open + close) / 2;
+		}
+		
+		public void CopyFrom(KLine c)
+		{
+			date = c.date;
+			time = c.time;
+			open = c.open;
+			close = c.close;
+			high = c.high;
+			low = c.low;
+			volume = c.volume;
+		}
+		
 		@Override
 		public int compareTo(Object arg0) {
 			// TODO Auto-generated method stub
-			KData sdto = (KData)arg0;
+			KLine sdto = (KLine)arg0;
 			int iRet = 0;
 			// date compare
 			if(null != this.date && null != sdto.date)
