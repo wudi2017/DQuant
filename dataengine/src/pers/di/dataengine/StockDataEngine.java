@@ -31,7 +31,7 @@ public class StockDataEngine {
 	{
 		if(null == m_cCache.localLatestDate)
 		{
-			CLog.output("STOCKLine","DataEngine.getUpdatedStocksDate\n");
+			CLog.output("STOCK","DataEngine.getUpdatedStocksDate\n");
 			ResultAllStockFullDataTimestamps cResultAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps();
 			if(0 == cResultAllStockFullDataTimestamps.error)
 			{
@@ -40,18 +40,18 @@ public class StockDataEngine {
 			else
 			{
 				m_cCache.localLatestDate = "0000-00-00";
-				CLog.output("STOCKLine", "DataEngine.getUpdatedStocksDate failed, reset to %s \n", m_cCache.localLatestDate);
+				CLog.output("STOCK", "DataEngine.getUpdatedStocksDate failed, reset to %s \n", m_cCache.localLatestDate);
 			}
 		}
 		
 		if(m_cCache.localLatestDate.compareTo(dateStr) >= 0)
 		{
-			CLog.output("STOCKLine", "update success! (current is newest, local: %s)\n", m_cCache.localLatestDate);
+			CLog.output("STOCK", "update success! (current is newest, local: %s)\n", m_cCache.localLatestDate);
 		}
 		else
 		{
 			int iUpdateCnt = m_cBaseDataLayer.updateLocalAllStocKLine(dateStr);
-			CLog.output("STOCKLine", "update success to date: %s (count: %d)\n", m_cCache.localLatestDate, iUpdateCnt);
+			CLog.output("STOCK", "update success to date: %s (count: %d)\n", m_cCache.localLatestDate, iUpdateCnt);
 			m_cCache.clearAllCache();
 		}
 		
@@ -66,7 +66,7 @@ public class StockDataEngine {
 	{
 		if(null == m_cCache.localLatestDate)
 		{
-			CLog.output("STOCKLine","DataEngine.getUpdatedStocksDate\n");
+			CLog.output("STOCK","DataEngine.getUpdatedStocksDate\n");
 			ResultAllStockFullDataTimestamps cResultAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps();
 			if(0 == cResultAllStockFullDataTimestamps.error)
 			{
@@ -74,13 +74,13 @@ public class StockDataEngine {
 			}
 			else
 			{
-				CLog.output("STOCKLine", "DataEngine.getUpdatedStocksDate failed! \n", m_cCache.localLatestDate);
+				CLog.output("STOCK", "DataEngine.getUpdatedStocksDate failed! \n", m_cCache.localLatestDate);
 			}
 		}
 		
 		if(m_cCache.localLatestDate.compareTo(dateStr) >= 0)
 		{
-			CLog.output("STOCKLine", "update %s success! (current is newest, local: %s)\n",stockID, m_cCache.localLatestDate);
+			CLog.output("STOCK", "update %s success! (current is newest, local: %s)\n",stockID, m_cCache.localLatestDate);
 		}
 		else
 		{
@@ -89,11 +89,11 @@ public class StockDataEngine {
 			
 			if(0 == cResultUpdateStock.error)
 			{
-				CLog.output("STOCKLine", "update %s success to date: %s (count: %d)\n", stockID, cResultUpdateStock.updateCnt);
+				CLog.output("STOCK", "update %s success to date: %s (count: %d)\n", stockID, cResultUpdateStock.updateCnt);
 			}
 			else
 			{
-				CLog.error("STOCKLine", "update %s failed \n", cResultUpdateStock.error);
+				CLog.error("STOCK", "update %s failed \n", cResultUpdateStock.error);
 			}
 		}
 		return 0;
@@ -140,7 +140,7 @@ public class StockDataEngine {
 			}
 			else
 			{
-				CLog.error("STOCKLine", "DataEngine.getLocalAllStock error(%d) \n", cResultAllStockList.error);
+				CLog.error("STOCK", "DataEngine.getLocalAllStock error(%d) \n", cResultAllStockList.error);
 			}
 		}
 		return cResultAllStockID;
@@ -161,7 +161,7 @@ public class StockDataEngine {
 		public int error;
 		public StockBaseInfo stockBaseInfo;
 	}
-	public ResultLatestStockBaseInfo getLatestStockBaseInfo(String id, StockBaseInfo out_stockBaseInfo)
+	public ResultLatestStockBaseInfo getLatestStockBaseInfo(String id)
 	{
 		ResultLatestStockBaseInfo cResultLatestStockBaseInfo = new ResultLatestStockBaseInfo();
 		
@@ -188,7 +188,7 @@ public class StockDataEngine {
 			}
 			else
 			{
-				//BLog.error("STOCKLine", "DataEngine.getBaseInfo error(%d) \n", cResultStockBaseData.error);
+				//BLog.error("STOCK", "DataEngine.getBaseInfo error(%d) \n", cResultStockBaseData.error);
 			}
 		}
 			

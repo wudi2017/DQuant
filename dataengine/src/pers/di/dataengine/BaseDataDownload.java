@@ -172,7 +172,7 @@ public class BaseDataDownload {
 			// 如果当前日期大于本地最后数据日期，需要继续检测
 			if(curValiddateStr.compareTo(localDataLastDate) > 0)
 			{
-				// 获取当前更多实时信息
+				// 获取当前BaseInfo信息
 				ResultStockBaseInfo cResultStockBaseInfo = DataWebStockBaseInfo.getStockBaseInfo(id);
 				if(0 == cResultStockBaseInfo.error)
 				{
@@ -296,33 +296,43 @@ public class BaseDataDownload {
 		else
 		// 本地没有数据，需要试图重新下载
 		{
-			// 下载日K，分红派息，基本信息
-			int retdownloadStockDayk =  this.downloadStockDayk(id);
-			int retdownloadStockDividendPayout =  this.downloadStockDividendPayout(id);
-			int retdownloadBaseInfo =  this.downloadBaseInfo(id);
-			if(0 == retdownloadStockDayk 
-					&& 0 == retdownloadStockDividendPayout 
-					&& 0 == retdownloadBaseInfo)
-			// 下载日K，分红派息，基本信息 成功
+			ResultStockBaseInfo cResultStockBaseInfo = DataWebStockBaseInfo.getStockBaseInfo(id);
+			if(0 == cResultStockBaseInfo.error)
 			{
-				ResultKLine cResultKLineLocalNew = m_baseDataStorage.getKLine(id);
-				if(cResultKLineLocalNew.error == 0)
+				// 下载日K，分红派息，基本信息
+				int retdownloadStockDayk =  this.downloadStockDayk(id);
+				int retdownloadStockDividendPayout =  this.downloadStockDividendPayout(id);
+				int retdownloadBaseInfo =  this.downloadBaseInfo(id);
+				if(0 == retdownloadStockDayk 
+						&& 0 == retdownloadStockDividendPayout 
+						&& 0 == retdownloadBaseInfo)
+				// 下载日K，分红派息，基本信息 成功
 				{
-					//最新数据下载成功返回天数
-					cResultUpdateStock.error = 0;
-					cResultUpdateStock.updateCnt = cResultKLineLocalNew.resultList.size();
-					return cResultUpdateStock;
+					ResultKLine cResultKLineLocalNew = m_baseDataStorage.getKLine(id);
+					if(cResultKLineLocalNew.error == 0)
+					{
+						//最新数据下载成功返回天数
+						cResultUpdateStock.error = 0;
+						cResultUpdateStock.updateCnt = cResultKLineLocalNew.resultList.size();
+						return cResultUpdateStock;
+					}
+					else
+					{
+						cResultUpdateStock.error = -23;
+						return cResultUpdateStock;
+					}
 				}
 				else
+				// 下载日K，分红派息，基本信息 失败
 				{
-					cResultUpdateStock.error = -23;
+					cResultUpdateStock.error = -10;
 					return cResultUpdateStock;
 				}
 			}
 			else
-			// 下载日K，分红派息，基本信息 失败
 			{
-				cResultUpdateStock.error = -10;
+				// 获取网络最新有效交易日期失败
+				cResultUpdateStock.error = -20;
 				return cResultUpdateStock;
 			}
 		}
