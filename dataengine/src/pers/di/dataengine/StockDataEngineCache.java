@@ -27,5 +27,5 @@ public class StockDataEngineCache {
 	
 	// 日内分时缓存  
 	// key:600001_2016-01-01
-	public Map<String,List<StockTime>> stockTimeData = null;
+	public Map<String,List<TimePrice>> stockTimeData = null;
 }

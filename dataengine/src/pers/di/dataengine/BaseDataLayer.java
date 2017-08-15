@@ -231,18 +231,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec093000 + i5Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TranDetail> tmpList = new ArrayList<TranDetail>();
+    			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				TranDetail cTranDetail = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cTranDetail.time + "," 
-//    	            		+ cTranDetail.price + "," + cTranDetail.volume);  
-    	            int iSec = Integer.parseInt(cTranDetail.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTranDetail.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTranDetail.time.split(":")[2]);
+    				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTradeDetail.time + "," 
+//    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
+    	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTranDetail);
+    	            	tmpList.add(cTradeDetail);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -256,18 +256,18 @@ public class BaseDataLayer {
     			float K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TranDetail cTranDetail = tmpList.get(k);  
+    				TradeDetail cTradeDetail = tmpList.get(k);  
     				if(0 == k) {
-    					K5MinOpen = cTranDetail.price;
-    					K5MinClose = cTranDetail.price;
-    					K5MinLow = cTranDetail.price;
-    					K5MinHigh = cTranDetail.price;
+    					K5MinOpen = cTradeDetail.price;
+    					K5MinClose = cTradeDetail.price;
+    					K5MinLow = cTradeDetail.price;
+    					K5MinHigh = cTradeDetail.price;
     				}
-    				if(tmpList.size()-1 == k) K5MinClose = cTranDetail.price;
-    				if(cTranDetail.price > K5MinHigh) K5MinHigh = cTranDetail.price;
-    				if(cTranDetail.price < K5MinLow) K5MinLow = cTranDetail.price;
-    				K5MinVolume = K5MinVolume + cTranDetail.volume;
-    				//System.out.println(cTranDetail.time);
+    				if(tmpList.size()-1 == k) K5MinClose = cTradeDetail.price;
+    				if(cTradeDetail.price > K5MinHigh) K5MinHigh = cTradeDetail.price;
+    				if(cTradeDetail.price < K5MinLow) K5MinLow = cTradeDetail.price;
+    				K5MinVolume = K5MinVolume + cTradeDetail.volume;
+    				//System.out.println(cTradeDetail.time);
     			}
     			KLine cKLine = new KLine();
     			cKLine.time = StdEndTimeStr;
@@ -303,18 +303,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec130000 + i5Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TranDetail> tmpList = new ArrayList<TranDetail>();
+    			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				TranDetail cTranDetail = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cTranDetail.time + "," 
-//    	            		+ cTranDetail.price + "," + cTranDetail.volume);  
-    	            int iSec = Integer.parseInt(cTranDetail.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTranDetail.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTranDetail.time.split(":")[2]);
+    				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTradeDetail.time + "," 
+//    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
+    	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTranDetail);
+    	            	tmpList.add(cTradeDetail);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -328,18 +328,18 @@ public class BaseDataLayer {
     			float K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TranDetail cTranDetail = tmpList.get(k);  
+    				TradeDetail cTradeDetail = tmpList.get(k);  
     				if(0 == k) {
-    					K5MinOpen = cTranDetail.price;
-    					K5MinClose = cTranDetail.price;
-    					K5MinLow = cTranDetail.price;
-    					K5MinHigh = cTranDetail.price;
+    					K5MinOpen = cTradeDetail.price;
+    					K5MinClose = cTradeDetail.price;
+    					K5MinLow = cTradeDetail.price;
+    					K5MinHigh = cTradeDetail.price;
     				}
-    				if(tmpList.size()-1 == k) K5MinClose = cTranDetail.price;
-    				if(cTranDetail.price > K5MinHigh) K5MinHigh = cTranDetail.price;
-    				if(cTranDetail.price < K5MinLow) K5MinLow = cTranDetail.price;
-    				K5MinVolume = K5MinVolume + cTranDetail.volume;
-    				//System.out.println(cTranDetail.time);
+    				if(tmpList.size()-1 == k) K5MinClose = cTradeDetail.price;
+    				if(cTradeDetail.price > K5MinHigh) K5MinHigh = cTradeDetail.price;
+    				if(cTradeDetail.price < K5MinLow) K5MinLow = cTradeDetail.price;
+    				K5MinVolume = K5MinVolume + cTradeDetail.volume;
+    				//System.out.println(cTradeDetail.time);
     			}
     			KLine cKLine = new KLine();
     			cKLine.time = StdEndTimeStr;
@@ -411,18 +411,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec093000 + i1Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TranDetail> tmpList = new ArrayList<TranDetail>();
+    			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				TranDetail cTranDetail = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cTranDetail.time + "," 
-//    	            		+ cTranDetail.price + "," + cTranDetail.volume);  
-    	            int iSec = Integer.parseInt(cTranDetail.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTranDetail.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTranDetail.time.split(":")[2]);
+    				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTradeDetail.time + "," 
+//    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
+    	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTranDetail);
+    	            	tmpList.add(cTradeDetail);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -436,18 +436,18 @@ public class BaseDataLayer {
     			float K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TranDetail cTranDetail = tmpList.get(k);  
+    				TradeDetail cTradeDetail = tmpList.get(k);  
     				if(0 == k) {
-    					K1MinOpen = cTranDetail.price;
-    					K1MinClose = cTranDetail.price;
-    					K1MinLow = cTranDetail.price;
-    					K1MinHigh = cTranDetail.price;
+    					K1MinOpen = cTradeDetail.price;
+    					K1MinClose = cTradeDetail.price;
+    					K1MinLow = cTradeDetail.price;
+    					K1MinHigh = cTradeDetail.price;
     				}
-    				if(tmpList.size()-1 == k) K1MinClose = cTranDetail.price;
-    				if(cTranDetail.price > K1MinHigh) K1MinHigh = cTranDetail.price;
-    				if(cTranDetail.price < K1MinLow) K1MinLow = cTranDetail.price;
-    				K1MinVolume = K1MinVolume + cTranDetail.volume;
-    				//System.out.println(cTranDetail.time);
+    				if(tmpList.size()-1 == k) K1MinClose = cTradeDetail.price;
+    				if(cTradeDetail.price > K1MinHigh) K1MinHigh = cTradeDetail.price;
+    				if(cTradeDetail.price < K1MinLow) K1MinLow = cTradeDetail.price;
+    				K1MinVolume = K1MinVolume + cTradeDetail.volume;
+    				//System.out.println(cTradeDetail.time);
     			}
     			KLine cKLine = new KLine();
     			cKLine.time = StdEndTimeStr;
@@ -483,18 +483,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec130000 + i1Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TranDetail> tmpList = new ArrayList<TranDetail>();
+    			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
     			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
     	        {  
-    				TranDetail cTranDetail = cResultDayDetail.resultList.get(j);  
-//    	            System.out.println(cTranDetail.time + "," 
-//    	            		+ cTranDetail.price + "," + cTranDetail.volume);  
-    	            int iSec = Integer.parseInt(cTranDetail.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTranDetail.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTranDetail.time.split(":")[2]);
+    				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(j);  
+//    	            System.out.println(cTradeDetail.time + "," 
+//    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
+    	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTranDetail);
+    	            	tmpList.add(cTradeDetail);
     	            }
     	        } 
     			// 计算5mink后添加到总表
@@ -508,18 +508,18 @@ public class BaseDataLayer {
     			float K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TranDetail cTranDetail = tmpList.get(k);  
+    				TradeDetail cTradeDetail = tmpList.get(k);  
     				if(0 == k) {
-    					K1MinOpen = cTranDetail.price;
-    					K1MinClose = cTranDetail.price;
-    					K1MinLow = cTranDetail.price;
-    					K1MinHigh = cTranDetail.price;
+    					K1MinOpen = cTradeDetail.price;
+    					K1MinClose = cTradeDetail.price;
+    					K1MinLow = cTradeDetail.price;
+    					K1MinHigh = cTradeDetail.price;
     				}
-    				if(tmpList.size()-1 == k) K1MinClose = cTranDetail.price;
-    				if(cTranDetail.price > K1MinHigh) K1MinHigh = cTranDetail.price;
-    				if(cTranDetail.price < K1MinLow) K1MinLow = cTranDetail.price;
-    				K1MinVolume = K1MinVolume + cTranDetail.volume;
-    				//System.out.println(cTranDetail.time);
+    				if(tmpList.size()-1 == k) K1MinClose = cTradeDetail.price;
+    				if(cTradeDetail.price > K1MinHigh) K1MinHigh = cTradeDetail.price;
+    				if(cTradeDetail.price < K1MinLow) K1MinLow = cTradeDetail.price;
+    				K1MinVolume = K1MinVolume + cTradeDetail.volume;
+    				//System.out.println(cTradeDetail.time);
     			}
     			KLine cKLine = new KLine();
     			cKLine.time = StdEndTimeStr;

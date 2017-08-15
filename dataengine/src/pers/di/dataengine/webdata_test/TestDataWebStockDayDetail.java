@@ -14,9 +14,9 @@ public class TestDataWebStockDayDetail {
 		{
 			for(int i = 0; i < cResultDayDetail.resultList.size(); i++)  
 	        {  
-				TranDetail cTranDetail = cResultDayDetail.resultList.get(i);  
-	            System.out.println(cTranDetail.time + "," 
-	            		+ cTranDetail.price + "," + cTranDetail.volume);  
+				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(i);  
+	            System.out.println(cTradeDetail.time + "," 
+	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
 	        } 
 		}
 		else

@@ -72,9 +72,9 @@ public class TestDataEngine {
 		CLog.output("TEST", "KLine count: %d\n", cResultDayDetail.resultList.size());
 		for(int i=0; i<cResultDayDetail.resultList.size(); i++)
 		{
-			StockTime cStockTime = cResultDayDetail.resultList.get(i);
-			CLog.output("TEST", "date: %s close: %f\n", cStockTime.time, cStockTime.price);
-			PoiList.add(new CurvePoint(i,cStockTime.price));
+			TimePrice cTimePrice = cResultDayDetail.resultList.get(i);
+			CLog.output("TEST", "date: %s close: %f\n", cTimePrice.time, cTimePrice.price);
+			PoiList.add(new CurvePoint(i,cTimePrice.price));
 		}
 		
 		cCImageCurve.writeLogicCurve(PoiList, 1);

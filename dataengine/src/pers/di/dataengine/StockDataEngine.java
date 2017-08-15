@@ -271,10 +271,10 @@ public class StockDataEngine {
 		public ResultDayDetail()
 		{
 			error = -1000;
-			resultList = new ArrayList<StockTime>();
+			resultList = new ArrayList<TimePrice>();
 		}
 		public int error;
-		public List<StockTime> resultList;
+		public List<TimePrice> resultList;
 	}
 	public ResultDayDetail getDayDetail(String id, String date, String beginTime, String endTime)
 	{
@@ -286,10 +286,10 @@ public class StockDataEngine {
 		{
 			if(null == m_cCache.stockTimeData)
 			{
-				m_cCache.stockTimeData = new HashMap<String,List<StockTime>>();
+				m_cCache.stockTimeData = new HashMap<String,List<TimePrice>>();
 			}
 			
-			List<StockTime> detailDataList = new ArrayList<StockTime>();
+			List<TimePrice> detailDataList = new ArrayList<TimePrice>();
 			
 			ResultDayKLine cResultDayKLine = this.getDayKLine(id, date, date);
 			if(0 == cResultDayKLine.error && cResultDayKLine.resultList.size()==1)
@@ -330,7 +330,7 @@ public class StockDataEngine {
 								float changeper_open = (actrualprice_open - actruaFirstPrice)/actruaFirstPrice;
 								float changedprice_open = baseOpenPrice + baseOpenPrice * changeper_open;
 								
-								StockTime cStockDayDetail = new StockTime();
+								TimePrice cStockDayDetail = new TimePrice();
 								cStockDayDetail.price = changedprice_open;
 								String openTime = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(cMinKLine.time, -1);
 								cStockDayDetail.time = openTime;
@@ -338,7 +338,7 @@ public class StockDataEngine {
 							}
 							
 
-							StockTime cStockDayDetail = new StockTime();
+							TimePrice cStockDayDetail = new TimePrice();
 							cStockDayDetail.price = changedprice;
 							cStockDayDetail.time = cMinKLine.time;
 							detailDataList.add(cStockDayDetail);
@@ -353,9 +353,9 @@ public class StockDataEngine {
 		// 从缓存中取数据
 		if(null != m_cCache.stockTimeData && m_cCache.stockTimeData.containsKey(findKey))
 		{
-			List<StockTime> cacheList = m_cCache.stockTimeData.get(findKey);
+			List<TimePrice> cacheList = m_cCache.stockTimeData.get(findKey);
 			cResultDayDetail.error = 0;
-			cResultDayDetail.resultList = StockUtils.subStockTimeData(cacheList, beginTime, endTime);
+			cResultDayDetail.resultList = StockUtils.subTimePriceData(cacheList, beginTime, endTime);
 		}
 		else
 		{

@@ -210,12 +210,12 @@ public class BaseDataStorage {
             	KLine cKLine = new KLine();
             	String[] cols = tempString.split(",");
 
-            	TranDetail cTranDetail = new TranDetail();
-	        	cTranDetail.time = cols[0];
-	        	cTranDetail.price = Float.parseFloat(cols[1]);
-	        	cTranDetail.volume = Float.parseFloat(cols[2]);
+            	TradeDetail cTradeDetail = new TradeDetail();
+	        	cTradeDetail.time = cols[0];
+	        	cTradeDetail.price = Float.parseFloat(cols[1]);
+	        	cTradeDetail.volume = Float.parseFloat(cols[2]);
 	        	
-	        	cResultDayDetail.resultList.add(cTranDetail);
+	        	cResultDayDetail.resultList.add(cTradeDetail);
 	        	
                 line++;
             }
@@ -229,7 +229,7 @@ public class BaseDataStorage {
 		}
 		return cResultDayDetail;
 	}
-	public int saveDayDetail(String id, String date, List<TranDetail> in_list)
+	public int saveDayDetail(String id, String date, List<TradeDetail> in_list)
 	{
 		String stocKLineDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stocKLineDir)) return -10;
@@ -241,12 +241,12 @@ public class BaseDataStorage {
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
 			for(int i = 0; i < in_list.size(); i++)  
 	        {  
-				TranDetail cTranDetail = in_list.get(i);  
-//			            System.out.println(cTranDetail.time + "," 
-//			            		+ cTranDetail.price + "," + cTranDetail.volume);  
-				cOutputStream.write((cTranDetail.time + ",").getBytes());
-				cOutputStream.write((cTranDetail.price + ",").getBytes());
-				cOutputStream.write((cTranDetail.volume + "\n").getBytes());
+				TradeDetail cTradeDetail = in_list.get(i);  
+//			            System.out.println(cTradeDetail.time + "," 
+//			            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
+				cOutputStream.write((cTradeDetail.time + ",").getBytes());
+				cOutputStream.write((cTradeDetail.price + ",").getBytes());
+				cOutputStream.write((cTradeDetail.volume + "\n").getBytes());
 	        } 
 			cOutputStream.close();
 		}

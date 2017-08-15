@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import pers.di.dataengine.webdata.CommonDef.KLine;
-import pers.di.dataengine.webdata.CommonDef.StockTime;
+import pers.di.dataengine.webdata.CommonDef.TimePrice;
 
 
 /**
@@ -225,21 +225,21 @@ public class StockUtils {
 		return newKLineData;
 	}
 	
-	public static List<StockTime> subStockTimeData(List<StockTime> oriList, String fromTime, String endTime)
+	public static List<TimePrice> subTimePriceData(List<TimePrice> oriList, String fromTime, String endTime)
 	{
-		List<StockTime> newStockTimeData = new ArrayList<StockTime>();
+		List<TimePrice> newTimePriceData = new ArrayList<TimePrice>();
 		for(int i = 0; i <oriList.size(); i++)  
         {  
-			StockTime cStockTime = oriList.get(i);  
-			if(cStockTime.time.compareTo(fromTime) >= 0 &&
-					cStockTime.time.compareTo(endTime) <= 0)
+			TimePrice cTimePrice = oriList.get(i);  
+			if(cTimePrice.time.compareTo(fromTime) >= 0 &&
+					cTimePrice.time.compareTo(endTime) <= 0)
 			{
-				StockTime cNewStockTime = new StockTime();
-				cNewStockTime.CopyFrom(cStockTime);
-				newStockTimeData.add(cNewStockTime);
+				TimePrice cNewTimePrice = new TimePrice();
+				cNewTimePrice.CopyFrom(cTimePrice);
+				newTimePriceData.add(cNewTimePrice);
 			}
         }
-		return newStockTimeData;
+		return newTimePriceData;
 	}
 	
 	
@@ -249,16 +249,16 @@ public class StockUtils {
 	 */
 	
 	// 计算i到j日的最高价格的索引
-	static public int indexStockTimeHigh(List<StockTime> list, int i, int j)
+	static public int indexTimePriceHigh(List<TimePrice> list, int i, int j)
 	{
 		int index = i;
 		float high = -100000.0f;
 		for(int k = i; k<=j; k++ )
 		{
-			StockTime cStockTime = list.get(k);
-			if(cStockTime.price > high) 
+			TimePrice cTimePrice = list.get(k);
+			if(cTimePrice.price > high) 
 			{
-				high = cStockTime.price;
+				high = cTimePrice.price;
 				index = k;
 			}
 		}
@@ -266,16 +266,16 @@ public class StockUtils {
 	}
 	
 	// 计算i到j日的最低价格的索引
-	static public int indexStockTimeLow(List<StockTime> list, int i, int j)
+	static public int indexTimePriceLow(List<TimePrice> list, int i, int j)
 	{
 		int index = i;
 		float low = 100000.0f;
 		for(int k = i; k<=j; k++ )
 		{
-			StockTime cStockTime = list.get(k);
-			if(cStockTime.price < low) 
+			TimePrice cTimePrice = list.get(k);
+			if(cTimePrice.price < low) 
 			{
-				low = cStockTime.price;
+				low = cTimePrice.price;
 				index = k;
 			}
 		}
