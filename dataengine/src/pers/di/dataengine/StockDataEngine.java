@@ -24,8 +24,8 @@ public class StockDataEngine {
 	
 	/*
 	 * 更新所有股票数据
-	 * m_cCache.localLatestDate为缓存最新数据日期，此日期大于等于要更新日时，不做事情
-	 * 真正数据更新执行后，所有缓存清空
+	 * 
+	 * localLatestDate 时间戳在全部更新完毕后即更新
 	 */
 	public int updateAllLocalStocks(String dateStr)
 	{
@@ -59,8 +59,7 @@ public class StockDataEngine {
 	}
 	
 	/*
-	 * 更新单只股票数据
-	 * 此方法不改变m_cCache.localLatestDate
+	 * 强制更新单只股票数据
 	 */
 	public int updateLocalStocks(String stockID, String dateStr)
 	{
@@ -100,9 +99,7 @@ public class StockDataEngine {
 	}
 	
 	/*
-	 * 获取所有股票Id列表
-	 * 基于当前本地数据获取，不保证是最新（依赖于数据更新）
-	 * 此接口带有数据缓存机制
+	 * 获取本地所有股票Id列表
 	 */
 	public static class ResultAllStockID
 	{
@@ -147,13 +144,11 @@ public class StockDataEngine {
 	}
 	
 	/*
-	 * 获取某只股票基本信息
-	 * 不保证是最新（依赖于数据更新）
-	 * 此接口带有数据缓存机制
+	 * 获取本地某只股票基本信息
 	 */
-	public static class ResultLatestStockBaseInfo
+	public static class ResultStockBaseInfo
 	{
-		public ResultLatestStockBaseInfo()
+		public ResultStockBaseInfo()
 		{
 			error = -1000;
 			stockBaseInfo = new StockBaseInfo();
@@ -161,9 +156,9 @@ public class StockDataEngine {
 		public int error;
 		public StockBaseInfo stockBaseInfo;
 	}
-	public ResultLatestStockBaseInfo getLatestStockBaseInfo(String id)
+	public ResultStockBaseInfo getStockBaseInfo(String id)
 	{
-		ResultLatestStockBaseInfo cResultLatestStockBaseInfo = new ResultLatestStockBaseInfo();
+		ResultStockBaseInfo cResultStockBaseInfo = new ResultStockBaseInfo();
 		
 		// 首次进行缓存
 		if(null == m_cCache.latestStockBaseInfo || !m_cCache.latestStockBaseInfo.containsKey(id))
@@ -195,21 +190,19 @@ public class StockDataEngine {
 		// 从缓存中取数据
 		if(null != m_cCache.latestStockBaseInfo && m_cCache.latestStockBaseInfo.containsKey(id))
 		{
-			cResultLatestStockBaseInfo.error = 0;
-			cResultLatestStockBaseInfo.stockBaseInfo = m_cCache.latestStockBaseInfo.get(id);
+			cResultStockBaseInfo.error = 0;
+			cResultStockBaseInfo.stockBaseInfo = m_cCache.latestStockBaseInfo.get(id);
 		}
 		else
 		{
-			cResultLatestStockBaseInfo.error = -1;
+			cResultStockBaseInfo.error = -1;
 		}
 		
-		return cResultLatestStockBaseInfo;
+		return cResultStockBaseInfo;
 	}
 	
 	/*
-	 * 获取某只股票的历史日K数据
-	 * 不保证是最新（依赖于数据更新）
-	 * 此接口带有数据缓存机制
+	 * 获取本地某只股票的历史日K数据
 	 */
 	public static class ResultDayKLine {
 		public ResultDayKLine()
@@ -262,13 +255,13 @@ public class StockDataEngine {
 	}
 	
 	/*
-	 * 获取某只股票某天某时间的细节数据
-	 * 不保证是最新（依赖于数据更新）
-	 * 此接口带有数据缓存机制
+	 * 获取本地某只股票某日内分钟级分时数据
+	 * 
+	 * 注：日内细节数据构成将从网络获取
 	 */
-	public static class ResultDayDetail
+	public static class ResultMinTimePrice
 	{
-		public ResultDayDetail()
+		public ResultMinTimePrice()
 		{
 			error = -1000;
 			resultList = new ArrayList<TimePrice>();
@@ -276,9 +269,9 @@ public class StockDataEngine {
 		public int error;
 		public List<TimePrice> resultList;
 	}
-	public ResultDayDetail getDayDetail(String id, String date, String beginTime, String endTime)
+	public ResultMinTimePrice getMinTimePrice(String id, String date, String beginTime, String endTime)
 	{
-		ResultDayDetail cResultDayDetail = new ResultDayDetail();
+		ResultMinTimePrice cResultMinTimePrice = new ResultMinTimePrice();
 		
 		// 首次进行历史数据缓存
 		String findKey = id + "_" + date;
@@ -354,15 +347,15 @@ public class StockDataEngine {
 		if(null != m_cCache.stockTimeData && m_cCache.stockTimeData.containsKey(findKey))
 		{
 			List<TimePrice> cacheList = m_cCache.stockTimeData.get(findKey);
-			cResultDayDetail.error = 0;
-			cResultDayDetail.resultList = StockUtils.subTimePriceData(cacheList, beginTime, endTime);
+			cResultMinTimePrice.error = 0;
+			cResultMinTimePrice.resultList = StockUtils.subTimePriceData(cacheList, beginTime, endTime);
 		}
 		else
 		{
-			cResultDayDetail.error = -1;
+			cResultMinTimePrice.error = -1;
 		}
 		
-		return cResultDayDetail;
+		return cResultMinTimePrice;
 	}
 	
 	
