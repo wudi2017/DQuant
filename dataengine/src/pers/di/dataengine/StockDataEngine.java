@@ -101,24 +101,24 @@ public class StockDataEngine {
 	/*
 	 * 获取本地所有股票Id列表
 	 */
-	public static class ResultAllStockID
+	public static class DEStockIDs
 	{
-		public ResultAllStockID()
+		public DEStockIDs()
 		{
 			error = -1000;
-			resultList = new ArrayList<String>();
+			resultList = null;
 		}
 		public int error;
 		public List<String> resultList;
 	}
-	public ResultAllStockID getAllStockID()
+	public DEStockIDs getAllStockIDs()
 	{
-		ResultAllStockID cResultAllStockID = new ResultAllStockID();
+		DEStockIDs cDEStockIDs = new DEStockIDs();
 		
 		if(null != m_cCache.AllStockID)
 		{
-			cResultAllStockID.error = 0;
-			cResultAllStockID.resultList = m_cCache.AllStockID;
+			cDEStockIDs.error = 0;
+			cDEStockIDs.resultList = m_cCache.AllStockID;
 		}
 		else
 		{
@@ -132,23 +132,23 @@ public class StockDataEngine {
 					String stockId = cResultAllStockList.resultList.get(i).id;
 					m_cCache.AllStockID.add(stockId);
 				}
-				cResultAllStockID.error = 0;
-				cResultAllStockID.resultList = m_cCache.AllStockID;
+				cDEStockIDs.error = 0;
+				cDEStockIDs.resultList = m_cCache.AllStockID;
 			}
 			else
 			{
 				CLog.error("STOCK", "DataEngine.getLocalAllStock error(%d) \n", cResultAllStockList.error);
 			}
 		}
-		return cResultAllStockID;
+		return cDEStockIDs;
 	}
 	
 	/*
 	 * 获取本地某只股票基本信息
 	 */
-	public static class ResultStockBaseInfo
+	public static class DEStockBaseInfo
 	{
-		public ResultStockBaseInfo()
+		public DEStockBaseInfo()
 		{
 			error = -1000;
 			stockBaseInfo = new StockBaseInfo();
@@ -156,9 +156,9 @@ public class StockDataEngine {
 		public int error;
 		public StockBaseInfo stockBaseInfo;
 	}
-	public ResultStockBaseInfo getStockBaseInfo(String id)
+	public DEStockBaseInfo getStockBaseInfo(String id)
 	{
-		ResultStockBaseInfo cResultStockBaseInfo = new ResultStockBaseInfo();
+		DEStockBaseInfo cDEStockBaseInfo = new DEStockBaseInfo();
 		
 		// 首次进行缓存
 		if(null == m_cCache.latestStockBaseInfo || !m_cCache.latestStockBaseInfo.containsKey(id))
@@ -190,22 +190,22 @@ public class StockDataEngine {
 		// 从缓存中取数据
 		if(null != m_cCache.latestStockBaseInfo && m_cCache.latestStockBaseInfo.containsKey(id))
 		{
-			cResultStockBaseInfo.error = 0;
-			cResultStockBaseInfo.stockBaseInfo = m_cCache.latestStockBaseInfo.get(id);
+			cDEStockBaseInfo.error = 0;
+			cDEStockBaseInfo.stockBaseInfo = m_cCache.latestStockBaseInfo.get(id);
 		}
 		else
 		{
-			cResultStockBaseInfo.error = -1;
+			cDEStockBaseInfo.error = -1;
 		}
 		
-		return cResultStockBaseInfo;
+		return cDEStockBaseInfo;
 	}
 	
 	/*
 	 * 获取本地某只股票的历史日K数据
 	 */
-	public static class ResultDayKLine {
-		public ResultDayKLine()
+	public static class DEKLines {
+		public DEKLines()
 		{
 			error = -1000;
 			resultList = new ArrayList<KLine>();
@@ -213,9 +213,9 @@ public class StockDataEngine {
 		public int error;
 		public List<KLine> resultList;
 	}
-	public ResultDayKLine getDayKLine(String stockID, String fromDate, String endDate)
+	public DEKLines getDayKLines(String stockID, String fromDate, String endDate)
 	{
-		ResultDayKLine cResultDayKLine = new ResultDayKLine();
+		DEKLines cDEKLines = new DEKLines();
 		
 		// 首次进行历史数据缓存
 		if(null == m_cCache.dayKLineList || !m_cCache.dayKLineList.containsKey(stockID))
@@ -227,7 +227,7 @@ public class StockDataEngine {
 			
 			List<KLine> tmpDayKLineList = new ArrayList<KLine>();
 			
-			ResultKLine cResultKLine = m_cBaseDataLayer.getDayKLineForwardAdjusted(stockID);
+			ResultKLine cResultKLine = m_cBaseDataLayer.getDayKLinesForwardAdjusted(stockID);
 			
 			if(0 == cResultKLine.error && cResultKLine.resultList.size() != 0)
 			{
@@ -236,22 +236,22 @@ public class StockDataEngine {
 			else
 			{
 				CLog.error("STOCKDATA", "DataEngine.getDayKDataQianFuQuan(%s %s %s) error(%d) \n", 
-						stockID, fromDate, endDate, cResultDayKLine.error);
+						stockID, fromDate, endDate, cDEKLines.error);
 			}
 		}
 		
 		// 从缓存中取数据
 		if(null != m_cCache.dayKLineList && m_cCache.dayKLineList.containsKey(stockID))
 		{
-			cResultDayKLine.error = 0;
-			cResultDayKLine.resultList = StockUtils.subKLineData(m_cCache.dayKLineList.get(stockID),fromDate, endDate);
+			cDEKLines.error = 0;
+			cDEKLines.resultList = StockUtils.subKLineData(m_cCache.dayKLineList.get(stockID),fromDate, endDate);
 		}
 		else
 		{
-			cResultDayKLine.error = -1;
+			cDEKLines.error = -1;
 		}
 		
-		return cResultDayKLine;
+		return cDEKLines;
 	}
 	
 	/*
@@ -259,9 +259,9 @@ public class StockDataEngine {
 	 * 
 	 * 注：日内细节数据构成将从网络获取
 	 */
-	public static class ResultMinTimePrice
+	public static class DETimePrices
 	{
-		public ResultMinTimePrice()
+		public DETimePrices()
 		{
 			error = -1000;
 			resultList = new ArrayList<TimePrice>();
@@ -269,9 +269,9 @@ public class StockDataEngine {
 		public int error;
 		public List<TimePrice> resultList;
 	}
-	public ResultMinTimePrice getMinTimePrice(String id, String date, String beginTime, String endTime)
+	public DETimePrices getMinTimePrices(String id, String date, String beginTime, String endTime)
 	{
-		ResultMinTimePrice cResultMinTimePrice = new ResultMinTimePrice();
+		DETimePrices cDETimePrices = new DETimePrices();
 		
 		// 首次进行历史数据缓存
 		String findKey = id + "_" + date;
@@ -284,10 +284,10 @@ public class StockDataEngine {
 			
 			List<TimePrice> detailDataList = new ArrayList<TimePrice>();
 			
-			ResultDayKLine cResultDayKLine = this.getDayKLine(id, date, date);
-			if(0 == cResultDayKLine.error && cResultDayKLine.resultList.size()==1)
+			DEKLines cDEKLines = this.getDayKLines(id, date, date);
+			if(0 == cDEKLines.error && cDEKLines.resultList.size()==1)
 			{
-				KLine cKLine = cResultDayKLine.resultList.get(0);
+				KLine cKLine = cDEKLines.resultList.get(0);
 				
 				if(null != cKLine && date.length() == "0000-00-00".length())
 				{
@@ -347,15 +347,15 @@ public class StockDataEngine {
 		if(null != m_cCache.stockTimeData && m_cCache.stockTimeData.containsKey(findKey))
 		{
 			List<TimePrice> cacheList = m_cCache.stockTimeData.get(findKey);
-			cResultMinTimePrice.error = 0;
-			cResultMinTimePrice.resultList = StockUtils.subTimePriceData(cacheList, beginTime, endTime);
+			cDETimePrices.error = 0;
+			cDETimePrices.resultList = StockUtils.subTimePriceData(cacheList, beginTime, endTime);
 		}
 		else
 		{
-			cResultMinTimePrice.error = -1;
+			cDETimePrices.error = -1;
 		}
 		
-		return cResultMinTimePrice;
+		return cDETimePrices;
 	}
 	
 	

@@ -1,9 +1,6 @@
 package pers.di.quantengine;
 
-public class QuantTriger {
-	public void onHandler(String date, String time, 
-			DataAccessor da, AccountController ac)
-	{
-		
-	}
+public abstract class QuantTriger {
+	public abstract void onHandler(String date, String time, 
+			DataAccessor da, AccountController ac);
 }

@@ -9,10 +9,10 @@ import pers.di.common.CUtilsDateTime;
 import pers.di.common.CImageCurve.CurvePoint;
 import pers.di.dataengine.BaseDataLayer;
 import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.StockDataEngine.ResultAllStockID;
-import pers.di.dataengine.StockDataEngine.ResultMinTimePrice;
-import pers.di.dataengine.StockDataEngine.ResultDayKLine;
-import pers.di.dataengine.StockDataEngine.ResultStockBaseInfo;
+import pers.di.dataengine.StockDataEngine.DEStockIDs;
+import pers.di.dataengine.StockDataEngine.DETimePrices;
+import pers.di.dataengine.StockDataEngine.DEKLines;
+import pers.di.dataengine.StockDataEngine.DEStockBaseInfo;
 import pers.di.dataengine.webdata.CommonDef.*;
 
 public class TestDataEngine {
@@ -27,10 +27,10 @@ public class TestDataEngine {
 		StockDataEngine.instance().updateLocalStocks("300163", "2017-08-16");
 	}
 	
-	private static void test_getAllStockID()
+	private static void test_getAllStockIDs()
 	{
-		ResultAllStockID cResultAllStockID = StockDataEngine.instance().getAllStockID();
-		List<String> stockIDList = cResultAllStockID.resultList;
+		DEStockIDs cDEStockIDs = StockDataEngine.instance().getAllStockIDs();
+		List<String> stockIDList = cDEStockIDs.resultList;
 		CLog.output("TEST", "stock count: %d\n", stockIDList.size());
 		for(int i=0; i<stockIDList.size(); i++)
 		{
@@ -42,37 +42,37 @@ public class TestDataEngine {
 	private static void test_getStockBaseInfo()
 	{
 		String stockID = "600000";
-		ResultStockBaseInfo cResultStockBaseInfo = StockDataEngine.instance().getStockBaseInfo(stockID);
-		if(0 == cResultStockBaseInfo.error)
+		DEStockBaseInfo cDEStockBaseInfo = StockDataEngine.instance().getStockBaseInfo(stockID);
+		if(0 == cDEStockBaseInfo.error)
 		{
 			CLog.output("TEST", "cStockInfo [%s][%s]\n",
-					stockID, cResultStockBaseInfo.stockBaseInfo.name);
+					stockID, cDEStockBaseInfo.stockBaseInfo.name);
 		}
 	}
 	
-	private static void test_getDayKLine()
+	private static void test_getDayKLines()
 	{
 		String stockID = "600000";
-		ResultDayKLine cResultDayKLine = StockDataEngine.instance().getDayKLine(stockID, "2014-05-23", "2014-08-15");
-		CLog.output("TEST", "KLine count: %d\n", cResultDayKLine.resultList.size());
-		for(int i=0; i<cResultDayKLine.resultList.size(); i++)
+		DEKLines cDEKLines = StockDataEngine.instance().getDayKLines(stockID, "2014-05-23", "2014-08-15");
+		CLog.output("TEST", "KLine count: %d\n", cDEKLines.resultList.size());
+		for(int i=0; i<cDEKLines.resultList.size(); i++)
 		{
-			KLine cKLine = cResultDayKLine.resultList.get(i);
+			KLine cKLine = cDEKLines.resultList.get(i);
 			CLog.output("TEST", "date: %s close: %f\n", cKLine.date, cKLine.close);
 		}
 	}
 	
-	private static void test_getMinTimePrice()
+	private static void test_getMinTimePrices()
 	{
 		CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_getDayDetail.jpg");
 		List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 		
 		String stockID = "600004";
-		ResultMinTimePrice cResultMinTimePrice = StockDataEngine.instance().getMinTimePrice(stockID, "2016-01-27", "09:00:00", "15:00:00");
-		CLog.output("TEST", "KLine count: %d\n", cResultMinTimePrice.resultList.size());
-		for(int i=0; i<cResultMinTimePrice.resultList.size(); i++)
+		DETimePrices cDETimePrices = StockDataEngine.instance().getMinTimePrices(stockID, "2016-01-27", "09:00:00", "15:00:00");
+		CLog.output("TEST", "KLine count: %d\n", cDETimePrices.resultList.size());
+		for(int i=0; i<cDETimePrices.resultList.size(); i++)
 		{
-			TimePrice cTimePrice = cResultMinTimePrice.resultList.get(i);
+			TimePrice cTimePrice = cDETimePrices.resultList.get(i);
 			CLog.output("TEST", "date: %s close: %f\n", cTimePrice.time, cTimePrice.price);
 			PoiList.add(new CurvePoint(i,cTimePrice.price));
 		}
@@ -85,9 +85,9 @@ public class TestDataEngine {
 	public static void main(String[] args) {
 		//test_updateAllLocalStocks();
 		//test_updateLocalStocks();
-		//test_getAllStockID();
+		//test_getAllStockIDs();
 		//test_getStockBaseInfo();
-		//test_getDayKLine();
-		//test_getMinTimePrice();
+		//test_getDayKLines();
+		//test_getMinTimePrices();
 	}
 }

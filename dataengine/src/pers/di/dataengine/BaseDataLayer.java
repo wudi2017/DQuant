@@ -66,7 +66,7 @@ public class BaseDataLayer {
 	/*
 	 * 获取某只股票日K
 	 */
-	public ResultKLine getDayKLine(String id)
+	public ResultKLine getDayKLines(String id)
 	{
 		return m_cBaseDataStorage.getKLine(id);
 	}
@@ -74,7 +74,7 @@ public class BaseDataLayer {
 	/*
 	 * 获取前复权日k
 	 */
-	public ResultKLine getDayKLineForwardAdjusted(String id)
+	public ResultKLine getDayKLinesForwardAdjusted(String id)
 	{
 		ResultKLine cResultKLine = m_cBaseDataStorage.getKLine(id);
 		ResultDividendPayout cResultDividendPayout = m_cBaseDataStorage.getDividendPayout(id);
@@ -124,7 +124,7 @@ public class BaseDataLayer {
 	/*
 	 * 获取后复权日k
 	 */
-	public ResultKLine getDayKLineBackwardAdjusted(String id)
+	public ResultKLine getDayKLinesBackwardAdjusted(String id)
 	{
 		ResultKLine cResultKLine = m_cBaseDataStorage.getKLine(id);
 		ResultDividendPayout cResultDividendPayout = m_cBaseDataStorage.getDividendPayout(id);
@@ -610,7 +610,7 @@ public class BaseDataLayer {
 		}
 		
 		// 检查前复权日K
-		ResultKLine cResultKLine = this.getDayKLineForwardAdjusted(stockID);
+		ResultKLine cResultKLine = this.getDayKLinesForwardAdjusted(stockID);
 		if(0 != cResultKLine.error 
 				|| cResultKLine.resultList.size() <= 0)
 		{
