@@ -100,25 +100,37 @@ public class StockDataEngine {
 	
 	/*
 	 * 获取本地所有股票Id列表
+	 * 注意： 内部为引用存储，数据更新后返回值无效
 	 */
 	public static class DEStockIDs
 	{
-		public DEStockIDs()
+		public DEStockIDs(int error, List<String> origin)
 		{
-			error = -1000;
-			resultList = null;
+			m_error = error;
+			m_resultList = origin;
 		}
-		public int error;
-		public List<String> resultList;
+		public int error() 
+		{ 
+			return m_error; 
+		}
+		public int size() 
+		{ 
+			return m_resultList.size();
+		}
+		public String get(int i)
+		{
+			return m_resultList.get(i);
+		}
+		private int m_error;
+		private List<String> m_resultList;
 	}
 	public DEStockIDs getAllStockIDs()
 	{
-		DEStockIDs cDEStockIDs = new DEStockIDs();
+		DEStockIDs cDEStockIDs = null;
 		
 		if(null != m_cCache.AllStockID)
 		{
-			cDEStockIDs.error = 0;
-			cDEStockIDs.resultList = m_cCache.AllStockID;
+			cDEStockIDs = new DEStockIDs(0, m_cCache.AllStockID);
 		}
 		else
 		{
@@ -132,8 +144,7 @@ public class StockDataEngine {
 					String stockId = cResultAllStockList.resultList.get(i).id;
 					m_cCache.AllStockID.add(stockId);
 				}
-				cDEStockIDs.error = 0;
-				cDEStockIDs.resultList = m_cCache.AllStockID;
+				cDEStockIDs = new DEStockIDs(0, m_cCache.AllStockID);
 			}
 			else
 			{
@@ -145,20 +156,29 @@ public class StockDataEngine {
 	
 	/*
 	 * 获取本地某只股票基本信息
+	 * 注意： 内部为引用存储，数据更新后返回值无效
 	 */
 	public static class DEStockBaseInfo
 	{
-		public DEStockBaseInfo()
+		public DEStockBaseInfo(int error, StockBaseInfo origin)
 		{
-			error = -1000;
-			stockBaseInfo = new StockBaseInfo();
+			m_error = error;
+			m_stockBaseInfo = origin;
 		}
-		public int error;
-		public StockBaseInfo stockBaseInfo;
+		public int error() 
+		{ 
+			return m_error; 
+		}
+		public StockBaseInfo get()
+		{
+			return m_stockBaseInfo;
+		}
+		private int m_error;
+		private StockBaseInfo m_stockBaseInfo;
 	}
 	public DEStockBaseInfo getStockBaseInfo(String id)
 	{
-		DEStockBaseInfo cDEStockBaseInfo = new DEStockBaseInfo();
+		DEStockBaseInfo cDEStockBaseInfo = null;
 		
 		// 首次进行缓存
 		if(null == m_cCache.latestStockBaseInfo || !m_cCache.latestStockBaseInfo.containsKey(id))
@@ -190,12 +210,11 @@ public class StockDataEngine {
 		// 从缓存中取数据
 		if(null != m_cCache.latestStockBaseInfo && m_cCache.latestStockBaseInfo.containsKey(id))
 		{
-			cDEStockBaseInfo.error = 0;
-			cDEStockBaseInfo.stockBaseInfo = m_cCache.latestStockBaseInfo.get(id);
+			cDEStockBaseInfo = new DEStockBaseInfo(0, m_cCache.latestStockBaseInfo.get(id));
 		}
 		else
 		{
-			cDEStockBaseInfo.error = -1;
+			cDEStockBaseInfo = new DEStockBaseInfo(-1, null);
 		}
 		
 		return cDEStockBaseInfo;
@@ -203,19 +222,36 @@ public class StockDataEngine {
 	
 	/*
 	 * 获取本地某只股票的历史日K数据
+	 * 注意： 内部为引用存储，数据更新后返回值无效
 	 */
 	public static class DEKLines {
-		public DEKLines()
+		public DEKLines(int error, List<KLine> origin, int iBase, int iSize)
 		{
-			error = -1000;
-			resultList = new ArrayList<KLine>();
+			m_error = error;
+			m_resultList = origin;
+			m_iBase = iBase;
+			m_iSize= iSize;
 		}
-		public int error;
-		public List<KLine> resultList;
+		public int error()
+		{
+			return m_error;
+		}
+		public int size()
+		{
+			return m_iSize;
+		}
+		public KLine get(int i)
+		{
+			return m_resultList.get(m_iBase+i);
+		}
+		private int m_error;
+		private List<KLine> m_resultList;
+		private int m_iBase;
+		private int m_iSize;
 	}
-	public DEKLines getDayKLines(String stockID, String fromDate, String endDate)
+	public DEKLines getDayKLines(String stockID, String fromDate, String toDate)
 	{
-		DEKLines cDEKLines = new DEKLines();
+		DEKLines cDEKLines = null;
 		
 		// 首次进行历史数据缓存
 		if(null == m_cCache.dayKLineList || !m_cCache.dayKLineList.containsKey(stockID))
@@ -236,19 +272,36 @@ public class StockDataEngine {
 			else
 			{
 				CLog.error("STOCKDATA", "DataEngine.getDayKDataQianFuQuan(%s %s %s) error(%d) \n", 
-						stockID, fromDate, endDate, cDEKLines.error);
+						stockID, fromDate, toDate, cResultKLine.error);
 			}
 		}
 		
 		// 从缓存中取数据
 		if(null != m_cCache.dayKLineList && m_cCache.dayKLineList.containsKey(stockID))
 		{
-			cDEKLines.error = 0;
-			cDEKLines.resultList = StockUtils.subKLineData(m_cCache.dayKLineList.get(stockID),fromDate, endDate);
+			int iBase = -1;
+			int iSize = 0;
+			List<KLine> cur_dayKLineList = m_cCache.dayKLineList.get(stockID);
+			if(fromDate.compareTo(toDate) <= 0)
+			{
+				for(int i = 0; i <cur_dayKLineList.size(); i++)  
+		        {  
+					KLine cKLine = cur_dayKLineList.get(i);  
+					if(-1 == iBase && cKLine.date.compareTo(fromDate) >= 0)
+					{
+						iBase = i;
+					}
+					if(cKLine.date.compareTo(fromDate) >= 0 && cKLine.date.compareTo(toDate) <= 0)
+					{
+						iSize++;
+					}
+		        }
+			}
+			cDEKLines = new DEKLines(0, cur_dayKLineList, iBase, iSize);
 		}
 		else
 		{
-			cDEKLines.error = -1;
+			cDEKLines = new DEKLines(-1, null, 0, 0);
 		}
 		
 		return cDEKLines;
@@ -258,20 +311,37 @@ public class StockDataEngine {
 	 * 获取本地某只股票某日内分钟级分时数据
 	 * 
 	 * 注：日内细节数据构成将从网络获取
+	 * 注意： 内部为引用存储，数据更新后返回值无效
 	 */
 	public static class DETimePrices
 	{
-		public DETimePrices()
+		public DETimePrices(int error, List<TimePrice> origin, int iBase, int iSize)
 		{
-			error = -1000;
-			resultList = new ArrayList<TimePrice>();
+			m_error = error;
+			m_resultList = origin;
+			m_iBase = iBase;
+			m_iSize = iSize;
 		}
-		public int error;
-		public List<TimePrice> resultList;
+		public int error()
+		{
+			return m_error;
+		}
+		public int size()
+		{
+			return m_iSize;
+		}
+		public TimePrice get(int i)
+		{
+			return m_resultList.get(m_iBase+i);
+		}
+		private int m_error;
+		private List<TimePrice> m_resultList;
+		private int m_iBase;
+		private int m_iSize;
 	}
 	public DETimePrices getMinTimePrices(String id, String date, String beginTime, String endTime)
 	{
-		DETimePrices cDETimePrices = new DETimePrices();
+		DETimePrices cDETimePrices = null;
 		
 		// 首次进行历史数据缓存
 		String findKey = id + "_" + date;
@@ -285,9 +355,9 @@ public class StockDataEngine {
 			List<TimePrice> detailDataList = new ArrayList<TimePrice>();
 			
 			DEKLines cDEKLines = this.getDayKLines(id, date, date);
-			if(0 == cDEKLines.error && cDEKLines.resultList.size()==1)
+			if(0 == cDEKLines.error() && cDEKLines.size()==1)
 			{
-				KLine cKLine = cDEKLines.resultList.get(0);
+				KLine cKLine = cDEKLines.get(0);
 				
 				if(null != cKLine && date.length() == "0000-00-00".length())
 				{
@@ -346,13 +416,29 @@ public class StockDataEngine {
 		// 从缓存中取数据
 		if(null != m_cCache.stockTimeData && m_cCache.stockTimeData.containsKey(findKey))
 		{
-			List<TimePrice> cacheList = m_cCache.stockTimeData.get(findKey);
-			cDETimePrices.error = 0;
-			cDETimePrices.resultList = StockUtils.subTimePriceData(cacheList, beginTime, endTime);
+			int iBase = -1;
+			int iSize = 0;
+			List<TimePrice> cur_stockTimeData = m_cCache.stockTimeData.get(findKey);
+			if(beginTime.compareTo(endTime) <= 0)
+			{
+				for(int i = 0; i <cur_stockTimeData.size(); i++)  
+		        {  
+					TimePrice cTimePrice = cur_stockTimeData.get(i);  
+					if(-1 == iBase && cTimePrice.time.compareTo(beginTime) >= 0)
+					{
+						iBase = i;
+					}
+					if(cTimePrice.time.compareTo(beginTime) >= 0 && cTimePrice.time.compareTo(endTime) <= 0)
+					{
+						iSize++;
+					}
+		        }
+			}
+			cDETimePrices = new DETimePrices(0 , cur_stockTimeData, iBase, iSize);
 		}
 		else
 		{
-			cDETimePrices.error = -1;
+			cDETimePrices = new DETimePrices(0 , null, 0, 0);
 		}
 		
 		return cDETimePrices;

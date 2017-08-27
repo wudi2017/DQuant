@@ -30,11 +30,10 @@ public class TestDataEngine {
 	private static void test_getAllStockIDs()
 	{
 		DEStockIDs cDEStockIDs = StockDataEngine.instance().getAllStockIDs();
-		List<String> stockIDList = cDEStockIDs.resultList;
-		CLog.output("TEST", "stock count: %d\n", stockIDList.size());
-		for(int i=0; i<stockIDList.size(); i++)
+		CLog.output("TEST", "stock count: %d\n", cDEStockIDs.size());
+		for(int i=0; i<cDEStockIDs.size(); i++)
 		{
-			String stockID = stockIDList.get(i);
+			String stockID = cDEStockIDs.get(i);
 			CLog.output("TEST", "stockID: %s\n", stockID);
 		}
 	}
@@ -43,10 +42,10 @@ public class TestDataEngine {
 	{
 		String stockID = "600000";
 		DEStockBaseInfo cDEStockBaseInfo = StockDataEngine.instance().getStockBaseInfo(stockID);
-		if(0 == cDEStockBaseInfo.error)
+		if(0 == cDEStockBaseInfo.error())
 		{
 			CLog.output("TEST", "cStockInfo [%s][%s]\n",
-					stockID, cDEStockBaseInfo.stockBaseInfo.name);
+					stockID, cDEStockBaseInfo.get().name);
 		}
 	}
 	
@@ -54,10 +53,10 @@ public class TestDataEngine {
 	{
 		String stockID = "600000";
 		DEKLines cDEKLines = StockDataEngine.instance().getDayKLines(stockID, "2014-05-23", "2014-08-15");
-		CLog.output("TEST", "KLine count: %d\n", cDEKLines.resultList.size());
-		for(int i=0; i<cDEKLines.resultList.size(); i++)
+		CLog.output("TEST", "KLine count: %d\n", cDEKLines.size());
+		for(int i=0; i<cDEKLines.size(); i++)
 		{
-			KLine cKLine = cDEKLines.resultList.get(i);
+			KLine cKLine = cDEKLines.get(i);
 			CLog.output("TEST", "date: %s close: %f\n", cKLine.date, cKLine.close);
 		}
 	}
@@ -68,11 +67,11 @@ public class TestDataEngine {
 		List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 		
 		String stockID = "600004";
-		DETimePrices cDETimePrices = StockDataEngine.instance().getMinTimePrices(stockID, "2016-01-27", "09:00:00", "15:00:00");
-		CLog.output("TEST", "KLine count: %d\n", cDETimePrices.resultList.size());
-		for(int i=0; i<cDETimePrices.resultList.size(); i++)
+		DETimePrices cDETimePrices = StockDataEngine.instance().getMinTimePrices(stockID, "2016-01-27", "09:31:00", "14:00:00");
+		CLog.output("TEST", "KLine count: %d\n", cDETimePrices.size());
+		for(int i=0; i<cDETimePrices.size(); i++)
 		{
-			TimePrice cTimePrice = cDETimePrices.resultList.get(i);
+			TimePrice cTimePrice = cDETimePrices.get(i);
 			CLog.output("TEST", "date: %s close: %f\n", cTimePrice.time, cTimePrice.price);
 			PoiList.add(new CurvePoint(i,cTimePrice.price));
 		}
@@ -88,6 +87,6 @@ public class TestDataEngine {
 		//test_getAllStockIDs();
 		//test_getStockBaseInfo();
 		//test_getDayKLines();
-		//test_getMinTimePrices();
+		test_getMinTimePrices();
 	}
 }

@@ -9,8 +9,9 @@ public class TestQuantEngine {
 	public static class MyQuantTest extends QuantTriger
 	{
 		@Override
-		public void onHandler(String date, String time, DataAccessor da, AccountController ac) {
-			CLog.output("TEST", "onHandler %s\n", date);
+		public void onHandler(QuantContext ctx) {
+			// TODO Auto-generated method stub
+			CLog.output("TEST", "onHandler %s\n", ctx.date);
 		}
 		
 	}
