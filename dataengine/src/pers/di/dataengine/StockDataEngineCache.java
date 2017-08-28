@@ -10,6 +10,9 @@ public class StockDataEngineCache {
 	{
 		localLatestDate = null;
 		AllStockID = null;
+		latestStockBaseInfo = null;
+		dayKLineList = null;
+		stockTimeData = null;
 	}
 	
 	// 当前总数据最新更新日期缓存

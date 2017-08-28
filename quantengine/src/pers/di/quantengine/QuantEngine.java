@@ -238,7 +238,7 @@ public class QuantEngine {
 			
 			for(int i = 0; i < 5; i++) // 试图5次来确认
 			{
-				ResultStockTime cResultStockTime = stockDataIF.getStockTime("999999", date, CUtilsDateTime.GetCurTimeStr());
+				ResultStockTime cResultStockTime = StockDataEngine.instance().getRealTimePrice("999999", date, CUtilsDateTime.GetCurTimeStr());
 				if(0 == cResultStockTime.error)
 				{
 					if(cResultStockTime.date.compareTo(date) == 0)
@@ -246,7 +246,7 @@ public class QuantEngine {
 						return true;
 					}
 				}
-				BThread.sleep(3000);
+				CThread.sleep(3000);
 			}
 			return false;
 		}

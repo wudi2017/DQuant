@@ -7,11 +7,13 @@ import java.util.*;
 import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
 import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
+import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
+import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
 /*
  * 股票基础数据层
@@ -542,6 +544,12 @@ public class BaseDataLayer {
 		}
 		return cResultMinKLineOneDay;
 	}
+	
+	public ResultRealTimeInfo getRealTimeInfo(String stockID)
+	{
+		return DataWebStockRealTimeInfo.getRealTimeInfo(stockID);
+	}
+	
 	
 	public List<StockItem> getRandomStockItem(int count)
 	{
