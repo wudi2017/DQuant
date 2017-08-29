@@ -1,28 +1,65 @@
 package pers.di.quantengine;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import pers.di.common.*;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.*;
+import pers.di.dataengine.StockUtils;
 import pers.di.dataengine.webdata.CommonDef.*;
 
 public class QuantEngine {
 	/*
 	 * 配置量化引擎
-	 * 1可以历史回测与实时运行
-	 * 2可以配置触发时间
 	 * 
 	 * key: "TrigerMode" 触发模式
-	 *     value: "HistoryTest" 历史回测
+	 *     value: "HistoryTest XXXX-XX-XX XXXX-XXXX-XX" 历史回测
 	 *     value: "RealTime" 实时
-	 * key: "HistoryTimeSpan"
-	 *     value: "XXXX-XX-XX XXXX-XXXX-XX" 历史回测时间段
+	 *     
+	 * key: "TrigerPoint"
+	 *     value: "EveryMinute" 每分钟触发
+	 *     value: "XX:XX" 触发时间手动配置  例如 08:20
 	 *   
 	 */
 	public int config(String key, String value)
 	{
+		if(0 == key.compareTo("TrigerMode"))
+		{
+			if(value.contains("HistoryTest"))
+			{
+				String[] cols = value.split(" ");
+				m_bHistoryTest = true;
+				m_beginDate = cols[1];
+				m_endDate = cols[2];
+				
+				// 初始化历史交易日表
+				if(m_bHistoryTest)
+				{
+					m_hisTranDate = new ArrayList<String>();
+					DEKLines cDEKLines = StockDataEngine.instance().getDayKLines("999999", "2008-01-01", "2100-01-01");
+					List<KLine> cStocDayListShangZheng = cDEKLines.origin();
+					int iB = StockUtils.indexDayKAfterDate(cStocDayListShangZheng, m_beginDate, true);
+					int iE = StockUtils.indexDayKBeforeDate(cStocDayListShangZheng, m_endDate, true);
+					
+					for(int i = iB; i <= iE; i++)  
+			        {  
+						KLine cStockDayShangZheng = cStocDayListShangZheng.get(i);  
+						String curDateStr = cStockDayShangZheng.date;
+						m_hisTranDate.add(curDateStr);
+			        }
+				}
+			}
+			else
+			{
+				m_bHistoryTest = false;
+			}
+		}
+		else if(0 == key.compareTo("TrigerPoint"))
+		{
+			
+		}
 		return 0;
 	}
 	
@@ -56,6 +93,7 @@ public class QuantEngine {
 				timestr = "09:27:00";
 				waitForDateTime(dateStr, timestr);
 				boolean bAccInit = false;
+				bAccInit = true;
 				CLog.output("CTRL", "[%s %s] account newDayInit = %b \n", dateStr, timestr, bAccInit);
 				
 				if(bAccInit)
@@ -238,10 +276,10 @@ public class QuantEngine {
 			
 			for(int i = 0; i < 5; i++) // 试图5次来确认
 			{
-				ResultStockTime cResultStockTime = StockDataEngine.instance().getRealTimePrice("999999", date, CUtilsDateTime.GetCurTimeStr());
-				if(0 == cResultStockTime.error)
+				DETimePrice cDETimePrice = StockDataEngine.instance().getRealTimePrice("999999");
+				if(0 == cDETimePrice.error())
 				{
-					if(cResultStockTime.date.compareTo(date) == 0)
+					if(cDETimePrice.date().compareTo(date) == 0)
 					{
 						return true;
 					}

@@ -245,6 +245,10 @@ public class StockDataEngine {
 		{
 			return m_resultList.get(m_iBase+i);
 		}
+		public List<KLine> origin()
+		{
+			return m_resultList;
+		}
 		private int m_error;
 		private List<KLine> m_resultList;
 		private int m_iBase;
@@ -449,119 +453,64 @@ public class StockDataEngine {
 	 * 获取某只股票某天某时间的价格
 	 * 数据缓存机制依赖于getDayDetail接口
 	 */
-	public static class ResultStockTime
+	public static class DETimePrice
 	{
-		public ResultStockTime()
+		public DETimePrice(int error, String date, TimePrice origin)
 		{
-			error = -1000;
+			m_error = error;
+			m_date = date;
+			m_resultTimePrice = origin;
 		}
-		public int error;
-		public String date;
-		public String time;
-		public float price;
+		public int error()
+		{
+			return m_error;
+		}
+		public String date()
+		{
+			return m_date;
+		}
+		public String time()
+		{
+			return m_resultTimePrice.time;
+		}
+		public float price()
+		{
+			return m_resultTimePrice.price;
+		}
+		public int m_error;
+		public String m_date;
+		private TimePrice m_resultTimePrice;
 	}
-	public ResultStockTime getRealTimePrice(String id, String date, String time)
+	public DETimePrice getRealTimePrice(String id)
 	{
-		ResultStockTime cResultStockTime = new ResultStockTime();
+		DETimePrice cDETimePrice = null;
 		
-		boolean bRealTime = false;
-		String curDate = CUtilsDateTime.GetCurDateStr();
-		String curTime = "";
-		if(date.compareTo(curDate) == 0)
+		ResultRealTimeInfo cResultRealTimeInfo = m_cBaseDataLayer.getRealTimeInfo(id);
+		
+		if(0 == cResultRealTimeInfo.error)
 		{
-			curTime = CUtilsDateTime.GetCurTimeStr();
-			if(Math.abs(CUtilsDateTime.subTime(time,curTime)) < 10) // 离当前时间10秒内
+			TimePrice cTimePrice = new TimePrice();
+			cTimePrice.time = cResultRealTimeInfo.realTimeInfo.time;
+			cTimePrice.price = cResultRealTimeInfo.realTimeInfo.curPrice;
+
+			if(0 == Float.compare(cTimePrice.price, 0.00f))
 			{
-				bRealTime = true;
+				cDETimePrice = new DETimePrice(-2, null, null);
+				CLog.error("STOCKDATA", "getStockTime %s price 0.00f!", id); // 修正取得实时价格为0则认为错误
 			}
-		}
-		
-		if(bRealTime)
-		{
-			ResultRealTimeInfo cResultRealTimeInfo = m_cBaseDataLayer.getRealTimeInfo(id);
-		
-			if(0 == cResultRealTimeInfo.error)
+			else
 			{
-				cResultStockTime.error = 0;
-				cResultStockTime.date = cResultRealTimeInfo.realTimeInfo.date;
-				cResultStockTime.time = cResultRealTimeInfo.realTimeInfo.time;
-				cResultStockTime.price = cResultRealTimeInfo.realTimeInfo.curPrice;
-				if(0 == Float.compare(cResultStockTime.price, 0.00f))
-				{
-					cResultStockTime.error = -8;
-					CLog.error("STOCKDATA", "getStockTime %s price 0.00f!", id); // 修正取得实时价格为0则认为错误
-				}
-				return cResultStockTime;
+				cDETimePrice = new DETimePrice(0,
+						cResultRealTimeInfo.realTimeInfo.date,
+						cTimePrice);
 			}
 		}
 		else
 		{
-			// 基于真实的历史数据
-			// 9点30（不含）之前，为前一天收盘价格
-			// 09:30:00 - 15:00:00 为交易期间真实前复权价格
-			// 15:00:00之后，为当天收盘价格
-			if(time.compareTo("09:30:00") >= 0)
-			{
-				if(time.compareTo("09:30:00") >= 0 && time.compareTo("15:00:00") <= 0)
-				{
-					// 交易时间
-					DETimePrices cDETimePrices = this.getMinTimePrices(id, date, "09:25:00", time);
-					if(null!=cDETimePrices && cDETimePrices.size()>0)
-					{
-						TimePrice cTimePrice = cDETimePrices.get(cDETimePrices.size()-1);
-						long subTimeMin = CUtilsDateTime.subTime(time, cTimePrice.time);
-						if(subTimeMin >=0 && subTimeMin<=120) // 在2分钟以内
-						{
-							cResultStockTime.error = 0;
-							cResultStockTime.date = date;
-							cResultStockTime.time = cTimePrice.time;
-							cResultStockTime.price = cTimePrice.price;
-							return cResultStockTime;
-						}
-						else
-						{
-							cResultStockTime.error = -1;
-							return cResultStockTime;
-						}
-					}
-					else
-					{
-						cResultStockTime.error = -2;
-						return cResultStockTime;
-					}
-				}
-				else
-				{
-					DEKLines DEKLines = this.getDayKLines(id, date, date);
-					if(DEKLines.size() > 0)
-					{
-						KLine cKLine = DEKLines.get(0);
-						cResultStockTime.error = 0;
-						cResultStockTime.date = cKLine.date;
-						cResultStockTime.time = "15:00:00";
-						cResultStockTime.price = cKLine.close;
-						return cResultStockTime;
-					}
-				}
-			}
-			else
-			{
-				
-				String beforeDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(date, -1);
-				DEKLines DEKLines = this.getDayKLines(id, beforeDate, beforeDate);
-				if(DEKLines.size() > 0)
-				{
-					KLine cKLine = DEKLines.get(0);
-					cResultStockTime.error = 0;
-					cResultStockTime.date = beforeDate;
-					cResultStockTime.time = "15:00:00";
-					cResultStockTime.price = cKLine.close;
-					return cResultStockTime;
-				}
-			}
+			cDETimePrice = new DETimePrice(-1, null, null);
 		}
-		cResultStockTime.error = -3;
-		return cResultStockTime;
+		
+		return cDETimePrice;
 	}
 	
 	private BaseDataLayer m_cBaseDataLayer;
