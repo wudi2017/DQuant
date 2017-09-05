@@ -1,10 +1,10 @@
 package pers.di.quantengine;
 
-import pers.di.quantengine.dataaccessor.DASPool;
+import pers.di.quantengine.dataaccessor.*;
 
 public class QuantContext {
 	public String date;
 	public String time;
 
-	public DASPool das;
+	public DAPool pool;
 }

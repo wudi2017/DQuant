@@ -21,7 +21,7 @@ public class DAStock {
 	}
 	
 	/*
-	 * 获取次日K线
+	 * 获取日K线
 	 */
 	public DAKLines dayKLines()
 	{

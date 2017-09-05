@@ -117,7 +117,7 @@ public class CommonDef {
 					}
 					else 
 					{
-						return -1;
+						return 0;
 					}
 				}
 				else
@@ -131,7 +131,7 @@ public class CommonDef {
 			}
 			else 
 			{
-				return -1;
+				return 0;
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package pers.di.quantengine_test;
 
 import pers.di.common.CLog;
+import pers.di.dataengine.webdata.CommonDef.*;
 import pers.di.quantengine.*;
 import pers.di.quantengine.dataaccessor.*;
 import pers.di.common.*;
@@ -14,9 +15,28 @@ public class TestQuantEngine {
 			// TODO Auto-generated method stub
 			CLog.output("TEST", "onHandler %s %s\n", ctx.date, ctx.time);
 			
-			ctx.das.get("600000").dayKLines();
+			// 遍历所有股票
+			for(int i=0; i<ctx.pool.size(); i++)
+			{
+				DAStock stock = ctx.pool.get(i);
+				CLog.output("TEST", "stock %s %s\n", stock.ID(), stock.name());
+			}
 			
-			ctx.das.get("600000").timePrices(ctx.date);
+			// 遍历某只股票日K线
+			DAKLines cKLines = ctx.pool.get("600000").dayKLines();
+			for(int i=0; i<cKLines.size(); i++)
+			{
+				KLine cKLine = cKLines.get(i);
+				CLog.output("TEST", "date %s close %.3f\n", cKLine.date, cKLine.close);
+			}
+			
+			// 遍历某只股票某日分时线
+			DATimePrices cTimePrices = ctx.pool.get("600000").timePrices(ctx.date);
+			for(int i=0; i<cTimePrices.size(); i++)
+			{
+				TimePrice cTimePrice = cTimePrices.get(i);
+				CLog.output("TEST", "time %s price %.3f\n", cTimePrice.time, cTimePrice.price);
+			}
 			
 		}
 	}

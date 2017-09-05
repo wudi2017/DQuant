@@ -9,7 +9,7 @@ import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.*;
 import pers.di.dataengine.StockUtils;
 import pers.di.dataengine.webdata.CommonDef.*;
-import pers.di.quantengine.dataaccessor.DataAccessor;
+import pers.di.quantengine.dataaccessor.*;
 
 public class QuantEngine {
 	/*
@@ -112,7 +112,7 @@ public class QuantEngine {
 							QuantContext ctx = new QuantContext();
 							ctx.date = dateStr;
 							ctx.time = timestr;
-							ctx.da = new DataAccessor(dateStr, timestr);
+							ctx.pool = new DAPool(dateStr, timestr);
 							triger.onHandler(ctx);
 						}
 						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
@@ -130,7 +130,7 @@ public class QuantEngine {
 							QuantContext ctx = new QuantContext();
 							ctx.date = dateStr;
 							ctx.time = timestr;
-							ctx.da = new DataAccessor(dateStr, timestr);
+							ctx.pool = new DAPool(dateStr, timestr);
 							triger.onHandler(ctx);
 						}
 						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
