@@ -7,7 +7,7 @@ import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
 import pers.di.dataengine.BaseDataLayer.ResultMinKLineOneDay;
 import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
-import pers.di.dataengine.webdata.CommonDef.*;
+import pers.di.dataengine.common.*;
 import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;

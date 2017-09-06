@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import pers.di.dataengine.webdata.CommonDef.StockBaseInfo;
+import pers.di.dataengine.common.*;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
 public class DataWebStockBaseInfo {

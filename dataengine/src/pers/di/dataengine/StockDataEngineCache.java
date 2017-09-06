@@ -2,7 +2,7 @@ package pers.di.dataengine;
 
 import java.util.*;
 
-import pers.di.dataengine.webdata.CommonDef.*;
+import pers.di.dataengine.common.*;
 
 public class StockDataEngineCache {
 	

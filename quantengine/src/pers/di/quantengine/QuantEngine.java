@@ -8,7 +8,7 @@ import pers.di.common.*;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.*;
 import pers.di.dataengine.StockUtils;
-import pers.di.dataengine.webdata.CommonDef.*;
+import pers.di.dataengine.common.*;
 import pers.di.quantengine.dataaccessor.*;
 
 public class QuantEngine {
@@ -85,7 +85,7 @@ public class QuantEngine {
 			{
 				bIsTranDate = true;
 			}
-			CLog.output("CTRL", "[%s %s] isTranDate = %b \n", dateStr, timestr, bIsTranDate);
+			CLog.output("QEngine", "[%s %s] isTranDate = %b \n", dateStr, timestr, bIsTranDate);
 			
 			
 			if(bIsTranDate)
@@ -95,7 +95,7 @@ public class QuantEngine {
 				waitForDateTime(dateStr, timestr);
 				boolean bAccInit = false;
 				bAccInit = true;
-				CLog.output("CTRL", "[%s %s] account newDayInit = %b \n", dateStr, timestr, bAccInit);
+				CLog.output("QEngine", "[%s %s] account newDayInit = %b \n", dateStr, timestr, bAccInit);
 				
 				if(bAccInit)
 				{
@@ -108,7 +108,7 @@ public class QuantEngine {
 					{
 						if(waitForDateTime(dateStr, timestr))
 						{
-							CLog.output("CTRL", "[%s %s] stockClearAnalysis & stockCreateAnalysis \n", dateStr, timestr);
+							CLog.output("QEngine", "[%s %s] stockClearAnalysis & stockCreateAnalysis \n", dateStr, timestr);
 							QuantContext ctx = new QuantContext();
 							ctx.date = dateStr;
 							ctx.time = timestr;
@@ -126,7 +126,7 @@ public class QuantEngine {
 					{
 						if(waitForDateTime(dateStr, timestr))
 						{
-							CLog.output("CTRL", "[%s %s] stockClearAnalysis & stockCreateAnalysis \n", dateStr, timestr);
+							CLog.output("QEngine", "[%s %s] stockClearAnalysis & stockCreateAnalysis \n", dateStr, timestr);
 							QuantContext ctx = new QuantContext();
 							ctx.date = dateStr;
 							ctx.time = timestr;
@@ -141,38 +141,38 @@ public class QuantEngine {
 					timestr = "19:00:00";
 					if(waitForDateTime(dateStr, timestr))
 					{
-						CLog.output("CTRL", "[%s %s] updateStockData \n", dateStr, timestr);
+						CLog.output("QEngine", "[%s %s] updateStockData \n", dateStr, timestr);
 					}
 					
 					// 20:30  选股
 					timestr = "20:30:00";
 					if(waitForDateTime(dateStr, timestr))
 					{
-						CLog.output("CTRL", "[%s %s] StockSelectAnalysis \n", dateStr, timestr);
+						CLog.output("QEngine", "[%s %s] StockSelectAnalysis \n", dateStr, timestr);
 					}
 					
 					// 20:35 当日报告
 					timestr = "20:35:00";
 					if(waitForDateTime(dateStr, timestr))
 					{
-						CLog.output("CTRL", "[%s %s] daily report collection \n", dateStr, timestr);
+						CLog.output("QEngine", "[%s %s] daily report collection \n", dateStr, timestr);
 					}
 					
 					// 20:40  账户当日交易结束
 					timestr = "20:40:00";
 					if(waitForDateTime(dateStr, timestr))
 					{
-						CLog.output("CTRL", "[%s %s] account newDayTranEnd\n", dateStr, timestr);
+						CLog.output("QEngine", "[%s %s] account newDayTranEnd\n", dateStr, timestr);
 					}
 				}
 				else
 				{
-					CLog.output("CTRL", "[%s %s] account newDayInit failed, continue! \n", dateStr, timestr);
+					CLog.output("QEngine", "[%s %s] account newDayInit failed, continue! \n", dateStr, timestr);
 				}
 			}
 			else
 			{
-				CLog.output("CTRL", "[%s %s] Not transaction date, continue! \n", dateStr, timestr);
+				CLog.output("QEngine", "[%s %s] Not transaction date, continue! \n", dateStr, timestr);
 			}
 			
 			// 获取下一日期

@@ -13,7 +13,7 @@ import pers.di.dataengine.StockDataEngine.DEStockIDs;
 import pers.di.dataengine.StockDataEngine.DETimePrices;
 import pers.di.dataengine.StockDataEngine.DEKLines;
 import pers.di.dataengine.StockDataEngine.DEStockBaseInfo;
-import pers.di.dataengine.webdata.CommonDef.*;
+import pers.di.dataengine.common.*;
 
 public class TestDataEngine {
 	

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import pers.di.dataengine.webdata.CommonDef.KLine;
-import pers.di.dataengine.webdata.CommonDef.TimePrice;
-
+import pers.di.dataengine.common.*;
 
 /**
  * 

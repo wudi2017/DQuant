@@ -1,7 +1,7 @@
 package pers.di.quantengine_test;
 
 import pers.di.common.CLog;
-import pers.di.dataengine.webdata.CommonDef.*;
+import pers.di.dataengine.common.*;
 import pers.di.quantengine.*;
 import pers.di.quantengine.dataaccessor.*;
 import pers.di.common.*;
@@ -45,6 +45,7 @@ public class TestQuantEngine {
 		CLog.output("TEST", "TestQuantEngine\n");
 		QuantEngine qE = new QuantEngine();
 		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-01-03");
+		// qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
 	}
 }

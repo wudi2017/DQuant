@@ -1,6 +1,6 @@
 package pers.di.quantengine.dataaccessor;
 
-import pers.di.dataengine.webdata.CommonDef.TimePrice;
+import pers.di.dataengine.common.*;
 
 public class DATimePrices {
 	
