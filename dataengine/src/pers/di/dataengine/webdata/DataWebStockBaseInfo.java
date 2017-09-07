@@ -7,7 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
 public class DataWebStockBaseInfo {
 	
@@ -26,21 +25,22 @@ public class DataWebStockBaseInfo {
 	 * 从网络获取某只股票更多当前信息（基本信息，总市值，流通市值，市盈率）
 	 * 返回0为成功，其他值为失败
 	 */
-	public static ResultStockBaseInfo getStockBaseInfo(String id)
+	public static int getStockBaseInfo(String id, StockBaseInfo container)
 	{
-		ResultStockBaseInfo cResultStockBaseInfo = new ResultStockBaseInfo();
+		int error = 0;
 		
 		// get base info
-		ResultRealTimeInfo cResultRealTimeInfoBase = DataWebStockRealTimeInfo.getRealTimeInfo(id);
-		if(0 != cResultRealTimeInfoBase.error) 
+		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
+		int errGetRealTimeInfo = DataWebStockRealTimeInfo.getRealTimeInfo(id, ctnRealTimeInfo);
+		if(0 != errGetRealTimeInfo) 
 		{
-			cResultStockBaseInfo.error = -2;
-			return cResultStockBaseInfo;
+			error = -2;
+			return error;
 		}
 		
-		cResultStockBaseInfo.stockBaseInfo.name = cResultRealTimeInfoBase.realTimeInfo.name;
-		cResultStockBaseInfo.stockBaseInfo.date = cResultRealTimeInfoBase.realTimeInfo.date;
-		cResultStockBaseInfo.stockBaseInfo.time = cResultRealTimeInfoBase.realTimeInfo.time;
+		container.name = ctnRealTimeInfo.name;
+		container.date = ctnRealTimeInfo.date;
+		container.time = ctnRealTimeInfo.time;
 		
 		// e.g http://qt.gtimg.cn/q=sz000858
 		String urlStr = "http://qt.gtimg.cn/q=";
@@ -56,13 +56,13 @@ public class DataWebStockBaseInfo {
 		else if(id.startsWith("99")) // 上证指数
 		{
 			tmpId = "sh" + "000001"; // 上证指数没有更多基本信息
-			cResultStockBaseInfo.error = 0;
-			return cResultStockBaseInfo;
+			error = 0;
+			return error;
 		}
 		else
 		{
-			cResultStockBaseInfo.error = -10;
-			return cResultStockBaseInfo;
+			error = -10;
+			return error;
 		}
 		urlStr = urlStr + tmpId;
 		
@@ -85,20 +85,20 @@ public class DataWebStockBaseInfo {
 //			{
 //				System.out.println(cells[i]);
 //			}
-			cResultStockBaseInfo.stockBaseInfo.allMarketValue = Float.parseFloat(cells[45]); //总市值
-			cResultStockBaseInfo.stockBaseInfo.circulatedMarketValue = Float.parseFloat(cells[44]); // 流通市值
+			container.allMarketValue = Float.parseFloat(cells[45]); //总市值
+			container.circulatedMarketValue = Float.parseFloat(cells[44]); // 流通市值
 			if(cells[39].length() != 0)
-				cResultStockBaseInfo.stockBaseInfo.peRatio = Float.parseFloat(cells[39]); //市盈率
+				container.peRatio = Float.parseFloat(cells[39]); //市盈率
 			else
-				cResultStockBaseInfo.stockBaseInfo.peRatio = 0.0f;
+				container.peRatio = 0.0f;
 			
         }catch (Exception e) {  
         	System.out.println("Exception[getRealTimeInfoMore]:" + e.getMessage()); 
             // TODO: handle exception  
-        	cResultStockBaseInfo.error = -1;
-        	return cResultStockBaseInfo;
+        	error = -1;
+        	return error;
         }  
-		return cResultStockBaseInfo;
+		return error;
 	}
 	
     public static  byte[] readInputStream(InputStream inputStream) throws IOException {    

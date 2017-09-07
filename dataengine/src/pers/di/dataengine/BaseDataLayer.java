@@ -12,7 +12,6 @@ import pers.di.dataengine.common.*;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
 /*
  * 股票基础数据层
@@ -544,9 +543,9 @@ public class BaseDataLayer {
 		return cResultMinKLineOneDay;
 	}
 	
-	public ResultRealTimeInfo getRealTimeInfo(String stockID)
+	public int getRealTimeInfo(String stockID, RealTimeInfo container)
 	{
-		return DataWebStockRealTimeInfo.getRealTimeInfo(stockID);
+		return DataWebStockRealTimeInfo.getRealTimeInfo(stockID, container);
 	}
 	
 	

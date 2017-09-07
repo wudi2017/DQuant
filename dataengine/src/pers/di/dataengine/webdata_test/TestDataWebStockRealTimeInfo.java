@@ -1,7 +1,7 @@
 package pers.di.dataengine.webdata_test;
 
+import pers.di.dataengine.common.*;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
 public class TestDataWebStockRealTimeInfo {
 
@@ -10,17 +10,18 @@ public class TestDataWebStockRealTimeInfo {
 		String stockID = "300550";
 		{
 			System.out.println("getRealTimeInfo -----------------------------------");
-			ResultRealTimeInfo cResultRealTimeInfo = DataWebStockRealTimeInfo.getRealTimeInfo(stockID);
-			if(0 == cResultRealTimeInfo.error)
+			RealTimeInfo container = new RealTimeInfo();
+			int error = DataWebStockRealTimeInfo.getRealTimeInfo(stockID, container);
+			if(0 == error)
 			{ 
-				System.out.println(cResultRealTimeInfo.realTimeInfo.name);
-				System.out.println(cResultRealTimeInfo.realTimeInfo.curPrice);
-				System.out.println(cResultRealTimeInfo.realTimeInfo.date);
-		        System.out.println(cResultRealTimeInfo.realTimeInfo.time);
+				System.out.println(container.name);
+				System.out.println(container.curPrice);
+				System.out.println(container.date);
+		        System.out.println(container.time);
 			}
 			else
 			{
-				System.out.println("ERROR:" + cResultRealTimeInfo.error);
+				System.out.println("ERROR:" + error);
 			}
 		}
 	}

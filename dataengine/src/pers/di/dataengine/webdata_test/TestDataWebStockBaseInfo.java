@@ -1,6 +1,7 @@
 package pers.di.dataengine.webdata_test;
 
 import pers.di.dataengine.webdata.DataWebStockBaseInfo.ResultStockBaseInfo;
+import pers.di.dataengine.common.*;
 import pers.di.dataengine.webdata.DataWebStockBaseInfo;
 
 public class TestDataWebStockBaseInfo {
@@ -10,19 +11,20 @@ public class TestDataWebStockBaseInfo {
 				String stockID = "300550";
 				
 				System.out.println("getRealTimeInfoMore -----------------------------------");
-				ResultStockBaseInfo cResultStockBaseInfo = DataWebStockBaseInfo.getStockBaseInfo(stockID);
-				if(0 == cResultStockBaseInfo.error)
+				StockBaseInfo ctnStockBaseInfo = new StockBaseInfo();
+				int error = DataWebStockBaseInfo.getStockBaseInfo(stockID, ctnStockBaseInfo);
+				if(0 == error)
 				{ 
-					System.out.println(cResultStockBaseInfo.stockBaseInfo.name);
-					System.out.println(cResultStockBaseInfo.stockBaseInfo.date);
-					System.out.println(cResultStockBaseInfo.stockBaseInfo.time);
-					System.out.println(cResultStockBaseInfo.stockBaseInfo.allMarketValue);
-					System.out.println(cResultStockBaseInfo.stockBaseInfo.circulatedMarketValue);
-					System.out.println(cResultStockBaseInfo.stockBaseInfo.peRatio);
+					System.out.println(ctnStockBaseInfo.name);
+					System.out.println(ctnStockBaseInfo.date);
+					System.out.println(ctnStockBaseInfo.time);
+					System.out.println(ctnStockBaseInfo.allMarketValue);
+					System.out.println(ctnStockBaseInfo.circulatedMarketValue);
+					System.out.println(ctnStockBaseInfo.peRatio);
 				}
 				else
 				{
-					System.out.println("ERROR:" + cResultStockBaseInfo.error);
+					System.out.println("ERROR:" + error);
 				}
 			}
 		}

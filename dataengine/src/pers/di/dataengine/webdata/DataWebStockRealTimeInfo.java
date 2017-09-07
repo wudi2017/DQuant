@@ -17,24 +17,15 @@ import pers.di.dataengine.common.*;
 
 public class DataWebStockRealTimeInfo {
 	
-	public static class ResultRealTimeInfo
-	{
-		public ResultRealTimeInfo()
-		{
-			error = 0;
-			realTimeInfo = new RealTimeInfo();
-		}
-		public int error;
-		public RealTimeInfo realTimeInfo;
-	}
-	
 	/*
 	 * 从网络获取某只股票当前信息（基本：名字 日期 时间 价格）
 	 * 返回0为成功，其他值为失败
+	 * 参数
+	 *     container 传入接收容器
 	 */
-	public static ResultRealTimeInfo getRealTimeInfo(String id)
+	public static int getRealTimeInfo(String id, RealTimeInfo container)
 	{
-		ResultRealTimeInfo cResultRealTimeInfo = new ResultRealTimeInfo();
+		int error = 0;
 		// e.g http://hq.sinajs.cn/list=sz300163
 		String urlStr = "http://hq.sinajs.cn/list=";
 		String tmpId = "";
@@ -52,8 +43,8 @@ public class DataWebStockRealTimeInfo {
 		}
 		else
 		{
-			cResultRealTimeInfo.error = -10;
-			return cResultRealTimeInfo;
+			error = -10;
+			return error;
 		}
 		urlStr = urlStr + tmpId;
 		
@@ -76,24 +67,24 @@ public class DataWebStockRealTimeInfo {
 			String validdata = cells[lenCells - 2];
 			//System.out.println(validdata);     
 			String[] cols = validdata.split(",");
-			cResultRealTimeInfo.realTimeInfo.name = cols[0];
-			cResultRealTimeInfo.realTimeInfo.curPrice = Float.parseFloat(cols[3]);
-			cResultRealTimeInfo.realTimeInfo.date = cols[30];
-			cResultRealTimeInfo.realTimeInfo.time = cols[31];
-			if(cResultRealTimeInfo.realTimeInfo.date.length() < 2 || cResultRealTimeInfo.realTimeInfo.name.length() < 2)
+			container.name = cols[0];
+			container.curPrice = Float.parseFloat(cols[3]);
+			container.date = cols[30];
+			container.time = cols[31];
+			if(container.date.length() < 2 || container.name.length() < 2)
 			{
 				System.out.println("Exception[DataWebStockRealTimeInfo]: invalid data"); 
-				cResultRealTimeInfo.error = -2;
-				return cResultRealTimeInfo;
+				error = -2;
+				return error;
 			}
 			
         }catch (Exception e) {  
         	System.out.println("Exception[DataWebStockRealTimeInfo]:" + e.getMessage()); 
             // TODO: handle exception  
-        	cResultRealTimeInfo.error = -1;
-			return cResultRealTimeInfo;
+        	error = -1;
+			return error;
         }  
-		return cResultRealTimeInfo;
+		return error;
 	}
 	
     public static  byte[] readInputStream(InputStream inputStream) throws IOException {    

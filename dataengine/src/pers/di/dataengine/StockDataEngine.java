@@ -9,7 +9,6 @@ import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
 import pers.di.dataengine.common.*;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
 public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine();  
@@ -485,13 +484,14 @@ public class StockDataEngine {
 	{
 		DETimePrice cDETimePrice = null;
 		
-		ResultRealTimeInfo cResultRealTimeInfo = m_cBaseDataLayer.getRealTimeInfo(id);
+		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
+		int error = m_cBaseDataLayer.getRealTimeInfo(id, ctnRealTimeInfo);
 		
-		if(0 == cResultRealTimeInfo.error)
+		if(0 == error)
 		{
 			TimePrice cTimePrice = new TimePrice();
-			cTimePrice.time = cResultRealTimeInfo.realTimeInfo.time;
-			cTimePrice.price = cResultRealTimeInfo.realTimeInfo.curPrice;
+			cTimePrice.time = ctnRealTimeInfo.time;
+			cTimePrice.price = ctnRealTimeInfo.curPrice;
 
 			if(0 == Float.compare(cTimePrice.price, 0.00f))
 			{
@@ -501,7 +501,7 @@ public class StockDataEngine {
 			else
 			{
 				cDETimePrice = new DETimePrice(0,
-						cResultRealTimeInfo.realTimeInfo.date,
+						ctnRealTimeInfo.date,
 						cTimePrice);
 			}
 		}
