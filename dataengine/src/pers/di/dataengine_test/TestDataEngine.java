@@ -67,18 +67,17 @@ public class TestDataEngine {
 		List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 		
 		String stockID = "600004";
-		DETimePrices cDETimePrices = StockDataEngine.instance().getMinTimePrices(stockID, "2016-01-27", "09:31:00", "14:00:00");
+		DETimePrices cDETimePrices = StockDataEngine.instance().getMinTimePrices(stockID, "2016-01-27", "09:00:00", "15:00:00");
 		CLog.output("TEST", "KLine count: %d\n", cDETimePrices.size());
 		for(int i=0; i<cDETimePrices.size(); i++)
 		{
 			TimePrice cTimePrice = cDETimePrices.get(i);
-			CLog.output("TEST", "date: %s close: %f\n", cTimePrice.time, cTimePrice.price);
+			CLog.output("TEST", "time: %s close: %f\n", cTimePrice.time, cTimePrice.price);
 			PoiList.add(new CurvePoint(i,cTimePrice.price));
 		}
 		
 		cCImageCurve.writeLogicCurve(PoiList, 1);
 		cCImageCurve.GenerateImage();
-		
 	}
 	
 	public static void main(String[] args) {

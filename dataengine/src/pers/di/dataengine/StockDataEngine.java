@@ -336,6 +336,7 @@ public class StockDataEngine {
 		private int m_iBase;
 		private int m_iSize;
 	}
+	
 	public DETimePrices getMinTimePrices(String id, String date, String beginTime, String endTime)
 	{
 		DETimePrices cDETimePrices = null;
