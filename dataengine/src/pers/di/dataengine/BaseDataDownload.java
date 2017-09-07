@@ -3,6 +3,7 @@ package pers.di.dataengine;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
@@ -23,7 +24,6 @@ import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayou
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 
 public class BaseDataDownload {
 	
@@ -68,12 +68,13 @@ public class BaseDataDownload {
 		
 		
 		// 更新所有k
-		ResultAllStockList cResultAllStockList = DataWebStockAllList.getAllStockList();
-		if(0 == cResultAllStockList.error)
+		List<StockItem> stockAllList = new ArrayList<StockItem>();
+		int error = DataWebStockAllList.getAllStockList(stockAllList);
+		if(0 == error)
 		{
-			for(int i = 0; i < cResultAllStockList.resultList.size(); i++)  
+			for(int i = 0; i < stockAllList.size(); i++)  
 	        {  
-				StockItem cStockItem = cResultAllStockList.resultList.get(i);
+				StockItem cStockItem = stockAllList.get(i);
 				
 				String stockID = cStockItem.id;
 				
@@ -98,11 +99,11 @@ public class BaseDataDownload {
 				}   
 				
 	        } 
-			System.out.println("update finish, count:" + cResultAllStockList.resultList.size()); 
+			System.out.println("update finish, count:" + stockAllList.size()); 
 		}
 		else
 		{
-			System.out.println("ERROR:" + cResultAllStockList.error);
+			System.out.println("ERROR:" + error);
 		}
 		
 		if(newestDate.length() == "0000-00-00".length())

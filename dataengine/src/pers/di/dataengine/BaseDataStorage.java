@@ -13,7 +13,6 @@ import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.common.CPath;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
@@ -399,20 +398,17 @@ public class BaseDataStorage {
 	}
 	
 	
-	public ResultAllStockList getLocalAllStock()
+	public int getLocalAllStock(List<StockItem> container)
 	{
-		ResultAllStockList cResultAllStockList = new ResultAllStockList();
-		
-		List<StockItem> retListAll = cResultAllStockList.resultList;
-			
+		int error = 0;
 		// emu local
 		File root = new File(s_workDir);
 		File[] fs = root.listFiles();
 		if(fs == null)
 		{
 			s_fmt.format("[ERROR] not found dir:data\n");
-			cResultAllStockList.error = -10;
-			return cResultAllStockList;
+			error = -10;
+			return error;
 		}
 		for(int i=0; i<fs.length; i++){
 			if(fs[i].isDirectory()){
@@ -423,12 +419,12 @@ public class BaseDataStorage {
 				{
 					StockItem cStockItem = new StockItem();
 					cStockItem.id = dirName;
-					retListAll.add(cStockItem);
+					container.add(cStockItem);
 				}
 				
 			}
 		}
-		return cResultAllStockList;
+		return error;
 	}
 	
 	private String s_workDir = "data";

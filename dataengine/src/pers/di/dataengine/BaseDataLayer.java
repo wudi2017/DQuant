@@ -9,7 +9,6 @@ import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
@@ -52,9 +51,9 @@ public class BaseDataLayer {
 	/*
 	 * 获取本地股票列表
 	 */
-	public ResultAllStockList getLocalAllStock()
+	public int getLocalAllStock(ArrayList<StockItem> container)
 	{
-		return m_cBaseDataStorage.getLocalAllStock();
+		return m_cBaseDataStorage.getLocalAllStock(container);
 	}
 	
 	/*

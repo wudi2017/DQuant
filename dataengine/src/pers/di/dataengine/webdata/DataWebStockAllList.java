@@ -22,6 +22,7 @@ import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
+import pers.di.common.CTypeDefine.*;
 import pers.di.dataengine.common.*;
 
 public class DataWebStockAllList {
@@ -29,19 +30,12 @@ public class DataWebStockAllList {
 	 * 从网络中获得所有股票ID与名字
 	 * 返回0为成功，其他值为失败
 	 */
-	public static class ResultAllStockList
+	public static int getAllStockList(List<StockItem> container)
 	{
-		public ResultAllStockList()
-		{
-			error = 0;
-			resultList = new ArrayList<StockItem>();
-		}
-		public int error;
-		public List<StockItem> resultList;
-	}
-	public static ResultAllStockList getAllStockList()
-	{
-		ResultAllStockList cResultAllStockList = new ResultAllStockList();
+		int error = 0;
+		
+		if(null == container) return 0;
+		
 		try{  
 			String allStockListUrl = "http://quote.eastmoney.com/stocklist.html";
 //            URL url = new URL(allStockListUrl);  
@@ -106,23 +100,23 @@ public class DataWebStockAllList {
                  		StockItem cStockItem = new StockItem();
                  		cStockItem.name = name;
                  		cStockItem.id = id;
-                 		cResultAllStockList.resultList.add(cStockItem);
+                 		container.add(cStockItem);
              		}
              	}
              }
              // System.out.println(allCount); 
              
-             if(cResultAllStockList.resultList.size() <= 0) 
+             if(container.size() <= 0) 
         	 {
-            	 cResultAllStockList.error = -30;
+            	 error = -30;
         	 }
 
         }catch (Exception e) {  
         	System.out.println("Exception[WebStockAllList]:" + e.getMessage()); 
             // TODO: handle exception  
-        	cResultAllStockList.error = -1;
+        	error = -1;
         }  
-		return cResultAllStockList;
+		return error;
 	}
 
 	public static class ResultRandomStock
@@ -141,12 +135,13 @@ public class DataWebStockAllList {
 		
 		if(0 != count)
 		{
-			ResultAllStockList cResultAllStockList = DataWebStockAllList.getAllStockList();
-			if(0 == cResultAllStockList.error)
+			List<StockItem> cStockItems = new ArrayList<StockItem>();
+			int error = DataWebStockAllList.getAllStockList(cStockItems);
+			if(0 == error)
 			{
 				for(int i = 0; i < count; i++)  
 		        {  
-					StockItem cStockItem = popRandomStock(cResultAllStockList.resultList);
+					StockItem cStockItem = popRandomStock(cStockItems);
 					cResultRandomStock.resultList.add(cStockItem);
 		        } 
 			}

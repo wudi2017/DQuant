@@ -8,7 +8,6 @@ import pers.di.dataengine.BaseDataLayer.ResultMinKLineOneDay;
 import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo.ResultRealTimeInfo;
 
@@ -137,19 +136,20 @@ public class StockDataEngine {
 		{
 			m_cCache.AllStockID = new ArrayList<String>();
 			
-			ResultAllStockList cResultAllStockList = m_cBaseDataLayer.getLocalAllStock();
-			if(0 == cResultAllStockList.error)
+			ArrayList<StockItem> container = new ArrayList<StockItem>();
+			int error = m_cBaseDataLayer.getLocalAllStock(container);
+			if(0 == error)
 			{
-				for(int i=0; i<cResultAllStockList.resultList.size();i++)
+				for(int i=0; i<container.size();i++)
 				{
-					String stockId = cResultAllStockList.resultList.get(i).id;
+					String stockId = container.get(i).id;
 					m_cCache.AllStockID.add(stockId);
 				}
 				cDEStockIDs = new DEStockIDs(0, m_cCache.AllStockID);
 			}
 			else
 			{
-				CLog.error("STOCK", "DataEngine.getLocalAllStock error(%d) \n", cResultAllStockList.error);
+				CLog.error("STOCK", "DataEngine.getLocalAllStock error(%d) \n", error);
 			}
 		}
 		return cDEStockIDs;

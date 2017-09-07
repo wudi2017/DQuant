@@ -5,24 +5,24 @@ import java.util.List;
 
 import pers.di.dataengine.common.*;
 import pers.di.dataengine.webdata.DataWebStockAllList;
-import pers.di.dataengine.webdata.DataWebStockAllList.ResultAllStockList;
 
 public class TestDataWebStockAllList {
 	public static void main(String[] args) {
 
-		ResultAllStockList cResultAllStockList = DataWebStockAllList.getAllStockList();
-		if(0 == cResultAllStockList.error)
+		List<StockItem> container = new ArrayList<StockItem>();
+		int error = DataWebStockAllList.getAllStockList(container);
+		if(0 == error)
 		{
-			for(int i = 0; i < cResultAllStockList.resultList.size(); i++)  
+			for(int i = 0; i < container.size(); i++)  
 	        {  
-				StockItem cStockItem = cResultAllStockList.resultList.get(i);  
+				StockItem cStockItem = container.get(i);  
 	            System.out.println(cStockItem.name + "," + cStockItem.id);  
 	        } 
-			System.out.println("count:" + cResultAllStockList.resultList.size()); 
+			System.out.println("count:" + container.size()); 
 		}
 		else
 		{
-			System.out.println("ERROR:" + cResultAllStockList.error);
+			System.out.println("ERROR:" + error);
 		}
 	}
 }

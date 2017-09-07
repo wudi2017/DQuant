@@ -1,22 +1,30 @@
 package pers.di.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CTypeDefine {
 	
-	public static class RefFloat
+	public static class ObjContainer<T>
 	{
-		public RefFloat()
+		public ObjContainer()
 		{
-			value = 0.0f;
+			m_obj = null;
 		}
-		public float value;
-	}
-	
-	public static class RefInt
-	{
-		public RefInt()
+		public void set(T obj)
 		{
-			value = 0;
+			m_obj = obj;
 		}
-		public int value;
+		public T get()
+		{
+			return m_obj;
+		}
+		public T move()
+		{
+			T tmp = m_obj;
+			m_obj = null;
+			return tmp;
+		}
+		private T m_obj;
 	}
 }
