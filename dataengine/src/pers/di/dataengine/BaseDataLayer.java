@@ -4,9 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
-import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
-import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
+import pers.di.common.*;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.common.*;
 
@@ -30,17 +28,17 @@ public class BaseDataLayer {
 		return m_cBaseDataDownload.downloadAllStockFullData(dateStr);
 	}
 	// 获取本地总体数据更新时间
-	public ResultAllStockFullDataTimestamps getAllStockFullDataTimestamps()
+	public int getAllStockFullDataTimestamps(CObjectContainer<String> container)
 	{
-		return m_cBaseDataStorage.getAllStockFullDataTimestamps();
+		return m_cBaseDataStorage.getAllStockFullDataTimestamps(container);
 	}
 	
 	/*
 	 * 更新某一只股票
 	 */
-	public ResultUpdateStock updateLocaStocKLine(String stockId)
+	public int updateLocaStocKLine(String stockId, CObjectContainer<Integer> container)
 	{
-		return m_cBaseDataDownload.downloadStockFullData(stockId);
+		return m_cBaseDataDownload.downloadStockFullData(stockId, container);
 	}
 	
 	
@@ -55,9 +53,9 @@ public class BaseDataLayer {
 	/*
 	 * 获取某只股票基础信息
 	 */
-	public ResultStockBaseData getBaseInfo(String id) 
+	public int getStockInfo(String id, StockInfo container) 
 	{
-		return m_cBaseDataStorage.getBaseInfo(id);
+		return m_cBaseDataStorage.getStockInfo(id, container);
 	}
 	
 	/*
@@ -613,9 +611,10 @@ public class BaseDataLayer {
 	public int checkStocKLine(String stockID)
 	{
 		// 检查基本信息
-		ResultStockBaseData cResultStockBaseData = m_cBaseDataStorage.getBaseInfo(stockID);
-		if(0 != cResultStockBaseData.error 
-				|| cResultStockBaseData.stockBaseInfo.name.length() <= 0)
+		StockInfo ctnStockInfo = new StockInfo();
+		int errStockInfo = m_cBaseDataStorage.getStockInfo(stockID, ctnStockInfo);
+		if(0 != errStockInfo 
+				|| ctnStockInfo.name.length() <= 0)
 		{
 			return -1;
 		}

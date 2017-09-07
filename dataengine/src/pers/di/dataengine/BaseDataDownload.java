@@ -5,10 +5,7 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import pers.di.common.CPath;
-import pers.di.common.CUtilsDateTime;
-import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
-import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
+import pers.di.common.*;
 import pers.di.dataengine.webdata.DataWebStockAllList;
 import pers.di.dataengine.webdata.DataWebStockInfo;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
@@ -24,14 +21,23 @@ public class BaseDataDownload {
 		m_baseDataStorage = cBaseDataStorage;
 	}
 	
+	/*
+	 * 下载所有股票数据到本地
+	 * 
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     dateStr 下载到的最后日期
+	 */
 	public int downloadAllStockFullData(String dateStr)
 	{
-		ResultAllStockFullDataTimestamps cResultUpdatedStocksDate = m_baseDataStorage.getAllStockFullDataTimestamps();
-		if(0 == cResultUpdatedStocksDate.error)
+		CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
+		int errAllStockFullDataTimestamps = m_baseDataStorage.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
+		if(0 == errAllStockFullDataTimestamps)
 		{
-			if(cResultUpdatedStocksDate.date.compareTo(dateStr) >= 0)
+			if(ctnAllStockFullDataTimestamps.get().compareTo(dateStr) >= 0)
 			{
-				s_fmt.format("update success! (current is newest, local: %s)\n", cResultUpdatedStocksDate.date);
+				s_fmt.format("update success! (current is newest, local: %s)\n", ctnAllStockFullDataTimestamps.get());
 				return 0;
 			}
 		}
@@ -40,9 +46,10 @@ public class BaseDataDownload {
 		String ShangZhiId = "999999";
 		String ShangZhiName = "上阵指数";
 		
-		ResultUpdateStock cResultUpdateStockShangZhi = this.downloadStockFullData(ShangZhiId);
+		CObjectContainer<Integer> ctnCountSZ = new CObjectContainer<Integer>();
+		int errDownloadSZ = this.downloadStockFullData(ShangZhiId, ctnCountSZ);
 		String newestDate = "";
-		if(0 == cResultUpdateStockShangZhi.error)
+		if(0 == errDownloadSZ)
 		{
 			List<KLine> ctnKLine = new ArrayList<KLine>();
 			int error = m_baseDataStorage.getKLine(ShangZhiId, ctnKLine);
@@ -52,11 +59,11 @@ public class BaseDataDownload {
 				newestDate = ctnKLine.get(ctnKLine.size()-1).date;
 			}
 			
-			s_fmt.format("update success: %s (%s) item:%d date:%s\n", ShangZhiId, ShangZhiName, cResultUpdateStockShangZhi.updateCnt, newestDate);
+			s_fmt.format("update success: %s (%s) item:%d date:%s\n", ShangZhiId, ShangZhiName, ctnCountSZ.get(), newestDate);
 		}
 		else
 		{
-			s_fmt.format("update ERROR: %s error(%d)\n", ShangZhiId, cResultUpdateStockShangZhi.error);
+			s_fmt.format("update ERROR: %s error(%d)\n", ShangZhiId, errDownloadSZ);
 		}
 		
 		
@@ -71,25 +78,26 @@ public class BaseDataDownload {
 				
 				String stockID = cStockItem.id;
 				
-				ResultUpdateStock cResultUpdateStock = this.downloadStockFullData(stockID);
+				CObjectContainer<Integer> ctnCount = new CObjectContainer<Integer>();
+				int errDownloaddStockFullData = this.downloadStockFullData(stockID, ctnCount);
 	           
-				if(0 == cResultUpdateStock.error)
+				if(0 == errDownloaddStockFullData)
 				{
 					List<KLine> ctnKLine = new ArrayList<KLine>();
 					int errKLine = m_baseDataStorage.getKLine(stockID, ctnKLine);
 		    		if(0 == errKLine && ctnKLine.size() > 0)
 		    		{
 		    			String stockNewestDate = ctnKLine.get(ctnKLine.size()-1).date;
-		    			s_fmt.format("update success: %s (%s) item:%d date:%s\n", cStockItem.id, cStockItem.name, cResultUpdateStock.updateCnt, stockNewestDate);
+		    			s_fmt.format("update success: %s (%s) item:%d date:%s\n", cStockItem.id, cStockItem.name, ctnCount.get(), stockNewestDate);
 		    		}
 		            else
 		            {
-		            	s_fmt.format("update ERROR: %s (%s) error(%d)\n", cStockItem.id, cStockItem.name, cResultUpdateStock.error);
+		            	s_fmt.format("update ERROR: %s (%s) error(%d)\n", cStockItem.id, cStockItem.name, errDownloaddStockFullData);
 		            }
 				}
 				else
 				{
-					s_fmt.format("update ERROR: %s error(%d)\n", cStockItem.id, cResultUpdateStock.error);
+					s_fmt.format("update ERROR: %s error(%d)\n", cStockItem.id, errDownloaddStockFullData);
 				}   
 				
 	        } 
@@ -114,23 +122,16 @@ public class BaseDataDownload {
 	
 
 	/*
-	 * downloadStocKLine
-	 * include: dayK,DividendPayout,BaseInfo
-	 * not include: detail
+	 * 下载所单只股票数据到本地
+	 * 
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     container 接收容器，获得更新日K线天数
 	 */
-	public static class ResultUpdateStock
+	public int downloadStockFullData(String id, CObjectContainer<Integer> container)
 	{
-		public ResultUpdateStock()
-		{
-			error = 0;
-			updateCnt = 0;
-		}
-		public int error;
-		public int updateCnt;
-	}
-	public ResultUpdateStock downloadStockFullData(String id)
-	{
-		ResultUpdateStock cResultUpdateStock = new ResultUpdateStock();
+		int error = 0;
 		
 		// 获取当前有效日期，交易日（非周六周日）
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
@@ -180,7 +181,7 @@ public class BaseDataDownload {
 					cStockBaseData.allMarketValue = ctnStockInfo.allMarketValue;
 					cStockBaseData.circulatedMarketValue = ctnStockInfo.circulatedMarketValue;
 					cStockBaseData.peRatio = ctnStockInfo.peRatio;
-					m_baseDataStorage.saveBaseInfo(id, cStockBaseData);
+					m_baseDataStorage.saveStockInfo(id, cStockBaseData);
 					
 					// 当前时间在收盘之前，网络数据有效日期为前一天（非周六周日）
 					String webValidLastDate = ctnStockInfo.date;
@@ -245,51 +246,51 @@ public class BaseDataDownload {
 								if(0 == this.downloadStockDividendPayout(id))
 								{
 									// 追加成功
-									cResultUpdateStock.error = 0;
-									cResultUpdateStock.updateCnt = ctnKLineWeb.size();
-									return cResultUpdateStock;
+									error = 0;
+									container.set(ctnKLineWeb.size());
+									return error;
 								}
 								else
 								{
 									// 更新复权因子失败
-									cResultUpdateStock.error = -80;
-									return cResultUpdateStock;
+									error = -80;
+									return error;
 								}
 							}
 							else
 							{
 								//保存本地数据失败
-								cResultUpdateStock.error = -50;
-								return cResultUpdateStock;
+								error = -50;
+								return error;
 							}
 						}
 						else
 						{
 							// 网络获取追加数据失败
-							cResultUpdateStock.error = -40;
-							return cResultUpdateStock;
+							error = -40;
+							return error;
 						}
 						
 					}
 					else
 					{
 						// 已经和网络最新有效日线一样
-						cResultUpdateStock.error = 0;
-						return cResultUpdateStock;
+						error = 0;
+						return error;
 					}
 				}
 				else
 				{
 					// 获取网络最新有效交易日期失败
-					cResultUpdateStock.error = -20;
-					return cResultUpdateStock;
+					error = -20;
+					return error;
 				}
 			}
 			else
 			{
 				// 本地数据已经是最新
-				cResultUpdateStock.error = 0;
-				return cResultUpdateStock;
+				error = 0;
+				return error;
 			}
 		}
 		else
@@ -302,7 +303,7 @@ public class BaseDataDownload {
 				// 下载日K，分红派息，基本信息
 				int retdownloadStockDayk =  this.downloadStockDayk(id);
 				int retdownloadStockDividendPayout =  this.downloadStockDividendPayout(id);
-				int retdownloadBaseInfo =  this.downloadBaseInfo(id);
+				int retdownloadBaseInfo =  this.downloadStockInfo(id);
 				if(0 == retdownloadStockDayk 
 						&& 0 == retdownloadStockDividendPayout 
 						&& 0 == retdownloadBaseInfo)
@@ -313,32 +314,35 @@ public class BaseDataDownload {
 					if(errKLineLocalNew == 0)
 					{
 						//最新数据下载成功返回天数
-						cResultUpdateStock.error = 0;
-						cResultUpdateStock.updateCnt = ctnKLineLocalNew.size();
-						return cResultUpdateStock;
+						error = 0;
+						container.set(ctnKLineLocalNew.size());
+						return error;
 					}
 					else
 					{
-						cResultUpdateStock.error = -23;
-						return cResultUpdateStock;
+						error = -23;
+						return error;
 					}
 				}
 				else
 				// 下载日K，分红派息，基本信息 失败
 				{
-					cResultUpdateStock.error = -10;
-					return cResultUpdateStock;
+					error = -10;
+					return error;
 				}
 			}
 			else
 			{
 				// 获取网络最新有效交易日期失败
-				cResultUpdateStock.error = -20;
-				return cResultUpdateStock;
+				error = -20;
+				return error;
 			}
 		}
 	}
 	
+	/*
+	 * 下载日K
+	 */
 	public int downloadStockDayk(String id)
 	{
 		String curDate = CUtilsDateTime.GetCurDateStr();
@@ -363,7 +367,11 @@ public class BaseDataDownload {
 		}
 		return 0;
 	}
-	public int downloadBaseInfo(String id)
+	
+	/*
+	 * 下载股票信息
+	 */
+	public int downloadStockInfo(String id)
 	{
 		try
 		{
@@ -371,7 +379,7 @@ public class BaseDataDownload {
 			int errStockInfo = DataWebStockInfo.getStockInfo(id, ctnStockInfo);
 			if(0 == errStockInfo)
 			{
-				m_baseDataStorage.saveBaseInfo(id, ctnStockInfo);
+				m_baseDataStorage.saveStockInfo(id, ctnStockInfo);
 			}
 			else
 			{
@@ -385,6 +393,10 @@ public class BaseDataDownload {
 		}
 		return 0;
 	}
+	
+	/*
+	 * 下载分红派息
+	 */
 	public int downloadStockDividendPayout(String id)
 	{
 		List<DividendPayout> ctnDividendPayout = new ArrayList<DividendPayout>();

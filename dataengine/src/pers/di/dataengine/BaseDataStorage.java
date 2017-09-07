@@ -13,10 +13,16 @@ import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.common.*;
-import pers.di.common.CPath;
+import pers.di.common.*;
 
 public class BaseDataStorage {
 	
+	/*
+	 * 基础数据存储类
+	 * 
+	 * 参数：
+	 *     dataDir 存储数据路径
+	 */
 	public BaseDataStorage(String dataDir) 
 	{
 		s_workDir = dataDir;
@@ -72,7 +78,7 @@ public class BaseDataStorage {
 		}
 		return error;
 	}
-	public int saveKLine(String id, List<KLine> in_list)
+	public int saveKLine(String id, List<KLine> container)
 	{
 		String stocKLineDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stocKLineDir)) return -10;
@@ -82,9 +88,9 @@ public class BaseDataStorage {
 		try
 		{
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
-			for(int i = 0; i < in_list.size(); i++)  
+			for(int i = 0; i < container.size(); i++)  
 	        {  
-				KLine cKLine = in_list.get(i);  
+				KLine cKLine = container.get(i);  
 //		            System.out.println(cKLine.date + "," 
 //		            		+ cKLine.open + "," + cKLine.close);  
 	            cOutputStream.write((cKLine.date + ",").getBytes());
@@ -110,15 +116,6 @@ public class BaseDataStorage {
 		
 		String stockDividendPayoutFileName = s_workDir + "/" + id + "/" + s_DividendPayoutFile;
 		File cfile=new File(stockDividendPayoutFileName);
-//		if(!cfile.exists())
-//		{
-//			int iDownLoad = downloadStockDividendPayout(id);
-//			if(0 != iDownLoad)
-//			{
-//				cResultDividendPayout.error = -21;
-//				return cResultDividendPayout;
-//			}
-//		}
 		if(!cfile.exists()) 
 		{
 			error = -10;
@@ -153,7 +150,7 @@ public class BaseDataStorage {
 		}
 		return error;
 	}
-	public int saveDividendPayout(String id, List<DividendPayout> in_list)
+	public int saveDividendPayout(String id, List<DividendPayout> container)
 	{
 		String stocKLineDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stocKLineDir)) return -10;
@@ -163,9 +160,9 @@ public class BaseDataStorage {
 		try
 		{
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
-			for(int i = 0; i < in_list.size(); i++)  
+			for(int i = 0; i < container.size(); i++)  
 	        {  
-				DividendPayout cDividendPayout = in_list.get(i);
+				DividendPayout cDividendPayout = container.get(i);
 				// System.out.println(cDividendPayout.date); 
 				cOutputStream.write((cDividendPayout.date + ",").getBytes());
 				cOutputStream.write((cDividendPayout.songGu + ",").getBytes());
@@ -224,7 +221,7 @@ public class BaseDataStorage {
 		}
 		return error;
 	}
-	public int saveDayDetail(String id, String date, List<TradeDetail> in_list)
+	public int saveDayDetail(String id, String date, List<TradeDetail> container)
 	{
 		String stocKLineDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stocKLineDir)) return -10;
@@ -234,9 +231,9 @@ public class BaseDataStorage {
 		{
 			File cfile =new File(stocKLineDetailFileName);
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
-			for(int i = 0; i < in_list.size(); i++)  
+			for(int i = 0; i < container.size(); i++)  
 	        {  
-				TradeDetail cTradeDetail = in_list.get(i);  
+				TradeDetail cTradeDetail = container.get(i);  
 //			            System.out.println(cTradeDetail.time + "," 
 //			            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
 				cOutputStream.write((cTradeDetail.time + ",").getBytes());
@@ -254,26 +251,15 @@ public class BaseDataStorage {
 		return 0;
 	}
 	
-	public static class ResultStockBaseData
+	public int getStockInfo(String id, StockInfo container) 
 	{
-		public ResultStockBaseData()
-		{
-			error = 0;
-			stockBaseInfo = new StockInfo();
-		}
-		public int error;
-		public StockInfo stockBaseInfo;
-	}
-	public ResultStockBaseData getBaseInfo(String id) 
-	{
-		ResultStockBaseData cResultStockBaseData = new ResultStockBaseData();
-		
+		int error = 0;
 		String stockBaseInfoFileName = s_workDir + "/" + id + "/" + s_BaseInfoFile;
 		File cfile=new File(stockBaseInfoFileName);
 		if(!cfile.exists()) 
 		{
-			cResultStockBaseData.error = -10;
-			return cResultStockBaseData;
+			error = -10;
+			return error;
 		}
 		
 		try
@@ -284,12 +270,12 @@ public class BaseDataStorage {
                 //System.out.println("line " + line + ": " + tempString);
             	String[] cols = tempString.split(",");
             	
-            	cResultStockBaseData.stockBaseInfo.name = cols[0];
-            	cResultStockBaseData.stockBaseInfo.date = cols[1];
-            	cResultStockBaseData.stockBaseInfo.time = cols[2];
-            	cResultStockBaseData.stockBaseInfo.allMarketValue = Float.parseFloat(cols[3]);
-            	cResultStockBaseData.stockBaseInfo.circulatedMarketValue = Float.parseFloat(cols[4]);
-            	cResultStockBaseData.stockBaseInfo.peRatio = Float.parseFloat(cols[5]);
+            	container.name = cols[0];
+            	container.date = cols[1];
+            	container.time = cols[2];
+            	container.allMarketValue = Float.parseFloat(cols[3]);
+            	container.circulatedMarketValue = Float.parseFloat(cols[4]);
+            	container.peRatio = Float.parseFloat(cols[5]);
 
                 break;
             }
@@ -298,12 +284,12 @@ public class BaseDataStorage {
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			cResultStockBaseData.error = -1;
-			return cResultStockBaseData;
+			error = -1;
+			return error;
 		}
-		return cResultStockBaseData;
+		return error;
 	}
-	public int saveBaseInfo(String id, StockInfo baseData) 
+	public int saveStockInfo(String id, StockInfo container) 
 	{
 		String stocKLineDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stocKLineDir)) return -10;
@@ -316,8 +302,8 @@ public class BaseDataStorage {
 		{
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
 			String s = String.format("%s,%s,%s,%.3f,%.3f,%.3f", 
-					baseData.name,baseData.date,baseData.time,
-					baseData.allMarketValue, baseData.circulatedMarketValue, baseData.peRatio);
+					container.name,container.date,container.time,
+					container.allMarketValue, container.circulatedMarketValue, container.peRatio);
 			cOutputStream.write(s.getBytes());
 			cOutputStream.close();
 		}
@@ -329,29 +315,17 @@ public class BaseDataStorage {
 		return 0;
 	}
 	
-	
-	public static class ResultAllStockFullDataTimestamps
+	public int getAllStockFullDataTimestamps(CObjectContainer<String> container)
 	{
-		public ResultAllStockFullDataTimestamps()
-		{
-			error = 0;
-			date = "0000-00-00";
-		}
-		public int error;
-		public String date;
-	}
-	public ResultAllStockFullDataTimestamps getAllStockFullDataTimestamps()
-	{
-		ResultAllStockFullDataTimestamps cResultUpdatedStocksDate = new ResultAllStockFullDataTimestamps();
+		int error = 0;
 		
-		String dateStr = null;
 		String allStockFullDataTimestampsFile = s_workDir + "/" + s_updateFinish;
 
 		File cfile=new File(allStockFullDataTimestampsFile);
 		if(!cfile.exists()) 
 		{
-			cResultUpdatedStocksDate.error = -10;
-			return cResultUpdatedStocksDate;
+			error = -10;
+			return error;
 		}
 		
 		try
@@ -363,16 +337,16 @@ public class BaseDataStorage {
             lineTxt = lineTxt.trim().replace("\n", "");
             if(lineTxt.length() == "0000-00-00".length())
             {
-            	cResultUpdatedStocksDate.date = lineTxt;
+            	container.set(lineTxt);
             }
             read.close();
 		}
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			cResultUpdatedStocksDate.error = -1;
+			error = -1;
 		}
-		return cResultUpdatedStocksDate;
+		return error;
 	}
 	public boolean saveAllStockFullDataTimestamps(String dateStr)
 	{

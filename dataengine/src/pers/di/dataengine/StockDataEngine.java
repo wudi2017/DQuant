@@ -3,10 +3,7 @@ package pers.di.dataengine;
 import java.util.*;
 
 import pers.di.common.*;
-import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
 import pers.di.dataengine.BaseDataLayer.ResultMinKLineOneDay;
-import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
-import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
 import pers.di.dataengine.common.*;
 
 public class StockDataEngine {
@@ -30,10 +27,11 @@ public class StockDataEngine {
 		if(null == m_cCache.localLatestDate)
 		{
 			CLog.output("STOCK","DataEngine.getUpdatedStocksDate\n");
-			ResultAllStockFullDataTimestamps cResultAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps();
-			if(0 == cResultAllStockFullDataTimestamps.error)
+			CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
+			int errAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
+			if(0 == errAllStockFullDataTimestamps)
 			{
-				m_cCache.localLatestDate = cResultAllStockFullDataTimestamps.date;
+				m_cCache.localLatestDate = ctnAllStockFullDataTimestamps.get();
 			}
 			else
 			{
@@ -64,10 +62,11 @@ public class StockDataEngine {
 		if(null == m_cCache.localLatestDate)
 		{
 			CLog.output("STOCK","DataEngine.getUpdatedStocksDate\n");
-			ResultAllStockFullDataTimestamps cResultAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps();
-			if(0 == cResultAllStockFullDataTimestamps.error)
+			CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
+			int errAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
+			if(0 == errAllStockFullDataTimestamps)
 			{
-				m_cCache.localLatestDate = cResultAllStockFullDataTimestamps.date;
+				m_cCache.localLatestDate = ctnAllStockFullDataTimestamps.get();
 			}
 			else
 			{
@@ -82,15 +81,16 @@ public class StockDataEngine {
 		else
 		{
 			// 更新单只股票数据 不影响m_cCache.localLatestDate
-			ResultUpdateStock cResultUpdateStock = m_cBaseDataLayer.updateLocaStocKLine(stockID);
+			CObjectContainer<Integer> ctnCount = new CObjectContainer<Integer>();
+			int errCount = m_cBaseDataLayer.updateLocaStocKLine(stockID, ctnCount);
 			
-			if(0 == cResultUpdateStock.error)
+			if(0 == errCount)
 			{
-				CLog.output("STOCK", "update %s success to date: %s (count: %d)\n", stockID, cResultUpdateStock.updateCnt);
+				CLog.output("STOCK", "update %s success to date: %s (count: %d)\n", stockID, ctnCount.get());
 			}
 			else
 			{
-				CLog.error("STOCK", "update %s failed \n", cResultUpdateStock.error);
+				CLog.error("STOCK", "update %s failed \n", errCount);
 			}
 		}
 		return 0;
@@ -187,18 +187,12 @@ public class StockDataEngine {
 				m_cCache.latestStockInfo = new HashMap<String,StockInfo>();
 			}
 			
-			StockInfo cStockInfo = new StockInfo();
+			StockInfo ctnStockInfo = new StockInfo();
+			int errStockInfo = m_cBaseDataLayer.getStockInfo(id, ctnStockInfo);
 			
-			ResultStockBaseData cResultStockBaseData = m_cBaseDataLayer.getBaseInfo(id);
-			
-			if(0 == cResultStockBaseData.error)
+			if(0 == errStockInfo)
 			{
-				cStockInfo.name = cResultStockBaseData.stockBaseInfo.name;
-				cStockInfo.allMarketValue = cResultStockBaseData.stockBaseInfo.allMarketValue; 
-				cStockInfo.circulatedMarketValue = cResultStockBaseData.stockBaseInfo.circulatedMarketValue; 
-				cStockInfo.peRatio = cResultStockBaseData.stockBaseInfo.peRatio;
-				
-				m_cCache.latestStockInfo.put(id, cStockInfo);
+				m_cCache.latestStockInfo.put(id, ctnStockInfo);
 			}
 			else
 			{

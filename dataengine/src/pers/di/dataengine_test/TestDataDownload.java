@@ -1,11 +1,14 @@
 package pers.di.dataengine_test;
 
+import pers.di.common.*;
 import pers.di.dataengine.BaseDataDownload;
 import pers.di.dataengine.BaseDataStorage;
 
 public class TestDataDownload {
 	public static void main(String[] args) {
 		BaseDataDownload cBaseDataDownload = new BaseDataDownload(new BaseDataStorage("data"));
-		cBaseDataDownload.downloadStockFullData("600001");
+		CObjectContainer<Integer> ctnCount = new CObjectContainer<Integer>();
+		int error = cBaseDataDownload.downloadStockFullData("300163", ctnCount);
+		CLog.output("TEST", "error: %d count: %d\n", error, ctnCount.get());
 	}
 }

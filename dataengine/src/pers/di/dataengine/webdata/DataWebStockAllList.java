@@ -22,7 +22,6 @@ import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
-import pers.di.common.CTypeDefine.*;
 import pers.di.dataengine.common.*;
 
 public class DataWebStockAllList {
