@@ -9,16 +9,16 @@ import pers.di.dataengine.webdata.DataWebStockAllList;
 public class TestDataWebStockAllList {
 	public static void main(String[] args) {
 
-		List<StockItem> container = new ArrayList<StockItem>();
-		int error = DataWebStockAllList.getAllStockList(container);
+		List<StockItem> ctnStockItem = new ArrayList<StockItem>();
+		int error = DataWebStockAllList.getAllStockList(ctnStockItem);
 		if(0 == error)
 		{
-			for(int i = 0; i < container.size(); i++)  
+			for(int i = 0; i < ctnStockItem.size(); i++)  
 	        {  
-				StockItem cStockItem = container.get(i);  
+				StockItem cStockItem = ctnStockItem.get(i);  
 	            System.out.println(cStockItem.name + "," + cStockItem.id);  
 	        } 
-			System.out.println("count:" + container.size()); 
+			System.out.println("count:" + ctnStockItem.size()); 
 		}
 		else
 		{

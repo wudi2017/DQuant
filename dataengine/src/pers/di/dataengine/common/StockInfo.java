@@ -4,7 +4,7 @@ package pers.di.dataengine.common;
  * 股票基本信息
  * 名字-当前价-总市值-流通市值-市盈率等（将来扩展为行业等）
  */
-public class StockBaseInfo
+public class StockInfo
 {
 	public String name;
 	public String date;
@@ -12,7 +12,7 @@ public class StockBaseInfo
 	public float allMarketValue; // 亿
 	public float circulatedMarketValue; // 亿
 	public float peRatio;
-	public StockBaseInfo()
+	public StockInfo()
 	{
 		name = "";
 		date = "0000-00-00";
@@ -21,7 +21,7 @@ public class StockBaseInfo
 		circulatedMarketValue = 0.0f;
 		peRatio = 0.0f;
 	}
-	public void CopyFrom(StockBaseInfo cCopyFromObj)
+	public void CopyFrom(StockInfo cCopyFromObj)
 	{
 		name = cCopyFromObj.name;
 		date = cCopyFromObj.date;

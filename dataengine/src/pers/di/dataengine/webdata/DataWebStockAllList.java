@@ -27,8 +27,12 @@ import pers.di.dataengine.common.*;
 
 public class DataWebStockAllList {
 	/*
-	 * 从网络中获得所有股票ID与名字
-	 * 返回0为成功，其他值为失败
+	 * 从网络中获得所有股票项目
+	 * 
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     container 接收容器
 	 */
 	public static int getAllStockList(List<StockItem> container)
 	{

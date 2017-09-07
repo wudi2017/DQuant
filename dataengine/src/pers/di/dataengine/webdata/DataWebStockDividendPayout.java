@@ -31,7 +31,11 @@ import pers.di.dataengine.common.*;
 public class DataWebStockDividendPayout {
 	/*
 	 * 从网络中获得某只股票的分红派息因子
-	 * 返回0为成功，其他值为失败
+	 * 
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     container 接收容器
 	 */
 	public static int getDividendPayout(String id, List<DividendPayout> container)
 	{

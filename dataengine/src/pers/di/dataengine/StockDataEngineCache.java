@@ -10,7 +10,7 @@ public class StockDataEngineCache {
 	{
 		localLatestDate = null;
 		AllStockID = null;
-		latestStockBaseInfo = null;
+		latestStockInfo = null;
 		dayKLineList = null;
 		stockTimeData = null;
 	}
@@ -22,7 +22,7 @@ public class StockDataEngineCache {
 	public List<String> AllStockID = null;
 	
 	// 本地股票最新基本信息缓存
-	public Map<String,StockBaseInfo> latestStockBaseInfo = null;
+	public Map<String,StockInfo> latestStockInfo = null;
 	
 	// 日K历史数据缓存
 	// key:600001

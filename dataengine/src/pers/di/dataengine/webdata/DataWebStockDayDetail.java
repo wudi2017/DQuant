@@ -24,7 +24,11 @@ import pers.di.dataengine.common.*;
 public class DataWebStockDayDetail {
 	/*
 	 * 从网络获取某只股票某日内的交易细节数据
-	 * 返回0为成功，其他值为失败
+	 * 
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     container 接收容器
 	 */
 	public static int getDayDetail(String id, String date, List<TradeDetail> container)
 	{

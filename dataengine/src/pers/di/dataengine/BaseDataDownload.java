@@ -10,8 +10,7 @@ import pers.di.common.CUtilsDateTime;
 import pers.di.dataengine.BaseDataDownload.ResultUpdateStock;
 import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.webdata.DataWebStockAllList;
-import pers.di.dataengine.webdata.DataWebStockBaseInfo;
-import pers.di.dataengine.webdata.DataWebStockBaseInfo.ResultStockBaseInfo;
+import pers.di.dataengine.webdata.DataWebStockInfo;
 import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDayK;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
@@ -171,28 +170,28 @@ public class BaseDataDownload {
 			if(curValiddateStr.compareTo(localDataLastDate) > 0)
 			{
 				// 获取当前BaseInfo信息
-				StockBaseInfo ctnStockBaseInfo = new StockBaseInfo();
-				int errStockBaseInfo = DataWebStockBaseInfo.getStockBaseInfo(id, ctnStockBaseInfo);
-				if(0 == errStockBaseInfo)
+				StockInfo ctnStockInfo = new StockInfo();
+				int errStockInfo = DataWebStockInfo.getStockInfo(id, ctnStockInfo);
+				if(0 == errStockInfo)
 				{
 					// 保存股票基本信息
-					StockBaseInfo cStockBaseData = new StockBaseInfo();
-					cStockBaseData.name = ctnStockBaseInfo.name;
-					cStockBaseData.allMarketValue = ctnStockBaseInfo.allMarketValue;
-					cStockBaseData.circulatedMarketValue = ctnStockBaseInfo.circulatedMarketValue;
-					cStockBaseData.peRatio = ctnStockBaseInfo.peRatio;
+					StockInfo cStockBaseData = new StockInfo();
+					cStockBaseData.name = ctnStockInfo.name;
+					cStockBaseData.allMarketValue = ctnStockInfo.allMarketValue;
+					cStockBaseData.circulatedMarketValue = ctnStockInfo.circulatedMarketValue;
+					cStockBaseData.peRatio = ctnStockInfo.peRatio;
 					m_baseDataStorage.saveBaseInfo(id, cStockBaseData);
 					
 					// 当前时间在收盘之前，网络数据有效日期为前一天（非周六周日）
-					String webValidLastDate = ctnStockBaseInfo.date;
-					if(ctnStockBaseInfo.time.compareTo("15:00:00") < 0)
+					String webValidLastDate = ctnStockInfo.date;
+					if(ctnStockInfo.time.compareTo("15:00:00") < 0)
 					{
-						int year = Integer.parseInt(ctnStockBaseInfo.date.split("-")[0]);
-						int month = Integer.parseInt(ctnStockBaseInfo.date.split("-")[1]);
-						int day = Integer.parseInt(ctnStockBaseInfo.date.split("-")[2]);
-						int hour = Integer.parseInt(ctnStockBaseInfo.time.split(":")[0]);
-						int min = Integer.parseInt(ctnStockBaseInfo.time.split(":")[1]);
-						int sec = Integer.parseInt(ctnStockBaseInfo.time.split(":")[2]);
+						int year = Integer.parseInt(ctnStockInfo.date.split("-")[0]);
+						int month = Integer.parseInt(ctnStockInfo.date.split("-")[1]);
+						int day = Integer.parseInt(ctnStockInfo.date.split("-")[2]);
+						int hour = Integer.parseInt(ctnStockInfo.time.split(":")[0]);
+						int min = Integer.parseInt(ctnStockInfo.time.split(":")[1]);
+						int sec = Integer.parseInt(ctnStockInfo.time.split(":")[2]);
 						Calendar cal0 = Calendar.getInstance();
 						cal0.set(year, month-1, day, hour, min, sec);
 						// 获取上一个非周末的日期
@@ -296,9 +295,9 @@ public class BaseDataDownload {
 		else
 		// 本地没有数据，需要试图重新下载
 		{	
-			StockBaseInfo ctnStockBaseInfo = new StockBaseInfo();
-			int errStockBaseInfo = DataWebStockBaseInfo.getStockBaseInfo(id, ctnStockBaseInfo);
-			if(0 == errStockBaseInfo)
+			StockInfo ctnStockInfo = new StockInfo();
+			int errStockInfo = DataWebStockInfo.getStockInfo(id, ctnStockInfo);
+			if(0 == errStockInfo)
 			{
 				// 下载日K，分红派息，基本信息
 				int retdownloadStockDayk =  this.downloadStockDayk(id);
@@ -368,11 +367,11 @@ public class BaseDataDownload {
 	{
 		try
 		{
-			StockBaseInfo ctnStockBaseInfo = new StockBaseInfo();
-			int errStockBaseInfo = DataWebStockBaseInfo.getStockBaseInfo(id, ctnStockBaseInfo);
-			if(0 == errStockBaseInfo)
+			StockInfo ctnStockInfo = new StockInfo();
+			int errStockInfo = DataWebStockInfo.getStockInfo(id, ctnStockInfo);
+			if(0 == errStockInfo)
 			{
-				m_baseDataStorage.saveBaseInfo(id, ctnStockBaseInfo);
+				m_baseDataStorage.saveBaseInfo(id, ctnStockInfo);
 			}
 			else
 			{

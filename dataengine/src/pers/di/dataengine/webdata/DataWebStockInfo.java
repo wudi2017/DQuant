@@ -8,24 +8,16 @@ import java.net.URL;
 
 import pers.di.dataengine.common.*;
 
-public class DataWebStockBaseInfo {
-	
-	public static class ResultStockBaseInfo
-	{
-		public ResultStockBaseInfo()
-		{
-			error = 0;
-			stockBaseInfo = new StockBaseInfo();
-		}
-		public int error;
-		public StockBaseInfo stockBaseInfo;
-	}
-	
+public class DataWebStockInfo {
 	/*
-	 * 从网络获取某只股票更多当前信息（基本信息，总市值，流通市值，市盈率）
-	 * 返回0为成功，其他值为失败
+	 * 从网络获取某只股票信息（基本信息，总市值，流通市值，市盈率等）
+	 * 
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     container 接收容器
 	 */
-	public static int getStockBaseInfo(String id, StockBaseInfo container)
+	public static int getStockInfo(String id, StockInfo container)
 	{
 		int error = 0;
 		

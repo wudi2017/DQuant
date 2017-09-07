@@ -12,7 +12,7 @@ import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.DEStockIDs;
 import pers.di.dataengine.StockDataEngine.DETimePrices;
 import pers.di.dataengine.StockDataEngine.DEKLines;
-import pers.di.dataengine.StockDataEngine.DEStockBaseInfo;
+import pers.di.dataengine.StockDataEngine.DEStockInfo;
 import pers.di.dataengine.common.*;
 
 public class TestDataEngine {
@@ -38,14 +38,14 @@ public class TestDataEngine {
 		}
 	}
 	
-	private static void test_getStockBaseInfo()
+	private static void test_getStockInfo()
 	{
 		String stockID = "600000";
-		DEStockBaseInfo cDEStockBaseInfo = StockDataEngine.instance().getStockBaseInfo(stockID);
-		if(0 == cDEStockBaseInfo.error())
+		DEStockInfo cDEStockInfo = StockDataEngine.instance().getStockInfo(stockID);
+		if(0 == cDEStockInfo.error())
 		{
 			CLog.output("TEST", "cStockInfo [%s][%s]\n",
-					stockID, cDEStockBaseInfo.get().name);
+					stockID, cDEStockInfo.get().name);
 		}
 	}
 	
@@ -85,7 +85,7 @@ public class TestDataEngine {
 		//test_updateAllLocalStocks();
 		//test_updateLocalStocks();
 		//test_getAllStockIDs();
-		//test_getStockBaseInfo();
+		//test_getStockInfo();
 		//test_getDayKLines();
 		test_getMinTimePrices();
 	}

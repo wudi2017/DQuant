@@ -30,19 +30,20 @@ import pers.di.dataengine.common.*;
 public class DataWebStockDayK {
 	/*
 	 * 从网络获取某只股票的日K数据
-	 * 传入999999代表上证指数
-	 * 返回0为成功，其他值为失败
-	 */
-	
-	/*
-	 * id: 
-	 * 上证指数：999999
-	 * 上海股票：60****
-	 * 深圳股票：00****或30****
 	 * 
-	 * doc: http://blog.csdn.net/xp5xp6/article/details/53121481
-	 * v1.0: url: e.g "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
-	 * v2.0: url: e.g "http://quotes.money.163.com/service/chddata.html?code=0601857&start=20171105&end=20170809&fields=TCLOSE;HIGH;LOW;TOPEN;VOTURNOVER;"
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     传入999999代表上证指数
+	 *     上海股票：60****
+	 *     深圳股票：00****或30****
+	 *     container 接收容器
+	 *     
+	 * 其他：
+	 *     doc: http://blog.csdn.net/xp5xp6/article/details/53121481
+	 *     v1.0: url: e.g "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
+	 *     v2.0: url: e.g "http://quotes.money.163.com/service/chddata.html?code=0601857&start=20171105&end=20170809&fields=TCLOSE;HIGH;LOW;TOPEN;VOTURNOVER;"
+	 
 	 */
 	public static int getKLine(String id, String begin_date, String end_date, List<KLine> container)
 	{

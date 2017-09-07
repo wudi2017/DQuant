@@ -259,10 +259,10 @@ public class BaseDataStorage {
 		public ResultStockBaseData()
 		{
 			error = 0;
-			stockBaseInfo = new StockBaseInfo();
+			stockBaseInfo = new StockInfo();
 		}
 		public int error;
-		public StockBaseInfo stockBaseInfo;
+		public StockInfo stockBaseInfo;
 	}
 	public ResultStockBaseData getBaseInfo(String id) 
 	{
@@ -303,7 +303,7 @@ public class BaseDataStorage {
 		}
 		return cResultStockBaseData;
 	}
-	public int saveBaseInfo(String id, StockBaseInfo baseData) 
+	public int saveBaseInfo(String id, StockInfo baseData) 
 	{
 		String stocKLineDir = s_workDir + "/" + id;
 		if(!CPath.createDir(stocKLineDir)) return -10;

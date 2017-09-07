@@ -157,9 +157,9 @@ public class StockDataEngine {
 	 * 获取本地某只股票基本信息
 	 * 注意： 内部为引用存储，数据更新后返回值无效
 	 */
-	public static class DEStockBaseInfo
+	public static class DEStockInfo
 	{
-		public DEStockBaseInfo(int error, StockBaseInfo origin)
+		public DEStockInfo(int error, StockInfo origin)
 		{
 			m_error = error;
 			m_stockBaseInfo = origin;
@@ -168,26 +168,26 @@ public class StockDataEngine {
 		{ 
 			return m_error; 
 		}
-		public StockBaseInfo get()
+		public StockInfo get()
 		{
 			return m_stockBaseInfo;
 		}
 		private int m_error;
-		private StockBaseInfo m_stockBaseInfo;
+		private StockInfo m_stockBaseInfo;
 	}
-	public DEStockBaseInfo getStockBaseInfo(String id)
+	public DEStockInfo getStockInfo(String id)
 	{
-		DEStockBaseInfo cDEStockBaseInfo = null;
+		DEStockInfo cDEStockInfo = null;
 		
 		// 首次进行缓存
-		if(null == m_cCache.latestStockBaseInfo || !m_cCache.latestStockBaseInfo.containsKey(id))
+		if(null == m_cCache.latestStockInfo || !m_cCache.latestStockInfo.containsKey(id))
 		{
-			if(null == m_cCache.latestStockBaseInfo)
+			if(null == m_cCache.latestStockInfo)
 			{
-				m_cCache.latestStockBaseInfo = new HashMap<String,StockBaseInfo>();
+				m_cCache.latestStockInfo = new HashMap<String,StockInfo>();
 			}
 			
-			StockBaseInfo cStockInfo = new StockBaseInfo();
+			StockInfo cStockInfo = new StockInfo();
 			
 			ResultStockBaseData cResultStockBaseData = m_cBaseDataLayer.getBaseInfo(id);
 			
@@ -198,7 +198,7 @@ public class StockDataEngine {
 				cStockInfo.circulatedMarketValue = cResultStockBaseData.stockBaseInfo.circulatedMarketValue; 
 				cStockInfo.peRatio = cResultStockBaseData.stockBaseInfo.peRatio;
 				
-				m_cCache.latestStockBaseInfo.put(id, cStockInfo);
+				m_cCache.latestStockInfo.put(id, cStockInfo);
 			}
 			else
 			{
@@ -207,16 +207,16 @@ public class StockDataEngine {
 		}
 			
 		// 从缓存中取数据
-		if(null != m_cCache.latestStockBaseInfo && m_cCache.latestStockBaseInfo.containsKey(id))
+		if(null != m_cCache.latestStockInfo && m_cCache.latestStockInfo.containsKey(id))
 		{
-			cDEStockBaseInfo = new DEStockBaseInfo(0, m_cCache.latestStockBaseInfo.get(id));
+			cDEStockInfo = new DEStockInfo(0, m_cCache.latestStockInfo.get(id));
 		}
 		else
 		{
-			cDEStockBaseInfo = new DEStockBaseInfo(-1, null);
+			cDEStockInfo = new DEStockInfo(-1, null);
 		}
 		
-		return cDEStockBaseInfo;
+		return cDEStockInfo;
 	}
 	
 	/*

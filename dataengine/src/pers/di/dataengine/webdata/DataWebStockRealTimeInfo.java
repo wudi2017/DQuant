@@ -16,12 +16,13 @@ import org.htmlparser.util.NodeList;
 import pers.di.dataengine.common.*;
 
 public class DataWebStockRealTimeInfo {
-	
 	/*
 	 * 从网络获取某只股票当前信息（基本：名字 日期 时间 价格）
-	 * 返回0为成功，其他值为失败
-	 * 参数
-	 *     container 传入接收容器
+	 * 
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     container 接收容器
 	 */
 	public static int getRealTimeInfo(String id, RealTimeInfo container)
 	{
