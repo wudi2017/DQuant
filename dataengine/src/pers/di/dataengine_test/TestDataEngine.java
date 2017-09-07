@@ -8,11 +8,7 @@ import pers.di.common.CLog;
 import pers.di.common.CUtilsDateTime;
 import pers.di.common.CImageCurve.CurvePoint;
 import pers.di.dataengine.basedata.*;
-import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.StockDataEngine.DEStockIDs;
-import pers.di.dataengine.StockDataEngine.DETimePrices;
-import pers.di.dataengine.StockDataEngine.DEKLines;
-import pers.di.dataengine.StockDataEngine.DEStockInfo;
+import pers.di.dataengine.*;
 import pers.di.dataengine.common.*;
 
 public class TestDataEngine {
@@ -29,11 +25,12 @@ public class TestDataEngine {
 	
 	private static void test_getAllStockIDs()
 	{
-		DEStockIDs cDEStockIDs = StockDataEngine.instance().getAllStockIDs();
-		CLog.output("TEST", "stock count: %d\n", cDEStockIDs.size());
-		for(int i=0; i<cDEStockIDs.size(); i++)
+		DEStockIDListObserver observer = new DEStockIDListObserver();
+		int error = StockDataEngine.instance().buildAllStockIDObserver(observer);
+		CLog.output("TEST", "stock count: %d\n", observer.size());
+		for(int i=0; i<observer.size(); i++)
 		{
-			String stockID = cDEStockIDs.get(i);
+			String stockID = observer.get(i);
 			CLog.output("TEST", "stockID: %s\n", stockID);
 		}
 	}
@@ -41,22 +38,24 @@ public class TestDataEngine {
 	private static void test_getStockInfo()
 	{
 		String stockID = "600000";
-		DEStockInfo cDEStockInfo = StockDataEngine.instance().getStockInfo(stockID);
-		if(0 == cDEStockInfo.error())
+		DEStockInfoObserver observer = new DEStockInfoObserver();
+		int error = StockDataEngine.instance().buildStockInfoObserver(stockID, observer);
+		if(0 == error)
 		{
 			CLog.output("TEST", "cStockInfo [%s][%s]\n",
-					stockID, cDEStockInfo.get().name);
+					stockID, observer.name());
 		}
 	}
 	
 	private static void test_getDayKLines()
 	{
 		String stockID = "600000";
-		DEKLines cDEKLines = StockDataEngine.instance().getDayKLines(stockID, "2014-05-23", "2014-08-15");
-		CLog.output("TEST", "KLine count: %d\n", cDEKLines.size());
-		for(int i=0; i<cDEKLines.size(); i++)
+		DEKLineListObserver obsKLineList = new DEKLineListObserver();
+		int error = StockDataEngine.instance().buildDayKLineListObserver(stockID, "2014-05-23", "2014-08-15", obsKLineList);
+		CLog.output("TEST", "KLine count: %d\n", obsKLineList.size());
+		for(int i=0; i<obsKLineList.size(); i++)
 		{
-			KLine cKLine = cDEKLines.get(i);
+			KLine cKLine = obsKLineList.get(i);
 			CLog.output("TEST", "date: %s close: %f\n", cKLine.date, cKLine.close);
 		}
 	}
@@ -67,17 +66,27 @@ public class TestDataEngine {
 		List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 		
 		String stockID = "600004";
-		DETimePrices cDETimePrices = StockDataEngine.instance().getMinTimePrices(stockID, "2016-01-27", "09:00:00", "15:00:00");
-		CLog.output("TEST", "KLine count: %d\n", cDETimePrices.size());
-		for(int i=0; i<cDETimePrices.size(); i++)
+		DETimePriceListObserver obsTimePriceList = new DETimePriceListObserver();
+		int errObsTimePriceList = StockDataEngine.instance().buildMinTimePriceListObserver(stockID, "2016-01-27", 
+				"09:00:00", "15:00:00", obsTimePriceList);
+		CLog.output("TEST", "KLine count: %d\n", obsTimePriceList.size());
+		for(int i=0; i<obsTimePriceList.size(); i++)
 		{
-			TimePrice cTimePrice = cDETimePrices.get(i);
+			TimePrice cTimePrice = obsTimePriceList.get(i);
 			CLog.output("TEST", "time: %s close: %f\n", cTimePrice.time, cTimePrice.price);
 			PoiList.add(new CurvePoint(i,cTimePrice.price));
 		}
 		
 		cCImageCurve.writeLogicCurve(PoiList, 1);
 		cCImageCurve.GenerateImage();
+	}
+	
+	private static void test_getRealTimePrice()
+	{
+		TimePrice ctnTimePrice = new TimePrice();
+		int error = StockDataEngine.instance().loadRealTimePrice("600000", ctnTimePrice);
+		CLog.output("TEST", "err:%d time:%s price:%f\n", error, ctnTimePrice.time, ctnTimePrice.price);
+		
 	}
 	
 	public static void main(String[] args) {
@@ -87,5 +96,6 @@ public class TestDataEngine {
 		//test_getStockInfo();
 		//test_getDayKLines();
 		test_getMinTimePrices();
+		test_getRealTimePrice();
 	}
 }

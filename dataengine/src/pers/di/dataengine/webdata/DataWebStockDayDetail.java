@@ -23,7 +23,7 @@ import pers.di.dataengine.common.*;
 
 public class DataWebStockDayDetail {
 	/*
-	 * 从网络获取某只股票某日内的交易细节数据
+	 * 从网络某只股票某日内的交易细节数据
 	 * 
 	 * 返回值：
 	 *     返回0为成功，其他值为失败
