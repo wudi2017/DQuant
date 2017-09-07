@@ -1,8 +1,7 @@
 package pers.di.dataengine_test;
 
 import pers.di.common.*;
-import pers.di.dataengine.BaseDataDownload;
-import pers.di.dataengine.BaseDataStorage;
+import pers.di.dataengine.basedata.*;
 
 public class TestDataDownload {
 	public static void main(String[] args) {

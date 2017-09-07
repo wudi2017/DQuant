@@ -3,8 +3,8 @@ package pers.di.dataengine;
 import java.util.*;
 
 import pers.di.common.*;
-import pers.di.dataengine.BaseDataLayer.ResultMinKLineOneDay;
 import pers.di.dataengine.common.*;
+import pers.di.dataengine.basedata.*;
 
 public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine();  
@@ -246,6 +246,7 @@ public class StockDataEngine {
 		private int m_iBase;
 		private int m_iSize;
 	}
+
 	public DEKLines getDayKLines(String stockID, String fromDate, String toDate)
 	{
 		DEKLines cDEKLines = null;
@@ -358,20 +359,21 @@ public class StockDataEngine {
 				if(null != cKLine && date.length() == "0000-00-00".length())
 				{
 					// load new detail data
-					ResultMinKLineOneDay cResultMinKLineOneDay = m_cBaseDataLayer.get1MinKLineOneDay(id, date);
+					List<KLine> ctnKLine = new ArrayList<KLine>();
+					int errKLine= m_cBaseDataLayer.get1MinKLineOneDay(id, date, ctnKLine);
 					
-					if(0 == cResultMinKLineOneDay.error && cResultMinKLineOneDay.KLineList.size() != 0)
+					if(0 == errKLine && ctnKLine.size() != 0)
 					{
 						// 由于可能是复权价位，需要重新计算相对价格
 						float baseOpenPrice = cKLine.open;
 			            //System.out.println("baseOpenPrice:" + baseOpenPrice);  
 			            
-						float actruaFirstPrice = cResultMinKLineOneDay.KLineList.get(0).open;
+						float actruaFirstPrice = ctnKLine.get(0).open;
 						//System.out.println("actruaFirstPrice:" + actruaFirstPrice); 
 						
-						for(int i = 0; i < cResultMinKLineOneDay.KLineList.size(); i++)  
+						for(int i = 0; i < ctnKLine.size(); i++)  
 				        {  
-							KLine cMinKLine = cResultMinKLineOneDay.KLineList.get(i);  
+							KLine cMinKLine = ctnKLine.get(i);  
 //				            System.out.println(cExKData.datetime + "," 
 //				            		+ cExKData.open + "," + cExKData.close + "," 
 //				            		+ cExKData.low + "," + cExKData.high + "," 

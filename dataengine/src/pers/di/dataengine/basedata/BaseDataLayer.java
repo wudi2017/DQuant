@@ -1,4 +1,4 @@
-package pers.di.dataengine;
+package pers.di.dataengine.basedata;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -174,35 +174,24 @@ public class BaseDataLayer {
 		return error;
 	}
 	
-	
-	public static class ResultMinKLineOneDay
-	{
-		public ResultMinKLineOneDay()
-		{
-			error = 0;
-			KLineList = new ArrayList<KLine>();
-		}
-		public int error;
-		public List<KLine> KLineList;
-	}
 	/*
 	 * 获取5分钟级别K
 	 */
-	public ResultMinKLineOneDay get5MinKLineOneDay(String id, String date)
+	public int get5MinKLineOneDay(String id, String date, List<KLine> container)
 	{
-		ResultMinKLineOneDay cResultMinKLineOneDay = new ResultMinKLineOneDay();
+		int error = 0;
 		
 		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
-		int error = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
+		int errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		
 		// 如果本地不存在，下载后获取
-		if(0 != error)
+		if(0 != errTradeDetail)
 		{
 			m_cBaseDataDownload.downloadStockDetail(id, date);
-			error = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
+			errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		}
 				
-		if(0 == error && ctnTradeDetail.size() != 0)
+		if(0 == errTradeDetail && ctnTradeDetail.size() != 0)
 		{
 			int iSec093000 = 9*3600 + 30*60 + 0;
 			int iSec130000 = 13*3600 + 0*60 + 0;
@@ -279,7 +268,7 @@ public class BaseDataLayer {
     			cKLine.high = K5MinHigh;
     			cKLine.volume = K5MinVolume;
     			tmpList.clear();
-    			cResultMinKLineOneDay.KLineList.add(cKLine);
+    			container.add(cKLine);
     			//System.out.println("cKLine.datetime:" + cKLine.datetime);
     			preClosePrice = cKLine.close;
             }
@@ -351,7 +340,7 @@ public class BaseDataLayer {
     			cKLine.high = K5MinHigh;
     			cKLine.volume = K5MinVolume;
     			tmpList.clear();
-    			cResultMinKLineOneDay.KLineList.add(cKLine);
+    			container.add(cKLine);
     			//System.out.println("cKLine.datetime:" + cKLine.datetime);
     			preClosePrice = cKLine.close;
             }
@@ -359,30 +348,30 @@ public class BaseDataLayer {
 		else
 		{
 			System.out.println("[ERROR] get5MinKLineOneDay: " + id + " # " + date);
-			cResultMinKLineOneDay.error = -10;
-			return cResultMinKLineOneDay;
+			error = -10;
+			return error;
 		}
-		return cResultMinKLineOneDay;
+		return error;
 	}
 	
 	/*
 	 * 获取1分钟级别K
 	 */
-	public ResultMinKLineOneDay get1MinKLineOneDay(String id, String date)
+	public int get1MinKLineOneDay(String id, String date, List<KLine> container)
 	{
-		ResultMinKLineOneDay cResultMinKLineOneDay = new ResultMinKLineOneDay();
+		int error = 0;
 		
 		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
-		int error = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
+		int errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		
 		// 如果本地不存在，下载后获取
-		if(0 != error)
+		if(0 != errTradeDetail)
 		{
 			m_cBaseDataDownload.downloadStockDetail(id, date);
-			error = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
+			errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		}
 		
-		if(0 == error && ctnTradeDetail.size() != 0)
+		if(0 == errTradeDetail && ctnTradeDetail.size() != 0)
 		{
 			int iSec092500 = 9*3600 + 25*60 + 0;
 			int iSec093000 = 9*3600 + 30*60 + 0;
@@ -460,7 +449,7 @@ public class BaseDataLayer {
     			cKLine.high = K1MinHigh;
     			cKLine.volume = K1MinVolume;
     			tmpList.clear();
-    			cResultMinKLineOneDay.KLineList.add(cKLine);
+    			container.add(cKLine);
     			//System.out.println("cExKLine.datetime:" + cExKLine.datetime);
     			preClosePrice = cKLine.close;
             }
@@ -532,7 +521,7 @@ public class BaseDataLayer {
     			cKLine.high = K1MinHigh;
     			cKLine.volume = K1MinVolume;
     			tmpList.clear();
-    			cResultMinKLineOneDay.KLineList.add(cKLine);
+    			container.add(cKLine);
     			//System.out.println("cExKLine.datetime:" + cExKLine.datetime);
     			preClosePrice = cKLine.close;
             }
@@ -540,10 +529,91 @@ public class BaseDataLayer {
 		else
 		{
 			System.out.println("[ERROR] get1MinKLineOneDay: " + id + " # " + date);
-			cResultMinKLineOneDay.error = -10;
-			return cResultMinKLineOneDay;
+			error = -10;
+			return error;
 		}
-		return cResultMinKLineOneDay;
+		return error;
+	}
+	
+	/*
+	 * 获取1分钟级别K
+	 */
+	public int get1MinKLineOneDayForwardAdjusted(String id, String date, List<KLine> container)
+	{
+		int error = 0;
+		
+		List<KLine> cntDayKLine = new ArrayList<KLine>();
+		int errDayKLine = this.getDayKLinesForwardAdjusted(id, cntDayKLine);
+		if(0 != errDayKLine) 
+		{
+			error = -1;
+			return error;
+		}
+		cntDayKLine = StockUtils.subKLineData(cntDayKLine, date, date);
+		
+		if(0 == errDayKLine && cntDayKLine.size()==1)
+		{
+			KLine cDayKLine = cntDayKLine.get(0);
+			if(null != cDayKLine && date.length() == "0000-00-00".length())
+			{
+				// load new detail data
+				// List<KLine> ctnMinKLine = new ArrayList<KLine>();
+				List<KLine> ctnMinKLine = container;  // use container instead, for performace
+				
+				int errMinKLine= this.get1MinKLineOneDay(id, date, ctnMinKLine);
+				
+				if(0 == errMinKLine && ctnMinKLine.size() != 0)
+				{
+					// 由于可能是复权价位，需要重新计算相对价格
+					float baseOpenPrice = cDayKLine.open;
+		            //System.out.println("baseOpenPrice:" + baseOpenPrice);  
+		            
+					float actualFirstPrice = ctnMinKLine.get(0).open;
+					//System.out.println("actruaFirstPrice:" + actruaFirstPrice); 
+					
+					for(int i = 0; i < ctnMinKLine.size(); i++)  
+			        {  
+						KLine cMinKLine = ctnMinKLine.get(i);  
+//			            System.out.println(cExKData.datetime + "," 
+//			            		+ cExKData.open + "," + cExKData.close + "," 
+//			            		+ cExKData.low + "," + cExKData.high + "," 
+//			            		+ cExKData.volume);  
+						
+						float actualprice = 0.0f;
+						float changeper = 0.0f;
+						
+						actualprice = cMinKLine.open;
+						changeper = (actualprice - actualFirstPrice)/actualFirstPrice;
+						cMinKLine.open = baseOpenPrice + baseOpenPrice * changeper;
+						
+						actualprice = cMinKLine.close;
+						changeper = (actualprice - actualFirstPrice)/actualFirstPrice;
+						cMinKLine.close = baseOpenPrice + baseOpenPrice * changeper;
+						
+						actualprice = cMinKLine.high;
+						changeper = (actualprice - actualFirstPrice)/actualFirstPrice;
+						cMinKLine.high = baseOpenPrice + baseOpenPrice * changeper;
+						
+						actualprice = cMinKLine.low;
+						changeper = (actualprice - actualFirstPrice)/actualFirstPrice;
+						cMinKLine.low = baseOpenPrice + baseOpenPrice * changeper;
+			        } 
+				}
+				else
+				{
+					error = -4;
+				}
+			} // if(null != cDayKLine && date.length() == "0000-00-00".length())
+			else
+			{
+				error = -3;
+			}
+		}
+		else
+		{
+			error = -2;
+		}
+		return error;
 	}
 	
 	public int getRealTimeInfo(String stockID, RealTimeInfo container)

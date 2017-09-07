@@ -7,7 +7,6 @@ import java.util.List;
 import pers.di.common.*;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.*;
-import pers.di.dataengine.StockUtils;
 import pers.di.dataengine.common.*;
 import pers.di.quantengine.dataaccessor.*;
 
