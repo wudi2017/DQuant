@@ -33,16 +33,6 @@ public class DataWebStockDayK {
 	 * 传入999999代表上证指数
 	 * 返回0为成功，其他值为失败
 	 */
-	public static class ResultKLine
-	{
-		public ResultKLine()
-		{
-			error = 0;
-			resultList = new ArrayList<KLine>();
-		}
-		public int error;
-		public List<KLine> resultList;
-	}
 	
 	/*
 	 * id: 
@@ -54,9 +44,9 @@ public class DataWebStockDayK {
 	 * v1.0: url: e.g "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
 	 * v2.0: url: e.g "http://quotes.money.163.com/service/chddata.html?code=0601857&start=20171105&end=20170809&fields=TCLOSE;HIGH;LOW;TOPEN;VOTURNOVER;"
 	 */
-	public static ResultKLine getKLine(String id, String begin_date, String end_date)
+	public static int getKLine(String id, String begin_date, String end_date, List<KLine> container)
 	{
-		ResultKLine cResultKLine = new ResultKLine();
+		int error = 0;
 		
 		String innerID = "";
 		if(id.startsWith("60") && 6 == id.length())
@@ -73,8 +63,8 @@ public class DataWebStockDayK {
 		}
 		else
 		{
-			cResultKLine.error = -10;
-			return cResultKLine;
+			error = -10;
+			return error;
 		}
 		
 		String urlStr = "http://quotes.money.163.com/service/chddata.html?";
@@ -83,24 +73,23 @@ public class DataWebStockDayK {
 		try
 		{
 			String htmlstr = CHttp.getWebData(urlStr);
-			parseHtml2(htmlstr, cResultKLine);
+			parseHtml2(htmlstr, container);
 		}
 		catch(Exception e)
 		{
 			System.out.println("Exception[WebStockDayK]:" + e.getMessage()); 
-        	cResultKLine.error = -1;
-        	return cResultKLine;
+			error = -1;
+        	return error;
 		}
 		
-		Collections.sort(cResultKLine.resultList);
+		Collections.sort(container);
 		
-		return cResultKLine;
+		return error;
 	}
 	
 	// for html: "http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz002095&scale=240&ma=no&datalen=1023"
-	private static void parseHtml2(String in_str, ResultKLine out_result)
+	private static void parseHtml2(String in_str, List<KLine> resultList)
 	{
-		
 		String[] lines = in_str.split("\n");
 		for(int i=0; i<lines.length; i++)
 		{
@@ -133,13 +122,15 @@ public class DataWebStockDayK {
         		continue;
         	}
         	
-        	out_result.resultList.add(cKLine);
+        	resultList.add(cKLine);
 		}
 	}
 	
 	// for html: "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
-	private static void parseHtml1(String in_str, ResultKLine out_result)
+	private static int parseHtml1(String in_str, List<KLine> resultList)
 	{
+		int error = 0;
+		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -150,7 +141,7 @@ public class DataWebStockDayK {
 	        // 检查返回数据有效性
 	        if(!rootElement.getTagName().contains("control")) 
 	        {
-	        	out_result.error = -30;
+	        	error = -30;
 	        }
 
 	        NodeList contents = rootElement.getElementsByTagName("content");
@@ -171,11 +162,13 @@ public class DataWebStockDayK {
 	        	cKLine.high = Float.parseFloat(high);
 	        	cKLine.volume = Float.parseFloat(volume);
 	        	
-	        	out_result.resultList.add(cKLine);
+	        	resultList.add(cKLine);
 	        }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return error;
 	}
 }

@@ -33,27 +33,17 @@ public class DataWebStockDividendPayout {
 	 * 从网络中获得某只股票的分红派息因子
 	 * 返回0为成功，其他值为失败
 	 */
-	public static class ResultDividendPayout
+	public static int getDividendPayout(String id, List<DividendPayout> container)
 	{
-		public ResultDividendPayout()
-		{
-			error = 0;
-			resultList = new ArrayList<DividendPayout>();
-		}
-		public int error;
-		public List<DividendPayout> resultList;
-	}
-	public static ResultDividendPayout getDividendPayout(String id)
-	{
-		ResultDividendPayout cResultDividendPayout = new ResultDividendPayout();
+		int error = 0;
 		
 		// e.g http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/300163.phtml
 		String urlStr = "http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/";
 		
 		if(id.contains("999999")) 
 		{
-			cResultDividendPayout.error = 0;
-			return cResultDividendPayout; // 上证指数没有分红派息
+			error = 0;
+			return error; // 上证指数没有分红派息
 		}
 		
 		try{  
@@ -150,7 +140,7 @@ public class DataWebStockDividendPayout {
                     {
                     	continue;
                     }
-                    cResultDividendPayout.resultList.add(cDividendPayout);
+                    container.add(cDividendPayout);
                     //System.out.println("--------------------------------");
                 }
             }
@@ -184,12 +174,12 @@ public class DataWebStockDividendPayout {
         }catch (Exception e) {  
         	System.out.println("Exception[WebStockDividendPayout]:" + e.getMessage()); 
             // TODO: handle exception  
-        	cResultDividendPayout.error = -1;
-        	return cResultDividendPayout;
+        	error = -1;
+        	return error;
         }  
 		
-		Collections.sort(cResultDividendPayout.resultList);
-		return cResultDividendPayout;
+		Collections.sort(container);
+		return error;
 	}
 	
     public static  byte[] readInputStream(InputStream inputStream) throws IOException {    

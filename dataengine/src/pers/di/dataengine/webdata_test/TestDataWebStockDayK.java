@@ -3,7 +3,6 @@ package pers.di.dataengine.webdata_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 import pers.di.dataengine.common.*;
 import pers.di.dataengine.webdata.DataWebStockDayK;
 
@@ -11,13 +10,14 @@ public class TestDataWebStockDayK {
 
 	public static void main(String[] args){
 		
-		ResultKLine cResultKLine = DataWebStockDayK.getKLine("300428", "20170311", "20170911");
+		List<KLine> ctnKLine = new ArrayList<KLine>();
+		int error = DataWebStockDayK.getKLine("300428", "20170311", "20170911", ctnKLine);
 		
-		if(0 == cResultKLine.error)
+		if(0 == error)
 		{
-			for(int i = 0; i < cResultKLine.resultList.size(); i++)  
+			for(int i = 0; i < ctnKLine.size(); i++)  
 	        {  
-				KLine cKLine = cResultKLine.resultList.get(i);  
+				KLine cKLine = ctnKLine.get(i);  
 	            System.out.println(cKLine.date + "," 
 	            		+ cKLine.open + "," + cKLine.close
 	            		 + "," + cKLine.low + "," + cKLine.high);  
@@ -25,7 +25,7 @@ public class TestDataWebStockDayK {
 		}
 		else
 		{
-			System.out.println("ERROR:" + cResultKLine.error);
+			System.out.println("ERROR:" + error);
 		}
 	}
 

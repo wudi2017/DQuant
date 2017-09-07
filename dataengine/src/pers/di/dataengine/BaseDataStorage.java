@@ -13,10 +13,7 @@ import pers.di.dataengine.webdata.DataWebStockDayDetail;
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
 import pers.di.common.CPath;
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
-import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 
 public class BaseDataStorage {
 	
@@ -26,17 +23,17 @@ public class BaseDataStorage {
 		CPath.createDir(s_workDir);
 	}
 
-	public ResultKLine getKLine(String id)
+	public int getKLine(String id, List<KLine> container)
 	{
-		ResultKLine cResultKLine = new ResultKLine();
+		int error = 0;
 		
 		String stockDayKFileName = s_workDir + "/" + id + "/" + s_daykFile;
 		File cfile=new File(stockDayKFileName);
 
 		if(!cfile.exists())
 		{
-			cResultKLine.error = -10;
-			return cResultKLine;
+			error = -10;
+			return error;
 		}
 		
 		try
@@ -61,7 +58,7 @@ public class BaseDataStorage {
 	        	cKLine.low = Float.parseFloat(cols[3]);
 	        	cKLine.high = Float.parseFloat(cols[4]);
 	        	cKLine.volume = Float.parseFloat(cols[5]);
-	        	cResultKLine.resultList.add(cKLine);
+	        	container.add(cKLine);
 	        	
                 line++;
             }
@@ -70,10 +67,10 @@ public class BaseDataStorage {
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			cResultKLine.error = -1;
-			return cResultKLine;
+			error = -1;
+			return error;
 		}
-		return cResultKLine;
+		return error;
 	}
 	public int saveKLine(String id, List<KLine> in_list)
 	{
@@ -107,9 +104,9 @@ public class BaseDataStorage {
 		return 0;
 	}
 	
-	public ResultDividendPayout getDividendPayout(String id)
+	public int getDividendPayout(String id, List<DividendPayout> container)
 	{
-		ResultDividendPayout cResultDividendPayout = new ResultDividendPayout();
+		int error = 0;
 		
 		String stockDividendPayoutFileName = s_workDir + "/" + id + "/" + s_DividendPayoutFile;
 		File cfile=new File(stockDividendPayoutFileName);
@@ -124,8 +121,8 @@ public class BaseDataStorage {
 //		}
 		if(!cfile.exists()) 
 		{
-			cResultDividendPayout.error = -10;
-			return cResultDividendPayout;
+			error = -10;
+			return error;
 		}
 		
 		try
@@ -142,7 +139,7 @@ public class BaseDataStorage {
                 cDividendPayout.songGu = Float.parseFloat(cols[1]);
                 cDividendPayout.zhuanGu = Float.parseFloat(cols[2]);
                 cDividendPayout.paiXi = Float.parseFloat(cols[3]);
-                cResultDividendPayout.resultList.add(cDividendPayout);
+                container.add(cDividendPayout);
                 
                 line++;
             }
@@ -151,10 +148,10 @@ public class BaseDataStorage {
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			cResultDividendPayout.error = -1;
-			return cResultDividendPayout;
+			error = -1;
+			return error;
 		}
-		return cResultDividendPayout;
+		return error;
 	}
 	public int saveDividendPayout(String id, List<DividendPayout> in_list)
 	{
@@ -185,17 +182,17 @@ public class BaseDataStorage {
 		return 0;
 	}
 	
-	public ResultDayDetail getDayDetail(String id, String date)
+	public int getDayDetail(String id, String date, List<TradeDetail> container)
 	{
-		ResultDayDetail cResultDayDetail = new ResultDayDetail();
-				
+		int error = 0;
+		
 		String stocKLineDetailFileName = s_workDir + "/" + id + "/" + date + ".txt";
 		File cfile=new File(stocKLineDetailFileName);
 
 		if(!cfile.exists()) 
 		{
-			cResultDayDetail.error = -10;
-			return cResultDayDetail;
+			error = -10;
+			return error;
 		}
 		
 		try
@@ -213,7 +210,7 @@ public class BaseDataStorage {
 	        	cTradeDetail.price = Float.parseFloat(cols[1]);
 	        	cTradeDetail.volume = Float.parseFloat(cols[2]);
 	        	
-	        	cResultDayDetail.resultList.add(cTradeDetail);
+	        	container.add(cTradeDetail);
 	        	
                 line++;
             }
@@ -222,10 +219,10 @@ public class BaseDataStorage {
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			cResultDayDetail.error = -1;
-			return cResultDayDetail;
+			error = -1;
+			return error;
 		}
-		return cResultDayDetail;
+		return error;
 	}
 	public int saveDayDetail(String id, String date, List<TradeDetail> in_list)
 	{

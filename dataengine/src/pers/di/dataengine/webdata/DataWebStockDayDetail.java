@@ -26,19 +26,9 @@ public class DataWebStockDayDetail {
 	 * 从网络获取某只股票某日内的交易细节数据
 	 * 返回0为成功，其他值为失败
 	 */
-	public static class ResultDayDetail
+	public static int getDayDetail(String id, String date, List<TradeDetail> container)
 	{
-		public ResultDayDetail()
-		{
-			error = 0;
-			resultList = new ArrayList<TradeDetail>();
-		}
-		public int error;
-		public List<TradeDetail> resultList;
-	}
-	public static ResultDayDetail getDayDetail(String id, String date)
-	{
-		ResultDayDetail cResultDayDetail = new ResultDayDetail();
+		int error = 0;
 		
 		// e.g "http://market.finance.sina.com.cn/downxls.php?date=2015-02-16&symbol=sz300163"
 		String urlStr = "http://market.finance.sina.com.cn/downxls.php?";
@@ -53,8 +43,8 @@ public class DataWebStockDayDetail {
 		}
 		else
 		{
-			cResultDayDetail.error = -10;
-			return cResultDayDetail;
+			error = -10;
+			return error;
 		}
 		
 		try
@@ -86,24 +76,24 @@ public class DataWebStockDayDetail {
 	        	cTradeDetail.price = Float.parseFloat(cols[1]);
 	        	cTradeDetail.volume = Float.parseFloat(cols[3]);
 	        	
-	        	cResultDayDetail.resultList.add(cTradeDetail);
+	        	container.add(cTradeDetail);
 	        }
 	        
-	        if(cResultDayDetail.resultList.size() <= 0) 
+	        if(container.size() <= 0) 
         	{
-	        	cResultDayDetail.error = -30;
-	        	return cResultDayDetail;
+	        	error = -30;
+	        	return error;
         	}
 		}
 		catch(Exception e)
 		{
 			System.out.println("Exception[WebStockDayDetail]:" + e.getMessage()); 
-        	cResultDayDetail.error = -1;
-        	return cResultDayDetail;
+			error = -1;
+        	return error;
 		}
 	
-		Collections.sort(cResultDayDetail.resultList);
-		return cResultDayDetail;
+		Collections.sort(container);
+		return error;
 	}
 	
     public static  byte[] readInputStream(InputStream inputStream) throws IOException {    

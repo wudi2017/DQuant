@@ -8,7 +8,6 @@ import pers.di.dataengine.BaseDataLayer.ResultMinKLineOneDay;
 import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
 
 public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine();  
@@ -265,18 +264,17 @@ public class StockDataEngine {
 				m_cCache.dayKLineList = new HashMap<String,List<KLine>>();
 			}
 			
-			List<KLine> tmpDayKLineList = new ArrayList<KLine>();
+			List<KLine> cntKLine = new ArrayList<KLine>();
+			int errKLine = m_cBaseDataLayer.getDayKLinesForwardAdjusted(stockID, cntKLine);
 			
-			ResultKLine cResultKLine = m_cBaseDataLayer.getDayKLinesForwardAdjusted(stockID);
-			
-			if(0 == cResultKLine.error && cResultKLine.resultList.size() != 0)
+			if(0 == errKLine && cntKLine.size() != 0)
 			{
-				m_cCache.dayKLineList.put(stockID, cResultKLine.resultList);
+				m_cCache.dayKLineList.put(stockID, cntKLine);
 			}
 			else
 			{
 				CLog.error("STOCKDATA", "DataEngine.getDayKDataQianFuQuan(%s %s %s) error(%d) \n", 
-						stockID, fromDate, toDate, cResultKLine.error);
+						stockID, fromDate, toDate, errKLine);
 			}
 		}
 		

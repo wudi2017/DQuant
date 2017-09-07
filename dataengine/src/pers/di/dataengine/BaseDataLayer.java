@@ -9,9 +9,6 @@ import pers.di.dataengine.BaseDataStorage.ResultAllStockFullDataTimestamps;
 import pers.di.dataengine.BaseDataStorage.ResultStockBaseData;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockDayDetail.ResultDayDetail;
-import pers.di.dataengine.webdata.DataWebStockDayK.ResultKLine;
-import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 
 /*
  * 股票基础数据层
@@ -66,28 +63,31 @@ public class BaseDataLayer {
 	/*
 	 * 获取某只股票日K
 	 */
-	public ResultKLine getDayKLines(String id)
+	public int getDayKLines(String id, List<KLine> container)
 	{
-		return m_cBaseDataStorage.getKLine(id);
+		return m_cBaseDataStorage.getKLine(id, container);
 	}
 	
 	/*
 	 * 获取前复权日k
 	 */
-	public ResultKLine getDayKLinesForwardAdjusted(String id)
+	public int getDayKLinesForwardAdjusted(String id, List<KLine> container)
 	{
-		ResultKLine cResultKLine = m_cBaseDataStorage.getKLine(id);
-		ResultDividendPayout cResultDividendPayout = m_cBaseDataStorage.getDividendPayout(id);
-		if(0 != cResultKLine.error || 0 != cResultDividendPayout.error) 
+		int error = 0;
+		
+		int errKline = m_cBaseDataStorage.getKLine(id, container);
+		List<DividendPayout> ctnDividendPayout = new ArrayList<DividendPayout>();
+		int errDividendPayout = m_cBaseDataStorage.getDividendPayout(id, ctnDividendPayout);
+		if(0 != errKline || 0 != errDividendPayout) 
 		{
-			cResultKLine.error = -10;
-			cResultKLine.resultList.clear();
-			return cResultKLine;
+			error = -10;
+			container.clear();
+			return error;
 		}
 		
-		for(int i = 0; i < cResultDividendPayout.resultList.size() ; i++)  
+		for(int i = 0; i < ctnDividendPayout.size() ; i++)  
 		{
-			DividendPayout cDividendPayout = cResultDividendPayout.resultList.get(i);  
+			DividendPayout cDividendPayout = ctnDividendPayout.get(i);  
 //			System.out.println(cDividendPayout.date);
 //			System.out.println(cDividendPayout.songGu);
 //			System.out.println(cDividendPayout.zhuanGu);
@@ -96,9 +96,9 @@ public class BaseDataLayer {
 			float unitMoreGuRatio = (cDividendPayout.songGu + cDividendPayout.zhuanGu + 10)/10;
 			float unitPaiXi = cDividendPayout.paiXi/10;
 			
-			for(int j = cResultKLine.resultList.size() -1; j >= 0 ; j--)
+			for(int j = container.size() -1; j >= 0 ; j--)
 			{
-				KLine cKLine = cResultKLine.resultList.get(j); 
+				KLine cKLine = container.get(j); 
 				
 				if(cKLine.date.compareTo(cDividendPayout.date) < 0) // 股票日期小于分红派息日期时，进行重新计算
 				{
@@ -118,27 +118,30 @@ public class BaseDataLayer {
 				}
 			}
 		}
-		return cResultKLine;
+		return error;
 	}
 	
 	/*
 	 * 获取后复权日k
 	 */
-	public ResultKLine getDayKLinesBackwardAdjusted(String id)
+	public int getDayKLinesBackwardAdjusted(String id, List<KLine> container)
 	{
-		ResultKLine cResultKLine = m_cBaseDataStorage.getKLine(id);
-		ResultDividendPayout cResultDividendPayout = m_cBaseDataStorage.getDividendPayout(id);
-		if(0 != cResultKLine.error || 0 != cResultDividendPayout.error) 
+		int error = 0;
+		
+		int errKline =  m_cBaseDataStorage.getKLine(id, container);
+		List<DividendPayout> ctnDividendPayout = new ArrayList<DividendPayout>();
+		int errDividendPayout = m_cBaseDataStorage.getDividendPayout(id, ctnDividendPayout);
+		if(0 != errKline || 0 != errDividendPayout) 
 		{
-			cResultKLine.error = -10;
-			cResultKLine.resultList.clear();
-			return cResultKLine;
+			error = -10;
+			container.clear();
+			return error;
 		}
 		
 		
-		for(int i = cResultDividendPayout.resultList.size() -1; i >=0  ; i--)  
+		for(int i = ctnDividendPayout.size() -1; i >=0  ; i--)  
 		{
-			DividendPayout cDividendPayout = cResultDividendPayout.resultList.get(i);  
+			DividendPayout cDividendPayout = ctnDividendPayout.get(i);  
 //			System.out.println(cDividendPayout.date);
 //			System.out.println(cDividendPayout.songGu);
 //			System.out.println(cDividendPayout.zhuanGu);
@@ -147,9 +150,9 @@ public class BaseDataLayer {
 			float unitMoreGuRatio = (cDividendPayout.songGu + cDividendPayout.zhuanGu + 10)/10;
 			float unitPaiXi = cDividendPayout.paiXi/10;
 			
-			for(int j = 0; j< cResultKLine.resultList.size(); j++)
+			for(int j = 0; j< container.size(); j++)
 			{
-				KLine cKLine = cResultKLine.resultList.get(j); 
+				KLine cKLine = container.get(j); 
 				
 				if(cKLine.date.compareTo(cDividendPayout.date) >= 0) // 股票日期 大于等于分红派息日期时，进行重新计算
 				{
@@ -170,7 +173,7 @@ public class BaseDataLayer {
 			}
 		}
 		
-		return cResultKLine;
+		return error;
 	}
 	
 	
@@ -191,16 +194,17 @@ public class BaseDataLayer {
 	{
 		ResultMinKLineOneDay cResultMinKLineOneDay = new ResultMinKLineOneDay();
 		
-		ResultDayDetail cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
+		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
+		int error = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		
 		// 如果本地不存在，下载后获取
-		if(0 != cResultDayDetail.error)
+		if(0 != error)
 		{
 			m_cBaseDataDownload.downloadStockDetail(id, date);
-			cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
+			error = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		}
 				
-		if(0 == cResultDayDetail.error && cResultDayDetail.resultList.size() != 0)
+		if(0 == error && ctnTradeDetail.size() != 0)
 		{
 			int iSec093000 = 9*3600 + 30*60 + 0;
 			int iSec130000 = 13*3600 + 0*60 + 0;
@@ -208,7 +212,7 @@ public class BaseDataLayer {
             int iSecBegin = 0;
             int iSecEnd = 0;
             int iStdSecEnd = 0;
-            float preClosePrice = cResultDayDetail.resultList.get(0).price;
+            float preClosePrice = ctnTradeDetail.get(0).price;
             // add 上午
             for(int i = 0; i < 24; i++)
             {
@@ -232,9 +236,9 @@ public class BaseDataLayer {
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
     			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
-    			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
+    			for(int j = 0; j < ctnTradeDetail.size(); j++)  
     	        {  
-    				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(j);  
+    				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
 //    	            System.out.println(cTradeDetail.time + "," 
 //    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
     	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
@@ -304,9 +308,9 @@ public class BaseDataLayer {
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
     			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
-    			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
+    			for(int j = 0; j < ctnTradeDetail.size(); j++)  
     	        {  
-    				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(j);  
+    				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
 //    	            System.out.println(cTradeDetail.time + "," 
 //    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
     	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
@@ -370,16 +374,17 @@ public class BaseDataLayer {
 	{
 		ResultMinKLineOneDay cResultMinKLineOneDay = new ResultMinKLineOneDay();
 		
-		ResultDayDetail cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
+		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
+		int error = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		
 		// 如果本地不存在，下载后获取
-		if(0 != cResultDayDetail.error)
+		if(0 != error)
 		{
 			m_cBaseDataDownload.downloadStockDetail(id, date);
-			cResultDayDetail = m_cBaseDataStorage.getDayDetail(id, date);
+			error = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		}
 		
-		if(0 == cResultDayDetail.error && cResultDayDetail.resultList.size() != 0)
+		if(0 == error && ctnTradeDetail.size() != 0)
 		{
 			int iSec092500 = 9*3600 + 25*60 + 0;
 			int iSec093000 = 9*3600 + 30*60 + 0;
@@ -388,7 +393,7 @@ public class BaseDataLayer {
             int iSecBegin = 0;
             int iSecEnd = 0;
             int iStdSecEnd = 0;
-            float preClosePrice = cResultDayDetail.resultList.get(0).price;
+            float preClosePrice = ctnTradeDetail.get(0).price;
             // add 上午
             for(int i = 0; i < 120; i++)
             {
@@ -412,9 +417,9 @@ public class BaseDataLayer {
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
     			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
-    			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
+    			for(int j = 0; j < ctnTradeDetail.size(); j++)  
     	        {  
-    				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(j);  
+    				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
 //    	            System.out.println(cTradeDetail.time + "," 
 //    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
     	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
@@ -484,9 +489,9 @@ public class BaseDataLayer {
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
     			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
-    			for(int j = 0; j < cResultDayDetail.resultList.size(); j++)  
+    			for(int j = 0; j < ctnTradeDetail.size(); j++)  
     	        {  
-    				TradeDetail cTradeDetail = cResultDayDetail.resultList.get(j);  
+    				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
 //    	            System.out.println(cTradeDetail.time + "," 
 //    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
     	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
@@ -616,20 +621,21 @@ public class BaseDataLayer {
 		}
 		
 		// 检查前复权日K
-		ResultKLine cResultKLine = this.getDayKLinesForwardAdjusted(stockID);
-		if(0 != cResultKLine.error 
-				|| cResultKLine.resultList.size() <= 0)
+		List<KLine> ctnKLine = new ArrayList<KLine>();
+		int errKLine = this.getDayKLinesForwardAdjusted(stockID, ctnKLine);
+		if(0 != errKLine 
+				|| ctnKLine.size() <= 0)
 		{
 			return -2;
 		}
 		
 		// 检查前复权日K涨跌幅度, 近若干天没有问题就算没有问题
-		int iBeginCheck = cResultKLine.resultList.size() - 500;
+		int iBeginCheck = ctnKLine.size() - 500;
 		if(iBeginCheck<=0) iBeginCheck = 0;
-		for(int i=iBeginCheck; i < cResultKLine.resultList.size()-1; i++)  
+		for(int i=iBeginCheck; i < ctnKLine.size()-1; i++)  
         {  
-			KLine cKLine = cResultKLine.resultList.get(i);  
-			KLine cKLineNext = cResultKLine.resultList.get(i+1);  
+			KLine cKLine = ctnKLine.get(i);  
+			KLine cKLineNext = ctnKLine.get(i+1);  
             float close = cKLine.close;
             float nextHigh = cKLineNext.high;
             float nextLow = cKLineNext.low;

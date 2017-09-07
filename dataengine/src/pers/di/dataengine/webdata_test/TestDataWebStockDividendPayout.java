@@ -6,19 +6,19 @@ import java.util.List;
 import pers.di.dataengine.common.*;
 
 import pers.di.dataengine.webdata.DataWebStockDividendPayout;
-import pers.di.dataengine.webdata.DataWebStockDividendPayout.ResultDividendPayout;
 
 public class TestDataWebStockDividendPayout {
 
 	public static void main(String[] args){
 		String StockID = "300428";
 		
-		ResultDividendPayout cResultDividendPayout = DataWebStockDividendPayout.getDividendPayout(StockID);
-		if(0 == cResultDividendPayout.error)
+		List<DividendPayout> container = new ArrayList<DividendPayout>();
+		int error = DataWebStockDividendPayout.getDividendPayout(StockID, container);
+		if(0 == error)
 		{
-			for(int i = 0; i < cResultDividendPayout.resultList.size(); i++)  
+			for(int i = 0; i < container.size(); i++)  
 	        {  
-				DividendPayout cDividendPayout = cResultDividendPayout.resultList.get(i);  
+				DividendPayout cDividendPayout = container.get(i);  
 	            System.out.println(cDividendPayout.date 
 	            		+ "," + cDividendPayout.songGu
 	            		+ "," + cDividendPayout.zhuanGu
@@ -27,7 +27,7 @@ public class TestDataWebStockDividendPayout {
 		}
 		else
 		{
-			System.out.println("ERROR:" + cResultDividendPayout.error);
+			System.out.println("ERROR:" + error);
 		}
 	}
 }
