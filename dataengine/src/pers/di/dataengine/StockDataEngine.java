@@ -364,27 +364,22 @@ public class StockDataEngine {
 	}
 	
 	/*
-	 * 装载某只股票实时价格容器
+	 * 装载某只股票实时信息容器
 	 * 
 	 * 返回值：
 	 *     返回0为成功，其他值为失败
 	 * 参数：
 	 *     container 
 	 */
-	public int loadRealTimePrice(String id, TimePrice container)
+	public int loadRealTimeInfo(String id, RealTimeInfo container)
 	{
 		int error = 0;
 		
-		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-		int errRealTimeInfo = m_cBaseDataLayer.getRealTimeInfo(id, ctnRealTimeInfo);
+		int errRealTimeInfo = m_cBaseDataLayer.getRealTimeInfo(id, container);
 		
 		if(0 == errRealTimeInfo)
 		{
-			TimePrice cTimePrice = container;
-			cTimePrice.time = ctnRealTimeInfo.time;
-			cTimePrice.price = ctnRealTimeInfo.curPrice;
-
-			if(0 == Float.compare(cTimePrice.price, 0.00f))
+			if(0 == Float.compare(container.curPrice, 0.00f))
 			{
 				error = -2;
 				CLog.error("STOCKDATA", "getStockTime %s price 0.00f!\n", id); // 修正取得实时价格为0则认为错误

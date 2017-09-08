@@ -1,6 +1,4 @@
-package pers.di.dataengine;
-
-import pers.di.dataengine.common.StockInfo;
+package pers.di.dataengine.common;
 
 public class DEStockInfoObserver {
 	public DEStockInfoObserver()

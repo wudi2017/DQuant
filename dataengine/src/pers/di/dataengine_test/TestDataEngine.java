@@ -83,9 +83,9 @@ public class TestDataEngine {
 	
 	private static void test_getRealTimePrice()
 	{
-		TimePrice ctnTimePrice = new TimePrice();
-		int error = StockDataEngine.instance().loadRealTimePrice("600000", ctnTimePrice);
-		CLog.output("TEST", "err:%d time:%s price:%f\n", error, ctnTimePrice.time, ctnTimePrice.price);
+		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
+		int error = StockDataEngine.instance().loadRealTimeInfo("600000", ctnRealTimeInfo);
+		CLog.output("TEST", "err:%d time:%s price:%f\n", error, ctnRealTimeInfo.time, ctnRealTimeInfo.curPrice);
 		
 	}
 	

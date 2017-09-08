@@ -38,14 +38,15 @@ public class QuantEngine {
 				if(m_bHistoryTest)
 				{
 					m_hisTranDate = new ArrayList<String>();
-					DEKLines cDEKLines = StockDataEngine.instance().getDayKLines("999999", "2008-01-01", "2100-01-01");
-					List<KLine> cStocDayListShangZheng = cDEKLines.origin();
-					int iB = StockUtils.indexDayKAfterDate(cStocDayListShangZheng, m_beginDate, true);
-					int iE = StockUtils.indexDayKBeforeDate(cStocDayListShangZheng, m_endDate, true);
+					DEKLineListObserver obsKLineListSZZS = new DEKLineListObserver();
+					int errKLineListSZZS = StockDataEngine.instance().buildDayKLineListObserver(
+							"999999", "2008-01-01", "2100-01-01", obsKLineListSZZS);
+					int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_beginDate, true);
+					int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_endDate, true);
 					
 					for(int i = iB; i <= iE; i++)  
 			        {  
-						KLine cStockDayShangZheng = cStocDayListShangZheng.get(i);  
+						KLine cStockDayShangZheng = obsKLineListSZZS.get(i);  
 						String curDateStr = cStockDayShangZheng.date;
 						m_hisTranDate.add(curDateStr);
 			        }
@@ -265,10 +266,12 @@ public class QuantEngine {
 			// 确认今天是否是交易日
 			String yesterdayDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(m_curDate, -1);
 			StockDataEngine.instance().updateLocalStocks("999999", yesterdayDate);
-			DEKLines cDEKLines = StockDataEngine.instance().getDayKLines("999999", "2000-01-01", "2100-01-01");
-			for(int i = 0; i < cDEKLines.size(); i++)  
+			DEKLineListObserver obsKLineListSZZS = new DEKLineListObserver();
+			int errKLineListSZZS = StockDataEngine.instance().buildDayKLineListObserver(
+					"999999", "2000-01-01", "2100-01-01", obsKLineListSZZS);
+			for(int i = 0; i < obsKLineListSZZS.size(); i++)  
 	        {  
-				KLine cStockDayShangZheng = cDEKLines.get(i);  
+				KLine cStockDayShangZheng = obsKLineListSZZS.get(i);  
 				String checkDateStr = cStockDayShangZheng.date;
 				if(checkDateStr.equals(date))
 				{
@@ -278,10 +281,11 @@ public class QuantEngine {
 			
 			for(int i = 0; i < 5; i++) // 试图5次来确认
 			{
-				DETimePrice cDETimePrice = StockDataEngine.instance().getRealTimePrice("999999");
-				if(0 == cDETimePrice.error())
+				RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
+				int errRealTimeInfo = StockDataEngine.instance().loadRealTimeInfo("999999", ctnRealTimeInfo);
+				if(0 == errRealTimeInfo)
 				{
-					if(cDETimePrice.date().compareTo(date) == 0)
+					if(ctnRealTimeInfo.date.compareTo(date) == 0)
 					{
 						return true;
 					}

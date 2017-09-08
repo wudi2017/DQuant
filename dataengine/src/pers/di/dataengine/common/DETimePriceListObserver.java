@@ -1,8 +1,6 @@
-package pers.di.dataengine;
+package pers.di.dataengine.common;
 
 import java.util.List;
-
-import pers.di.dataengine.common.TimePrice;
 
 public class DETimePriceListObserver {
 	public DETimePriceListObserver()

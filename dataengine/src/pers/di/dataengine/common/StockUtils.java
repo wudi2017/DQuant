@@ -17,11 +17,6 @@ import pers.di.dataengine.common.*;
  */
 public class StockUtils {
 	
-	/*
-	 * 日K基本机能
-	 * ------------------------------------------------------------------------------------------------------
-	 */
-	
 	// 计算index的临近日平均价（count=1时，表示昨天，今天，明天的均价）
 	static public float GetAveNear(List<KLine> dayklist, int count, int index)
 	{
@@ -240,12 +235,6 @@ public class StockUtils {
 		return newTimePriceData;
 	}
 	
-	
-	/*
-	 * 日内分时基本机能
-	 * ------------------------------------------------------------------------------------------------------
-	 */
-	
 	// 计算i到j日的最高价格的索引
 	static public int indexTimePriceHigh(List<TimePrice> list, int i, int j)
 	{
@@ -275,6 +264,85 @@ public class StockUtils {
 			{
 				low = cTimePrice.price;
 				index = k;
+			}
+		}
+		return index;
+	}
+	
+	
+	/**
+	 * ***************************************************************************
+	 * 
+	 */
+	
+	public static DEKLineListObserver subKLineListObserver(DEKLineListObserver oriObs, String fromDate, String endDate)
+	{
+		DEKLineListObserver newObs = new DEKLineListObserver();
+		int iBase = -1;
+		int iSize = 0;
+		for(int i = 0; i <oriObs.size(); i++)  
+        {  
+			KLine cKLine = oriObs.get(i);  
+			if(cKLine.date.compareTo(fromDate) >= 0)
+			{
+				iBase = i;
+			}
+			if(iBase >= 0 && cKLine.date.compareTo(endDate) <= 0)
+			{
+				iSize++;
+			}
+        }
+		if(iBase >=0)
+		{
+			newObs.build(oriObs, iBase, iSize);
+		}
+		return newObs;
+	}
+	
+	// 查找日期索引，返回list中某日期（含/不含）之后的第一天index索引
+	static public int indexDayKAfterDate(DEKLineListObserver oriObs, String dateStr, boolean bContainSelf)
+	{
+		int index = 0;
+		for(int k = 0; k<oriObs.size(); k++ )
+		{
+			KLine cDayKDataTmp = oriObs.get(k);
+			boolean bFind = false;
+			if(bContainSelf)
+			{
+				bFind = cDayKDataTmp.date.compareTo(dateStr) >= 0;
+			}
+			else
+			{
+				bFind = cDayKDataTmp.date.compareTo(dateStr) > 0;
+			}
+			if(bFind)
+			{
+				index = k;
+				break;
+			}
+		}
+		return index;
+	}
+	
+	static public int indexDayKBeforeDate(DEKLineListObserver oriObs, String dateStr, boolean bContainSelf)
+	{
+		int index = 0;
+		for(int k = oriObs.size()-1; k >= 0; k-- )
+		{
+			KLine cDayKDataTmp = oriObs.get(k);
+			boolean bFind = false;
+			if(bContainSelf)
+			{
+				bFind = cDayKDataTmp.date.compareTo(dateStr) <= 0;
+			}
+			else
+			{
+				bFind = cDayKDataTmp.date.compareTo(dateStr) < 0;
+			}
+			if(bFind)
+			{
+				index = k;
+				break;
 			}
 		}
 		return index;

@@ -1,7 +1,6 @@
 package pers.di.quantengine.dataaccessor;
 
 import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.StockDataEngine.DEKLines;
 
 public class DAStock {
 	

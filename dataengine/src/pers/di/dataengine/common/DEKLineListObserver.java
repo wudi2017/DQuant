@@ -1,8 +1,6 @@
-package pers.di.dataengine;
+package pers.di.dataengine.common;
 
 import java.util.List;
-
-import pers.di.dataengine.common.KLine;
 
 public class DEKLineListObserver {
 	public DEKLineListObserver()
@@ -14,6 +12,12 @@ public class DEKLineListObserver {
 	public void build(List<KLine> origin, int iBase, int iSize)
 	{
 		m_resultList = origin;
+		m_iBase = iBase;
+		m_iSize= iSize;
+	}
+	public void build(DEKLineListObserver origin, int iBase, int iSize)
+	{
+		m_resultList = origin.m_resultList;
 		m_iBase = iBase;
 		m_iSize= iSize;
 	}
