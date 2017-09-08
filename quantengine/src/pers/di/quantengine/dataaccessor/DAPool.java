@@ -16,20 +16,29 @@ import pers.di.dataengine.common.*;
 public class DAPool {
 	public DAPool(String date, String time)
 	{
+		m_date = date;
+		m_time = time;
+		m_obsStockIDList = new DEStockIDListObserver();
+		StockDataEngine.instance().buildAllStockIDObserver(m_obsStockIDList);
 	}
 	
 	public int size()
 	{
-		return 0;
+		return m_obsStockIDList.size();
 	}
 	
 	public DAStock get(int i)
 	{
-		return new DAStock();
+		String stockID = m_obsStockIDList.get(i);
+		return new DAStock(stockID, m_date, m_time);
 	}
 	
 	public DAStock get(String stockID)
 	{
-		return new DAStock();
+		return new DAStock(stockID, m_date, m_time);
 	}
+	
+	private String m_date;
+	private String m_time;
+	private DEStockIDListObserver m_obsStockIDList;
 }

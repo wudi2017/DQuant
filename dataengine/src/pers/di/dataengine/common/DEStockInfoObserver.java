@@ -12,21 +12,29 @@ public class DEStockInfoObserver {
 	
 	public String name()
 	{
+		if(null == m_innerRefStockInfo)
+			return null;
 		return m_innerRefStockInfo.name;
 	}
 	
-	public float PE()
+	public Float PE()
 	{
+		if(null == m_innerRefStockInfo)
+			return null;
 		return m_innerRefStockInfo.peRatio;
 	}
 	
-	public float circulatedMarketValue()
+	public Float circulatedMarketValue()
 	{
+		if(null == m_innerRefStockInfo)
+			return null;
 		return m_innerRefStockInfo.circulatedMarketValue;
 	}
 	
-	public float allMarketValue()
+	public Float allMarketValue()
 	{
+		if(null == m_innerRefStockInfo)
+			return null;
 		return m_innerRefStockInfo.allMarketValue;
 	}
 

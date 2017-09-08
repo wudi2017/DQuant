@@ -8,7 +8,7 @@ import pers.di.dataengine.common.*;
  */
 public class DAKLines
 {
-	public DAKLines()
+	public DAKLines(String stockID, String date)
 	{
 	}
 	public int size()

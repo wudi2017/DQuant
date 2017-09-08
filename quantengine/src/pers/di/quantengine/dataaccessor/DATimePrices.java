@@ -4,7 +4,7 @@ import pers.di.dataengine.common.*;
 
 public class DATimePrices {
 	
-	public DATimePrices()
+	public DATimePrices(String stockID, String date)
 	{
 	}
 	public int size()

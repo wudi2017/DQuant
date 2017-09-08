@@ -1,22 +1,32 @@
 package pers.di.quantengine.dataaccessor;
 
 import pers.di.dataengine.StockDataEngine;
+import pers.di.dataengine.common.DEStockInfoObserver;
 
 public class DAStock {
 	
+	public DAStock(String stockID, String date, String time)
+	{
+		m_date = date;
+		m_time = time;
+		m_stockID = stockID;
+		obsStockInfo = new DEStockInfoObserver();
+		StockDataEngine.instance().buildStockInfoObserver(stockID, obsStockInfo);
+	}
+	
 	public String ID()
 	{
-		return null;
+		return m_stockID;
 	}
 	
 	public String name()
 	{
-		return null;
+		return obsStockInfo.name();
 	}
 	
 	public float PE()
 	{
-		return 0;
+		return obsStockInfo.PE();
 	}
 	
 	/*
@@ -24,7 +34,7 @@ public class DAStock {
 	 */
 	public DAKLines dayKLines()
 	{
-		return new DAKLines();
+		return new DAKLines(m_stockID, m_date);
 	}
 	
 	/*
@@ -32,6 +42,11 @@ public class DAStock {
 	 */
 	public DATimePrices timePrices(String date)
 	{
-		return null;
+		return new DATimePrices(m_stockID, m_date);
 	}
+	
+	private String m_date;
+	private String m_time;
+	private String m_stockID;
+	private DEStockInfoObserver obsStockInfo;
 }
