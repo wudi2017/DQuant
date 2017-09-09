@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import pers.di.common.*;
+import pers.di.common.CNewTypeDefine.CListObserver;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.*;
 import pers.di.dataengine.common.*;
@@ -38,7 +39,7 @@ public class QuantEngine {
 				if(m_bHistoryTest)
 				{
 					m_hisTranDate = new ArrayList<String>();
-					DEKLineListObserver obsKLineListSZZS = new DEKLineListObserver();
+					CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
 					int errKLineListSZZS = StockDataEngine.instance().buildDayKLineListObserver(
 							"999999", "2008-01-01", "2100-01-01", obsKLineListSZZS);
 					int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_beginDate, true);
@@ -266,7 +267,7 @@ public class QuantEngine {
 			// 确认今天是否是交易日
 			String yesterdayDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(m_curDate, -1);
 			StockDataEngine.instance().updateLocalStocks("999999", yesterdayDate);
-			DEKLineListObserver obsKLineListSZZS = new DEKLineListObserver();
+			CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
 			int errKLineListSZZS = StockDataEngine.instance().buildDayKLineListObserver(
 					"999999", "2000-01-01", "2100-01-01", obsKLineListSZZS);
 			for(int i = 0; i < obsKLineListSZZS.size(); i++)  

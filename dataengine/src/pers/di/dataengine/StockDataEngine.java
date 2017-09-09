@@ -105,7 +105,7 @@ public class StockDataEngine {
 	 * 参数：
 	 *     observer 观察器
 	 */
-	public int buildAllStockIDObserver(DEStockIDListObserver observer)
+	public int buildAllStockIDObserver(CListObserver<String> observer)
 	{
 		int error = 0;
 		if(null != m_cCache.AllStockID)
@@ -144,7 +144,7 @@ public class StockDataEngine {
 	 * 参数：
 	 *     observer 观察器
 	 */
-	public int buildStockInfoObserver(String id, DEStockInfoObserver observer)
+	public int buildStockInfoObserver(String id, CObjectObserver<StockInfo> observer)
 	{
 		int error = 0;
 		
@@ -190,7 +190,7 @@ public class StockDataEngine {
 	 * 参数：
 	 *     observer 观察器
 	 */
-	public int buildDayKLineListObserver(String stockID, String fromDate, String toDate, DEKLineListObserver observer)
+	public int buildDayKLineListObserver(String stockID, String fromDate, String toDate, CListObserver<KLine> observer)
 	{
 		int error = 0;
 		
@@ -256,7 +256,7 @@ public class StockDataEngine {
 	 *     observer 观察器
 	 */
 	public int buildMinTimePriceListObserver(String id, String date, 
-			String beginTime, String endTime, DETimePriceListObserver observer)
+			String beginTime, String endTime, CListObserver<TimePrice> observer)
 	{
 		int error = 0;
 		
@@ -271,7 +271,7 @@ public class StockDataEngine {
 			
 			List<TimePrice> detailDataList = new ArrayList<TimePrice>();
 			
-			DEKLineListObserver obsDayKLineList = new DEKLineListObserver();
+			CListObserver<KLine> obsDayKLineList = new CListObserver<KLine>();
 			int errObsDayKLineList = this.buildDayKLineListObserver(id, date, date, obsDayKLineList);
 			if(0 == errObsDayKLineList && obsDayKLineList.size()==1)
 			{

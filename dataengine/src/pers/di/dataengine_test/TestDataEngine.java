@@ -7,6 +7,7 @@ import pers.di.common.CImageCurve;
 import pers.di.common.CLog;
 import pers.di.common.CUtilsDateTime;
 import pers.di.common.CImageCurve.CurvePoint;
+import pers.di.common.CNewTypeDefine.*;
 import pers.di.dataengine.basedata.*;
 import pers.di.dataengine.*;
 import pers.di.dataengine.common.*;
@@ -25,7 +26,7 @@ public class TestDataEngine {
 	
 	private static void test_getAllStockIDs()
 	{
-		DEStockIDListObserver observer = new DEStockIDListObserver();
+		CListObserver<String> observer = new CListObserver<String>();
 		int error = StockDataEngine.instance().buildAllStockIDObserver(observer);
 		CLog.output("TEST", "stock count: %d\n", observer.size());
 		for(int i=0; i<observer.size(); i++)
@@ -38,19 +39,19 @@ public class TestDataEngine {
 	private static void test_getStockInfo()
 	{
 		String stockID = "600000";
-		DEStockInfoObserver observer = new DEStockInfoObserver();
+		CObjectObserver<StockInfo> observer = new CObjectObserver<StockInfo>();
 		int error = StockDataEngine.instance().buildStockInfoObserver(stockID, observer);
 		if(0 == error)
 		{
 			CLog.output("TEST", "cStockInfo [%s][%s]\n",
-					stockID, observer.name());
+					stockID, observer.get().name);
 		}
 	}
 	
 	private static void test_getDayKLines()
 	{
 		String stockID = "600000";
-		DEKLineListObserver obsKLineList = new DEKLineListObserver();
+		CListObserver<KLine> obsKLineList = new CListObserver<KLine>();
 		int error = StockDataEngine.instance().buildDayKLineListObserver(stockID, "2014-05-23", "2014-08-15", obsKLineList);
 		CLog.output("TEST", "KLine count: %d\n", obsKLineList.size());
 		for(int i=0; i<obsKLineList.size(); i++)
@@ -66,7 +67,7 @@ public class TestDataEngine {
 		List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 		
 		String stockID = "600004";
-		DETimePriceListObserver obsTimePriceList = new DETimePriceListObserver();
+		CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
 		int errObsTimePriceList = StockDataEngine.instance().buildMinTimePriceListObserver(stockID, "2016-01-27", 
 				"09:00:00", "15:00:00", obsTimePriceList);
 		CLog.output("TEST", "KLine count: %d\n", obsTimePriceList.size());

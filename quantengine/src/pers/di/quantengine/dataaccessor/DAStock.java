@@ -1,7 +1,9 @@
 package pers.di.quantengine.dataaccessor;
 
+import pers.di.common.CNewTypeDefine.CListObserver;
 import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.common.DEStockInfoObserver;
+import pers.di.dataengine.common.*;
+import pers.di.common.CNewTypeDefine.*;
 
 public class DAStock {
 	
@@ -10,7 +12,7 @@ public class DAStock {
 		m_date = date;
 		m_time = time;
 		m_stockID = stockID;
-		obsStockInfo = new DEStockInfoObserver();
+		obsStockInfo = new CObjectObserver<StockInfo>();
 		StockDataEngine.instance().buildStockInfoObserver(stockID, obsStockInfo);
 	}
 	
@@ -21,12 +23,12 @@ public class DAStock {
 	
 	public String name()
 	{
-		return obsStockInfo.name();
+		return obsStockInfo.get().name;
 	}
 	
 	public float PE()
 	{
-		return obsStockInfo.PE();
+		return obsStockInfo.get().peRatio;
 	}
 	
 	/*
@@ -48,5 +50,5 @@ public class DAStock {
 	private String m_date;
 	private String m_time;
 	private String m_stockID;
-	private DEStockInfoObserver obsStockInfo;
+	private CObjectObserver<StockInfo> obsStockInfo;
 }

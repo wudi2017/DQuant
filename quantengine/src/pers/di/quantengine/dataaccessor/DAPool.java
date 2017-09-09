@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.common.CLog;
+import pers.di.common.CNewTypeDefine.CListObserver;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.*;
 import pers.di.dataengine.common.*;
@@ -18,7 +19,7 @@ public class DAPool {
 	{
 		m_date = date;
 		m_time = time;
-		m_obsStockIDList = new DEStockIDListObserver();
+		m_obsStockIDList = new CListObserver<String>();
 		StockDataEngine.instance().buildAllStockIDObserver(m_obsStockIDList);
 	}
 	
@@ -40,5 +41,5 @@ public class DAPool {
 	
 	private String m_date;
 	private String m_time;
-	private DEStockIDListObserver m_obsStockIDList;
+	private CListObserver<String> m_obsStockIDList;
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import pers.di.common.CNewTypeDefine.*;
 import pers.di.dataengine.common.*;
 
 /**
@@ -275,9 +276,9 @@ public class StockUtils {
 	 * 
 	 */
 	
-	public static DEKLineListObserver subKLineListObserver(DEKLineListObserver oriObs, String fromDate, String endDate)
+	public static CListObserver<KLine> subKLineListObserver(CListObserver<KLine> oriObs, String fromDate, String endDate)
 	{
-		DEKLineListObserver newObs = new DEKLineListObserver();
+		CListObserver<KLine> newObs = new CListObserver<KLine>();
 		int iBase = -1;
 		int iSize = 0;
 		for(int i = 0; i <oriObs.size(); i++)  
@@ -300,7 +301,7 @@ public class StockUtils {
 	}
 	
 	// 查找日期索引，返回list中某日期（含/不含）之后的第一天index索引
-	static public int indexDayKAfterDate(DEKLineListObserver oriObs, String dateStr, boolean bContainSelf)
+	static public int indexDayKAfterDate(CListObserver<KLine> oriObs, String dateStr, boolean bContainSelf)
 	{
 		int index = 0;
 		for(int k = 0; k<oriObs.size(); k++ )
@@ -324,7 +325,7 @@ public class StockUtils {
 		return index;
 	}
 	
-	static public int indexDayKBeforeDate(DEKLineListObserver oriObs, String dateStr, boolean bContainSelf)
+	static public int indexDayKBeforeDate(CListObserver<KLine> oriObs, String dateStr, boolean bContainSelf)
 	{
 		int index = 0;
 		for(int k = oriObs.size()-1; k >= 0; k-- )
