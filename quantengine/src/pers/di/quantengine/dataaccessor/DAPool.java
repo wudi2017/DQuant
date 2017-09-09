@@ -22,6 +22,14 @@ public class DAPool {
 		m_obsStockIDList = new CListObserver<String>();
 		StockDataEngine.instance().buildAllStockIDObserver(m_obsStockIDList);
 	}
+	public String date()
+	{
+		return m_date;
+	}
+	public String time()
+	{
+		return m_time;
+	}
 	
 	public int size()
 	{
@@ -31,12 +39,11 @@ public class DAPool {
 	public DAStock get(int i)
 	{
 		String stockID = m_obsStockIDList.get(i);
-		return new DAStock(stockID, m_date, m_time);
+		return new DAStock(stockID, this);
 	}
-	
 	public DAStock get(String stockID)
 	{
-		return new DAStock(stockID, m_date, m_time);
+		return new DAStock(stockID, this);
 	}
 	
 	private String m_date;

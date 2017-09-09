@@ -7,13 +7,16 @@ import pers.di.common.CNewTypeDefine.*;
 
 public class DAStock {
 	
-	public DAStock(String stockID, String date, String time)
+	public DAStock(String stockID, DAPool pool)
 	{
-		m_date = date;
-		m_time = time;
+		m_pool = pool;
 		m_stockID = stockID;
 		obsStockInfo = new CObjectObserver<StockInfo>();
-		StockDataEngine.instance().buildStockInfoObserver(stockID, obsStockInfo);
+		int errStockInfo = StockDataEngine.instance().buildStockInfoObserver(stockID, obsStockInfo);
+		if(0 != errStockInfo)
+		{
+			obsStockInfo.build(new StockInfo());
+		}
 	}
 	
 	public String ID()
@@ -36,7 +39,7 @@ public class DAStock {
 	 */
 	public DAKLines dayKLines()
 	{
-		return new DAKLines(m_stockID, m_date);
+		return new DAKLines(m_stockID, m_pool);
 	}
 	
 	/*
@@ -44,11 +47,10 @@ public class DAStock {
 	 */
 	public DATimePrices timePrices(String date)
 	{
-		return new DATimePrices(m_stockID, m_date);
+		return new DATimePrices(m_stockID, m_pool);
 	}
 	
-	private String m_date;
-	private String m_time;
+	private DAPool m_pool;
 	private String m_stockID;
 	private CObjectObserver<StockInfo> obsStockInfo;
 }

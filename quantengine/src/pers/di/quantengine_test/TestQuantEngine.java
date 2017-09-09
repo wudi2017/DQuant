@@ -10,16 +10,24 @@ public class TestQuantEngine {
 
 	public static class MyQuantTest extends QuantTriger
 	{
+		public void onNewDay(String date, String time)
+		{
+			CLog.output("TEST", "onHandler %s %s\n", date, time);
+		}
 		@Override
 		public void onHandler(QuantContext ctx) {
+			
+			if(ctx.time.equals("09:30:00"))
+				onNewDay(ctx.date, ctx.time);
+			
 			// TODO Auto-generated method stub
-			CLog.output("TEST", "onHandler %s %s\n", ctx.date, ctx.time);
+			//CLog.output("TEST", "onHandler %s %s\n", ctx.date, ctx.time);
 			
 			// 遍历所有股票
 			for(int i=0; i<ctx.pool.size(); i++)
 			{
 				DAStock stock = ctx.pool.get(i);
-				CLog.output("TEST", "stock %s %s\n", stock.ID(), stock.name());
+				//CLog.output("TEST", "stock %s %s\n", stock.ID(), stock.name());
 			}
 			
 			// 遍历某只股票日K线
@@ -27,7 +35,7 @@ public class TestQuantEngine {
 			for(int i=0; i<cKLines.size(); i++)
 			{
 				KLine cKLine = cKLines.get(i);
-				CLog.output("TEST", "date %s close %.3f\n", cKLine.date, cKLine.close);
+				//CLog.output("TEST", "date %s close %.3f\n", cKLine.date, cKLine.close);
 			}
 			
 			// 遍历某只股票某日分时线
@@ -35,16 +43,15 @@ public class TestQuantEngine {
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);
-				CLog.output("TEST", "time %s price %.3f\n", cTimePrice.time, cTimePrice.price);
+				//CLog.output("TEST", "time %s price %.3f\n", cTimePrice.time, cTimePrice.price);
 			}
-			
 		}
 	}
 	
 	public static void main(String[] args) {
 		CLog.output("TEST", "TestQuantEngine\n");
 		QuantEngine qE = new QuantEngine();
-		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-01-03");
+		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-03");
 		// qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
 	}

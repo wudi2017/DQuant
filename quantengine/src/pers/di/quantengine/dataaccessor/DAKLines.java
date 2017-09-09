@@ -1,5 +1,7 @@
 package pers.di.quantengine.dataaccessor;
 
+import pers.di.common.CNewTypeDefine.CListObserver;
+import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.common.*;
 
 /*
@@ -8,15 +10,21 @@ import pers.di.dataengine.common.*;
  */
 public class DAKLines
 {
-	public DAKLines(String stockID, String date)
+	public DAKLines(String stockID, DAPool pool)
 	{
+		m_obsKLineList = new CListObserver<KLine>();
+		StockDataEngine.instance().buildDayKLineListObserver(
+				stockID, "2000-01-01", pool.date(), m_obsKLineList);
+		
 	}
 	public int size()
 	{
-		return 0;
+		return m_obsKLineList.size();
 	}
 	public KLine get(int i)
 	{
-		return new KLine();
+		return m_obsKLineList.get(i);
 	}
+	
+	private CListObserver<KLine> m_obsKLineList;
 }
