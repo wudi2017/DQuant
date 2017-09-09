@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import pers.di.common.*;
-import pers.di.common.CNewTypeDefine.CListObserver;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.*;
 import pers.di.dataengine.common.*;

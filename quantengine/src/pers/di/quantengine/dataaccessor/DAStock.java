@@ -1,9 +1,9 @@
 package pers.di.quantengine.dataaccessor;
 
-import pers.di.common.CNewTypeDefine.CListObserver;
+import pers.di.common.*;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.common.*;
-import pers.di.common.CNewTypeDefine.*;
+import pers.di.common.*;
 
 public class DAStock {
 	

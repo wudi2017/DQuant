@@ -4,9 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import pers.di.common.CNewTypeDefine.*;
 import pers.di.dataengine.common.*;
+import pers.di.common.*;
 
 /**
  * 

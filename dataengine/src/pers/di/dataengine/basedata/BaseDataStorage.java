@@ -14,7 +14,6 @@ import pers.di.dataengine.webdata.DataWebStockDividendPayout;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.common.*;
 import pers.di.common.*;
-import pers.di.common.CNewTypeDefine.*;
 
 public class BaseDataStorage {
 	

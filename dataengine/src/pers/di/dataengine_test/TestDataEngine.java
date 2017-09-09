@@ -3,11 +3,8 @@ package pers.di.dataengine_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.common.CImageCurve;
-import pers.di.common.CLog;
-import pers.di.common.CUtilsDateTime;
+import pers.di.common.*;
 import pers.di.common.CImageCurve.CurvePoint;
-import pers.di.common.CNewTypeDefine.*;
 import pers.di.dataengine.basedata.*;
 import pers.di.dataengine.*;
 import pers.di.dataengine.common.*;

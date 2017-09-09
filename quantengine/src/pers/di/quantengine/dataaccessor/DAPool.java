@@ -3,8 +3,7 @@ package pers.di.quantengine.dataaccessor;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.common.CLog;
-import pers.di.common.CNewTypeDefine.CListObserver;
+import pers.di.common.*;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.StockDataEngine.*;
 import pers.di.dataengine.common.*;

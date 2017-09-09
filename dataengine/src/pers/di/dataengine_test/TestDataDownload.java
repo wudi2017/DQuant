@@ -2,7 +2,6 @@ package pers.di.dataengine_test;
 
 import pers.di.common.*;
 import pers.di.dataengine.basedata.*;
-import pers.di.common.CNewTypeDefine.*;
 
 public class TestDataDownload {
 	public static void main(String[] args) {
