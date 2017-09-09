@@ -7,6 +7,7 @@ import java.util.*;
 import pers.di.common.*;
 import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
 import pers.di.dataengine.common.*;
+import pers.di.common.CNewTypeDefine.*;
 
 /*
  * 股票基础数据层

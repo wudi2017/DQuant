@@ -3,6 +3,7 @@ package pers.di.dataengine;
 import java.util.*;
 
 import pers.di.common.*;
+import pers.di.common.CNewTypeDefine.*;
 import pers.di.dataengine.common.*;
 import pers.di.dataengine.basedata.*;
 
