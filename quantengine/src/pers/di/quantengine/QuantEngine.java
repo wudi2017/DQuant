@@ -61,6 +61,10 @@ public class QuantEngine {
 		{
 			
 		}
+		
+		// 实时缓存
+		m_realtimeCache = new RealtimeCache();
+		
 		return 0;
 	}
 	
@@ -73,7 +77,7 @@ public class QuantEngine {
 		String dateStr = getStartDate();
 		while(true) 
 		{
-			CLog.output("QEngine", "Date [%s] ##########################\n", dateStr);
+			CLog.output("QEngine", "Date [%s] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", dateStr);
 			
 			String timestr = "00:00:00";
 			
@@ -112,7 +116,7 @@ public class QuantEngine {
 							QuantContext ctx = new QuantContext();
 							ctx.date = dateStr;
 							ctx.time = timestr;
-							ctx.pool = new DAPool(dateStr, timestr);
+							ctx.pool = new DAPool(dateStr, timestr, m_realtimeCache);
 							triger.onHandler(ctx);
 						}
 						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
@@ -130,7 +134,7 @@ public class QuantEngine {
 							QuantContext ctx = new QuantContext();
 							ctx.date = dateStr;
 							ctx.time = timestr;
-							ctx.pool = new DAPool(dateStr, timestr);
+							ctx.pool = new DAPool(dateStr, timestr, m_realtimeCache);
 							triger.onHandler(ctx);
 						}
 						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
@@ -177,6 +181,10 @@ public class QuantEngine {
 			
 			// 获取下一日期
 			dateStr = getNextDate();
+			
+			// 当天处理结束
+			m_realtimeCache.clear(); // 清除实时缓存
+			
 			if(null == dateStr) break;
 		}
 		return 0;
@@ -232,9 +240,9 @@ public class QuantEngine {
 		}
 		else
 		{
-			CLog.output("CTRL", "realtime waitting DateTime (%s %s)... \n", date, time);
+			CLog.output("QEngine", "realtime waitting DateTime (%s %s)... \n", date, time);
 			boolean bWait = CUtilsDateTime.waitDateTime(date, time);
-			CLog.output("CTRL", "realtime waitting DateTime (%s %s) complete! result(%b)\n", date, time, bWait);
+			CLog.output("QEngine", "realtime waitting DateTime (%s %s) complete! result(%b)\n", date, time, bWait);
 			return bWait;
 		}
 	}
@@ -290,7 +298,7 @@ public class QuantEngine {
 						return true;
 					}
 				}
-				CThread.sleep(3000);
+				CThread.sleep(1000);
 			}
 			return false;
 		}
@@ -300,6 +308,8 @@ public class QuantEngine {
 	private List<String> m_hisTranDate;
 	// 当前日期
 	private String m_curDate;
+	// 实时数据缓存
+	private RealtimeCache m_realtimeCache;
 	
 	// 基本参数
 	private boolean m_bHistoryTest;

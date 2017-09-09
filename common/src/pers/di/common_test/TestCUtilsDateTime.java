@@ -50,7 +50,16 @@ public class TestCUtilsDateTime {
 	public static void main(String[] args) {
 		CLog.output("TEST", "TestCUtilsDateTime begin\n");
 		
-		test_getDateStrForSpecifiedDateOffsetD();
+		long lB = CUtilsDateTime.GetCurrentTimeMillis();
+		
+		String teststr = "";
+		for(int i=0; i<10000; i++)
+		{
+			teststr = CUtilsDateTime.GetCurDateStr();
+		}
+		
+		long lE = CUtilsDateTime.GetCurrentTimeMillis();
+		CLog.output("TEST", "cost %d %s\n", lE-lB, teststr);
 	
 		CLog.output("TEST", "TestCUtilsDateTime end\n");
 	}

@@ -50,9 +50,16 @@ public class TestQuantEngine {
 	
 	public static void main(String[] args) {
 		CLog.output("TEST", "TestQuantEngine\n");
+		
+		CLog.config_setLogCfg("config", "log_config.xml");
+		CLog.config_setLogFile("output", "default.log");
+		CLog.config_setTag("QEngine", true);
+		CLog.start();
+		
+		
 		QuantEngine qE = new QuantEngine();
-		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-03");
-		// qE.config("TrigerMode", "RealTime");
+		//qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-03");
+		qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
 	}
 }

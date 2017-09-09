@@ -10,7 +10,7 @@ import pers.di.dataengine.common.*;
  */
 public class DAKLines
 {
-	public DAKLines(String stockID, DAPool pool)
+	public DAKLines(DAPool pool, String stockID)
 	{
 		m_obsKLineList = new CListObserver<KLine>();
 		StockDataEngine.instance().buildDayKLineListObserver(

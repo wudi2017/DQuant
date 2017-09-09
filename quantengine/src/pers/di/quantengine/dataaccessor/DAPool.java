@@ -14,13 +14,16 @@ import pers.di.dataengine.common.*;
  * 细节：内部只有时间数据，当需要访问时进行调用
  */
 public class DAPool {
-	public DAPool(String date, String time)
+	public DAPool(String date, String time, RealtimeCache rtc)
 	{
 		m_date = date;
 		m_time = time;
+		m_realtimeCache = rtc;
+		
 		m_obsStockIDList = new CListObserver<String>();
 		StockDataEngine.instance().buildAllStockIDObserver(m_obsStockIDList);
 	}
+
 	public String date()
 	{
 		return m_date;
@@ -28,6 +31,10 @@ public class DAPool {
 	public String time()
 	{
 		return m_time;
+	}
+	public RealtimeCache realtimeCache()
+	{
+		return m_realtimeCache;
 	}
 	
 	public int size()
@@ -38,14 +45,16 @@ public class DAPool {
 	public DAStock get(int i)
 	{
 		String stockID = m_obsStockIDList.get(i);
-		return new DAStock(stockID, this);
+		return new DAStock(this, stockID);
 	}
 	public DAStock get(String stockID)
 	{
-		return new DAStock(stockID, this);
+		return new DAStock(this, stockID);
 	}
 	
 	private String m_date;
 	private String m_time;
+	private RealtimeCache m_realtimeCache;
+	
 	private CListObserver<String> m_obsStockIDList;
 }

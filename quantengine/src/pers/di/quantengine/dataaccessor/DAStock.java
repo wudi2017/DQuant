@@ -7,7 +7,7 @@ import pers.di.common.*;
 
 public class DAStock {
 	
-	public DAStock(String stockID, DAPool pool)
+	public DAStock(DAPool pool, String stockID)
 	{
 		m_pool = pool;
 		m_stockID = stockID;
@@ -39,7 +39,7 @@ public class DAStock {
 	 */
 	public DAKLines dayKLines()
 	{
-		return new DAKLines(m_stockID, m_pool);
+		return new DAKLines(m_pool, m_stockID);
 	}
 	
 	/*
@@ -47,7 +47,7 @@ public class DAStock {
 	 */
 	public DATimePrices timePrices(String date)
 	{
-		return new DATimePrices(m_stockID, m_pool);
+		return new DATimePrices(m_pool, m_stockID, date);
 	}
 	
 	private DAPool m_pool;
