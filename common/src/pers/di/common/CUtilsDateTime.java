@@ -24,10 +24,20 @@ public class CUtilsDateTime {
 	
 	/*
 	 *  当前时间
+	 *  XX:XX:XX
 	 */
 	static public String GetCurTimeStr()
 	{
 		return GetTimeStr(new Date());
+	}
+	
+	/*
+	 *  当前时间
+	 *  XX:XX
+	 */
+	static public String GetCurTimeStrHM()
+	{
+		return GetTimeStrHM(new Date());
 	}
 	
 	/*
@@ -55,6 +65,16 @@ public class CUtilsDateTime {
 	static public String GetTimeStr(Date cDate)
 	{
 		SimpleDateFormat sdf =new SimpleDateFormat("HH:mm:ss");
+		return sdf.format(cDate);
+	}
+	
+	/*
+	 *  转换日期对象Date到字符串
+	 *  返回  "HH:mm"
+	 */
+	static public String GetTimeStrHM(Date cDate)
+	{
+		SimpleDateFormat sdf =new SimpleDateFormat("HH:mm");
 		return sdf.format(cDate);
 	}
 	

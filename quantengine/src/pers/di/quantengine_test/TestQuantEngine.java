@@ -20,9 +20,6 @@ public class TestQuantEngine {
 			if(ctx.time.equals("09:30:00"))
 				onNewDay(ctx.date, ctx.time);
 			
-			// TODO Auto-generated method stub
-			//CLog.output("TEST", "onHandler %s %s\n", ctx.date, ctx.time);
-			
 			// 遍历所有股票
 			for(int i=0; i<ctx.pool.size(); i++)
 			{
@@ -39,7 +36,7 @@ public class TestQuantEngine {
 			}
 			
 			// 遍历某只股票某日分时线
-			DATimePrices cTimePrices = ctx.pool.get("600000").timePrices(ctx.date);
+			DATimePrices cTimePrices = ctx.pool.get("600000").timePrices("2017-01-04");
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);
@@ -58,8 +55,10 @@ public class TestQuantEngine {
 		
 		
 		QuantEngine qE = new QuantEngine();
-		//qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-03");
-		qE.config("TrigerMode", "RealTime");
+		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-01");
+		//qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
+		
+		CLog.stop();
 	}
 }

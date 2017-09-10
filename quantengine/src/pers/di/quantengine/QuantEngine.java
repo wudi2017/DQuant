@@ -55,15 +55,14 @@ public class QuantEngine {
 			else
 			{
 				m_bHistoryTest = false;
+				// 实时缓存
+				m_realtimeCache = new RealtimeCache();
 			}
 		}
 		else if(0 == key.compareTo("TrigerPoint"))
 		{
 			
 		}
-		
-		// 实时缓存
-		m_realtimeCache = new RealtimeCache();
 		
 		return 0;
 	}
@@ -112,7 +111,7 @@ public class QuantEngine {
 					{
 						if(waitForDateTime(dateStr, timestr))
 						{
-							CLog.output("QEngine", "[%s %s] stockClearAnalysis & stockCreateAnalysis \n", dateStr, timestr);
+							CLog.output("QEngine", "[%s %s] triger.onHandler \n", dateStr, timestr);
 							QuantContext ctx = new QuantContext();
 							ctx.date = dateStr;
 							ctx.time = timestr;
@@ -130,7 +129,7 @@ public class QuantEngine {
 					{
 						if(waitForDateTime(dateStr, timestr))
 						{
-							CLog.output("QEngine", "[%s %s] stockClearAnalysis & stockCreateAnalysis \n", dateStr, timestr);
+							CLog.output("QEngine", "[%s %s] triger.onHandler \n", dateStr, timestr);
 							QuantContext ctx = new QuantContext();
 							ctx.date = dateStr;
 							ctx.time = timestr;
@@ -183,7 +182,8 @@ public class QuantEngine {
 			dateStr = getNextDate();
 			
 			// 当天处理结束
-			m_realtimeCache.clear(); // 清除实时缓存
+			if(null !=m_realtimeCache)
+				m_realtimeCache.clear(); // 清除实时缓存
 			
 			if(null == dateStr) break;
 		}
@@ -304,13 +304,20 @@ public class QuantEngine {
 		}
 	}
 	
-	// 历史交易日
-	private List<String> m_hisTranDate;
+	//-----------------------------------------------------
+	// 引擎用
 	// 当前日期
 	private String m_curDate;
+	
+	//-----------------------------------------------------
+	// 历史交易日
+	private List<String> m_hisTranDate;
+	
+	//-----------------------------------------------------
 	// 实时数据缓存
 	private RealtimeCache m_realtimeCache;
 	
+	//-----------------------------------------------------
 	// 基本参数
 	private boolean m_bHistoryTest;
 	private String m_beginDate;

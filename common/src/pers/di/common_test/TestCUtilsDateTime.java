@@ -60,6 +60,8 @@ public class TestCUtilsDateTime {
 		
 		long lE = CUtilsDateTime.GetCurrentTimeMillis();
 		CLog.output("TEST", "cost %d %s\n", lE-lB, teststr);
+		
+		CLog.output("TEST", "GetCurTimeStrHM %s\n" , CUtilsDateTime.GetCurTimeStrHM());
 	
 		CLog.output("TEST", "TestCUtilsDateTime end\n");
 	}
