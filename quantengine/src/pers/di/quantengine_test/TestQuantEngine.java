@@ -25,6 +25,14 @@ public class TestQuantEngine {
 			{
 				DAStock stock = ctx.pool.get(i);
 				//CLog.output("TEST", "stock %s %s\n", stock.ID(), stock.name());
+				
+				DATimePrices cTimePrices = stock.timePrices();
+				for(int j=0; j<cTimePrices.size(); j++)
+				{
+					TimePrice cTimePrice = cTimePrices.get(j);
+					CLog.output("TEST", "stock id %s time %s price %.3f\n", 
+							stock.ID(), cTimePrice.time, cTimePrice.price);
+				}
 			}
 			
 			// 遍历某只股票日K线
@@ -36,7 +44,7 @@ public class TestQuantEngine {
 			}
 			
 			// 遍历某只股票某日分时线
-			DATimePrices cTimePrices = ctx.pool.get("600000").timePrices("2017-01-04");
+			DATimePrices cTimePrices = ctx.pool.get("600000").timePrices();
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);
@@ -55,8 +63,8 @@ public class TestQuantEngine {
 		
 		
 		QuantEngine qE = new QuantEngine();
-		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-01");
-		//qE.config("TrigerMode", "RealTime");
+		//qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-01");
+		qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
 		
 		CLog.stop();
