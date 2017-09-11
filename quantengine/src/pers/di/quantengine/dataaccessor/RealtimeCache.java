@@ -14,6 +14,21 @@ public class RealtimeCache {
 		m_cacheStockTimeMap = 
 				new HashMap<String, List<TimePrice>>();
 	}
+	
+	public void build(String date, String time)
+	{
+		
+	}
+	
+	public void subscribe(String stockID)
+	{
+		
+	}
+	
+	public void unSubscribeAll()
+	{
+		
+	}
 
 	public boolean clear()
 	{

@@ -55,14 +55,14 @@ public class QuantEngine {
 			else
 			{
 				m_bHistoryTest = false;
-				// 实时缓存
-				m_realtimeCache = new RealtimeCache();
 			}
 		}
 		else if(0 == key.compareTo("TrigerPoint"))
 		{
 			
 		}
+		
+		m_context = new QuantContext();
 		
 		return 0;
 	}
@@ -99,6 +99,8 @@ public class QuantEngine {
 				boolean bAccInit = false;
 				bAccInit = true;
 				CLog.output("QEngine", "[%s %s] account newDayInit = %b \n", dateStr, timestr, bAccInit);
+				m_context.setDateTime(dateStr, timestr);
+				triger.onNewDayInit(m_context);
 				
 				if(bAccInit)
 				{
@@ -112,11 +114,8 @@ public class QuantEngine {
 						if(waitForDateTime(dateStr, timestr))
 						{
 							CLog.output("QEngine", "[%s %s] triger.onHandler \n", dateStr, timestr);
-							QuantContext ctx = new QuantContext();
-							ctx.date = dateStr;
-							ctx.time = timestr;
-							ctx.pool = new DAPool(dateStr, timestr, m_realtimeCache);
-							triger.onHandler(ctx);
+							m_context.setDateTime(dateStr, timestr);
+							triger.onHandler(m_context);
 						}
 						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
 						if(timestr.compareTo(timestr_end) > 0) break;
@@ -130,11 +129,8 @@ public class QuantEngine {
 						if(waitForDateTime(dateStr, timestr))
 						{
 							CLog.output("QEngine", "[%s %s] triger.onHandler \n", dateStr, timestr);
-							QuantContext ctx = new QuantContext();
-							ctx.date = dateStr;
-							ctx.time = timestr;
-							ctx.pool = new DAPool(dateStr, timestr, m_realtimeCache);
-							triger.onHandler(ctx);
+							m_context.setDateTime(dateStr, timestr);
+							triger.onHandler(m_context);
 						}
 						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
 						if(timestr.compareTo(timestr_end) > 0) break;
@@ -180,10 +176,6 @@ public class QuantEngine {
 			
 			// 获取下一日期
 			dateStr = getNextDate();
-			
-			// 当天处理结束
-			if(null !=m_realtimeCache)
-				m_realtimeCache.clear(); // 清除实时缓存
 			
 			if(null == dateStr) break;
 		}
@@ -308,14 +300,11 @@ public class QuantEngine {
 	// 引擎用
 	// 当前日期
 	private String m_curDate;
+	private QuantContext m_context;
 	
 	//-----------------------------------------------------
 	// 历史交易日
 	private List<String> m_hisTranDate;
-	
-	//-----------------------------------------------------
-	// 实时数据缓存
-	private RealtimeCache m_realtimeCache;
 	
 	//-----------------------------------------------------
 	// 基本参数

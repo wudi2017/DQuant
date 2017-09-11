@@ -10,25 +10,30 @@ public class TestQuantEngine {
 
 	public static class MyQuantTest extends QuantTriger
 	{
-		public void onNewDay(String date, String time)
+		@Override
+		public void onNewDayInit(QuantContext ctx)
 		{
-			CLog.output("TEST", "onHandler %s %s\n", date, time);
+			CLog.output("TEST", "onNewDayInit %s %s\n", ctx.date(), ctx.time());
+			ctx.pool().subscribeNewest("600000");
+			ctx.pool().subscribeNewest("600005");
+			ctx.pool().subscribeNewest("600006");
 		}
+		
 		@Override
 		public void onHandler(QuantContext ctx) {
 			
-			if(ctx.time.equals("09:30:00"))
-				onNewDay(ctx.date, ctx.time);
+			if(ctx.time().equals("09:30:00"))
+				CLog.output("TEST", "onHandler %s %s\n", ctx.date(), ctx.time());
 			
 			// 遍历所有股票
-			for(int i=0; i<ctx.pool.size(); i++)
+			for(int i=0; i<ctx.pool().size(); i++)
 			{
-				DAStock stock = ctx.pool.get(i);
+				DAStock stock = ctx.pool().get(i);
 				//CLog.output("TEST", "stock %s %s\n", stock.ID(), stock.name());
 			}
 			
 			// 遍历某只股票日K线
-			DAKLines cKLines = ctx.pool.get("600000").dayKLines();
+			DAKLines cKLines = ctx.pool().get("600000").dayKLines();
 			for(int i=0; i<cKLines.size(); i++)
 			{
 				KLine cKLine = cKLines.get(i);
@@ -36,7 +41,7 @@ public class TestQuantEngine {
 			}
 			
 			// 遍历某只股票某日分时线
-			DATimePrices cTimePrices = ctx.pool.get("600000").timePrices();
+			DATimePrices cTimePrices = ctx.pool().get("600000").timePrices();
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);

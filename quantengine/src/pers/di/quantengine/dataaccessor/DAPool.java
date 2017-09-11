@@ -14,14 +14,24 @@ import pers.di.dataengine.common.*;
  * 细节：内部只有时间数据，当需要访问时进行调用
  */
 public class DAPool {
-	public DAPool(String date, String time, RealtimeCache rtc)
+	
+	public DAPool()
+	{
+		m_obsStockIDList = null;
+		m_realtimeCache = new RealtimeCache();
+	}
+	
+	public void build(String date, String time)
 	{
 		m_date = date;
 		m_time = time;
-		m_realtimeCache = rtc;
-		
+
+		// 构建所有股票ID
 		m_obsStockIDList = new CListObserver<String>();
 		StockDataEngine.instance().buildAllStockIDObserver(m_obsStockIDList);
+		
+		// 构建
+		m_realtimeCache.build(date, time);
 	}
 
 	public String date()
@@ -32,16 +42,10 @@ public class DAPool {
 	{
 		return m_time;
 	}
-	public RealtimeCache realtimeCache()
-	{
-		return m_realtimeCache;
-	}
-	
 	public int size()
 	{
 		return m_obsStockIDList.size();
 	}
-	
 	public DAStock get(int i)
 	{
 		String stockID = m_obsStockIDList.get(i);
@@ -52,9 +56,28 @@ public class DAPool {
 		return new DAStock(this, stockID);
 	}
 	
+	public void subscribeNewest(String stockID)
+	{
+		m_realtimeCache.subscribe(stockID);
+	}
+	public void unSubscribeNewestAll()
+	{
+		m_realtimeCache.unSubscribeAll();
+	}
+	
+	public RealtimeCache realtimeCache()
+	{
+		return m_realtimeCache;
+	}
+	
+	// 数据池 日期 时间
 	private String m_date;
 	private String m_time;
+	
+	// 所有股票ID
+	private CListObserver<String> m_obsStockIDList;
+	
+	// 当天分时数据缓存
 	private RealtimeCache m_realtimeCache;
 	
-	private CListObserver<String> m_obsStockIDList;
 }
