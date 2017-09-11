@@ -1,8 +1,13 @@
 package pers.di.common;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import com.google.protobuf.TextFormat.ParseException;
 
@@ -19,7 +24,7 @@ public class CUtilsDateTime {
 	 */
 	static public String GetCurDateStr()
 	{
-		return GetDateStr(new Date());
+		return GetDateStr(s_cDateTimeProvider.curDate());
 	}
 	
 	/*
@@ -28,7 +33,7 @@ public class CUtilsDateTime {
 	 */
 	static public String GetCurTimeStr()
 	{
-		return GetTimeStr(new Date());
+		return GetTimeStr(s_cDateTimeProvider.curDate());
 	}
 	
 	/*
@@ -37,7 +42,7 @@ public class CUtilsDateTime {
 	 */
 	static public String GetCurTimeStrHM()
 	{
-		return GetTimeStrHM(new Date());
+		return GetTimeStrHM(s_cDateTimeProvider.curDate());
 	}
 	
 	/*
@@ -45,7 +50,7 @@ public class CUtilsDateTime {
 	 */
 	static public String GetCurDateTimeStr()
 	{
-		return GetDateTimeStr(new Date());
+		return GetDateTimeStr(s_cDateTimeProvider.curDate());
 	}
 	
 	/*
@@ -166,7 +171,7 @@ public class CUtilsDateTime {
     	String waitDateTimeStr = date + " " + time;
     	
     	{
-        	Date curDate = new Date();
+        	Date curDate = s_cDateTimeProvider.curDate();
     		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     		String curDateTimeStr = sdf.format(curDate);
     		if(curDateTimeStr.compareTo(waitDateTimeStr) > 0) 
@@ -175,7 +180,7 @@ public class CUtilsDateTime {
     	
     	while(true)
     	{
-    		Date curDate = new Date();
+    		Date curDate = s_cDateTimeProvider.curDate();
     		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     		String curDateTimeStr = sdf.format(curDate);
     		
@@ -225,4 +230,144 @@ public class CUtilsDateTime {
 		} 
         return diffsec;
     }
+    
+    public static Date getCurDate()
+    {
+    	return s_cDateTimeProvider.curDate();
+    }
+    
+    public static void start()
+    {
+    	s_cDateTimeProvider.start();
+    }
+    
+    public static void stop()
+    {
+    	s_cDateTimeProvider.stop();
+    }
+    
+    /*
+     * -----------------------------------------------------------------------------------------------
+     */
+    
+	public static class DateTimeProvider extends CThread
+	{
+		public DateTimeProvider()
+		{
+			c_startFlag = false;
+			c_curDate = null;
+			c_syncObj = new CSyncObj();
+		}
+		
+		public void start()
+		{
+			this.startThread();
+		}
+		
+		public void stop()
+		{
+			this.stopThread();
+		}
+		
+		public Date curDate()
+		{
+			Date curDate = null;
+			if(c_startFlag)
+			{
+				c_syncObj.Lock();
+				curDate = c_curDate;
+				c_syncObj.UnLock();
+			}
+			else
+			{
+				
+				curDate = new Date();
+			}
+			return curDate;
+		}
+		
+		@Override
+		public void run() {
+			
+			c_startFlag = true;
+			
+			c_syncObj.Lock();
+			c_curDate = getSyncRealDate();
+			c_syncObj.UnLock();
+			c_lLastSystemSyncTC = System.currentTimeMillis();
+			c_lLastLocalProgSyncTC = c_lLastSystemSyncTC;
+			
+			while(!this.checkQuit())
+			{
+				CThread.sleep(100);
+				long curTC = System.currentTimeMillis();
+				if(curTC - c_lLastSystemSyncTC >= 1000*30)
+				{
+					// 每30s，sync时间一次
+					c_syncObj.Lock();
+					c_curDate = getSyncRealDate();
+					c_syncObj.UnLock();
+					c_lLastSystemSyncTC = curTC;
+					
+				}
+				if(curTC - c_lLastLocalProgSyncTC >= 1000)
+				{
+					// 每秒，本地更新时间
+					Calendar c = Calendar.getInstance();  
+					c_syncObj.Lock();
+			        c.setTime(c_curDate);  
+			        int second = c.get(Calendar.SECOND);  
+			        c.set(Calendar.SECOND, second + 1);  
+			        c_curDate = c.getTime();
+			        c_syncObj.UnLock();
+			        c_lLastLocalProgSyncTC = curTC;
+			        
+					//System.out.println("DateTimeProvider: Local sync:" + CUtilsDateTime.GetDateTimeStr(c_curDate)); 
+				}
+			}
+		}
+		
+		private Date getSyncRealDate()
+		{
+			Date curDate = null;
+			curDate = getWebsiteDatetime();
+			if(null != curDate)
+			{
+				//System.out.println("DateTimeProvider: web sync:" + CUtilsDateTime.GetDateTimeStr(curDate)); 
+			}
+			else
+			{
+				curDate = new Date();
+				//System.out.println("DateTimeProvider: system sync:" + CUtilsDateTime.GetDateTimeStr(curDate));
+			}
+			return curDate;
+		}
+		private Date getWebsiteDatetime(){
+	        try {
+	            URL url = new URL("http://www.baidu.com");// 取得资源对象
+	            URLConnection uc = url.openConnection();// 生成连接对象
+	            uc.connect();// 发出连接
+	            long ld = uc.getDate();// 读取网站日期时间
+	            Date date = new Date(ld);// 转换为标准时间对象
+	            //System.out.println("DateTimeProvider: getWebsiteDatetime...");
+	            return date;
+	        } catch (MalformedURLException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	        return null;
+	    }
+		
+		private boolean c_startFlag;
+		
+		private Date c_curDate;
+		
+		private long c_lLastSystemSyncTC;
+		private long c_lLastLocalProgSyncTC;
+		
+		private CSyncObj c_syncObj;
+	}
+	
+	private static DateTimeProvider s_cDateTimeProvider = new DateTimeProvider();
 }

@@ -1,9 +1,14 @@
 package pers.di.common_test;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
-import pers.di.common.CLog;
-import pers.di.common.CUtilsDateTime;
+import pers.di.common.*;
 
 public class TestCUtilsDateTime {
 	
@@ -47,22 +52,41 @@ public class TestCUtilsDateTime {
 		String testdate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD("2016-01-31", 2);
 		CLog.output("TEST", "testdate = %s\n", testdate);
 	}
-	public static void main(String[] args) {
-		CLog.output("TEST", "TestCUtilsDateTime begin\n");
-		
-		long lB = CUtilsDateTime.GetCurrentTimeMillis();
-		
+	
+	public static void test_GetCurDateTimeStr()
+	{
 		String teststr = "";
 		for(int i=0; i<10000; i++)
 		{
-			teststr = CUtilsDateTime.GetCurDateStr();
+			teststr = CUtilsDateTime.GetCurDateTimeStr();
+			CLog.output("TEST", "teststr: %s\n", teststr);
+			CThread.sleep(1);
 		}
+	}
+	
+	public static void main(String[] args) {
+		CSystem cCSystem = new CSystem();
+		cCSystem.start();
 		
-		long lE = CUtilsDateTime.GetCurrentTimeMillis();
-		CLog.output("TEST", "cost %d %s\n", lE-lB, teststr);
+		CLog.output("TEST", "TestCUtilsDateTime begin\n");
 		
-		CLog.output("TEST", "GetCurTimeStrHM %s\n" , CUtilsDateTime.GetCurTimeStrHM());
+		test_GetCurDateTimeStr();
+
+		//long lB = CUtilsDateTime.GetCurrentTimeMillis();
+//		
+//		String teststr = "";
+//		for(int i=0; i<10000; i++)
+//		{
+//			teststr = CUtilsDateTime.GetCurDateStr();
+//		}
+//		
+//		long lE = CUtilsDateTime.GetCurrentTimeMillis();
+//		CLog.output("TEST", "cost %d %s\n", lE-lB, teststr);
+//		
+//		CLog.output("TEST", "GetCurTimeStrHM %s\n" , CUtilsDateTime.GetCurTimeStrHM());
 	
 		CLog.output("TEST", "TestCUtilsDateTime end\n");
+		
+		cCSystem.stop();
 	}
 }
