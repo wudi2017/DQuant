@@ -409,9 +409,7 @@ public class BaseDataLayer {
     				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
 //    	            System.out.println(cTradeDetail.time + "," 
 //    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-    	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[2]);
+    	            int iSec = CUtilsDateTime.GetSecond(cTradeDetail.time);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
     	            	tmpList.add(cTradeDetail);
@@ -421,6 +419,7 @@ public class BaseDataLayer {
     			//System.out.println("==================================================");
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
+    			
     			float K1MinOpen = preClosePrice;
     			float K1MinClose = preClosePrice;
     			float K1MinLow = preClosePrice;
@@ -481,9 +480,7 @@ public class BaseDataLayer {
     				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
 //    	            System.out.println(cTradeDetail.time + "," 
 //    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-    	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[2]);
+    	            int iSec = CUtilsDateTime.GetSecond(cTradeDetail.time);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
     	            	tmpList.add(cTradeDetail);

@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.*;
 
 import com.google.protobuf.TextFormat.ParseException;
 
@@ -196,6 +197,38 @@ public class CUtilsDateTime {
 			}
     	}
     }
+    
+    /*
+     * 获取时间秒数
+     * 01:00:01 秒数为 3601
+     */
+    public static int GetSecond(String time)
+    {
+		int iSec = 0;
+		{
+			char c1 = time.charAt(0);
+			int iC1 = (int)c1 - 48;
+			char c2 = time.charAt(1);
+			int iC2 = (int)c2 - 48;
+			iSec = iSec + (iC1*10+iC2)*3600;
+		}
+		{
+			char c1 = time.charAt(3);
+			int iC1 = (int)c1 - 48;
+			char c2 = time.charAt(4);
+			int iC2 = (int)c2 - 48;
+			iSec = iSec + (iC1*10+iC2)*60;
+		}
+		{
+			char c1 = time.charAt(6);
+			int iC1 = (int)c1 - 48;
+			char c2 = time.charAt(7);
+			int iC2 = (int)c2 - 48;
+			iSec = iSec + (iC1*10+iC2);
+		}
+        return iSec;
+    }
+    
     
     /*
      * 时间差（秒）

@@ -56,12 +56,31 @@ public class TestCUtilsDateTime {
 	public static void test_GetCurDateTimeStr()
 	{
 		String teststr = "";
-		for(int i=0; i<10000; i++)
+		long TCB = CUtilsDateTime.GetCurrentTimeMillis();
+		for(int i=0; i<100000; i++)
 		{
 			teststr = CUtilsDateTime.GetCurDateTimeStr();
-			CLog.output("TEST", "teststr: %s\n", teststr);
-			CThread.sleep(1);
+			//CLog.output("TEST", "teststr: %s\n", teststr);
+			//CThread.sleep(1);
 		}
+		long TCE = CUtilsDateTime.GetCurrentTimeMillis();
+		CLog.output("TEST", "cost: %ds\n", TCE-TCB);
+	}
+	
+	public static void test_GetSecond()
+	{
+		long Sec = 0;
+		long TCB = CUtilsDateTime.GetCurrentTimeMillis();
+		for(int i=0; i<1000*1000; i++)
+		{
+			Sec = Sec + CUtilsDateTime.GetSecond("12:34:56");
+			//CLog.output("TEST", "teststr: %s\n", teststr);
+			//CThread.sleep(1);
+			
+		}
+		long TCE = CUtilsDateTime.GetCurrentTimeMillis();
+		CLog.output("TEST", "cost: %dms\n", TCE-TCB);
+		CLog.output("TEST", "dump:%d\n", Sec);
 	}
 	
 	public static void main(String[] args) {
@@ -70,7 +89,8 @@ public class TestCUtilsDateTime {
 		
 		CLog.output("TEST", "TestCUtilsDateTime begin\n");
 		
-		test_GetCurDateTimeStr();
+		//test_GetCurDateTimeStr();
+		test_GetSecond();
 
 		//long lB = CUtilsDateTime.GetCurrentTimeMillis();
 //		
