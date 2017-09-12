@@ -12,6 +12,53 @@ import pers.di.common.*;
 
 public class TestCUtilsDateTime {
 	
+	public static class TEST_GetCurrentTimeMillis extends CTest
+	{
+
+		public TEST_GetCurrentTimeMillis() {
+			super("CUtilsDateTime", "GetCurrentTimeMillis");
+		}
+
+		@Override
+		public void TESTCASE() {
+			long testdata = 0;
+			long test_cnt = 10000 * 100;
+			for(int i=0; i<test_cnt; i++)
+			{
+				testdata = testdata + CUtilsDateTime.GetCurrentTimeMillis();
+			}
+			
+			this.EXPECT_TRUE(this.CURRENT_COST() < 100);
+			CLog.output("X", "dump:%d\n", testdata);
+		}
+	}
+	
+	public static class TEST_GetCurDateStr extends CTest
+	{
+
+		public TEST_GetCurDateStr() {
+			super("CUtilsDateTime", "GetCurDateStr");
+		}
+
+		@Override
+		public void TESTCASE() {
+			
+			String stestdata = "";
+			long test_cnt = 10000 * 100;
+			Date x = null;
+			for(int i=0; i<test_cnt; i++)
+			{
+				 x = CUtilsDateTime.getCurDate();
+				 SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
+				 sdf.format(x);
+			}
+			
+			this.EXPECT_TRUE(this.CURRENT_COST() < 100);
+			CLog.output("X", "dump:%s\n", stestdata , x.toString());
+		}
+		
+	}
+	
 	public static void test_all()
 	{
 		String time1 = "12:22:23";
@@ -84,13 +131,16 @@ public class TestCUtilsDateTime {
 	}
 	
 	public static void main(String[] args) {
-		CSystem cCSystem = new CSystem();
-		cCSystem.start();
+		CSystem.start();
 		
-		CLog.output("TEST", "TestCUtilsDateTime begin\n");
+		CTest.RUNCTEST(TEST_GetCurrentTimeMillis.class);
+		CTest.RUNCTEST(TEST_GetCurDateStr.class);
+		
+		
+		//test_GetCurDateStr();
 		
 		//test_GetCurDateTimeStr();
-		test_GetSecond();
+		// test_GetSecond();
 
 		//long lB = CUtilsDateTime.GetCurrentTimeMillis();
 //		
@@ -105,8 +155,6 @@ public class TestCUtilsDateTime {
 //		
 //		CLog.output("TEST", "GetCurTimeStrHM %s\n" , CUtilsDateTime.GetCurTimeStrHM());
 	
-		CLog.output("TEST", "TestCUtilsDateTime end\n");
-		
-		cCSystem.stop();
+		CSystem.stop();
 	}
 }
