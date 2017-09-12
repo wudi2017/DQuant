@@ -12,51 +12,29 @@ import pers.di.common.*;
 
 public class TestCUtilsDateTime {
 	
-	public static class TEST_GetCurrentTimeMillis extends CTest
-	{
-
-		public TEST_GetCurrentTimeMillis() {
-			super("CUtilsDateTime", "GetCurrentTimeMillis");
+	public void test_GetCurrentTimeMillis() {
+		long testdata = 0;
+		long test_cnt = 10000 * 100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			testdata = testdata + CUtilsDateTime.GetCurrentTimeMillis();
 		}
-
-		@Override
-		public void TESTCASE() {
-			long testdata = 0;
-			long test_cnt = 10000 * 100;
-			for(int i=0; i<test_cnt; i++)
-			{
-				testdata = testdata + CUtilsDateTime.GetCurrentTimeMillis();
-			}
-			
-			this.EXPECT_TRUE(this.CURRENT_COST() < 100);
-			CLog.output("X", "dump:%d\n", testdata);
-		}
+	
+		CLog.output("X", "dump:%d\n", testdata);
 	}
 	
-	public static class TEST_GetCurDateStr extends CTest
-	{
-
-		public TEST_GetCurDateStr() {
-			super("CUtilsDateTime", "GetCurDateStr");
-		}
-
-		@Override
-		public void TESTCASE() {
-			
-			String stestdata = "";
-			long test_cnt = 10000 * 100;
-			Date x = null;
-			for(int i=0; i<test_cnt; i++)
-			{
-				 x = CUtilsDateTime.getCurDate();
-				 SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
-				 sdf.format(x);
-			}
-			
-			this.EXPECT_TRUE(this.CURRENT_COST() < 100);
-			CLog.output("X", "dump:%s\n", stestdata , x.toString());
-		}
+	public void test_GetCurDateStr() {
 		
+		String stestdata = "";
+		long test_cnt = 10000 * 100;
+		Date x = null;
+		for(int i=0; i<test_cnt; i++)
+		{
+			 x = CUtilsDateTime.getCurDate();
+			 SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
+			 sdf.format(x);
+		}
+		CLog.output("X", "dump:%s\n", stestdata , x.toString());
 	}
 	
 	public static void test_all()
@@ -132,11 +110,7 @@ public class TestCUtilsDateTime {
 	
 	public static void main(String[] args) {
 		CSystem.start();
-		
-		CTest.RUNCTEST(TEST_GetCurrentTimeMillis.class);
-		CTest.RUNCTEST(TEST_GetCurDateStr.class);
-		
-		
+
 		//test_GetCurDateStr();
 		
 		//test_GetCurDateTimeStr();

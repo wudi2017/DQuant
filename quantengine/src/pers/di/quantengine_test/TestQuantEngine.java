@@ -4,13 +4,23 @@ import pers.di.common.CLog;
 import pers.di.dataengine.common.*;
 import pers.di.quantengine.*;
 import pers.di.quantengine.dataaccessor.*;
+
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+
 import pers.di.common.*;
 
 public class TestQuantEngine {
-
+	
 	public static class MyQuantTest extends QuantTriger
 	{
 		@Override
+		@FruitName
 		public void onHandleData(QuantContext ctx) {
 			
 			if(ctx.time().equals("09:30:00"))
@@ -44,6 +54,26 @@ public class TestQuantEngine {
 	}
 	
 	public static void main(String[] args) {
+		
+		
+		Method method;
+	    try {
+	      method = MyQuantTest.class.getMethod("onHandleData",QuantContext.class);
+	      
+	      Annotation[] methodAnnotations = method.getAnnotations();
+
+	      for(Annotation me : methodAnnotations){
+	        Class annotationType =  me.annotationType();
+	        System.out.println("setPwd方法上的注释有: " + annotationType);
+	      }
+	    } catch (SecurityException e) {
+	      e.printStackTrace();
+	    } catch (NoSuchMethodException e) {
+	      e.printStackTrace();
+	    }
+		    
+		    
+		    
 		CSystem.start();
 		//CLog.config_setTag("QEngine", true);
 		
