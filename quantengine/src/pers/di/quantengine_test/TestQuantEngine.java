@@ -11,20 +11,13 @@ public class TestQuantEngine {
 	public static class MyQuantTest extends QuantTriger
 	{
 		@Override
-		public void onNewDayInit(QuantContext ctx)
-		{
-			CLog.output("TEST", "onNewDayInit %s %s\n", ctx.date(), ctx.time());
-			ctx.pool().subscribeNewest("600000");
-			ctx.pool().subscribeNewest("600005");
-			ctx.pool().subscribeNewest("600006");
-		}
-		
-		@Override
-		public void onHandler(QuantContext ctx) {
+		public void onHandleData(QuantContext ctx) {
 			
 			if(ctx.time().equals("09:30:00"))
+			{
 				CLog.output("TEST", "onHandler %s %s\n", ctx.date(), ctx.time());
-			
+			}
+				
 			// 遍历所有股票
 			for(int i=0; i<ctx.pool().size(); i++)
 			{
@@ -45,18 +38,18 @@ public class TestQuantEngine {
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);
-				//CLog.output("TEST", "time %s price %.3f\n", cTimePrice.time, cTimePrice.price);
+				CLog.output("TEST", "time %s price %.3f\n", cTimePrice.time, cTimePrice.price);
 			}
 		}
 	}
 	
 	public static void main(String[] args) {
 		CSystem.start();
-		//CLog.config_setTag("QEngine", true);
+		CLog.config_setTag("QEngine", true);
 		
 		QuantEngine qE = new QuantEngine();
-		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-01");
-		//qE.config("TrigerMode", "RealTime");
+		//qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-01");
+		qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
 		
 		CSystem.stop();

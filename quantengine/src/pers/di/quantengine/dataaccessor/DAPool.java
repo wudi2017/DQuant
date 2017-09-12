@@ -17,21 +17,33 @@ public class DAPool {
 	
 	public DAPool()
 	{
+		m_date = "";
+		m_time = "";
 		m_obsStockIDList = null;
 		m_realtimeCache = new RealtimeCache();
 	}
 	
 	public void build(String date, String time)
 	{
-		m_date = date;
-		m_time = time;
-
 		// 构建所有股票ID
 		m_obsStockIDList = new CListObserver<String>();
 		StockDataEngine.instance().buildAllStockIDObserver(m_obsStockIDList);
 		
-		// 构建
-		m_realtimeCache.build(date, time);
+		// 构建时期是当前日，需要构建实时数据
+		String curRealDate = CUtilsDateTime.GetCurDateStr();
+		if(curRealDate.equals(date))
+		{
+			if(!m_date.equals(date))
+			{
+				m_realtimeCache.clear(); // 构建天数不一致，清空实时缓存
+			}
+			m_realtimeCache.buildAll();
+		}
+		
+		
+		// 更新pool日期
+		m_date = date;
+		m_time = time;
 	}
 
 	public String date()
@@ -54,15 +66,6 @@ public class DAPool {
 	public DAStock get(String stockID)
 	{
 		return new DAStock(this, stockID);
-	}
-	
-	public void subscribeNewest(String stockID)
-	{
-		m_realtimeCache.subscribe(stockID);
-	}
-	public void unSubscribeNewestAll()
-	{
-		m_realtimeCache.unSubscribeAll();
 	}
 	
 	public RealtimeCache realtimeCache()

@@ -10,11 +10,10 @@ public class DATimePrices {
 	{
 		m_obsTimePriceList = new CListObserver<TimePrice>();
 		int errObsTimePriceList = -1;
-		// 加载引擎数据
 		int cmp = date.compareTo(pool.date());
 		if(cmp < 0)
 		{
-			// 获取日期是测试日期之前的天，全天数据build
+			// 获取日期是测试日期之前的天，加载引擎数据，全天数据build
 			errObsTimePriceList = StockDataEngine.instance().buildMinTimePriceListObserver(
 					stockID, date, 
 					"09:30:00", "15:00:00", m_obsTimePriceList);
@@ -33,7 +32,7 @@ public class DATimePrices {
 				if(date.equals(curRealDate))
 				{
 					pool.realtimeCache().buildMinTimePriceListObserver(
-							stockID, curRealDate, 
+							stockID, 
 							m_obsTimePriceList);
 				}
 			}

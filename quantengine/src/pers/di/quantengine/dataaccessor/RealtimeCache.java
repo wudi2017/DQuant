@@ -10,46 +10,20 @@ public class RealtimeCache {
 	
 	public RealtimeCache()
 	{
-		m_curDate = "0000-00-00";
-		m_cacheStockTimeMap = 
-				new HashMap<String, List<TimePrice>>();
+		m_cacheStockTimeMap = new HashMap<String, List<TimePrice>>();
 	}
 	
-	public void build(String date, String time)
+	public void buildAll()
 	{
-		
-	}
-	
-	public void subscribe(String stockID)
-	{
-		
-	}
-	
-	public void unSubscribeAll()
-	{
-		
-	}
-
-	public boolean clear()
-	{
-		m_curDate = "0000-00-00";
-		m_cacheStockTimeMap.clear();
-		return true;
-	}
-	
-	public int buildMinTimePriceListObserver(String id, String date,
-			CListObserver<TimePrice> observer)
-	{
-		// 构建缓存
-		if(date.compareTo(m_curDate) != 0)
-		{
-			clear();
+		for (Map.Entry<String, List<TimePrice>> entry : m_cacheStockTimeMap.entrySet()) {  
+			String stockID = entry.getKey();
+			build(stockID);
 		}
-		if(!m_cacheStockTimeMap.containsKey(id))
-		{
-			m_cacheStockTimeMap.put(id, new ArrayList<TimePrice>());
-		}
-		List<TimePrice> cTimePriceList = m_cacheStockTimeMap.get(id);
+	}
+	
+	private void build(String stockID)
+	{
+		List<TimePrice> cTimePriceList = m_cacheStockTimeMap.get(stockID);
 		
 		// 判断是否要添加新实时数据
 		boolean bAddNewVal = false;
@@ -77,22 +51,39 @@ public class RealtimeCache {
 		{
 			// 缓存中没数据
 			bAddNewVal = true;
-
 		}
 		
-		// 添加实时数据
-		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-		int error = StockDataEngine.instance().loadRealTimeInfo(id, ctnRealTimeInfo);
-		if(0 == error)
+		if(bAddNewVal)
 		{
-			TimePrice cTimePrice = new TimePrice();
-			cTimePrice.time = ctnRealTimeInfo.time;
-			cTimePrice.price = ctnRealTimeInfo.curPrice;
-			cTimePriceList.add(cTimePrice);
+			// 添加实时数据
+			RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
+			int error = StockDataEngine.instance().loadRealTimeInfo(stockID, ctnRealTimeInfo);
+			if(0 == error)
+			{
+				TimePrice cTimePrice = new TimePrice();
+				cTimePrice.time = ctnRealTimeInfo.time;
+				cTimePrice.price = ctnRealTimeInfo.curPrice;
+				cTimePriceList.add(cTimePrice);
+			}
 		}
-		
-		// 更新日期
-		m_curDate = date;
+
+	}
+
+	public boolean clear()
+	{
+		m_cacheStockTimeMap.clear();
+		return true;
+	}
+	
+	public int buildMinTimePriceListObserver(String stockID,
+			CListObserver<TimePrice> observer)
+	{
+		if(!m_cacheStockTimeMap.containsKey(stockID))
+		{
+			m_cacheStockTimeMap.put(stockID, new ArrayList<TimePrice>());
+			build(stockID);
+		}
+		List<TimePrice> cTimePriceList = m_cacheStockTimeMap.get(stockID);
 		
 		// build观察器
 		observer.build(cTimePriceList);
@@ -100,6 +91,5 @@ public class RealtimeCache {
 		return 0;
 	}
 	
-	private String m_curDate;
 	private Map<String, List<TimePrice>> m_cacheStockTimeMap;
 }

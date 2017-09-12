@@ -99,8 +99,6 @@ public class QuantEngine {
 				boolean bAccInit = false;
 				bAccInit = true;
 				CLog.output("QEngine", "[%s %s] account newDayInit = %b \n", dateStr, timestr, bAccInit);
-				m_context.setDateTime(dateStr, timestr);
-				triger.onNewDayInit(m_context);
 				
 				if(bAccInit)
 				{
@@ -115,7 +113,7 @@ public class QuantEngine {
 						{
 							CLog.output("QEngine", "[%s %s] triger.onHandler \n", dateStr, timestr);
 							m_context.setDateTime(dateStr, timestr);
-							triger.onHandler(m_context);
+							triger.onHandleData(m_context);
 						}
 						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
 						if(timestr.compareTo(timestr_end) > 0) break;
@@ -130,7 +128,7 @@ public class QuantEngine {
 						{
 							CLog.output("QEngine", "[%s %s] triger.onHandler \n", dateStr, timestr);
 							m_context.setDateTime(dateStr, timestr);
-							triger.onHandler(m_context);
+							triger.onHandleData(m_context);
 						}
 						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
 						if(timestr.compareTo(timestr_end) > 0) break;
