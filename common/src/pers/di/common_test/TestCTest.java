@@ -1,37 +1,36 @@
 package pers.di.common_test;
 
 import pers.di.common.CTest;
+import pers.di.common.CTest.test;
 import pers.di.common.CThread;
 
 public class TestCTest {
 	
-	public class TestFunctionX
+	public static class TestFunctionX
 	{
-		public TestFunctionX()
-		{
-			
-		}
-		
+		@test
 		public void testcaseX1()
 		{
 			CThread.sleep(20);
 		}
 	}
 	
-	public class TestFunctionY
+	public static class TestFunctionY
 	{
+		@test
 		public void testcaseY1()
 		{
 			CThread.sleep(100);
 		}
 		
+		@test
 		public void testcaseY2()
 		{
 			CThread.sleep(200);
 		}
 	}
 	
-	public class TestFunctionZ
+	public static class TestFunctionZ
 	{
 		public void testcaseZ1()
 		{
@@ -40,12 +39,14 @@ public class TestCTest {
 		
 		public void testcaseZ2()
 		{
-			CThread.sleep(1500);
+			CThread.sleep(1100);
 		}
 		
+		@test
 		public void testcaseZ3()
 		{
-			CThread.sleep(1800);
+			CThread.sleep(1200);
+			CTest.EXPECT_TRUE(CTest.CURRENT_COSTTIME() < 1000);
 		}
 	}
 

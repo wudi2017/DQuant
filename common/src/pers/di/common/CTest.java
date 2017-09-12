@@ -17,60 +17,15 @@ public abstract class CTest {
 	public @interface test {
 	}
 	
-	public CTest()
+	public static long CURRENT_COSTTIME()
 	{
-		m_errCount = 0;
+		long TCE = System.currentTimeMillis();
+		return TCE-s_curTestInnnerTCB;
 	}
-
-	public void EXPECT_TRUE(boolean bResult)
+	public static void EXPECT_TRUE(boolean bResult)
 	{
-		if(!bResult) m_errCount++;
+		if(!bResult) s_curTestInnnerErrorCount++;
 	}
-
-	private int start()
-	{
-//		outputProcess("[CTEST] %s.%s", m_module, m_function);
-//		
-//		Method[] methods = userClass.getDeclaredMethods();
-//		
-//		
-//		Method method;
-//	    try {
-//	      method = MyQuantTest.class.getMethod("onHandleData",QuantContext.class);
-//	      
-//	      Annotation[] methodAnnotations = method.getAnnotations();
-//
-//	      for(Annotation me : methodAnnotations){
-//	        Class annotationType =  me.annotationType();
-//	        System.out.println("setPwd方法上的注释有: " + annotationType);
-//	      }
-//	    } catch (SecurityException e) {
-//	      e.printStackTrace();
-//	    } catch (NoSuchMethodException e) {
-//	      e.printStackTrace();
-//	    }
-//	    
-//	    
-//		long TCB = System.currentTimeMillis();
-//		
-//		long TCE = System.currentTimeMillis();
-//		if(0 == m_errCount)
-//		{
-//			outputProcess("[CTEST] %s.%s [%dms][OK]", m_module, m_function, TCE-m_TCB);
-//		}
-//		else
-//		{
-//			outputProcess("[CTEST] %s.%s [%dms][NG]", m_module, m_function, TCE-m_TCB);
-//		}
-		return m_errCount;
-	}
-	
-	private int m_errCount;
-	
-	/**
-	 * ****************************************************************************************
-	 * Static
-	 */
 	
 	public static int ADD_TEST(Class<?> cls)
 	{
@@ -85,23 +40,57 @@ public abstract class CTest {
 	
 	public static int RUN_ALLTEST()
 	{
-		outputProcess("RUN_ALLTEST...");
+		outputProcess("RUN_ALLTEST BEGIN");
 		
 		for(int iCls = 0; iCls<s_clsList.size(); iCls++)
 		{
 			Class<?> testCls = s_clsList.get(iCls);
-			outputProcess("TestClass: %s", testCls.getName());
-			
+			String clsName = testCls.getName();
+			String clsSimpleName = testCls.getSimpleName();
+			//outputProcess("TestClass: %s", clsSimpleName);
 			
 			try {
 				
+				Object obj = testCls.newInstance();
 				Method[] methods = testCls.getDeclaredMethods();
 				
 				for(int iMethod = 0; iMethod < methods.length; iMethod++)
 				{
-					Method method = methods[0];
-					outputProcess("    method: %s", method.getName());
-					//method.invoke(testCls.newInstance(););
+					Method method = methods[iMethod];
+					String methodName = method.getName();
+					//outputProcess("    method: %s", methodName);
+					
+					boolean bCallTest = false;
+					Annotation[] allAnnotations = method.getAnnotations();
+					for(Annotation an : allAnnotations)
+					{
+				        Class annotationType = an.annotationType();
+				        //outputProcess("        annotationType: %s", annotationType.getName());
+				        
+				        if(annotationType.getName().equals(test.class.getName()))
+				        {
+				        	bCallTest = true;
+				        }
+					}
+
+					// call test
+					if(bCallTest)
+					{
+						outputProcess("[CTEST] %s.%s", clsSimpleName, methodName);
+						s_curTestInnnerErrorCount = 0;
+						s_curTestInnnerTCB = System.currentTimeMillis();
+						method.invoke(obj);
+						long TCE = System.currentTimeMillis();
+						if(0 == s_curTestInnnerErrorCount)
+						{
+							outputProcess("[CTEST] %s.%s [%dms][OK]", clsSimpleName, methodName, TCE-s_curTestInnnerTCB);
+						}
+						else
+						{
+							outputProcess("[CTEST] %s.%s [%dms][NG]", clsSimpleName, methodName, TCE-s_curTestInnnerTCB);
+							s_testErrorCount++;
+						}
+					}
 				}
 			}
 			catch (Exception e) {
@@ -109,8 +98,16 @@ public abstract class CTest {
 				e.printStackTrace();
 			}
 		}
+		
+		outputProcess("RUN_ALLTEST END");
+		outputProcess("error(%d)", s_testErrorCount);
 		return 0;
 	}
+	
+	public static int s_curTestInnnerErrorCount = 0;
+	public static long s_curTestInnnerTCB = 0;
+	
+	public static int s_testErrorCount = 0;
 	
 	public static List<Class<?>> s_clsList = new ArrayList<Class<?>>();
 	

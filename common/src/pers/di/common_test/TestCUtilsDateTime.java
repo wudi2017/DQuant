@@ -9,9 +9,16 @@ import java.util.Date;
 import java.util.Locale;
 
 import pers.di.common.*;
+import pers.di.common.CTest.test;
 
 public class TestCUtilsDateTime {
 	
+	public void TestCUtilsDateTime()
+	{
+		CSystem.start();
+	}
+	
+	@test
 	public void test_GetCurrentTimeMillis() {
 		long testdata = 0;
 		long test_cnt = 10000 * 100;
@@ -19,10 +26,11 @@ public class TestCUtilsDateTime {
 		{
 			testdata = testdata + CUtilsDateTime.GetCurrentTimeMillis();
 		}
-	
+		CTest.EXPECT_TRUE(CTest.CURRENT_COSTTIME() < 30);
 		CLog.output("X", "dump:%d\n", testdata);
 	}
 	
+	@test
 	public void test_GetCurDateStr() {
 		
 		String stestdata = "";
@@ -31,9 +39,10 @@ public class TestCUtilsDateTime {
 		for(int i=0; i<test_cnt; i++)
 		{
 			 x = CUtilsDateTime.getCurDate();
-			 SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
-			 sdf.format(x);
+			 //SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
+			// sdf.format(x);
 		}
+		CTest.EXPECT_TRUE(CTest.CURRENT_COSTTIME() < 50);
 		CLog.output("X", "dump:%s\n", stestdata , x.toString());
 	}
 	
@@ -109,8 +118,10 @@ public class TestCUtilsDateTime {
 	}
 	
 	public static void main(String[] args) {
-		CSystem.start();
 
+		CTest.ADD_TEST(TestCUtilsDateTime.class);
+		CTest.RUN_ALLTEST();
+		
 		//test_GetCurDateStr();
 		
 		//test_GetCurDateTimeStr();
