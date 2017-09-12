@@ -20,22 +20,10 @@ public class DATimePrices {
 		}
 		else if(cmp == 0)
 		{
-			// 获取日期在测试日期当天，只build测试时间之前的部分 
-			errObsTimePriceList = StockDataEngine.instance().buildMinTimePriceListObserver(
-					stockID, date, 
-					"09:30:00", pool.time(), m_obsTimePriceList);
-			
-			// 引擎中没有数据，并且需要获取的是真实当日数据，从实时缓存中构建
-			if(0 != errObsTimePriceList)
-			{
-				String curRealDate = CUtilsDateTime.GetCurDateStr();
-				if(date.equals(curRealDate))
-				{
-					pool.realtimeCache().buildMinTimePriceListObserver(
-							stockID, 
-							m_obsTimePriceList);
-				}
-			}
+			// 获取日期在测试日期当天，从当天缓存中加载
+			pool.currentDayTimePriceCache().buildMinTimePriceListObserver(
+					stockID, 
+					m_obsTimePriceList);
 		}
 		else
 		{

@@ -38,18 +38,18 @@ public class TestQuantEngine {
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);
-				CLog.output("TEST", "time %s price %.3f\n", cTimePrice.time, cTimePrice.price);
+				//CLog.output("TEST", "time %s price %.3f\n", cTimePrice.time, cTimePrice.price);
 			}
 		}
 	}
 	
 	public static void main(String[] args) {
 		CSystem.start();
-		CLog.config_setTag("QEngine", true);
+		//CLog.config_setTag("QEngine", true);
 		
 		QuantEngine qE = new QuantEngine();
-		//qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-01");
-		qE.config("TrigerMode", "RealTime");
+		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-05");
+		//qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
 		
 		CSystem.stop();

@@ -38,10 +38,11 @@ public class CListObserver<T> {
 	}
 	public boolean build(CListObserver<T> origin, int iBase, int iSize)
 	{
-		if(iBase >= m_iBase && iBase < m_iBase + m_iSize
-				&& iBase + iSize < m_iSize)
+		if(iBase >= 0 && iBase < origin.m_iBase + origin.m_iSize
+				&& iBase + iSize <= origin.m_iSize)
 		{
-			m_iBase = m_iBase + iBase;
+			m_listContainer = origin.m_listContainer;
+			m_iBase = origin.m_iBase + iBase;
 			m_iSize= iSize;
 			return true;
 		}

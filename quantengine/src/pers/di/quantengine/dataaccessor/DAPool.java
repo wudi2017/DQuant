@@ -20,7 +20,7 @@ public class DAPool {
 		m_date = "";
 		m_time = "";
 		m_obsStockIDList = null;
-		m_realtimeCache = new RealtimeCache();
+		m_currentDayTimePriceCache = new CurrentDayTimePriceCache();
 	}
 	
 	public void build(String date, String time)
@@ -29,16 +29,12 @@ public class DAPool {
 		m_obsStockIDList = new CListObserver<String>();
 		StockDataEngine.instance().buildAllStockIDObserver(m_obsStockIDList);
 		
-		// 构建时期是当前日，需要构建实时数据
-		String curRealDate = CUtilsDateTime.GetCurDateStr();
-		if(curRealDate.equals(date))
+		// 构建当日缓存数据
+		if(!m_date.equals(date))
 		{
-			if(!m_date.equals(date))
-			{
-				m_realtimeCache.clear(); // 构建天数不一致，清空实时缓存
-			}
-			m_realtimeCache.buildAll();
+			m_currentDayTimePriceCache.clear(); // 构建天数不一致，清空实时缓存
 		}
+		m_currentDayTimePriceCache.buildAll(date, time);
 		
 		
 		// 更新pool日期
@@ -68,9 +64,9 @@ public class DAPool {
 		return new DAStock(this, stockID);
 	}
 	
-	public RealtimeCache realtimeCache()
+	public CurrentDayTimePriceCache currentDayTimePriceCache()
 	{
-		return m_realtimeCache;
+		return m_currentDayTimePriceCache;
 	}
 	
 	// 数据池 日期 时间
@@ -81,6 +77,6 @@ public class DAPool {
 	private CListObserver<String> m_obsStockIDList;
 	
 	// 当天分时数据缓存
-	private RealtimeCache m_realtimeCache;
+	private CurrentDayTimePriceCache m_currentDayTimePriceCache;
 	
 }
