@@ -20,7 +20,6 @@ public class TestQuantEngine {
 	public static class MyQuantTest extends QuantTriger
 	{
 		@Override
-		@FruitName
 		public void onHandleData(QuantContext ctx) {
 			
 			if(ctx.time().equals("09:30:00"))

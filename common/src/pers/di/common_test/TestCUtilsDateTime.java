@@ -20,19 +20,20 @@ public class TestCUtilsDateTime {
 	
 	@test
 	public void test_GetCurrentTimeMillis() {
+		CTest.TEST_PERFORMANCE_BEGIN();
 		long testdata = 0;
 		long test_cnt = 10000 * 100;
 		for(int i=0; i<test_cnt; i++)
 		{
 			testdata = testdata + CUtilsDateTime.GetCurrentTimeMillis();
 		}
-		CTest.EXPECT_TRUE(CTest.CURRENT_COSTTIME() < 30);
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 30);
 		CLog.output("X", "dump:%d\n", testdata);
 	}
 	
 	@test
 	public void test_GetCurDateStr() {
-		
+		CTest.TEST_PERFORMANCE_BEGIN();
 		String stestdata = "";
 		long test_cnt = 10000 * 100;
 		Date x = null;
@@ -42,7 +43,7 @@ public class TestCUtilsDateTime {
 			 //SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
 			// sdf.format(x);
 		}
-		CTest.EXPECT_TRUE(CTest.CURRENT_COSTTIME() < 50);
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
 		CLog.output("X", "dump:%s\n", stestdata , x.toString());
 	}
 	
@@ -120,7 +121,7 @@ public class TestCUtilsDateTime {
 	public static void main(String[] args) {
 
 		CTest.ADD_TEST(TestCUtilsDateTime.class);
-		CTest.RUN_ALLTEST();
+		CTest.RUN_ALL_TESTS();
 		
 		//test_GetCurDateStr();
 		

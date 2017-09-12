@@ -17,11 +17,29 @@ public abstract class CTest {
 	public @interface test {
 	}
 	
-	public static long CURRENT_COSTTIME()
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface setup {
+	}
+	
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	public @interface teardown {
+	}
+	
+	public static void TEST_PERFORMANCE_BEGIN()
+	{
+		s_curTestPerformanceTCB = System.currentTimeMillis();
+	}
+	
+	public static long TEST_PERFORMANCE_END()
 	{
 		long TCE = System.currentTimeMillis();
-		return TCE-s_curTestInnnerTCB;
+		return TCE-s_curTestPerformanceTCB;
 	}
+	
 	public static void EXPECT_TRUE(boolean bResult)
 	{
 		if(!bResult) s_curTestInnnerErrorCount++;
@@ -38,9 +56,9 @@ public abstract class CTest {
 		return 0;
 	}
 	
-	public static int RUN_ALLTEST()
+	public static int RUN_ALLTEST(String filter)
 	{
-		outputProcess("RUN_ALLTEST BEGIN");
+		outputProcess("[CTEST] RUN_ALLTEST BEGIN");
 		
 		for(int iCls = 0; iCls<s_clsList.size(); iCls++)
 		{
@@ -54,13 +72,39 @@ public abstract class CTest {
 				Object obj = testCls.newInstance();
 				Method[] methods = testCls.getDeclaredMethods();
 				
+				// call setup
 				for(int iMethod = 0; iMethod < methods.length; iMethod++)
 				{
 					Method method = methods[iMethod];
+					
+					boolean bCallTestSetup = false;
 					String methodName = method.getName();
+					Annotation[] allAnnotations = method.getAnnotations();
+					for(Annotation an : allAnnotations)
+					{
+				        Class annotationType = an.annotationType();
+				        if(annotationType.getName().equals(setup.class.getName())
+				        		&& methodName.equals("setup"))
+				        {
+				        	bCallTestSetup = true;
+				        }
+					}
+					
+					if(bCallTestSetup)
+					{
+						method.invoke(obj);
+					}
+				}
+				
+				// call test
+				for(int iMethod = 0; iMethod < methods.length; iMethod++)
+				{
+					Method method = methods[iMethod];
+					
 					//outputProcess("    method: %s", methodName);
 					
 					boolean bCallTest = false;
+					String methodName = method.getName();
 					Annotation[] allAnnotations = method.getAnnotations();
 					for(Annotation an : allAnnotations)
 					{
@@ -71,6 +115,20 @@ public abstract class CTest {
 				        {
 				        	bCallTest = true;
 				        }
+					}
+					if(bCallTest 
+							&& null != filter 
+							&& !filter.equals(""))
+					{
+						String testName= clsSimpleName + "." + methodName;
+						if(testName.startsWith(filter))
+						{
+							bCallTest = true;
+						}
+						else
+						{
+							bCallTest = false;
+						}
 					}
 
 					// call test
@@ -92,6 +150,30 @@ public abstract class CTest {
 						}
 					}
 				}
+				
+				// call teardown
+				for(int iMethod = 0; iMethod < methods.length; iMethod++)
+				{
+					Method method = methods[iMethod];
+					
+					boolean bCallTestTeardown = false;
+					String methodName = method.getName();
+					Annotation[] allAnnotations = method.getAnnotations();
+					for(Annotation an : allAnnotations)
+					{
+				        Class annotationType = an.annotationType();
+				        if(annotationType.getName().equals(teardown.class.getName())
+				        		&& methodName.equals("teardown"))
+				        {
+				        	bCallTestTeardown = true;
+				        }
+					}
+					
+					if(bCallTestTeardown)
+					{
+						method.invoke(obj);
+					}
+				}
 			}
 			catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -99,17 +181,22 @@ public abstract class CTest {
 			}
 		}
 		
-		outputProcess("RUN_ALLTEST END");
-		outputProcess("error(%d)", s_testErrorCount);
+		outputProcess("[CTEST] RUN_ALLTEST END");
+		outputProcess("[CTEST] error(%d)", s_testErrorCount);
 		return 0;
 	}
 	
-	public static int s_curTestInnnerErrorCount = 0;
-	public static long s_curTestInnnerTCB = 0;
+	public static int RUN_ALL_TESTS()
+	{
+		return RUN_ALLTEST("");
+	}
 	
-	public static int s_testErrorCount = 0;
+	private static long s_curTestPerformanceTCB = 0;
+	private static int s_curTestInnnerErrorCount = 0;
+	private static long s_curTestInnnerTCB = 0;
 	
-	public static List<Class<?>> s_clsList = new ArrayList<Class<?>>();
+	private static int s_testErrorCount = 0;
+	private static List<Class<?>> s_clsList = new ArrayList<Class<?>>();
 	
 	/**
 	 * ****************************************************************************************
