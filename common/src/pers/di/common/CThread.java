@@ -38,10 +38,31 @@ abstract public class CThread {
 		return m_thread.checkRunning();
 	}
 	
-	public static void sleep(int msec)
+	public static void msleep(int msec)
 	{
 		try {
 			Thread.sleep(msec);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		};
+	}
+	
+	public static void usleep(int usec)
+	{
+		try {
+			int msec = usec/1000;
+			int nsec = (usec%1000)*1000;
+			Thread.sleep(msec, nsec);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		};
+	}
+	
+	public static void nsleep(int nsec)
+	{
+		try {
+			int msec = nsec/1000000;
+			Thread.sleep(msec, nsec%1000000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		};

@@ -84,7 +84,7 @@ public class CurrentDayTimePriceCache {
 			}
 			if(null != latastTimePrice)
 			{
-				String curRealTimeHM = CUtilsDateTime.GetCurTimeStrHM();
+				String curRealTimeHM = CUtilsDateTime.GetCurTimeStr().substring(0, 5);
 				String latestTime = latastTimePrice.time;
 				if(latestTime.startsWith(curRealTimeHM))
 				{

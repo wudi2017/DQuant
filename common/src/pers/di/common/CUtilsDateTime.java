@@ -20,12 +20,34 @@ public class CUtilsDateTime {
 	{
 		return System.currentTimeMillis();
 	}
+	
+	/*
+	 *  当前日期对象
+	 *  class Date
+	 */
+	static public Date GetCurDate()
+	{
+		return s_cDateTimeProvider.curDate();
+		// return GetDateTimeStr(s_cDateTimeProvider.curDate());
+	}
+	
+	/*
+	 *  当前日期时间字符串
+	 *  XXXX-XX-XX XX:XX:XX
+	 */
+	static public String GetCurDateTimeStr()
+	{
+		return s_cDateTimeProvider.curDateTime();
+		// return GetDateTimeStr(new Date());
+	}
+	
 	/*
 	 *  当前日期
+	 *  XXXX-XX-XX
 	 */
 	static public String GetCurDateStr()
 	{
-		return GetDateStr(s_cDateTimeProvider.curDate());
+		return GetCurDateTimeStr().substring(0, 10);
 	}
 	
 	/*
@@ -34,99 +56,82 @@ public class CUtilsDateTime {
 	 */
 	static public String GetCurTimeStr()
 	{
-		return GetTimeStr(s_cDateTimeProvider.curDate());
+		return GetCurDateTimeStr().substring(11, 19);
 	}
 	
-	/*
-	 *  当前时间
-	 *  XX:XX
-	 */
-	static public String GetCurTimeStrHM()
-	{
-		return GetTimeStrHM(s_cDateTimeProvider.curDate());
-	}
+//	/*
+//	 *  转换日期对象Date到字符串
+//	 *  返回  "yyyy-MM-dd"
+//	 */
+//	static public String GetDateStr(Date cDate)
+//	{
+//		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
+//		return sdf.format(cDate);
+//	}
 	
-	/*
-	 *  当前日期时间
-	 */
-	static public String GetCurDateTimeStr()
-	{
-		return GetDateTimeStr(s_cDateTimeProvider.curDate());
-	}
+//	/*
+//	 *  转换日期对象Date到字符串
+//	 *  返回  "HH:mm:ss"
+//	 */
+//	static public String GetTimeStr(Date cDate)
+//	{
+//		SimpleDateFormat sdf =new SimpleDateFormat("HH:mm:ss");
+//		return sdf.format(cDate);
+//	}
 	
-	/*
-	 *  转换日期对象Date到字符串
-	 *  返回  "yyyy-MM-dd"
-	 */
-	static public String GetDateStr(Date cDate)
-	{
-		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
-		return sdf.format(cDate);
-	}
+//	/*
+//	 *  转换日期对象Date到字符串
+//	 *  返回  "HH:mm"
+//	 */
+//	static public String GetTimeStrHM(Date cDate)
+//	{
+//		SimpleDateFormat sdf =new SimpleDateFormat("HH:mm");
+//		return sdf.format(cDate);
+//	}
 	
-	/*
-	 *  转换日期对象Date到字符串
-	 *  返回  "HH:mm:ss"
-	 */
-	static public String GetTimeStr(Date cDate)
-	{
-		SimpleDateFormat sdf =new SimpleDateFormat("HH:mm:ss");
-		return sdf.format(cDate);
-	}
+//	/*
+//	 *  转换日期对象Date到字符串
+//	 *  返回  "yyyy-MM-dd HH:mm:ss"
+//	 */
+//	static public String GetDateTimeStr(Date cDate)
+//	{
+//		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		return sdf.format(cDate);
+//	}
 	
-	/*
-	 *  转换日期对象Date到字符串
-	 *  返回  "HH:mm"
-	 */
-	static public String GetTimeStrHM(Date cDate)
-	{
-		SimpleDateFormat sdf =new SimpleDateFormat("HH:mm");
-		return sdf.format(cDate);
-	}
-	
-	/*
-	 *  转换日期对象Date到字符串
-	 *  返回  "yyyy-MM-dd HH:mm:ss"
-	 */
-	static public String GetDateTimeStr(Date cDate)
-	{
-		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return sdf.format(cDate);
-	}
-	
-	/*
-	 * 转换日期字符串到对象 Date
-	 * 输入日期字符串可以为 "yyyy-MM-dd"
-	 * 输入日期字符串可以为 "yyyy-MM-dd HH:mm:ss"
-	 */
-	static public Date GetDate(String dateStr)
-	{
-		SimpleDateFormat sdf = null;
-		if(dateStr.length() == "yyyy-MM-dd".length())
-		{
-			sdf =new SimpleDateFormat("yyyy-MM-dd");
-		}
-		else
-		{
-			sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		}
-		Date cDate = null;
-		try
-		{
-			cDate = sdf.parse(dateStr);  
-		}
-		catch (Exception e)  
-		{  
-			CLog.output("TIME", e.getMessage());  
-		}  
-		return cDate;
-	}
+//	/*
+//	 * 转换日期字符串到对象 Date
+//	 * 输入日期字符串可以为 "yyyy-MM-dd"
+//	 * 输入日期字符串可以为 "yyyy-MM-dd HH:mm:ss"
+//	 */
+//	static public Date GetDate(String dateStr)
+//	{
+//		SimpleDateFormat sdf = null;
+//		if(dateStr.length() == "yyyy-MM-dd".length())
+//		{
+//			sdf =new SimpleDateFormat("yyyy-MM-dd");
+//		}
+//		else
+//		{
+//			sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		}
+//		Date cDate = null;
+//		try
+//		{
+//			cDate = sdf.parse(dateStr);  
+//		}
+//		catch (Exception e)  
+//		{  
+//			CLog.output("TIME", e.getMessage());  
+//		}  
+//		return cDate;
+//	}
 	
 	/*
      * 获得指定日期偏移后的日期字符串
      * 例如传入 "2016-01-06", 4 则返回  "2016-01-10"
      */  
-    public static String getDateStrForSpecifiedDateOffsetD(String specifiedDate, int offset) {
+    public static String getDateStrForSpecifiedDateOffsetD(String specifiedDate, int offset_d) {
         Calendar c = Calendar.getInstance();  
         Date date = null;  
         try {  
@@ -136,17 +141,17 @@ public class CUtilsDateTime {
         }  
         c.setTime(date);  
         int day = c.get(Calendar.DATE);  
-        c.set(Calendar.DATE, day + offset);  
+        c.set(Calendar.DATE, day + offset_d);  
   
         String dayNew = new SimpleDateFormat("yyyy-MM-dd").format(c.getTime());  
         return dayNew;  
     } 
     
 	/*
-     * 获得指定时间偏移若干分钟后的时间字符串
-     * 例如传入 "12:33:05", 4 则返回  "12:37:05"
+     * 获得指定时间偏移若干秒后的时间字符串
+     * 例如传入 "12:33:05", 65 则返回  "12:34:10"
      */  
-    public static String getTimeStrForSpecifiedTimeOffsetM(String specifiedTime, int offset_m) {
+    public static String getTimeStrForSpecifiedTimeOffsetS(String specifiedTime, int offset_s) {
         Calendar c = Calendar.getInstance();  
         Date date = null;  
         try {  
@@ -155,48 +160,12 @@ public class CUtilsDateTime {
             e.printStackTrace();  
         }  
         c.setTime(date);  
-        int minute = c.get(Calendar.MINUTE);  
-        c.set(Calendar.MINUTE, minute + offset_m);  
+        int second = c.get(Calendar.SECOND);  
+        c.set(Calendar.SECOND, second + offset_s);  
   
         String timeNew = new SimpleDateFormat("HH:mm:ss").format(c.getTime());  
         return timeNew;  
     } 
-    
-    /*
-     * 等待日期时间
-     * 等待到时间后返回true
-     * 调用时已经超时返回false
-     */
-    public static boolean waitDateTime(String date, String time)
-    {
-    	String waitDateTimeStr = date + " " + time;
-    	
-    	{
-        	Date curDate = s_cDateTimeProvider.curDate();
-    		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    		String curDateTimeStr = sdf.format(curDate);
-    		if(curDateTimeStr.compareTo(waitDateTimeStr) > 0) 
-    			return false;
-    	}
-    	
-    	while(true)
-    	{
-    		Date curDate = s_cDateTimeProvider.curDate();
-    		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    		String curDateTimeStr = sdf.format(curDate);
-    		
-    		if(curDateTimeStr.compareTo(waitDateTimeStr) > 0) 
-    		{
-    			return true;
-    		}
-  
-    		try {
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-    	}
-    }
     
     /*
      * 获取时间秒数
@@ -229,6 +198,37 @@ public class CUtilsDateTime {
         return iSec;
     }
     
+    /*
+     * 等待日期时间
+     * 等待到时间后返回true
+     * 调用时已经超时返回false
+     */
+    public static boolean waitDateTime(String date, String time)
+    {
+    	String waitDateTimeStr = date + " " + time;
+    	
+    	{
+    		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
+    		if(curDateTimeStr.compareTo(waitDateTimeStr) > 0) 
+    			return false;
+    	}
+    	
+    	while(true)
+    	{
+    		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
+    		
+    		if(curDateTimeStr.compareTo(waitDateTimeStr) > 0) 
+    		{
+    			return true;
+    		}
+  
+    		try {
+				Thread.sleep(300);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+    	}
+    }
     
     /*
      * 时间差（秒）
@@ -264,11 +264,6 @@ public class CUtilsDateTime {
         return diffsec;
     }
     
-    public static Date getCurDate()
-    {
-    	return s_cDateTimeProvider.curDate();
-    }
-    
     public static void start()
     {
     	s_cDateTimeProvider.start();
@@ -294,6 +289,13 @@ public class CUtilsDateTime {
 		
 		public void start()
 		{
+			c_syncObj.Lock();
+			c_curDate = getSyncRealDate();
+			c_curDateTimeStr = c_sdf.format(c_curDate);
+			c_syncObj.UnLock();
+			c_lLastSystemSyncTC = System.currentTimeMillis();
+			c_lLastLocalProgSyncTC = c_lLastSystemSyncTC;
+			
 			this.startThread();
 		}
 		
@@ -319,26 +321,37 @@ public class CUtilsDateTime {
 			return curDate;
 		}
 		
+		public String curDateTime()
+		{
+			String curDateTimeStr = "0000-00-00 00:00:00";
+			if(c_startFlag)
+			{
+				//c_syncObj.Lock();
+				curDateTimeStr = c_curDateTimeStr;
+				//c_syncObj.UnLock();
+			}
+			else
+			{
+				curDateTimeStr = c_sdf.format(new Date());
+			}
+			return curDateTimeStr;
+		}
+		
 		@Override
 		public void run() {
 			
 			c_startFlag = true;
 			
-			c_syncObj.Lock();
-			c_curDate = getSyncRealDate();
-			c_syncObj.UnLock();
-			c_lLastSystemSyncTC = System.currentTimeMillis();
-			c_lLastLocalProgSyncTC = c_lLastSystemSyncTC;
-			
 			while(!this.checkQuit())
 			{
-				CThread.sleep(100);
+				CThread.msleep(200);
 				long curTC = System.currentTimeMillis();
 				if(curTC - c_lLastSystemSyncTC >= 1000*30)
 				{
 					// 每30s，sync时间一次
 					c_syncObj.Lock();
 					c_curDate = getSyncRealDate();
+					c_curDateTimeStr = c_sdf.format(c_curDate);
 					c_syncObj.UnLock();
 					c_lLastSystemSyncTC = curTC;
 					
@@ -352,6 +365,7 @@ public class CUtilsDateTime {
 			        int second = c.get(Calendar.SECOND);  
 			        c.set(Calendar.SECOND, second + 1);  
 			        c_curDate = c.getTime();
+			        c_curDateTimeStr = c_sdf.format(c_curDate);
 			        c_syncObj.UnLock();
 			        c_lLastLocalProgSyncTC = curTC;
 			        
@@ -362,8 +376,7 @@ public class CUtilsDateTime {
 		
 		private Date getSyncRealDate()
 		{
-			Date curDate = null;
-			curDate = getWebsiteDatetime();
+			Date curDate = getWebsiteDatetime();
 			if(null != curDate)
 			{
 				//System.out.println("DateTimeProvider: web sync:" + CUtilsDateTime.GetDateTimeStr(curDate)); 
@@ -377,11 +390,22 @@ public class CUtilsDateTime {
 		}
 		private Date getWebsiteDatetime(){
 	        try {
-	            URL url = new URL("http://www.baidu.com");// 取得资源对象
-	            URLConnection uc = url.openConnection();// 生成连接对象
-	            uc.connect();// 发出连接
-	            long ld = uc.getDate();// 读取网站日期时间
-	            Date date = new Date(ld);// 转换为标准时间对象
+	        	Date date = null;
+	        	
+	        	for(int i=0; i<5 ; i++)
+	        	{
+		            URL url = new URL("http://www.baidu.com");// 取得资源对象
+		            URLConnection uc = url.openConnection();// 生成连接对象
+		            uc.connect();// 发出连接
+		            long ld = uc.getDate();// 读取网站日期时间
+		            if(ld > 1505239488000L)
+		            {
+		            	date = new Date(ld);
+		            	break;
+		            }
+		            CThread.usleep(1000*100);
+	        	}
+
 	            //System.out.println("DateTimeProvider: getWebsiteDatetime...");
 	            return date;
 	        } catch (MalformedURLException e) {
@@ -395,6 +419,8 @@ public class CUtilsDateTime {
 		private boolean c_startFlag;
 		
 		private Date c_curDate;
+		private String c_curDateTimeStr;
+		private SimpleDateFormat c_sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		private long c_lLastSystemSyncTC;
 		private long c_lLastLocalProgSyncTC;

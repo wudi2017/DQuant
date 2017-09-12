@@ -56,7 +56,7 @@ public abstract class CTest {
 		return 0;
 	}
 	
-	public static int RUN_ALLTEST(String filter)
+	public static int RUN_ALL_TESTS(String filter)
 	{
 		outputProcess("[CTEST] RUN_ALLTEST BEGIN");
 		
@@ -188,7 +188,7 @@ public abstract class CTest {
 	
 	public static int RUN_ALL_TESTS()
 	{
-		return RUN_ALLTEST("");
+		return RUN_ALL_TESTS("");
 	}
 	
 	private static long s_curTestPerformanceTCB = 0;

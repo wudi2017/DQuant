@@ -115,7 +115,7 @@ public class QuantEngine {
 							m_context.setDateTime(dateStr, timestr);
 							triger.onHandleData(m_context);
 						}
-						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
+						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
 						if(timestr.compareTo(timestr_end) > 0) break;
 					}
 					
@@ -130,7 +130,7 @@ public class QuantEngine {
 							m_context.setDateTime(dateStr, timestr);
 							triger.onHandleData(m_context);
 						}
-						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(timestr, interval_min);
+						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
 						if(timestr.compareTo(timestr_end) > 0) break;
 					}
 
@@ -190,7 +190,7 @@ public class QuantEngine {
 		}
 		else
 		{
-			String curDateStr = CUtilsDateTime.GetDateStr(new Date());
+			String curDateStr = CUtilsDateTime.GetCurDateStr();
 			m_curDate = curDateStr;
 			return curDateStr;
 		}
@@ -288,7 +288,7 @@ public class QuantEngine {
 						return true;
 					}
 				}
-				CThread.sleep(1000);
+				CThread.msleep(1000);
 			}
 			return false;
 		}

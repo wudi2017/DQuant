@@ -36,7 +36,7 @@ public class TestCLog {
 			CLog.output("TAG4", "testlog TAG3 string abcdedf4!\n");
 			CLog.output("TAG5", "testlog TAG3 string abcdedf4!\n");
 			CLog.output("TAG6", "testlog TAG3 string abcdedf4!\n");
-			CThread.sleep(1000);
+			CThread.msleep(1000);
 		}
 		
 		CLog.stop();

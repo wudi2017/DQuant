@@ -313,7 +313,7 @@ public class StockDataEngine {
 								
 								TimePrice cStockDayDetail = new TimePrice();
 								cStockDayDetail.price = changedprice_open;
-								String openTime = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(cMinKLine.time, -1);
+								String openTime = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(cMinKLine.time, -1*60);
 								cStockDayDetail.time = openTime;
 								detailDataList.add(cStockDayDetail);
 							}

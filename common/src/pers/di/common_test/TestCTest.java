@@ -9,7 +9,7 @@ public class TestCTest {
 		@CTest.test
 		public void testcaseX1()
 		{
-			CThread.sleep(20);
+			CThread.msleep(20);
 		}
 	}
 	
@@ -18,13 +18,13 @@ public class TestCTest {
 		@CTest.test
 		public void testcaseY1()
 		{
-			CThread.sleep(100);
+			CThread.msleep(100);
 		}
 		
 		@CTest.test
 		public void testcaseY2()
 		{
-			CThread.sleep(200);
+			CThread.msleep(200);
 		}
 	}
 	
@@ -44,19 +44,19 @@ public class TestCTest {
 		
 		public void testcaseZ1()
 		{
-			CThread.sleep(1000);
+			CThread.msleep(1000);
 		}
 		
 		public void testcaseZ2()
 		{
-			CThread.sleep(1100);
+			CThread.msleep(1100);
 		}
 		
 		@CTest.test
 		public void testcaseZ3()
 		{
 			CTest.TEST_PERFORMANCE_BEGIN();
-			CThread.sleep(1200);
+			CThread.msleep(1200);
 			CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 1000);
 		}
 	}

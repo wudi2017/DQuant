@@ -26,7 +26,7 @@ public class TestCConsole {
 		TestConsole cTestConsole = new TestConsole();
 		cTestConsole.startThread();
 		
-		CThread.sleep(1);
+		CThread.msleep(1);
 		CLog.output("TEST", "XXX\n");
 		
 		cTestConsole.stopThread();

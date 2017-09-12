@@ -12,12 +12,7 @@ import pers.di.common.*;
 import pers.di.common.CTest.test;
 
 public class TestCUtilsDateTime {
-	
-	public void TestCUtilsDateTime()
-	{
-		CSystem.start();
-	}
-	
+
 	@test
 	public void test_GetCurrentTimeMillis() {
 		CTest.TEST_PERFORMANCE_BEGIN();
@@ -27,24 +22,123 @@ public class TestCUtilsDateTime {
 		{
 			testdata = testdata + CUtilsDateTime.GetCurrentTimeMillis();
 		}
-		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 30);
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
 		CLog.output("X", "dump:%d\n", testdata);
 	}
 	
 	@test
-	public void test_GetCurDateStr() {
+	public void test_GetCurDate() {
 		CTest.TEST_PERFORMANCE_BEGIN();
-		String stestdata = "";
 		long test_cnt = 10000 * 100;
-		Date x = null;
+		Date cDate = null;
 		for(int i=0; i<test_cnt; i++)
 		{
-			 x = CUtilsDateTime.getCurDate();
-			 //SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
-			// sdf.format(x);
+			cDate = CUtilsDateTime.GetCurDate();
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
-		CLog.output("X", "dump:%s\n", stestdata , x.toString());
+		CLog.output("X", "dump:%s\n" , cDate.toString());
+	}
+	
+	@test
+	public static void test_GetCurDateTimeStr()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		String stestdata = "";
+		long test_cnt = 10000*100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			stestdata = CUtilsDateTime.GetCurDateTimeStr();
+			//CThread.sleep(1000);
+			//CLog.output("TEST", "dump:%s \n", stestdata);
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CLog.output("x", "dump:%s \n", stestdata);
+	}
+	
+	@test
+	public static void test_GetCurDateStr()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		String stestdata = "";
+		long test_cnt = 10000*100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			stestdata = CUtilsDateTime.GetCurDateStr();
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CLog.output("x", "dump[%s] \n", stestdata);
+	}
+	
+	@test
+	public static void test_GetCurTimeStr()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		String stestdata = "";
+		long test_cnt = 10000*100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			stestdata = CUtilsDateTime.GetCurTimeStr();
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CLog.output("x", "dump[%s] \n", stestdata);
+	}
+	
+	@test
+	public static void test_getDateStrForSpecifiedDateOffsetD()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		String stestdata = "";
+		long test_cnt = 10000*10;
+		for(int i=0; i<test_cnt; i++)
+		{
+			stestdata = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD("2016-01-31", 2);
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 1000);
+		CLog.output("x", "dump[%s] \n", stestdata);
+	}
+	
+	@test
+	public static void test_getTimeStrForSpecifiedTimeOffsetS()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		String stestdata = "";
+		long test_cnt = 10000*10;
+		for(int i=0; i<test_cnt; i++)
+		{
+			stestdata = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS("12:33:05", 65);
+			//String afterTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM("12:22:34", 2);
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 1000);
+		CLog.output("x", "dump[%s] \n", stestdata);
+	}
+	
+	@test
+	public static void test_GetSecond()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		int itestdata = 0;
+		long test_cnt = 10000*100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			itestdata = CUtilsDateTime.GetSecond("12:34:56");
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CLog.output("x", "dump[%d] \n", itestdata);
+	}
+	
+	@test
+	public static void test_waitDateTime()
+	{
+		String curDateStr = CUtilsDateTime.GetCurDateStr();
+		String curTimeStr = CUtilsDateTime.GetCurTimeStr();
+		String beforeTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, -2);
+		String afterTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, 1);
+		CLog.output("X", "curDateStr %s beforeTimeStr = %s\n", curDateStr, beforeTimeStr);
+		CLog.output("X", "curDateStr %s afterTimeStr = %s\n", curDateStr, afterTimeStr);
+		boolean bwaitbefore = CUtilsDateTime.waitDateTime(curDateStr, beforeTimeStr);
+		CLog.output("X", "waitDateTime beforeTimeStr = %b\n", bwaitbefore);
+		boolean bwaitafter = CUtilsDateTime.waitDateTime(curDateStr, afterTimeStr);
+		CLog.output("X", "waitDateTime bwaitafter = %b\n", bwaitafter);
 	}
 	
 	public static void test_all()
@@ -58,88 +152,15 @@ public class TestCUtilsDateTime {
 		String date2 = "0000-01-01";
 		long diffDay = CUtilsDateTime.subDate(date1, date2);
 		CLog.output("TEST", "date1(%s) - date2(%s) = %d day\n", date1,date2,diffDay);
-		
-		
-		String testdate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD("2016-01-31", 2);
-		CLog.output("TEST", "testdate = %s\n", testdate);
-		
-		String testtime = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM("12:22:34", 2);
-		CLog.output("TEST", "testtime = %s\n", testtime);
-		
-		String curDateStr = CUtilsDateTime.GetCurDateStr();
-		String curTimeStr = CUtilsDateTime.GetCurTimeStr();
-		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
-		CLog.output("TEST", "curDate %s curTime %s \n", curDateStr, curTimeStr);
-		CLog.output("TEST", "curDateTimeStr %s \n", curDateTimeStr);
-		
-		String beforeTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(curTimeStr, -2);
-		String afterTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM(curTimeStr, 2);
-		CLog.output("TEST", "curDateStr %s beforeTimeStr = %s\n", curDateStr, beforeTimeStr);
-		CLog.output("TEST", "curDateStr %s afterTimeStr = %s\n", curDateStr, afterTimeStr);
-		boolean bwaitbefore = CUtilsDateTime.waitDateTime(curDateStr, beforeTimeStr);
-		CLog.output("TEST", "waitDateTime beforeTimeStr = %b\n", bwaitbefore);
-		boolean bwaitafter = CUtilsDateTime.waitDateTime(curDateStr, afterTimeStr);
-		CLog.output("TEST", "waitDateTime bwaitafter = %b\n", bwaitafter);
-	}
-	
-	public static void test_getDateStrForSpecifiedDateOffsetD()
-	{
-		String testdate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD("2016-01-31", 2);
-		CLog.output("TEST", "testdate = %s\n", testdate);
-	}
-	
-	public static void test_GetCurDateTimeStr()
-	{
-		String teststr = "";
-		long TCB = CUtilsDateTime.GetCurrentTimeMillis();
-		for(int i=0; i<100000; i++)
-		{
-			teststr = CUtilsDateTime.GetCurDateTimeStr();
-			//CLog.output("TEST", "teststr: %s\n", teststr);
-			//CThread.sleep(1);
-		}
-		long TCE = CUtilsDateTime.GetCurrentTimeMillis();
-		CLog.output("TEST", "cost: %ds\n", TCE-TCB);
-	}
-	
-	public static void test_GetSecond()
-	{
-		long Sec = 0;
-		long TCB = CUtilsDateTime.GetCurrentTimeMillis();
-		for(int i=0; i<1000*1000; i++)
-		{
-			Sec = Sec + CUtilsDateTime.GetSecond("12:34:56");
-			//CLog.output("TEST", "teststr: %s\n", teststr);
-			//CThread.sleep(1);
-			
-		}
-		long TCE = CUtilsDateTime.GetCurrentTimeMillis();
-		CLog.output("TEST", "cost: %dms\n", TCE-TCB);
-		CLog.output("TEST", "dump:%d\n", Sec);
 	}
 	
 	public static void main(String[] args) {
 
+		String x = CUtilsDateTime.GetCurTimeStr().substring(0, 5);
+		CSystem.start();
+		
 		CTest.ADD_TEST(TestCUtilsDateTime.class);
-		CTest.RUN_ALL_TESTS();
-		
-		//test_GetCurDateStr();
-		
-		//test_GetCurDateTimeStr();
-		// test_GetSecond();
-
-		//long lB = CUtilsDateTime.GetCurrentTimeMillis();
-//		
-//		String teststr = "";
-//		for(int i=0; i<10000; i++)
-//		{
-//			teststr = CUtilsDateTime.GetCurDateStr();
-//		}
-//		
-//		long lE = CUtilsDateTime.GetCurrentTimeMillis();
-//		CLog.output("TEST", "cost %d %s\n", lE-lB, teststr);
-//		
-//		CLog.output("TEST", "GetCurTimeStrHM %s\n" , CUtilsDateTime.GetCurTimeStrHM());
+		CTest.RUN_ALL_TESTS("");
 	
 		CSystem.stop();
 	}
