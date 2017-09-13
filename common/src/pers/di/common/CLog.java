@@ -33,14 +33,125 @@ import pers.di.common.CQThread.CQThreadRequest;
 
 public class CLog {
 
+	/*
+	 * LogOutRequest
+	 */
+	private static class LogOutRequest extends CQThreadRequest 
+	{
+		public LogOutRequest(String logbuf)
+		{
+			m_logbuf = logbuf;
+		}
+		@Override
+		public void doAction() {
+			// TODO Auto-generated method stub
+			CLog.implLogOutput(m_logbuf); // 无log工作线程直接输出
+		}
+		private String m_logbuf;
+	}
+	
+	public static class LogContentCache
+	{
+		public LogContentCache()
+		{
+			m_logContent = "";
+			s_syncObj = new CSyncObj();
+		}
+		public void lock()
+		{
+			s_syncObj.Lock();
+		}
+		public void unlock()
+		{
+			s_syncObj.UnLock();
+		}
+		public int size()
+		{
+			return m_logContent.length();
+		}
+		public String popContent()
+		{
+			String tmp = m_logContent;
+			m_logContent = "";
+			return tmp;
+		}
+		public void addContent(String content)
+		{
+			m_logContent += content;
+		}
+		private String m_logContent;
+		private CSyncObj s_syncObj;
+	}
+	
+	/*
+	 * log config monitor, thread
+	 */
+	private static class LogConfigMonitorThread extends CThread
+	{
+		public void startMonitor()
+		{
+			super.startThread();
+		}
+		public void stopMonitor()
+		{
+			try {
+				if(null != m_WatchService)
+				{
+					m_WatchService.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			super.stopThread();
+		}
+		@Override
+		public void run() {
+			try {
+				m_WatchService = FileSystems.getDefault().newWatchService();
+				Paths.get(CLog.s_strConfig).register(m_WatchService,   
+		                StandardWatchEventKinds.ENTRY_CREATE,  
+		                StandardWatchEventKinds.ENTRY_DELETE,  
+		                StandardWatchEventKinds.ENTRY_MODIFY);  
+				while(!super.checkQuit())
+				{
+		            WatchKey key=m_WatchService.take();  
+		            for(WatchEvent<?> event:key.pollEvents())  
+		            {  
+		                //System.out.println(event.context()+"发生了"+event.kind()+"事件");  
+		                if(event.context().toString().equals(CLog.s_strLogConfigName))
+		                {
+		                	CLog.reloadConfig();
+		                }
+		            }  
+		            if(!key.reset())  
+		            {  
+		                break;  
+		            }  
+					super.Wait(100);
+				}
+			} catch (Exception e) {
+				if(!e.getClass().getSimpleName().equals("ClosedWatchServiceException"))
+				{
+					e.printStackTrace();
+				}
+			} 
+		}
+		private WatchService m_WatchService;
+	}
+	
 	public static void start()
 	{
 		reloadConfig();
 		
-		if(null == s_qThread)
+		if(null == s_contentCache)
 		{
-			s_qThread = new CQThread();
-			s_qThread.startThread();
+			s_contentCache = new LogContentCache();
+		}
+		 
+		if(null == s_LogWorkQThread)
+		{
+			s_LogWorkQThread = new CQThread();
+			s_LogWorkQThread.startThread();
 		}
 		if(null == s_configMonitorThread)
 		{
@@ -56,10 +167,25 @@ public class CLog {
 			s_configMonitorThread.stopMonitor();
 			s_configMonitorThread = null;
 		}
-		if(null != s_qThread)
+		if(null != s_LogWorkQThread)
 		{
-			s_qThread.stopThread();
-			s_qThread = null;
+			s_LogWorkQThread.stopThread();
+			s_LogWorkQThread = null;
+		}
+		
+		// output cache
+		String currentOutputContent = null;
+		s_contentCache.lock();
+		currentOutputContent = s_contentCache.popContent();
+		s_contentCache.unlock();
+		if(null != currentOutputContent)
+		{
+			outputConsole(currentOutputContent);
+			outputFile(currentOutputContent);
+		}
+		if(null != s_contentCache)
+		{
+			s_contentCache = null;
 		}
 	}
 
@@ -185,16 +311,16 @@ public class CLog {
 		if(null == s_strLogName) s_strLogName = "default.log";
 		
 		String logstr = String.format(format, args);
+
+		long TC = CUtilsDateTime.GetCurrentTimeMillis();
+		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
 		
-		SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		String curDateTimeStr = sdf.format(new Date());
+		String fullLogStr = String.format("[%s.%d][%10s] %s", curDateTimeStr, TC%1000, target, logstr);
 		
-		String fullLogStr = String.format("[%s][%10s] %s", curDateTimeStr, target, logstr);
-		
-		if(null != s_qThread)
+		if(null != s_LogWorkQThread)
 		{
 			LogOutRequest cLogOutRequest = new LogOutRequest(fullLogStr);
-			s_qThread.postRequest(cLogOutRequest);
+			s_LogWorkQThread.postRequest(cLogOutRequest);
 		}
 		else
 		{
@@ -204,8 +330,33 @@ public class CLog {
 	
 	private static void implLogOutput(String logbuf)
 	{
-		outputConsole(logbuf);
+		String currentOutputContent = null;
 		
+		// add to cache and check
+		s_contentCache.lock();
+		s_contentCache.addContent(logbuf);
+		if(s_contentCache.size() > 32*1024)
+		{
+			currentOutputContent = s_contentCache.popContent();
+		}
+		s_contentCache.unlock();
+		
+		// 开始输出
+		if(null != currentOutputContent)
+		{
+			outputConsole(currentOutputContent);
+			outputFile(currentOutputContent);
+		}
+	}
+	
+	private static void outputConsole(String format, Object... args)
+	{
+		String logstr = String.format(format, args);
+		s_fmt.format("%s", logstr);
+	}
+	private static void outputFile(String format, Object... args)
+	{
+		String logstr = String.format(format, args);
 		File cDir = new File(s_strLogDirName);  
 		if (!cDir.exists()  && !cDir.isDirectory())      
 		{       
@@ -215,7 +366,7 @@ public class CLog {
 		try
 		{
 			FileOutputStream cOutputStream = new FileOutputStream(cfile, true);
-			cOutputStream.write(logbuf.getBytes());
+			cOutputStream.write(logstr.getBytes());
 			cOutputStream.close();
 		}
 		catch(Exception e)
@@ -224,17 +375,11 @@ public class CLog {
 		}
 	}
 	
-	private static void outputConsole(String format, Object... args)
-	{
-		String logstr = String.format(format, args);
-		s_fmt.format("%s", logstr);
-	}
 	static private Formatter s_fmt = new Formatter(System.out);
 	static private String s_strLogDirName = "output";
 	static private String s_strLogName = "default.log";
 	static private String s_strConfig = "config";
 	static private String s_strLogConfigName = "log_config.xml";
-	
 	static private Map<String, Boolean> s_tagMap = new HashMap<String, Boolean>() {
 		{
 			put("TEST", true);
@@ -243,82 +388,9 @@ public class CLog {
 		}
 	};
 	static private CSyncObj s_syncObjForTagMap = new CSyncObj();
-	
-	/*
-	 * --------------------------------------------------------------------------------------
-	 * log request, thread
-	 */
-	private static class LogOutRequest extends CQThreadRequest 
-	{
-		public LogOutRequest(String logbuf)
-		{
-			m_logbuf = logbuf;
-		}
-		@Override
-		public void doAction() {
-			// TODO Auto-generated method stub
-			CLog.implLogOutput(m_logbuf); // 无log工作线程直接输出
-		}
-		private String m_logbuf;
-	}
-	static private CQThread s_qThread = null;
-	
-	/*
-	 * --------------------------------------------------------------------------------------
-	 * log config monitor, thread
-	 */
-	private static class LogConfigMonitorThread extends CThread
-	{
-		public void startMonitor()
-		{
-			super.startThread();
-		}
-		public void stopMonitor()
-		{
-			try {
-				if(null != m_WatchService)
-				{
-					m_WatchService.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			super.stopThread();
-		}
-		@Override
-		public void run() {
-			try {
-				m_WatchService = FileSystems.getDefault().newWatchService();
-				Paths.get(CLog.s_strConfig).register(m_WatchService,   
-		                StandardWatchEventKinds.ENTRY_CREATE,  
-		                StandardWatchEventKinds.ENTRY_DELETE,  
-		                StandardWatchEventKinds.ENTRY_MODIFY);  
-				while(!super.checkQuit())
-				{
-		            WatchKey key=m_WatchService.take();  
-		            for(WatchEvent<?> event:key.pollEvents())  
-		            {  
-		                //System.out.println(event.context()+"发生了"+event.kind()+"事件");  
-		                if(event.context().toString().equals(CLog.s_strLogConfigName))
-		                {
-		                	CLog.reloadConfig();
-		                }
-		            }  
-		            if(!key.reset())  
-		            {  
-		                break;  
-		            }  
-					super.Wait(100);
-				}
-			} catch (Exception e) {
-				if(!e.getClass().getSimpleName().equals("ClosedWatchServiceException"))
-				{
-					e.printStackTrace();
-				}
-			} 
-		}
-		private WatchService m_WatchService;
-	}
-	
+
+	static private CQThread s_LogWorkQThread = null;
 	static private LogConfigMonitorThread s_configMonitorThread = null;
+	
+	static private LogContentCache s_contentCache = null;
 }

@@ -34,8 +34,10 @@ public class TestQuantEngine {
 				//CLog.output("TEST", "stock %s %s\n", stock.ID(), stock.name());
 			}
 			
+			String StockID = "600000";
+			
 			// 遍历某只股票日K线
-			DAKLines cKLines = ctx.pool().get("600000").dayKLines();
+			DAKLines cKLines = ctx.pool().get(StockID).dayKLines();
 			for(int i=0; i<cKLines.size(); i++)
 			{
 				KLine cKLine = cKLines.get(i);
@@ -43,42 +45,22 @@ public class TestQuantEngine {
 			}
 			
 			// 遍历某只股票某日分时线
-			DATimePrices cTimePrices = ctx.pool().get("600000").timePrices();
+			DATimePrices cTimePrices = ctx.pool().get(StockID).timePrices();
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);
-				//CLog.output("TEST", "time %s price %.3f\n", cTimePrice.time, cTimePrice.price);
+				CLog.output("TEST", "stockID:%s time %s price %.3f\n", StockID, cTimePrice.time, cTimePrice.price);
 			}
 		}
 	}
 	
 	public static void main(String[] args) {
-		
-		
-		Method method;
-	    try {
-	      method = MyQuantTest.class.getMethod("onHandleData",QuantContext.class);
-	      
-	      Annotation[] methodAnnotations = method.getAnnotations();
-
-	      for(Annotation me : methodAnnotations){
-	        Class annotationType =  me.annotationType();
-	        System.out.println("setPwd方法上的注释有: " + annotationType);
-	      }
-	    } catch (SecurityException e) {
-	      e.printStackTrace();
-	    } catch (NoSuchMethodException e) {
-	      e.printStackTrace();
-	    }
-		    
-		    
-		    
 		CSystem.start();
-		//CLog.config_setTag("QEngine", true);
+		CLog.config_setTag("QEngine", true);
 		
 		QuantEngine qE = new QuantEngine();
-		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-05");
-		//qE.config("TrigerMode", "RealTime");
+		//qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-02-05");
+		qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
 		
 		CSystem.stop();

@@ -36,7 +36,7 @@ public class TestCUtilsDateTime {
 			cDate = CUtilsDateTime.GetCurDate();
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
-		CLog.output("X", "dump:%s\n" , cDate.toString());
+		CLog.output("TEST", "dump:%s\n" , cDate.toString());
 	}
 	
 	@test
@@ -155,12 +155,10 @@ public class TestCUtilsDateTime {
 	}
 	
 	public static void main(String[] args) {
-
-		String x = CUtilsDateTime.GetCurTimeStr().substring(0, 5);
 		CSystem.start();
 		
 		CTest.ADD_TEST(TestCUtilsDateTime.class);
-		CTest.RUN_ALL_TESTS("");
+		CTest.RUN_ALL_TESTS("TestCUtilsDateTime.test_GetCur");
 	
 		CSystem.stop();
 	}

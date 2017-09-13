@@ -11,34 +11,32 @@ import java.nio.file.WatchService;
 import pers.di.common.*;
 
 public class TestCLog {
+	
+	@CTest.test
+	public static void test_CLog()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		int itestdata = 0;
+		long test_cnt = 10000*5;
+		for(int i=0; i<test_cnt; i++)
+		{
+			CLog.output("TAG1", "testlog TAG1 string abcdedf1 %d!\n", i);
+		}
+		long cost = CTest.TEST_PERFORMANCE_END();
+		CTest.EXPECT_TRUE(cost < 50);
+		CLog.output("TAG1", "dump[%d] \n", cost);
+	}
 	public static void main(String[] args) {
-		//CLog.config_setLogDir("testlog");
+		CSystem.start();
 		CLog.config_setLogCfg("config", "log_config.xml");
 		CLog.config_setLogFile("output", "default.log");
 		CLog.config_setTag("TAG1", true);
-		CLog.config_setTag("TAG2", true);
+		CLog.config_setTag("TAG2", false);
 		CLog.config_setTag("TAG3", false);
-		CLog.start();
 		
-		CLog.output("TAG1", "testlog TAG1 string abcdedf1!\n");
-		CLog.output("TAG2", "testlog TAG2 string abcdedf2! %d\n", 25);
-		CLog.output("TAG3", "testlog TAG2 string abcdedf3!\n");
-		CLog.output("TAG4", "testlog TAG3 string abcdedf4!\n");
-		CLog.output("TAG5", "testlog TAG3 string abcdedf4!\n");
-		CLog.output("TAG6", "testlog TAG3 string abcdedf4!\n");
-		
-		
-		for(int i=0; i< 20; i++)
-		{
-			CLog.output("TAG1", "testlog TAG1 string abcdedf1!\n");
-			CLog.output("TAG2", "testlog TAG2 string abcdedf2! %d\n", 25);
-			CLog.output("TAG3", "testlog TAG2 string abcdedf3!\n");
-			CLog.output("TAG4", "testlog TAG3 string abcdedf4!\n");
-			CLog.output("TAG5", "testlog TAG3 string abcdedf4!\n");
-			CLog.output("TAG6", "testlog TAG3 string abcdedf4!\n");
-			CThread.msleep(1000);
-		}
-		
-		CLog.stop();
+		CTest.ADD_TEST(TestCLog.class);
+		CTest.RUN_ALL_TESTS();
+	
+		CSystem.stop();
 	}
 }
