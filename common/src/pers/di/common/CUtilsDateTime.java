@@ -152,26 +152,30 @@ public class CUtilsDateTime {
      * 例如传入 "12:33:05", 65 则返回  "12:34:10"
      */  
     public static String getTimeStrForSpecifiedTimeOffsetS(String specifiedTime, int offset_s) {
-        Calendar c = Calendar.getInstance();  
-        Date date = null;  
-        try {  
-            date = new SimpleDateFormat("HH:mm:ss").parse(specifiedTime);  
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }  
-        c.setTime(date);  
-        int second = c.get(Calendar.SECOND);  
-        c.set(Calendar.SECOND, second + offset_s);  
-  
-        String timeNew = new SimpleDateFormat("HH:mm:ss").format(c.getTime());  
-        return timeNew;  
+//        Calendar c = Calendar.getInstance();  
+//        Date date = null;  
+//        try {  
+//            date = new SimpleDateFormat("HH:mm:ss").parse(specifiedTime);  
+//        } catch (Exception e) {  
+//            e.printStackTrace();  
+//        }  
+//        c.setTime(date);  
+//        int second = c.get(Calendar.SECOND);  
+//        c.set(Calendar.SECOND, second + offset_s);  
+//  
+//        String timeNew = new SimpleDateFormat("HH:mm:ss").format(c.getTime());  
+    	int second = GetSecondFromTimeStr(specifiedTime);
+    	int newSecond = second + offset_s;
+    	if(newSecond < 0)
+    		newSecond = 0;
+        return GetTimeStrFromSecond(newSecond);  
     } 
     
     /*
      * 获取时间秒数
      * 01:00:01 秒数为 3601
      */
-    public static int GetSecond(String time)
+    public static int GetSecondFromTimeStr(String time)
     {
 		int iSec = 0;
 		{
@@ -196,6 +200,34 @@ public class CUtilsDateTime {
 			iSec = iSec + (iC1*10+iC2);
 		}
         return iSec;
+    }
+    
+    /*
+     * 获取秒数时间
+     *  3601 的时间为 01:00:01
+     */
+    public static String GetTimeStrFromSecond(int second)
+    {
+    	int HH = second/3600%24;
+		int MM = second%3600/60;
+		int SS = second%3600%60;
+
+		StringBuilder strBuilder = new StringBuilder();
+		strBuilder.setLength(8);
+		
+		strBuilder.setCharAt(0, (char)('0' + HH/10));
+		strBuilder.setCharAt(1, (char)('0' + HH%10));
+		strBuilder.setCharAt(2, ':');
+		
+		strBuilder.setCharAt(3, (char)('0' + MM/10));
+		strBuilder.setCharAt(4, (char)('0' + MM%10));
+		strBuilder.setCharAt(5, ':');
+		
+		strBuilder.setCharAt(6, (char)('0' + SS/10));
+		strBuilder.setCharAt(7, (char)('0' + SS%10));
+		
+		String time = strBuilder.toString();
+        return time;
     }
     
     /*

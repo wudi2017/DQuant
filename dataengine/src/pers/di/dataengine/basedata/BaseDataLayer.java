@@ -409,7 +409,7 @@ public class BaseDataLayer {
     				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
 //    	            System.out.println(cTradeDetail.time + "," 
 //    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-    	            int iSec = CUtilsDateTime.GetSecond(cTradeDetail.time);
+    	            int iSec = CUtilsDateTime.GetSecondFromTimeStr(cTradeDetail.time);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
     	            	tmpList.add(cTradeDetail);
@@ -480,7 +480,7 @@ public class BaseDataLayer {
     				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
 //    	            System.out.println(cTradeDetail.time + "," 
 //    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-    	            int iSec = CUtilsDateTime.GetSecond(cTradeDetail.time);
+    	            int iSec = CUtilsDateTime.GetSecondFromTimeStr(cTradeDetail.time);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
     	            	tmpList.add(cTradeDetail);

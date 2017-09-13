@@ -102,28 +102,44 @@ public class TestCUtilsDateTime {
 	{
 		CTest.TEST_PERFORMANCE_BEGIN();
 		String stestdata = "";
-		long test_cnt = 10000*10;
+		long test_cnt = 10000*100;
 		for(int i=0; i<test_cnt; i++)
 		{
-			stestdata = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS("12:33:05", 65);
+			stestdata = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS("12:33:05", 3600*2+60*40+60);
 			//String afterTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetM("12:22:34", 2);
 		}
-		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 1000);
-		CLog.output("x", "dump[%s] \n", stestdata);
+		CTest.EXPECT_TRUE(stestdata.equals("15:14:05"));
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 200);
+		CLog.output("TEST", "dump[%s] \n", stestdata);
 	}
 	
 	@test
-	public static void test_GetSecond()
+	public static void test_GetSecondFromTimeStr()
 	{
 		CTest.TEST_PERFORMANCE_BEGIN();
 		int itestdata = 0;
 		long test_cnt = 10000*100;
 		for(int i=0; i<test_cnt; i++)
 		{
-			itestdata = CUtilsDateTime.GetSecond("12:34:56");
+			itestdata = CUtilsDateTime.GetSecondFromTimeStr("12:34:56");
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
 		CLog.output("x", "dump[%d] \n", itestdata);
+	}
+	
+	@test
+	public static void test_GetTimeStrFromSecond()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		String stestdata = "'";
+		long test_cnt = 10000*100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			stestdata = CUtilsDateTime.GetTimeStrFromSecond(25*3600+61*60+72);
+		}
+		CTest.EXPECT_TRUE(stestdata.equals("02:02:12"));
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 200);
+		CLog.output("TEST", "dump[%s] \n", stestdata);
 	}
 	
 	@test
@@ -158,7 +174,7 @@ public class TestCUtilsDateTime {
 		CSystem.start();
 		
 		CTest.ADD_TEST(TestCUtilsDateTime.class);
-		CTest.RUN_ALL_TESTS("TestCUtilsDateTime.test_GetCur");
+		CTest.RUN_ALL_TESTS("TestCUtilsDateTime.test_getTimeStrForSpecifiedTimeOffsetS");
 	
 		CSystem.stop();
 	}

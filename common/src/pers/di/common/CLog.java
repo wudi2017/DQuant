@@ -331,7 +331,7 @@ public class CLog {
 		long TC = CUtilsDateTime.GetCurrentTimeMillis();
 		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
 		
-		String fullLogStr = String.format("[%s.%d][%10s] %s", curDateTimeStr, TC%1000, target, logstr);
+		String fullLogStr = String.format("[%s.%03d][%10s] %s", curDateTimeStr, TC%1000, target, logstr);
 		
 		if(null != s_LogWorkQThread)
 		{
