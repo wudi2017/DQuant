@@ -139,6 +139,20 @@ public class CLog {
 		private WatchService m_WatchService;
 	}
 	
+	private static class LogContentFlushThread extends CThread
+	{
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			while(!super.checkQuit())
+			{
+				CLog.flushLogContentCache();
+				this.Wait(1000);
+			}
+		}
+		
+	}
+	
 	public static void start()
 	{
 		reloadConfig();
@@ -152,6 +166,11 @@ public class CLog {
 		{
 			s_LogWorkQThread = new CQThread();
 			s_LogWorkQThread.startThread();
+		}
+		if(null == s_ContentFlushThread)
+		{
+			s_ContentFlushThread = new LogContentFlushThread();
+			s_ContentFlushThread.startThread();
 		}
 		if(null == s_configMonitorThread)
 		{
@@ -167,6 +186,11 @@ public class CLog {
 			s_configMonitorThread.stopMonitor();
 			s_configMonitorThread = null;
 		}
+		if(null != s_ContentFlushThread)
+		{
+			s_ContentFlushThread.stopThread();
+			s_ContentFlushThread = null;
+		}
 		if(null != s_LogWorkQThread)
 		{
 			s_LogWorkQThread.stopThread();
@@ -174,15 +198,7 @@ public class CLog {
 		}
 		
 		// output cache
-		String currentOutputContent = null;
-		s_contentCache.lock();
-		currentOutputContent = s_contentCache.popContent();
-		s_contentCache.unlock();
-		if(null != currentOutputContent)
-		{
-			outputConsole(currentOutputContent);
-			outputFile(currentOutputContent);
-		}
+		flushLogContentCache();
 		if(null != s_contentCache)
 		{
 			s_contentCache = null;
@@ -328,6 +344,22 @@ public class CLog {
 		}
 	}
 	
+	private static void flushLogContentCache()
+	{
+		String currentOutputContent = null;
+		
+		s_contentCache.lock();
+		currentOutputContent = s_contentCache.popContent();
+		s_contentCache.unlock();
+		
+		// ¿ªÊ¼Êä³ö
+		if(null != currentOutputContent)
+		{
+			outputConsole(currentOutputContent);
+			outputFile(currentOutputContent);
+		}
+	}
+	
 	private static void implLogOutput(String logbuf)
 	{
 		String currentOutputContent = null;
@@ -393,4 +425,5 @@ public class CLog {
 	static private LogConfigMonitorThread s_configMonitorThread = null;
 	
 	static private LogContentCache s_contentCache = null;
+	static private LogContentFlushThread s_ContentFlushThread = null;
 }
