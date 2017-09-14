@@ -9,6 +9,21 @@ public class TestCTest {
 		@CTest.test
 		public void testcaseX1()
 		{
+			CTest.EXPECT_TRUE(true);
+			CTest.EXPECT_TRUE(false);
+			CTest.EXPECT_FALSE(true);
+			CTest.EXPECT_FALSE(false);
+			
+			CTest.EXPECT_STR_EQ("x", "x");
+			CTest.EXPECT_STR_EQ("x", "xxy");
+			
+			CTest.EXPECT_LONG_EQ(25635, 25635);
+			CTest.EXPECT_LONG_EQ(25635, 2);
+			
+			CTest.EXPECT_DOUBLE_EQ(2.36325f, 2.36325);
+			CTest.EXPECT_DOUBLE_EQ(2.363259879879789797978979, 2.363259879879789797978971);
+			CTest.EXPECT_DOUBLE_EQ(2.363259879879789797978979, 2.32);
+			
 			CThread.msleep(20);
 		}
 	}

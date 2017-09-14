@@ -328,10 +328,14 @@ public class CLog {
 		
 		String logstr = String.format(format, args);
 
-		long TC = CUtilsDateTime.GetCurrentTimeMillis();
 		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
-		
+		Long TC = CUtilsDateTime.GetCurrentTimeMillis();
 		String fullLogStr = String.format("[%s.%03d][%10s] %s", curDateTimeStr, TC%1000, target, logstr);
+		
+//		String fullLogStr = "[" + curDateTimeStr + "." + TC + "] " + target + " " + logstr;
+		
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//		String fullLogStr = String.format("[%s][%10s] %s", sdf.format(CUtilsDateTime.GetCurDate()), target, logstr);
 		
 		if(s_bStarted)
 		{

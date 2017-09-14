@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public abstract class CTest {
@@ -40,9 +41,90 @@ public abstract class CTest {
 		return TCE-s_curTestPerformanceTCB;
 	}
 	
-	public static void EXPECT_TRUE(boolean bResult)
+	public static void EXPECT_TRUE(boolean bExpect)
 	{
-		if(!bResult) s_curTestInnnerErrorCount++;
+		if(!bExpect) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        outputProcess("[CTEST] NG(%d) expect(true) actual(%b) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		bExpect, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	
+	public static void EXPECT_FALSE(boolean bExpect)
+	{
+		if(bExpect) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        outputProcess("[CTEST] NG(%d) expect(false) actual(%b) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		bExpect, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	
+	public static void EXPECT_STR_EQ(String sExpect, String sActual)
+	{
+		if(!sExpect.equals(sActual)) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        outputProcess("[CTEST] NG(%d) expect(%s) actual(%s) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		sExpect, sActual, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	
+	public static void EXPECT_LONG_EQ(long lExpect, long lActual)
+	{
+		if(lExpect != lActual) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        outputProcess("[CTEST] NG(%d) expect(%d) actual(%d) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		lExpect, lActual, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	
+	public static void EXPECT_DOUBLE_EQ(double dExpect, double dActual)
+	{
+		if(0 != Double.compare(dExpect, dActual)) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        
+	        DecimalFormat df = new DecimalFormat();
+	        df.setMaximumFractionDigits(12);
+	        String dExpectStr = df.format(dExpect);
+	        String dActualStr = df.format(dActual);
+	        
+	        outputProcess("[CTEST] NG(%d) expect(%s) actual(%s) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		dExpectStr, dActualStr, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
 	}
 	
 	public static int ADD_TEST(Class<?> cls)

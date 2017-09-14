@@ -132,19 +132,163 @@ public class CUtilsDateTime {
      * 例如传入 "2016-01-06", 4 则返回  "2016-01-10"
      */  
     public static String getDateStrForSpecifiedDateOffsetD(String specifiedDate, int offset_d) {
-        Calendar c = Calendar.getInstance();  
-        Date date = null;  
-        try {  
-            date = new SimpleDateFormat("yyyy-MM-dd").parse(specifiedDate);  
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        }  
-        c.setTime(date);  
-        int day = c.get(Calendar.DATE);  
-        c.set(Calendar.DATE, day + offset_d);  
-  
-        String dayNew = new SimpleDateFormat("yyyy-MM-dd").format(c.getTime());  
-        return dayNew;  
+//        Calendar c = Calendar.getInstance();  
+//        Date date = null;  
+//        try {  
+//            date = new SimpleDateFormat("yyyy-MM-dd").parse(specifiedDate);  
+//        } catch (Exception e) {  
+//            e.printStackTrace();  
+//        }  
+//        c.setTime(date);  
+//        int day = c.get(Calendar.DATE);  
+//        c.set(Calendar.DATE, day + offset_d);  
+//  
+//        String dayNew = new SimpleDateFormat("yyyy-MM-dd").format(c.getTime());  
+//        return dayNew;  
+    	
+    	// convert to number
+    	
+    	int iC0 = (int)specifiedDate.charAt(0) - 48;
+    	int iC1 = (int)specifiedDate.charAt(1) - 48;
+    	int iC2 = (int)specifiedDate.charAt(2) - 48;
+    	int iC3 = (int)specifiedDate.charAt(3) - 48;
+    	int year = 1000*iC0+ 100*iC1 + 10*iC2 + iC3;
+    	
+    	int iC5 = (int)specifiedDate.charAt(5) - 48;
+    	int iC6 = (int)specifiedDate.charAt(6) - 48;
+    	int month = 10*iC5 + iC6;
+    	
+    	int iC8 = (int)specifiedDate.charAt(8) - 48;
+    	int iC9 = (int)specifiedDate.charAt(9) - 48;
+    	int day = 10*iC8 + iC9;
+    	
+    	int iNewDay = day;
+    	int iNewMonth = month;
+    	int iNewYear = year;
+    	
+    	if(offset_d > 0)
+    	{
+    		for(int i = 0; i < offset_d; i++)
+        	{
+        		// calc DMonthMax
+        		int DMonthMax_current = 30;
+            	boolean runYear = false;
+            	if((iNewYear%4 == 0 && iNewYear%100 != 0)
+            		|| iNewYear%400 == 0)
+            	{
+            		runYear = true;
+            	}
+            	if(1 == iNewMonth) DMonthMax_current=31;
+            	else if(2 == iNewMonth) {
+            		DMonthMax_current=28;
+            		if(runYear) DMonthMax_current=29;
+            	}
+            	else if(3 == iNewMonth) DMonthMax_current=31;
+            	else if(4 == iNewMonth) DMonthMax_current=30;
+            	else if(5 == iNewMonth) DMonthMax_current=31;
+            	else if(6 == iNewMonth) DMonthMax_current=30;
+            	else if(7 == iNewMonth) DMonthMax_current=31;
+            	else if(8 == iNewMonth) DMonthMax_current=31;
+            	else if(9 == iNewMonth) DMonthMax_current=30;
+            	else if(10 == iNewMonth) DMonthMax_current=31;
+            	else if(11 == iNewMonth) DMonthMax_current=30;
+            	else if(12 == iNewMonth) DMonthMax_current=31;
+            	
+            	iNewDay = iNewDay + 1;
+            	boolean bJinWeiMonth = iNewDay>DMonthMax_current?true:false;
+            	if(bJinWeiMonth)
+            	{
+            		iNewDay = 1;
+            		iNewMonth = iNewMonth + 1;
+            		
+            		boolean bJinWeiYear = iNewMonth>12?true:false;
+            		if(bJinWeiYear)
+            		{
+            			iNewMonth = 1;
+            			iNewYear = iNewYear + 1;
+            		}
+            	}
+        	}
+    	}
+    	else
+    	{
+    		for(int i = 0; i < -offset_d; i++)
+        	{
+        		// calc DMonthMax
+        		int DMonthMax_before = 30;
+        		
+            	boolean runYear = false;
+            	if(iNewMonth == 1 && iNewDay == 1)
+            	{
+            		if(((iNewYear-1)%4 == 0 && (iNewYear-1)%100 != 0)
+                    		|| (iNewYear-1)%400 == 0)
+                	{
+                		runYear = true;
+                	}
+            	}
+            	else
+            	{
+            		if((iNewYear%4 == 0 && iNewYear%100 != 0)
+                    		|| iNewYear%400 == 0)
+                	{
+                		runYear = true;
+                	}
+            	}
+            	int beforeMonth = iNewMonth-1;
+            	beforeMonth = beforeMonth==0?12:beforeMonth;
+            	
+            	if(1 == beforeMonth) DMonthMax_before=31;
+            	else if(2 == beforeMonth) {
+            		DMonthMax_before=28;
+            		if(runYear) DMonthMax_before=29;
+            	}
+            	else if(3 == beforeMonth) DMonthMax_before=31;
+            	else if(4 == beforeMonth) DMonthMax_before=30;
+            	else if(5 == beforeMonth) DMonthMax_before=31;
+            	else if(6 == beforeMonth) DMonthMax_before=30;
+            	else if(7 == beforeMonth) DMonthMax_before=31;
+            	else if(8 == beforeMonth) DMonthMax_before=31;
+            	else if(9 == beforeMonth) DMonthMax_before=30;
+            	else if(10 == beforeMonth) DMonthMax_before=31;
+            	else if(11 == beforeMonth) DMonthMax_before=30;
+            	else if(12 == beforeMonth) DMonthMax_before=31;
+            	
+            	iNewDay = iNewDay - 1;
+            	boolean bJianweiMonth = iNewDay==0?true:false;
+            	if(bJianweiMonth)
+            	{
+            		iNewDay = DMonthMax_before;
+            		
+            		iNewMonth = iNewMonth - 1;
+            		
+            		boolean bJianweiYear = iNewMonth==0?true:false;
+            		if(bJianweiYear)
+            		{
+            			iNewMonth = 12;
+            			iNewYear = iNewYear - 1;
+            		}
+            	}
+        	}
+    	}
+    	
+    	// convert to new string
+    	
+    	StringBuilder strBuilder = new StringBuilder(specifiedDate);
+    	
+    	strBuilder.setCharAt(0, (char)('0' + iNewYear%10000/1000));
+    	strBuilder.setCharAt(1, (char)('0' + iNewYear%1000/100));
+    	strBuilder.setCharAt(2, (char)('0' + iNewYear%100/10));
+    	strBuilder.setCharAt(3, (char)('0' + iNewYear%10));
+    	//strBuilder.setCharAt(4, '-');
+    	strBuilder.setCharAt(5, (char)('0' + iNewMonth/10));
+    	strBuilder.setCharAt(6, (char)('0' + iNewMonth%10));
+    	//strBuilder.setCharAt(7, '-');
+    	strBuilder.setCharAt(8, (char)('0' + iNewDay/10));
+    	strBuilder.setCharAt(9, (char)('0' + iNewDay%10));
+    	
+    	String newDate = strBuilder.toString();
+    	return newDate;
+
     } 
     
 	/*
@@ -267,33 +411,16 @@ public class CUtilsDateTime {
      */
     public static long subTime(String time1, String time2)
     {  
-    	long diffsec = 0;
-		try {
-			Date date1 = new SimpleDateFormat("HH:mm:ss").parse(time1);
-			Date date2 = new SimpleDateFormat("HH:mm:ss").parse(time2);  
-	        long diff = date1.getTime() - date2.getTime();
-	        diffsec = diff / 1000; 
-		} catch (java.text.ParseException e) {
-			e.printStackTrace();
-		} 
-        return diffsec;
-    }
-    
-    /*
-     * 日期差（天）
-     */
-    public static long subDate(String date1, String date2)
-    {  
-    	long diffsec = 0;
-		try {
-			Date dateObj1 = new SimpleDateFormat("yyyy-MM-dd").parse(date1);
-			Date dateObj2 = new SimpleDateFormat("yyyy-MM-dd").parse(date2);  
-	        long diff = dateObj1.getTime() - dateObj2.getTime();
-	        diffsec = diff / 1000 / 3600 / 24; 
-		} catch (java.text.ParseException e) {
-			e.printStackTrace();
-		} 
-        return diffsec;
+//    	long diffsec = 0;
+//		try {
+//			Date date1 = new SimpleDateFormat("HH:mm:ss").parse(time1);
+//			Date date2 = new SimpleDateFormat("HH:mm:ss").parse(time2);  
+//	        long diff = date1.getTime() - date2.getTime();
+//	        diffsec = diff / 1000; 
+//		} catch (java.text.ParseException e) {
+//			e.printStackTrace();
+//		} 
+        return GetSecondFromTimeStr(time1) - GetSecondFromTimeStr(time2);
     }
     
     public static void start()
