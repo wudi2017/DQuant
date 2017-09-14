@@ -45,7 +45,7 @@ public class CLog {
 		@Override
 		public void doAction() {
 			// TODO Auto-generated method stub
-			CLog.implLogOutput(m_logbuf); // 无log工作线程直接输出
+			CLog.implLogOutput(m_logbuf); 
 		}
 		private String m_logbuf;
 	}
@@ -147,7 +147,7 @@ public class CLog {
 			while(!super.checkQuit())
 			{
 				CLog.flushLogContentCache();
-				this.Wait(1000);
+				this.Wait(1000*3);
 			}
 		}
 		
@@ -177,6 +177,7 @@ public class CLog {
 			s_configMonitorThread = new LogConfigMonitorThread();
 			s_configMonitorThread.startMonitor();
 		}
+		s_bStarted = true;
 	}
 	
 	public static void stop()
@@ -203,6 +204,7 @@ public class CLog {
 		{
 			s_contentCache = null;
 		}
+		s_bStarted = false;
 	}
 
 	public static void config_setLogCfg(String dirName, String fileName)
@@ -307,7 +309,6 @@ public class CLog {
 	
 	public static void output(String target, String format, Object... args)
 	{
-
 		s_syncObjForTagMap.Lock();
 		if(null != target && "" != target && !s_tagMap.containsKey(target))
 		{
@@ -320,7 +321,6 @@ public class CLog {
 			return;
 		}
 		s_syncObjForTagMap.UnLock();
-
 		
 		// dir file name check
 		if(null == s_strLogDirName) s_strLogDirName = CPath.getOutputDir();
@@ -333,7 +333,7 @@ public class CLog {
 		
 		String fullLogStr = String.format("[%s.%03d][%10s] %s", curDateTimeStr, TC%1000, target, logstr);
 		
-		if(null != s_LogWorkQThread)
+		if(s_bStarted)
 		{
 			LogOutRequest cLogOutRequest = new LogOutRequest(fullLogStr);
 			s_LogWorkQThread.postRequest(cLogOutRequest);
@@ -346,17 +346,20 @@ public class CLog {
 	
 	private static void flushLogContentCache()
 	{
-		String currentOutputContent = null;
-		
-		s_contentCache.lock();
-		currentOutputContent = s_contentCache.popContent();
-		s_contentCache.unlock();
-		
-		// 开始输出
-		if(null != currentOutputContent)
+		if(s_bStarted)
 		{
-			outputConsole(currentOutputContent);
-			outputFile(currentOutputContent);
+			String currentOutputContent = null;
+			
+			s_contentCache.lock();
+			currentOutputContent = s_contentCache.popContent();
+			s_contentCache.unlock();
+			
+			// 开始输出
+			if(null != currentOutputContent && currentOutputContent.length() > 0)
+			{
+				outputConsole(currentOutputContent);
+				outputFile(currentOutputContent);
+			}
 		}
 	}
 	
@@ -364,17 +367,24 @@ public class CLog {
 	{
 		String currentOutputContent = null;
 		
-		// add to cache and check
-		s_contentCache.lock();
-		s_contentCache.addContent(logbuf);
-		if(s_contentCache.size() > 32*1024)
+		if(s_bStarted)
 		{
-			currentOutputContent = s_contentCache.popContent();
+			// add to cache and check
+			s_contentCache.lock();
+			s_contentCache.addContent(logbuf);
+			if(s_contentCache.size() > 7*1024)
+			{
+				currentOutputContent = s_contentCache.popContent();
+			}
+			s_contentCache.unlock();
 		}
-		s_contentCache.unlock();
+		else
+		{
+			currentOutputContent = logbuf;
+		}
 		
 		// 开始输出
-		if(null != currentOutputContent)
+		if(null != currentOutputContent && currentOutputContent.length() > 0)
 		{
 			outputConsole(currentOutputContent);
 			outputFile(currentOutputContent);
@@ -426,4 +436,5 @@ public class CLog {
 	
 	static private LogContentCache s_contentCache = null;
 	static private LogContentFlushThread s_ContentFlushThread = null;
+	static private boolean s_bStarted = false;
 }

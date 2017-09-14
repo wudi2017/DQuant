@@ -13,30 +13,44 @@ public class TestCQThread {
 		}
 		@Override
 		public void doAction() {
-			CLog.output("TEST", "TestRequest doAction! m_index [%d]\n", m_index);
 			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
+				s_iCalled++;
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		public int m_index;
 	}
-
-	public static void main(String[] args) {
-		CLog.output("TEST", "TestCQThread Begin\n");
+	
+	
+	public static int s_iCalled = 0;
+	@CTest.test
+	public void test_CQThreadRequest()
+	{
+		int iPostCnt = 10000*100;
+		s_iCalled = 0;
 		
 		CQThread cCQThread = new CQThread();
 		
+		CTest.TEST_PERFORMANCE_BEGIN();
+		
 		cCQThread.startThread();
 		
-		for(int i=0; i<100; i++)
+		for(int i=0; i<iPostCnt; i++)
 		{
 			cCQThread.postRequest(new TestRequest(i));
 		}
 		
 		cCQThread.stopThread();
 		
-		CLog.output("TEST", "TestCQThread End\n");
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 1000);
+		CTest.EXPECT_TRUE(iPostCnt == s_iCalled);
+	}
+
+	public static void main(String[] args) {
+		
+		CTest.ADD_TEST(TestCQThread.class);
+		
+		CTest.RUN_ALL_TESTS();
 	}
 }

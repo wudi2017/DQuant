@@ -1,7 +1,9 @@
 package pers.di.common;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CQThread {
 	
@@ -38,8 +40,10 @@ public class CQThread {
 	{
 		public CQThreadEntity()
 		{
-			m_requestList = new ArrayList<CQThreadRequest>();
-			m_syncObj = new CSyncObj();
+//			m_requestList = new LinkedList<CQThreadRequest>();
+//			m_syncObj = new CSyncObj();
+			
+			m_requestConcurrentLinkedQueue = new ConcurrentLinkedQueue<CQThreadRequest>();
 		}
 		@Override
 		public void run() {
@@ -53,29 +57,45 @@ public class CQThread {
 				}
 				super.Wait(Long.MAX_VALUE);
 			}
+			while(true)
+			{
+				CQThreadRequest cReq = popRequest();
+				if(null == cReq) break;
+				cReq.doAction();
+			}
 		}
 		public boolean postRequest(CQThreadRequest cReq)
 		{
-			m_syncObj.Lock();
-			m_requestList.add(cReq);
-			m_syncObj.UnLock();
+//			m_syncObj.Lock();
+//			m_requestList.add(cReq);
+//			m_syncObj.UnLock();
+			
+			m_requestConcurrentLinkedQueue.add(cReq);
+			
 			super.Notify();
 			return true;
 		}
 		public CQThreadRequest popRequest()
 		{
 			CQThreadRequest cReq = null;
-			m_syncObj.Lock();
-			if(m_requestList.size()>0)
-			{
-				cReq = m_requestList.get(0);
-				m_requestList.remove(0);
-			}
-			m_syncObj.UnLock();
+			
+//			m_syncObj.Lock();
+//			if(m_requestList.size()>0)
+//			{
+//				cReq = m_requestList.get(0);
+//				m_requestList.remove(0);
+//			}
+//			m_syncObj.UnLock();
+			
+			cReq = m_requestConcurrentLinkedQueue.poll();
+			
 			return cReq;
 		}
-		private List<CQThreadRequest> m_requestList;
-		private CSyncObj m_syncObj;
+
+//		private List<CQThreadRequest> m_requestList;
+//		private CSyncObj m_syncObj;
+		
+		private ConcurrentLinkedQueue<CQThreadRequest> m_requestConcurrentLinkedQueue;
 	}
 	
 	private CQThreadEntity m_thread;

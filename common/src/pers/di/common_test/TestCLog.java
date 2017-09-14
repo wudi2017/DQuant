@@ -23,13 +23,15 @@ public class TestCLog {
 			CLog.output("TAG1", "testlog TAG1 string abcdedf1 %d!\n", i);
 		}
 		long cost = CTest.TEST_PERFORMANCE_END();
-		CTest.EXPECT_TRUE(cost < 50);
+		CTest.EXPECT_TRUE(cost < 1000);
 		CLog.output("TAG1", "dump[%d] \n", cost);
 	}
 	public static void main(String[] args) {
-		CSystem.start();
+		
 		CLog.config_setLogCfg("config", "log_config.xml");
 		CLog.config_setLogFile("output", "default.log");
+		CLog.start();
+
 		CLog.config_setTag("TAG1", true);
 		CLog.config_setTag("TAG2", false);
 		CLog.config_setTag("TAG3", false);
@@ -37,6 +39,6 @@ public class TestCLog {
 		CTest.ADD_TEST(TestCLog.class);
 		CTest.RUN_ALL_TESTS();
 	
-		CSystem.stop();
+		CLog.stop();
 	}
 }
