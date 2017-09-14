@@ -4,7 +4,7 @@ import pers.di.common.CSystem;
 import pers.di.common.CTest;
 import pers.di.common.CThread;
 
-public class Test_ALL {
+public class TestALL {
 
 	public static void main(String[] args) {
 		CSystem.start();

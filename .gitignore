@@ -1,6 +1,8 @@
 */bin/*
 */output/*
 */data/*
+*.txt
+*log*xml
 RemoteSystemsTempFiles
 .recommenders
 .metadata

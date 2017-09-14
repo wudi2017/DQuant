@@ -49,8 +49,8 @@ public class TestQuantEngine {
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);
-//				CLog.output("TEST", "stockID:%s date %s time %s price %.3f\n", 
-//						StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
+				CLog.output("TEST", "stockID:%s date %s time %s price %.3f\n", 
+						StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
 			}
 		}
 	}

@@ -9,11 +9,44 @@ public class CPath {
 	{
 		return s_outputDir;
 	}
+	public static boolean isDirExist(String dirName)
+	{
+		File folder = new File(dirName);
+		if(folder.exists() && folder.isDirectory())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public static boolean isFileExist(String fileName)
+	{
+		File folder = new File(fileName);
+		if(folder.exists() && !folder.isDirectory())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	public static boolean createDir(String dirName)
 	{
 		File folder = new File(dirName);
 		folder.mkdirs();
 		return true;
+	}
+	public static int clearDir(String dirName)
+	{
+		File folder =new File(dirName);
+		if(!folder.exists())      
+		{        
+			return 0;
+		}
+		return help_deleteFile(folder);
 	}
 	public static int removeDir(String dirName)
 	{

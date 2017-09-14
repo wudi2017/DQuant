@@ -41,9 +41,9 @@ public abstract class CTest {
 		return TCE-s_curTestPerformanceTCB;
 	}
 	
-	public static void EXPECT_TRUE(boolean bExpect)
+	public static void EXPECT_TRUE(boolean bActual)
 	{
-		if(!bExpect) 
+		if(!bActual) 
 		{
 			s_curTestInnnerErrorCount++;
 			
@@ -52,14 +52,14 @@ public abstract class CTest {
 	        StackTraceElement tmp = trace[1];
 	        outputProcess("[CTEST] NG(%d) expect(true) actual(%b) (%s:%d)",
 	        		s_curTestInnnerErrorCount, 
-	        		bExpect, 
+	        		bActual, 
 	        		tmp.getFileName(), tmp.getLineNumber());
 		}
 	}
 	
-	public static void EXPECT_FALSE(boolean bExpect)
+	public static void EXPECT_FALSE(boolean bActual)
 	{
-		if(bExpect) 
+		if(bActual) 
 		{
 			s_curTestInnnerErrorCount++;
 			
@@ -68,12 +68,12 @@ public abstract class CTest {
 	        StackTraceElement tmp = trace[1];
 	        outputProcess("[CTEST] NG(%d) expect(false) actual(%b) (%s:%d)",
 	        		s_curTestInnnerErrorCount, 
-	        		bExpect, 
+	        		bActual, 
 	        		tmp.getFileName(), tmp.getLineNumber());
 		}
 	}
 	
-	public static void EXPECT_STR_EQ(String sExpect, String sActual)
+	public static void EXPECT_STR_EQ(String sActual, String sExpect)
 	{
 		if(!sExpect.equals(sActual)) 
 		{
@@ -89,7 +89,7 @@ public abstract class CTest {
 		}
 	}
 	
-	public static void EXPECT_LONG_EQ(long lExpect, long lActual)
+	public static void EXPECT_LONG_EQ(long lActual, long lExpect)
 	{
 		if(lExpect != lActual) 
 		{
@@ -105,9 +105,29 @@ public abstract class CTest {
 		}
 	}
 	
-	public static void EXPECT_DOUBLE_EQ(double dExpect, double dActual)
+	public static void EXPECT_DOUBLE_EQ(double dActual, double dExpect, int precision)
 	{
-		if(0 != Double.compare(dExpect, dActual)) 
+		DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(precision);
+        String dExpectStr = df.format(dExpect);
+        String dActualStr = df.format(dActual);
+		if(!dActualStr.equals(dExpectStr)) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+
+	        outputProcess("[CTEST] NG(%d) expect(%s) actual(%s) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		dExpectStr, dActualStr, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	public static void EXPECT_DOUBLE_EQ(double dActual, double dExpect)
+	{
+		if(0 != Double.compare(dActual, dExpect)) 
 		{
 			s_curTestInnnerErrorCount++;
 			

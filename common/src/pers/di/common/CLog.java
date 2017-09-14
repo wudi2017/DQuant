@@ -243,6 +243,16 @@ public class CLog {
 		File cfile=new File(configFileFullName);
 		try
 		{
+			if(!cfile.exists())
+			{
+				String defaultContent = ""
+						+ "<config>\n"
+						+ "\t<tag name='COMMON' output='1' />\n"
+						+ "\t<tag name='TEST' output='1' />\n"
+						+ "</config>\n";
+				CPath.createDir(s_strConfig);
+				CFile.fileWrite(configFileFullName, defaultContent, false);
+			}
 			BufferedReader reader = new BufferedReader(new FileReader(cfile));
 	        int fileLen = (int)cfile.length();
 	        char[] chars = new char[fileLen];
@@ -330,7 +340,7 @@ public class CLog {
 
 		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
 		Long TC = CUtilsDateTime.GetCurrentTimeMillis();
-		String fullLogStr = String.format("[%s.%03d][%10s] %s", curDateTimeStr, TC%1000, target, logstr);
+		String fullLogStr = String.format("[%s.%03d][%10s] %s\n", curDateTimeStr, TC%1000, target, logstr);
 		
 //		String fullLogStr = "[" + curDateTimeStr + "." + TC + "] " + target + " " + logstr;
 		
