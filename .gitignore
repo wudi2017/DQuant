@@ -2,7 +2,7 @@
 */output/*
 */data/*
 *.txt
-*log*xml
+*log*.xml
 RemoteSystemsTempFiles
 .recommenders
 .metadata
