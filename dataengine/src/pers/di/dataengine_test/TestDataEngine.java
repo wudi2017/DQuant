@@ -103,7 +103,7 @@ public class TestDataEngine {
 
 		CListObserver<KLine> obsKLineList = new CListObserver<KLine>();
 		int error = StockDataEngine.instance().buildDayKLineListObserver(stockID, "2011-05-23", "2017-05-25", obsKLineList);
-		CLog.output("x", "KLine count: %d\n", obsKLineList.size());
+		CLog.output("TEST", "KLine count: %d", obsKLineList.size());
 		CTest.EXPECT_LONG_EQ(obsKLineList.size(), 1428);
 		int iCheckCnt = 0;
 		for(int i=0; i<obsKLineList.size(); i++)
@@ -154,7 +154,7 @@ public class TestDataEngine {
 		for(int i=0; i<obsTimePriceList.size(); i++)
 		{
 			TimePrice cTimePrice = obsTimePriceList.get(i);
-			CLog.output("x", "time: %s close: %f\n", cTimePrice.time, cTimePrice.price);
+			CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
 			if(cTimePrice.time.equals("09:30:00")) 
 			{
 				CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.00, 2);

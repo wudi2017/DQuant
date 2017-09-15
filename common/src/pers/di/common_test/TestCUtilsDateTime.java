@@ -24,7 +24,7 @@ public class TestCUtilsDateTime {
 			testdata = testdata + CUtilsDateTime.GetCurrentTimeMillis();
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
-		CLog.output("X", "dump:%d\n", testdata);
+		CLog.output("TEST", "dump:%d", testdata);
 	}
 	
 	@test
@@ -37,7 +37,7 @@ public class TestCUtilsDateTime {
 			cDate = CUtilsDateTime.GetCurDate();
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
-		CLog.output("TEST", "dump:%s\n" , cDate.toString());
+		CLog.output("TEST", "dump:%s" , cDate.toString());
 	}
 	
 	@test
@@ -53,7 +53,7 @@ public class TestCUtilsDateTime {
 			//CLog.output("TEST", "dump:%s \n", stestdata);
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
-		CLog.output("x", "dump:%s \n", stestdata);
+		CLog.output("TEST", "dump:%s", stestdata);
 	}
 	
 	@test
@@ -67,7 +67,7 @@ public class TestCUtilsDateTime {
 			stestdata = CUtilsDateTime.GetCurDateStr();
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
-		CLog.output("x", "dump[%s] \n", stestdata);
+		CLog.output("TEST", "dump[%s]", stestdata);
 	}
 	
 	@test
@@ -81,7 +81,7 @@ public class TestCUtilsDateTime {
 			stestdata = CUtilsDateTime.GetCurTimeStr();
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
-		CLog.output("x", "dump[%s] \n", stestdata);
+		CLog.output("TEST", "dump[%s]", stestdata);
 	}
 	
 	@test
@@ -173,7 +173,7 @@ public class TestCUtilsDateTime {
 		}
 		CTest.EXPECT_TRUE(stestdata.equals("15:14:05"));
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 200);
-		CLog.output("TEST", "dump[%s] \n", stestdata);
+		CLog.output("TEST", "dump[%s]", stestdata);
 	}
 	
 	@test
@@ -187,7 +187,7 @@ public class TestCUtilsDateTime {
 			itestdata = CUtilsDateTime.GetSecondFromTimeStr("12:34:56");
 		}
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
-		CLog.output("x", "dump[%d] \n", itestdata);
+		CLog.output("TEST", "dump[%d]", itestdata);
 	}
 	
 	@test
@@ -202,7 +202,7 @@ public class TestCUtilsDateTime {
 		}
 		CTest.EXPECT_TRUE(stestdata.equals("02:02:12"));
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 200);
-		CLog.output("TEST", "dump[%s] \n", stestdata);
+		CLog.output("TEST", "dump[%s]", stestdata);
 	}
 	
 	@test
@@ -212,12 +212,12 @@ public class TestCUtilsDateTime {
 		String curTimeStr = CUtilsDateTime.GetCurTimeStr();
 		String beforeTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, -2);
 		String afterTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, 1);
-		CLog.output("X", "curDateStr %s beforeTimeStr = %s\n", curDateStr, beforeTimeStr);
-		CLog.output("X", "curDateStr %s afterTimeStr = %s\n", curDateStr, afterTimeStr);
+		CLog.output("TEST", "curDateStr %s beforeTimeStr = %s", curDateStr, beforeTimeStr);
+		CLog.output("TEST", "curDateStr %s afterTimeStr = %s", curDateStr, afterTimeStr);
 		boolean bwaitbefore = CUtilsDateTime.waitDateTime(curDateStr, beforeTimeStr);
-		CLog.output("X", "waitDateTime beforeTimeStr = %b\n", bwaitbefore);
+		CLog.output("TEST", "waitDateTime beforeTimeStr = %b", bwaitbefore);
 		boolean bwaitafter = CUtilsDateTime.waitDateTime(curDateStr, afterTimeStr);
-		CLog.output("X", "waitDateTime bwaitafter = %b\n", bwaitafter);
+		CLog.output("TEST", "waitDateTime bwaitafter = %b", bwaitafter);
 	}
 	
 	@CTest.test

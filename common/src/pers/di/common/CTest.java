@@ -160,7 +160,7 @@ public abstract class CTest {
 	
 	public static int RUN_ALL_TESTS(String filter)
 	{
-		outputProcess("[CTEST] RUN_ALLTEST BEGIN");
+		outputProcess("[CTEST] RUN_ALL_TESTS BEGIN");
 		
 		for(int iCls = 0; iCls<s_clsList.size(); iCls++)
 		{
@@ -283,9 +283,8 @@ public abstract class CTest {
 			}
 		}
 		
-		outputProcess("[CTEST] RUN_ALLTEST END");
-		outputProcess("[CTEST] error(%d)", s_testErrorCount);
-		return 0;
+		outputProcess("[CTEST] RUN_ALL_TESTS END Error(%d)", s_testErrorCount);
+		return s_testErrorCount;
 	}
 	
 	public static int RUN_ALL_TESTS()
