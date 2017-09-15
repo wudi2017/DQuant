@@ -10,11 +10,17 @@ public class CurrentDayTimePriceCache {
 	
 	public CurrentDayTimePriceCache()
 	{
+		m_subscribeMinuteDataStockIDList = new ArrayList<String>();
 		m_bIsHistoryData = false;
-		m_date = "";
-		m_time = "";
+		m_date = "0000-00-00";
+		m_time = "00:00:00";
 		m_realtimeCacheStockTimeMap = new HashMap<String, List<TimePrice>>();
 		m_historyCacheStockTimeMap = new HashMap<String, CListObserver<TimePrice>>();
+	}
+	
+	public boolean subscribeMinuteData(String StockID)
+	{
+		return m_subscribeMinuteDataStockIDList.add(StockID);
 	}
 	
 	public void buildAll(String date, String time)
@@ -32,22 +38,11 @@ public class CurrentDayTimePriceCache {
 		m_date = date;
 		m_time = time;
 		
-		
-		if(m_bIsHistoryData)
+		for(int i=0; i<m_subscribeMinuteDataStockIDList.size(); i++)
 		{
-			for (Map.Entry<String, CListObserver<TimePrice>> entry : m_historyCacheStockTimeMap.entrySet()) {  
-				String stockID = entry.getKey();
-				build(stockID);
-			}
+			String stockID = m_subscribeMinuteDataStockIDList.get(i);
+			build(stockID);
 		}
-		else
-		{
-			for (Map.Entry<String, List<TimePrice>> entry : m_realtimeCacheStockTimeMap.entrySet()) {  
-				String stockID = entry.getKey();
-				build(stockID);
-			}
-		}
-		
 	}
 	
 	private void build(String stockID)
@@ -55,6 +50,12 @@ public class CurrentDayTimePriceCache {
 		if(m_bIsHistoryData)
 		{
 			CListObserver<TimePrice> cObsTimePrice = m_historyCacheStockTimeMap.get(stockID);
+			if(null == cObsTimePrice)
+			{
+				cObsTimePrice = new CListObserver<TimePrice>();
+				m_historyCacheStockTimeMap.put(stockID, cObsTimePrice);
+			}
+			
 			if(cObsTimePrice.size() > 0)
 			{
 				// 缓存中有数据，加载后面的部分
@@ -74,6 +75,11 @@ public class CurrentDayTimePriceCache {
 		else
 		{
 			List<TimePrice> cTimePriceList = m_realtimeCacheStockTimeMap.get(stockID);
+			if(null == cTimePriceList)
+			{
+				cTimePriceList = new ArrayList<TimePrice>();
+				m_realtimeCacheStockTimeMap.put(stockID, cTimePriceList);
+			}
 			
 			// 判断是否要添加新实时数据
 			boolean bAddNewVal = false;
@@ -121,6 +127,10 @@ public class CurrentDayTimePriceCache {
 
 	public boolean clear()
 	{
+		m_subscribeMinuteDataStockIDList.clear();
+		m_bIsHistoryData = false;
+		m_date = "0000-00-00";
+		m_time = "00:00:00";
 		m_realtimeCacheStockTimeMap.clear();
 		m_historyCacheStockTimeMap.clear();
 		return true;
@@ -133,8 +143,7 @@ public class CurrentDayTimePriceCache {
 		{
 			if(!m_historyCacheStockTimeMap.containsKey(stockID))
 			{
-				m_historyCacheStockTimeMap.put(stockID, new CListObserver<TimePrice>());
-				build(stockID);
+				return -1;
 			}
 			CListObserver<TimePrice> cObsTimePrice = m_historyCacheStockTimeMap.get(stockID);
 			// build观察器
@@ -144,8 +153,7 @@ public class CurrentDayTimePriceCache {
 		{
 			if(!m_realtimeCacheStockTimeMap.containsKey(stockID))
 			{
-				m_realtimeCacheStockTimeMap.put(stockID, new ArrayList<TimePrice>());
-				build(stockID);
+				return -1;
 			}
 			List<TimePrice> cTimePriceList = m_realtimeCacheStockTimeMap.get(stockID);
 			
@@ -155,6 +163,7 @@ public class CurrentDayTimePriceCache {
 		return 0;
 	}
 	
+	private List<String> m_subscribeMinuteDataStockIDList;
 	private boolean m_bIsHistoryData;
 	
 	private Map<String, List<TimePrice>> m_realtimeCacheStockTimeMap;

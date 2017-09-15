@@ -24,6 +24,10 @@ public class QuantContext {
 		return m_pool;
 	}
 	
+	public boolean subscribeMinuteData(String StockID)
+	{
+		return m_pool.subscribeMinuteData(StockID);
+	}
 	/*
 	 * --------------------------------------------------------------
 	 */

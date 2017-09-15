@@ -64,6 +64,11 @@ public class DAPool {
 		return new DAStock(this, stockID);
 	}
 	
+	public boolean subscribeMinuteData(String StockID)
+	{
+		return m_currentDayTimePriceCache.subscribeMinuteData(StockID);
+	}
+	
 	public CurrentDayTimePriceCache currentDayTimePriceCache()
 	{
 		return m_currentDayTimePriceCache;

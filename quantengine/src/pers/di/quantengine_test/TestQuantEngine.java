@@ -20,18 +20,21 @@ public class TestQuantEngine {
 	public static class MyQuantTest extends QuantTriger
 	{
 		@Override
-		public void onHandleData(QuantContext ctx) {
+		public void onDayBegin(QuantContext ctx) {
+			CLog.output("TEST", "onDayBegin %s %s", ctx.date(), ctx.time());
+			ctx.subscribeMinuteData("600000");
+		}
+		
+		@Override
+		public void onEveryMinute(QuantContext ctx) {
 			
-			if(ctx.time().equals("09:30:00"))
-			{
-				CLog.output("TEST", "onHandler %s %s\n", ctx.date(), ctx.time());
-			}
-				
+			CLog.output("TEST", "onEveryMinute %s %s", ctx.date(), ctx.time());
+			
 			// 遍历所有股票
 			for(int i=0; i<ctx.pool().size(); i++)
 			{
 				DAStock stock = ctx.pool().get(i);
-				//CLog.output("TEST", "stock %s %s\n", stock.ID(), stock.name());
+				//CLog.output("TEST", "stock %s %s", stock.ID(), stock.name());
 			}
 			
 			String StockID = "600000";
@@ -41,7 +44,7 @@ public class TestQuantEngine {
 			for(int i=0; i<cKLines.size(); i++)
 			{
 				KLine cKLine = cKLines.get(i);
-				//CLog.output("TEST", "date %s close %.3f\n", cKLine.date, cKLine.close);
+				//CLog.output("TEST", "date %s close %.3f", cKLine.date, cKLine.close);
 			}
 			
 			// 遍历某只股票某日分时线
@@ -49,9 +52,13 @@ public class TestQuantEngine {
 			for(int i=0; i<cTimePrices.size(); i++)
 			{
 				TimePrice cTimePrice = cTimePrices.get(i);
-				CLog.output("TEST", "stockID:%s date %s time %s price %.3f\n", 
-						StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
+				//CLog.output("TEST", "%s %s %s %.3f", StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
 			}
+		}
+
+		@Override
+		public void onDayEnd(QuantContext ctx) {
+			CLog.output("TEST", "onDayEnd %s %s", ctx.date(), ctx.time());
 		}
 	}
 	
@@ -60,7 +67,7 @@ public class TestQuantEngine {
 		//CLog.config_setTag("QEngine", true);
 		
 		QuantEngine qE = new QuantEngine();
-		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-01-20");
+		qE.config("TrigerMode", "HistoryTest 2017-01-01 2017-01-03");
 		//qE.config("TrigerMode", "RealTime");
 		qE.run(new MyQuantTest());
 		

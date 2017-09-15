@@ -17,14 +17,15 @@ public class QuantEngine {
 	 * key: "TrigerMode" 触发模式
 	 *     value: "HistoryTest XXXX-XX-XX XXXX-XXXX-XX" 历史回测
 	 *     value: "RealTime" 实时
-	 *     
-	 * key: "TrigerPoint"
-	 *     value: "EveryMinute" 每分钟触发
-	 *     value: "XX:XX" 触发时间手动配置  例如 08:20
-	 *   
 	 */
 	public int config(String key, String value)
 	{
+		// init context object
+		if(null == m_context)
+		{
+			m_context = new QuantContext();
+		}
+		// init history or realtime
 		if(0 == key.compareTo("TrigerMode"))
 		{
 			if(value.contains("HistoryTest"))
@@ -57,12 +58,6 @@ public class QuantEngine {
 				m_bHistoryTest = false;
 			}
 		}
-		else if(0 == key.compareTo("TrigerPoint"))
-		{
-			
-		}
-		
-		m_context = new QuantContext();
 		
 		return 0;
 	}
@@ -72,12 +67,12 @@ public class QuantEngine {
 	 */
 	public int run(QuantTriger triger)
 	{
+		CLog.output("QEngine", "The QuantEngine is running now...");
+		
 		// 每天进行循环
 		String dateStr = getStartDate();
 		while(true) 
 		{
-			CLog.output("QEngine", "Date [%s] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n", dateStr);
-			
 			String timestr = "00:00:00";
 			
 			// 09:25确定是否是交易日
@@ -88,93 +83,67 @@ public class QuantEngine {
 			{
 				bIsTranDate = true;
 			}
-			CLog.output("QEngine", "[%s %s] isTranDate = %b \n", dateStr, timestr, bIsTranDate);
-			
+			CLog.output("QEngine", "[%s %s] check market day = %b ", dateStr, timestr, bIsTranDate);
 			
 			if(bIsTranDate)
 			{
-				// 09:27 账户新交易日初始化
+				// 09:27 触发trigger.onDayBegin
 				timestr = "09:27:00";
 				waitForDateTime(dateStr, timestr);
-				boolean bAccInit = false;
-				bAccInit = true;
-				CLog.output("QEngine", "[%s %s] account newDayInit = %b \n", dateStr, timestr, bAccInit);
+				CLog.output("QEngine", "[%s %s] triger.onDayBegin ", dateStr, timestr);
+				m_context.setDateTime(dateStr, timestr);
+				triger.onDayBegin(m_context);
 				
-				if(bAccInit)
+				// 9:30-11:30 1:00-3:00 定期间隔进行触发trigger.onEveryMinute
+				int interval_min = 1;
+				String timestr_begin = "09:30:00";
+				String timestr_end = "11:30:00";
+				timestr = timestr_begin;
+				while(true)
 				{
-					// 9:30-11:30 1:00-3:00 定期间隔进行触发trigger
-					int interval_min = 1;
-					String timestr_begin = "09:30:00";
-					String timestr_end = "11:30:00";
-					timestr = timestr_begin;
-					while(true)
+					if(waitForDateTime(dateStr, timestr))
 					{
-						if(waitForDateTime(dateStr, timestr))
-						{
-							CLog.output("QEngine", "[%s %s] triger.onHandler \n", dateStr, timestr);
-							m_context.setDateTime(dateStr, timestr);
-							triger.onHandleData(m_context);
-						}
-						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
-						if(timestr.compareTo(timestr_end) > 0) break;
+						CLog.output("QEngine", "[%s %s] triger.onEveryMinute ", dateStr, timestr);
+						m_context.setDateTime(dateStr, timestr);
+						triger.onEveryMinute(m_context);
 					}
-					
-					timestr_begin = "13:00:00";
-					timestr_end = "15:00:00";
-					timestr = timestr_begin;
-					while(true)
+					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
+					if(timestr.compareTo(timestr_end) > 0) break;
+				}
+				
+				timestr_begin = "13:00:00";
+				timestr_end = "15:00:00";
+				timestr = timestr_begin;
+				while(true)
+				{
+					if(waitForDateTime(dateStr, timestr))
 					{
-						if(waitForDateTime(dateStr, timestr))
-						{
-							CLog.output("QEngine", "[%s %s] triger.onHandler \n", dateStr, timestr);
-							m_context.setDateTime(dateStr, timestr);
-							triger.onHandleData(m_context);
-						}
-						timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
-						if(timestr.compareTo(timestr_end) > 0) break;
+						CLog.output("QEngine", "[%s %s] triger.onEveryMinute ", dateStr, timestr);
+						m_context.setDateTime(dateStr, timestr);
+						triger.onEveryMinute(m_context);
 					}
+					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
+					if(timestr.compareTo(timestr_end) > 0) break;
+				}
 
-					// 19:00 更新历史数据
-					timestr = "19:00:00";
-					if(waitForDateTime(dateStr, timestr))
-					{
-						CLog.output("QEngine", "[%s %s] updateStockData \n", dateStr, timestr);
-					}
-					
-					// 20:30  选股
-					timestr = "20:30:00";
-					if(waitForDateTime(dateStr, timestr))
-					{
-						CLog.output("QEngine", "[%s %s] StockSelectAnalysis \n", dateStr, timestr);
-					}
-					
-					// 20:35 当日报告
-					timestr = "20:35:00";
-					if(waitForDateTime(dateStr, timestr))
-					{
-						CLog.output("QEngine", "[%s %s] daily report collection \n", dateStr, timestr);
-					}
-					
-					// 20:40  账户当日交易结束
-					timestr = "20:40:00";
-					if(waitForDateTime(dateStr, timestr))
-					{
-						CLog.output("QEngine", "[%s %s] account newDayTranEnd\n", dateStr, timestr);
-					}
-				}
-				else
+				// 19:00 更新历史数据
+				timestr = "19:00:00";
+				if(waitForDateTime(dateStr, timestr))
 				{
-					CLog.output("QEngine", "[%s %s] account newDayInit failed, continue! \n", dateStr, timestr);
+					CLog.output("QEngine", "[%s %s] update market data ", dateStr, timestr);
+					StockDataEngine.instance().updateAllLocalStocks(dateStr);
 				}
-			}
-			else
-			{
-				CLog.output("QEngine", "[%s %s] Not transaction date, continue! \n", dateStr, timestr);
+				
+				// 20:00 触发trigger.onDayEnd
+				timestr = "21:00:00";
+				waitForDateTime(dateStr, timestr);
+				CLog.output("QEngine", "[%s %s] triger.onDayEnd ", dateStr, timestr);
+				m_context.setDateTime(dateStr, timestr);
+				triger.onDayEnd(m_context);
 			}
 			
 			// 获取下一日期
 			dateStr = getNextDate();
-			
 			if(null == dateStr) break;
 		}
 		return 0;
@@ -230,9 +199,9 @@ public class QuantEngine {
 		}
 		else
 		{
-			CLog.output("QEngine", "realtime waitting DateTime (%s %s)... \n", date, time);
+			CLog.output("QEngine", "realtime waitting DateTime (%s %s)... ", date, time);
 			boolean bWait = CUtilsDateTime.waitDateTime(date, time);
-			CLog.output("QEngine", "realtime waitting DateTime (%s %s) complete! result(%b)\n", date, time, bWait);
+			CLog.output("QEngine", "realtime waitting DateTime (%s %s) complete! result(%b)", date, time, bWait);
 			return bWait;
 		}
 	}
