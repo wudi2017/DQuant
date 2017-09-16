@@ -34,9 +34,10 @@ public class QuantEngine {
 				m_bHistoryTest = true;
 				m_beginDate = cols[1];
 				m_endDate = cols[2];
-				
+			
 				// 初始化历史交易日表
-				if(m_bHistoryTest)
+				if(CUtilsDateTime.CheckValidDate(m_beginDate) 
+						&&CUtilsDateTime.CheckValidDate(m_endDate))
 				{
 					m_hisTranDate = new ArrayList<String>();
 					CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
@@ -52,6 +53,11 @@ public class QuantEngine {
 						m_hisTranDate.add(curDateStr);
 			        }
 				}
+				else
+				{
+					CLog.error("QEngine", "input parameter error!");
+					return -1;
+				}
 			}
 			else
 			{
@@ -59,6 +65,7 @@ public class QuantEngine {
 			}
 		}
 		
+		m_startFlag = true;
 		return 0;
 	}
 	
@@ -67,6 +74,8 @@ public class QuantEngine {
 	 */
 	public int run(QuantTriger triger)
 	{
+		if(!m_startFlag) return -1;
+		
 		CLog.output("QEngine", "The QuantEngine is running now...");
 		
 		// 每天进行循环
@@ -266,6 +275,7 @@ public class QuantEngine {
 	//-----------------------------------------------------
 	// 引擎用
 	// 当前日期
+	private boolean m_startFlag;
 	private String m_curDate;
 	private QuantContext m_context;
 	
