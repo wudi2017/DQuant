@@ -21,6 +21,179 @@ public class CUtilsDateTime {
 		return System.currentTimeMillis();
 	}
 	
+	static public boolean CheckValidDateTime(String dateTime,
+			CObjectContainer<Integer> year,
+			CObjectContainer<Integer> month,
+			CObjectContainer<Integer> day,
+			CObjectContainer<Integer> hour,
+			CObjectContainer<Integer> minute,
+			CObjectContainer<Integer> second)
+	{
+		if(dateTime.length() != 19 || dateTime.charAt(10) != ' ')
+			return false;
+		
+		CObjectContainer<Integer> tmpYear = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> tmpMonth= new CObjectContainer<Integer>();
+		CObjectContainer<Integer> tmpDay= new CObjectContainer<Integer>();
+		if(!CheckValidDate(dateTime.substring(0, 10), tmpYear, tmpMonth, tmpDay))
+		{
+			return false;
+		}
+		
+		if(!CheckValidTime(dateTime.substring(11, 19), hour, minute, second))
+		{
+			return false;
+		}
+		
+    	if(null !=year) year.set(tmpYear.get());
+    	if(null !=month) month.set(tmpMonth.get());
+    	if(null !=day) day.set(tmpDay.get());
+		
+		return true;
+	}
+	static public boolean CheckValidDateTime(String dateTime)
+	{
+		return CheckValidDateTime(dateTime, null, null, null, null, null, null);
+	}
+	
+	static public boolean CheckValidDate(String date, 
+			CObjectContainer<Integer> year,
+			CObjectContainer<Integer> month,
+			CObjectContainer<Integer> day)
+	{
+		if(date.length() != 10)
+			return false;
+		
+		if(
+			(date.charAt(0) < 48 || date.charAt(0) > 57)
+			|| (date.charAt(1) < 48 || date.charAt(1) > 57)
+			|| (date.charAt(2) < 48 || date.charAt(2) > 57)
+			|| (date.charAt(3) < 48 || date.charAt(3) > 57)
+			|| (date.charAt(4) != '-')
+			|| (date.charAt(5) < 48 || date.charAt(5) > 57)
+			|| (date.charAt(6) < 48 || date.charAt(6) > 57)
+			|| (date.charAt(7) != '-')
+			|| (date.charAt(8) < 48 || date.charAt(8) > 57)
+			|| (date.charAt(9) < 48 || date.charAt(9) > 57)
+				)
+		{
+			return false;
+		}
+		
+		// get year
+		byte iC0 = (byte) (date.charAt(0) - 48);
+		byte iC1 = (byte) (date.charAt(1) - 48);
+		byte iC2 = (byte) (date.charAt(2) - 48);
+		byte iC3 = (byte) (date.charAt(3) - 48);
+    	int iYear = 1000*iC0+ 100*iC1 + 10*iC2 + iC3;
+    	
+    	//  get month
+    	byte iC5 = (byte) (date.charAt(5) - 48);
+    	byte iC6 = (byte) (date.charAt(6) - 48);
+    	int iMonth = 10*iC5 + iC6;
+    	if(iMonth < 1 || iMonth > 12)
+    	{
+    		return false;
+    	}
+    	
+    	// get day
+    	int iC8 = (int)date.charAt(8) - 48;
+    	int iC9 = (int)date.charAt(9) - 48;
+    	int iDay = 10*iC8 + iC9;
+    	
+		int DMonthMax_current = 30; // calc DMonthMax
+    	boolean runYear = false;
+    	if((iYear%4 == 0 && iYear%100 != 0)
+    		|| iYear%400 == 0)
+    	{
+    		runYear = true;
+    	}
+    	if(1 == iMonth) DMonthMax_current=31;
+    	else if(2 == iMonth) {
+    		DMonthMax_current=28;
+    		if(runYear) DMonthMax_current=29;
+    	}
+    	else if(3 == iMonth) DMonthMax_current=31;
+    	else if(4 == iMonth) DMonthMax_current=30;
+    	else if(5 == iMonth) DMonthMax_current=31;
+    	else if(6 == iMonth) DMonthMax_current=30;
+    	else if(7 == iMonth) DMonthMax_current=31;
+    	else if(8 == iMonth) DMonthMax_current=31;
+    	else if(9 == iMonth) DMonthMax_current=30;
+    	else if(10 == iMonth) DMonthMax_current=31;
+    	else if(11 == iMonth) DMonthMax_current=30;
+    	else if(12 == iMonth) DMonthMax_current=31;
+    	
+    	if(iDay < 1 || iDay > DMonthMax_current)
+    	{
+    		return false;
+    	}
+    	
+    	if(null !=year) year.set(iYear);
+    	if(null !=month) month.set(iMonth);
+    	if(null !=day) day.set(iDay);
+    	
+		return true;
+	}
+	
+	static public boolean CheckValidDate(String date)
+	{
+		return CheckValidDate(date, null, null, null);
+	}
+	
+	static public boolean CheckValidTime(String time,
+			CObjectContainer<Integer> hour,
+			CObjectContainer<Integer> minute,
+			CObjectContainer<Integer> second)
+	{
+		if(time.length() != 8)
+			return false;
+		
+		if(
+			(time.charAt(0) < 48 || time.charAt(0) > 57)
+			|| (time.charAt(1) < 48 || time.charAt(1) > 57)
+			|| (time.charAt(2) != ':')
+			|| (time.charAt(3) < 48 || time.charAt(3) > 57)
+			|| (time.charAt(4) < 48 || time.charAt(4) > 57)
+			|| (time.charAt(5) != ':')
+			|| (time.charAt(6) < 48 || time.charAt(6) > 57)
+			|| (time.charAt(7) < 48 || time.charAt(7) > 57)
+				)
+		{
+			return false;
+		}
+		
+		byte iC0 = (byte) (time.charAt(0) - 48);
+		byte iC1 = (byte) (time.charAt(1) - 48);
+		int iHour = iC0*10 +iC1;
+		
+		byte iC3 = (byte) (time.charAt(3) - 48);
+		byte iC4 = (byte) (time.charAt(4) - 48);
+		int iMinute = iC3*10 +iC4;
+		
+		byte iC6 = (byte) (time.charAt(6) - 48);
+		byte iC7 = (byte) (time.charAt(7) - 48);
+		int iSecond = iC6*10 +iC7;
+		
+		if(iHour < 0 || iHour > 23 ||
+				iMinute < 0 || iMinute > 59 ||
+				iSecond < 0 || iSecond > 59)
+		{
+			return false;
+		}
+
+		if(null !=hour) hour.set(iHour);
+    	if(null !=minute) minute.set(iMinute);
+    	if(null !=second) second.set(iSecond);
+    	
+		return true;
+	}
+	
+	static public boolean CheckValidTime(String time)
+	{
+		return CheckValidTime(time, null, null, null);
+	}
+	
 	/*
 	 *  当前日期对象
 	 *  class Date
@@ -130,6 +303,7 @@ public class CUtilsDateTime {
 	/*
      * 获得指定日期偏移后的日期字符串
      * 例如传入 "2016-01-06", 4 则返回  "2016-01-10"
+     * 转换错误 返回原值
      */  
     public static String getDateStrForSpecifiedDateOffsetD(String specifiedDate, int offset_d) {
 //        Calendar c = Calendar.getInstance();  
@@ -147,6 +321,11 @@ public class CUtilsDateTime {
 //        return dayNew;  
     	
     	// convert to number
+    	
+    	if(!CheckValidDate(specifiedDate))
+    	{
+    		return specifiedDate;
+    	}
     	
     	int iC0 = (int)specifiedDate.charAt(0) - 48;
     	int iC1 = (int)specifiedDate.charAt(1) - 48;
@@ -318,29 +497,29 @@ public class CUtilsDateTime {
     /*
      * 获取时间秒数
      * 01:00:01 秒数为 3601
+     * 转换错误 返回0；
      */
     public static int GetSecondFromTimeStr(String time)
     {
+    	if(!CheckValidTime(time))
+    	{
+    		return 0;
+    	}
+    	
 		int iSec = 0;
 		{
-			char c1 = time.charAt(0);
-			int iC1 = (int)c1 - 48;
-			char c2 = time.charAt(1);
-			int iC2 = (int)c2 - 48;
+			byte iC1 = (byte) (time.charAt(0) - 48);
+			byte iC2 = (byte) (time.charAt(1) - 48);
 			iSec = iSec + (iC1*10+iC2)*3600;
 		}
 		{
-			char c1 = time.charAt(3);
-			int iC1 = (int)c1 - 48;
-			char c2 = time.charAt(4);
-			int iC2 = (int)c2 - 48;
+			byte iC1 = (byte) (time.charAt(3)- 48);
+			byte iC2 = (byte) (time.charAt(4) - 48);
 			iSec = iSec + (iC1*10+iC2)*60;
 		}
 		{
-			char c1 = time.charAt(6);
-			int iC1 = (int)c1 - 48;
-			char c2 = time.charAt(7);
-			int iC2 = (int)c2 - 48;
+			byte iC1 = (byte) (time.charAt(6) - 48);
+			byte iC2 = (byte) (time.charAt(7) - 48);
 			iSec = iSec + (iC1*10+iC2);
 		}
         return iSec;
@@ -349,6 +528,7 @@ public class CUtilsDateTime {
     /*
      * 获取秒数时间
      *  3601 的时间为 01:00:01
+     *  最大值为 23:59:59 大于此值循环计数
      */
     public static String GetTimeStrFromSecond(int second)
     {
@@ -408,9 +588,14 @@ public class CUtilsDateTime {
     
     /*
      * 时间差（秒）
+     * 转换错误 返回0
      */
     public static long subTime(String time1, String time2)
     {  
+    	if(!CheckValidTime(time1) || !CheckValidTime(time2))
+    	{
+    		return 0;
+    	}
 //    	long diffsec = 0;
 //		try {
 //			Date date1 = new SimpleDateFormat("HH:mm:ss").parse(time1);

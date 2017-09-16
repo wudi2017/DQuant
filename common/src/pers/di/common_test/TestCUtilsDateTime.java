@@ -28,6 +28,153 @@ public class TestCUtilsDateTime {
 	}
 	
 	@test
+	public void test_CheckValidDate()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		boolean testdata = false;
+		long test_cnt = 10000 * 100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			testdata = testdata & CUtilsDateTime.CheckValidDate("2017-02-04");
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CLog.output("TEST", "dump:%b", testdata);
+		
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2016--02-04"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2016--2-29"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2016-0--28"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("201a-01-28"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2010-0a-28"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2010-01-2a"));
+		
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2016-00-28"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2016-13-28"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2016-01-00"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2016-01-32"));
+		
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDate("2016-02-04"));
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDate("2016-02-29"));
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDate("2016-02-28"));
+		
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDate("2017-02-04"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2017-02-29"));
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDate("2017-02-28"));
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDate("2017-03-31"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2017-04-31"));
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDate("2017-12-31"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2017-12-32"));
+		
+		CObjectContainer<Integer> year = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> month = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> day = new CObjectContainer<Integer>();
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2017-02-29", year, month, day));
+		CTest.EXPECT_TRUE(null == year.get());
+		CTest.EXPECT_TRUE(null == month.get());
+		CTest.EXPECT_TRUE(null == day.get());
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDate("2017-02-28", year, month, day));
+		CTest.EXPECT_LONG_EQ(year.get(), 2017);
+		CTest.EXPECT_LONG_EQ(month.get(), 2);
+		CTest.EXPECT_LONG_EQ(day.get(), 28);
+	}
+	
+	@test
+	public void test_CheckValidTime()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		boolean testdata = false;
+		long test_cnt = 10000 * 100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			testdata = testdata & CUtilsDateTime.CheckValidTime("12:31:22");
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CLog.output("TEST", "dump:%b", testdata);
+		
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("21::31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("21::1:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("21:31::2"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("2a:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("21:3a:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("21:31:2a"));
+		
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidTime("23:31:01"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("24:31:01"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("23:60:01"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("23:31:60"));
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidTime("00:00:00"));
+		
+		CObjectContainer<Integer> hour = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> minute = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> second = new CObjectContainer<Integer>();
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("24:31:01", hour, minute, second));
+		CTest.EXPECT_TRUE(null == hour.get());
+		CTest.EXPECT_TRUE(null == minute.get());
+		CTest.EXPECT_TRUE(null == second.get());
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidTime("12:33:21", hour, minute, second));
+		CTest.EXPECT_LONG_EQ(hour.get(), 12);
+		CTest.EXPECT_LONG_EQ(minute.get(), 33);
+		CTest.EXPECT_LONG_EQ(second.get(), 21);
+	}
+	
+	@test
+	public void test_CheckValidDateTime()
+	{
+		CTest.TEST_PERFORMANCE_BEGIN();
+		boolean testdata = false;
+		long test_cnt = 10000 * 100;
+		for(int i=0; i<test_cnt; i++)
+		{
+			testdata = testdata & CUtilsDateTime.CheckValidDateTime("2017-02-21 12:31:22");
+		}
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 250);
+		CLog.output("TEST", "dump:%b", testdata);
+		
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-2112:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21x12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:31:22?"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("201--02-21 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-0--21 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-2- 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21 -2:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:-1:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:31:-2"));
+	
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-13-21 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-00-21 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-00 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-32 12:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21 24:31:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:60:22"));
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:31:60"));
+		
+		CObjectContainer<Integer> year = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> month = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> day = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> hour = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> minute = new CObjectContainer<Integer>();
+		CObjectContainer<Integer> second = new CObjectContainer<Integer>();
+		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:31:60", 
+				year, month, day, hour, minute, second));
+		CTest.EXPECT_TRUE(null == year.get());
+		CTest.EXPECT_TRUE(null == month.get());
+		CTest.EXPECT_TRUE(null == day.get());
+		CTest.EXPECT_TRUE(null == hour.get());
+		CTest.EXPECT_TRUE(null == minute.get());
+		CTest.EXPECT_TRUE(null == second.get());
+		CTest.EXPECT_TRUE(CUtilsDateTime.CheckValidDateTime("2017-02-21 12:31:59", 
+				year, month, day, hour, minute, second));
+		CTest.EXPECT_LONG_EQ(year.get(), 2017);
+		CTest.EXPECT_LONG_EQ(month.get(), 2);
+		CTest.EXPECT_LONG_EQ(day.get(), 21);
+		CTest.EXPECT_LONG_EQ(hour.get(), 12);
+		CTest.EXPECT_LONG_EQ(minute.get(), 31);
+		CTest.EXPECT_LONG_EQ(second.get(), 59);
+	}
+	
+	
+	@test
 	public void test_GetCurDate() {
 		CTest.TEST_PERFORMANCE_BEGIN();
 		long test_cnt = 10000 * 100;
@@ -186,6 +333,8 @@ public class TestCUtilsDateTime {
 		{
 			itestdata = CUtilsDateTime.GetSecondFromTimeStr("12:34:56");
 		}
+		CTest.EXPECT_LONG_EQ(CUtilsDateTime.GetSecondFromTimeStr("12:34:56"),12*3600+34*60+56);
+		CTest.EXPECT_TRUE(CUtilsDateTime.GetSecondFromTimeStr("25:34:56") == 0);
 		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
 		CLog.output("TEST", "dump[%d]", itestdata);
 	}
@@ -234,7 +383,7 @@ public class TestCUtilsDateTime {
 			diffSec = CUtilsDateTime.subTime(time1,time2);
 			
 		}
-		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 30);
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 250);
 		CTest.EXPECT_LONG_EQ(diffSec, subTime_OK(time1, time2));
 	}
 	private static long subTime_OK(String time1, String time2)
