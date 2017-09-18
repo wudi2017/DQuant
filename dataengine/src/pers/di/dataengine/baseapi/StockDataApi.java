@@ -1,21 +1,17 @@
-package pers.di.dataengine;
+package pers.di.dataengine.baseapi;
 
 import java.util.*;
 
 import pers.di.common.*;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.baseapi.*;
 
-public class StockDataEngine {
-	private static StockDataEngine s_instance = new StockDataEngine();  
-	private StockDataEngine () 
+public class StockDataApi {
+	
+	public StockDataApi(String rootDir) 
 	{
-		m_cBaseApi = new BaseApi("data");
-		m_cCache = new StockDataEngineCache();
+		m_cBaseDataLayer = new BaseDataLayer(rootDir);
+		m_cCache = new StockDataApiCache();
 	}
-	public static StockDataEngine instance() {  
-		return s_instance;  
-	}  
 	
 	/*
 	 * 更新所有股票数据
@@ -28,7 +24,7 @@ public class StockDataEngine {
 		{
 			CLog.output("STOCK","DataEngine.getUpdatedStocksDate\n");
 			CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
-			int errAllStockFullDataTimestamps = m_cBaseApi.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
+			int errAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
 			if(0 == errAllStockFullDataTimestamps)
 			{
 				m_cCache.localLatestDate = ctnAllStockFullDataTimestamps.get();
@@ -46,7 +42,7 @@ public class StockDataEngine {
 		}
 		else
 		{
-			int iUpdateCnt = m_cBaseApi.updateLocalAllStocKLine(dateStr);
+			int iUpdateCnt = m_cBaseDataLayer.updateLocalAllStocKLine(dateStr);
 			CLog.output("STOCK", "update success to date: %s (count: %d)\n", m_cCache.localLatestDate, iUpdateCnt);
 			m_cCache.clearAllCache();
 		}
@@ -63,7 +59,7 @@ public class StockDataEngine {
 		{
 			CLog.output("STOCK","DataEngine.getUpdatedStocksDate\n");
 			CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
-			int errAllStockFullDataTimestamps = m_cBaseApi.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
+			int errAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
 			if(0 == errAllStockFullDataTimestamps)
 			{
 				m_cCache.localLatestDate = ctnAllStockFullDataTimestamps.get();
@@ -82,7 +78,7 @@ public class StockDataEngine {
 		{
 			// 更新单只股票数据 不影响m_cCache.localLatestDate
 			CObjectContainer<Integer> ctnCount = new CObjectContainer<Integer>();
-			int errCount = m_cBaseApi.updateLocaStocKLine(stockID, ctnCount);
+			int errCount = m_cBaseDataLayer.updateLocaStocKLine(stockID, ctnCount);
 			
 			if(0 == errCount)
 			{
@@ -116,7 +112,7 @@ public class StockDataEngine {
 			m_cCache.AllStockID = new ArrayList<String>();
 			
 			ArrayList<StockItem> container = new ArrayList<StockItem>();
-			int errStockItem = m_cBaseApi.getLocalAllStock(container);
+			int errStockItem = m_cBaseDataLayer.getLocalAllStock(container);
 			if(0 == errStockItem)
 			{
 				for(int i=0; i<container.size();i++)
@@ -156,7 +152,7 @@ public class StockDataEngine {
 			}
 			
 			StockInfo ctnStockInfo = new StockInfo();
-			int errStockInfo = m_cBaseApi.getStockInfo(id, ctnStockInfo);
+			int errStockInfo = m_cBaseDataLayer.getStockInfo(id, ctnStockInfo);
 			
 			if(0 == errStockInfo)
 			{
@@ -202,7 +198,7 @@ public class StockDataEngine {
 			}
 			
 			List<KLine> cntKLine = new ArrayList<KLine>();
-			int errKLine = m_cBaseApi.getDayKLinesForwardAdjusted(stockID, cntKLine);
+			int errKLine = m_cBaseDataLayer.getDayKLinesForwardAdjusted(stockID, cntKLine);
 			
 			if(0 == errKLine && cntKLine.size() != 0)
 			{
@@ -280,7 +276,7 @@ public class StockDataEngine {
 				{
 					// load new detail data
 					List<KLine> ctnKLine = new ArrayList<KLine>();
-					int errKLine= m_cBaseApi.get1MinKLineOneDay(id, date, ctnKLine);
+					int errKLine= m_cBaseDataLayer.get1MinKLineOneDay(id, date, ctnKLine);
 					
 					if(0 == errKLine && ctnKLine.size() != 0)
 					{
@@ -375,7 +371,7 @@ public class StockDataEngine {
 	{
 		int error = 0;
 		
-		int errRealTimeInfo = m_cBaseApi.getRealTimeInfo(id, container);
+		int errRealTimeInfo = m_cBaseDataLayer.getRealTimeInfo(id, container);
 		
 		if(0 == errRealTimeInfo)
 		{
@@ -393,6 +389,6 @@ public class StockDataEngine {
 		return error;
 	}
 	
-	private BaseApi m_cBaseApi;
-	private StockDataEngineCache m_cCache;
+	private BaseDataLayer m_cBaseDataLayer;
+	private StockDataApiCache m_cCache;
 }

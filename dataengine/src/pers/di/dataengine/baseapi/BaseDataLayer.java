@@ -11,8 +11,8 @@ import pers.di.dataengine.common.*;
 /*
  * 鑲＄エ鍩虹鏁版嵁灞�
  */
-public class BaseApi { 
-	public BaseApi (String workDir) 
+public class BaseDataLayer { 
+	public BaseDataLayer (String workDir) 
 	{
 		m_cBaseDataStorage = new BaseDataStorage(workDir);
 		m_cBaseDataDownload = new BaseDataDownload(m_cBaseDataStorage);

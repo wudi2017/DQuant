@@ -1,10 +1,10 @@
-package pers.di.dataengine;
+package pers.di.dataengine.baseapi;
 
 import java.util.*;
 
 import pers.di.dataengine.common.*;
 
-public class StockDataEngineCache {
+public class StockDataApiCache {
 	
 	public void clearAllCache()
 	{

@@ -11,7 +11,7 @@ import pers.di.dataengine.baseapi.*;
 import pers.di.dataengine.*;
 import pers.di.dataengine.common.*;
 
-public class TestDataEngine {
+public class TestStockDataApi {
 	
 	private static String s_workDir = "data";
 	private static String s_updateFinish = "updateFinish.txt";
@@ -39,7 +39,7 @@ public class TestDataEngine {
 		for(int i=0; i<stockIDs.size();i++)
 		{
 			String stockID = stockIDs.get(i);
-			int ret = StockDataEngine.instance().updateLocalStocks(stockID, newestDate);
+			int ret = s_StockDataApi.updateLocalStocks(stockID, newestDate);
 			CTest.EXPECT_LONG_EQ(0, ret);
 		}
 
@@ -56,7 +56,7 @@ public class TestDataEngine {
 	
 	public static void test_updateAllLocalStocks()
 	{
-		StockDataEngine.instance().updateAllLocalStocks("2017-08-15");
+		s_StockDataApi.updateAllLocalStocks("2017-08-15");
 	}
 	
 	@CTest.test
@@ -64,7 +64,7 @@ public class TestDataEngine {
 	{
 		String stockID = s_stockIDs.get(0);
 		String dateStr = s_newestDate;
-		int ret = StockDataEngine.instance().updateLocalStocks(stockID, dateStr);
+		int ret = s_StockDataApi.updateLocalStocks(stockID, dateStr);
 		CTest.EXPECT_LONG_EQ(0, ret);
 			
 		String checkFileName = "";
@@ -80,7 +80,7 @@ public class TestDataEngine {
 	public static void test_buildAllStockIDObserver()
 	{
 		CListObserver<String> observer = new CListObserver<String>();
-		int error = StockDataEngine.instance().buildAllStockIDObserver(observer);
+		int error = s_StockDataApi.buildAllStockIDObserver(observer);
 		CTest.EXPECT_LONG_EQ(error, 0);
 		CTest.EXPECT_LONG_EQ(observer.size(), s_stockIDs.size());
 	}
@@ -91,7 +91,7 @@ public class TestDataEngine {
 		String stockID = "600000";
 		
 		CObjectObserver<StockInfo> observer = new CObjectObserver<StockInfo>();
-		int error = StockDataEngine.instance().buildStockInfoObserver(stockID, observer);
+		int error = s_StockDataApi.buildStockInfoObserver(stockID, observer);
 		CTest.EXPECT_LONG_EQ(error, 0);
 		CTest.EXPECT_STR_EQ(observer.get().name, "ÆÖ·¢ÒøÐÐ");
 	}
@@ -102,7 +102,7 @@ public class TestDataEngine {
 		String stockID = "600000";
 
 		CListObserver<KLine> obsKLineList = new CListObserver<KLine>();
-		int error = StockDataEngine.instance().buildDayKLineListObserver(stockID, "2011-05-23", "2017-05-25", obsKLineList);
+		int error = s_StockDataApi.buildDayKLineListObserver(stockID, "2011-05-23", "2017-05-25", obsKLineList);
 		CLog.output("TEST", "KLine count: %d", obsKLineList.size());
 		CTest.EXPECT_LONG_EQ(obsKLineList.size(), 1428);
 		int iCheckCnt = 0;
@@ -147,7 +147,7 @@ public class TestDataEngine {
 		List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 		
 		CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
-		int errObsTimePriceList = StockDataEngine.instance().buildMinTimePriceListObserver(stockID, "2016-04-20", 
+		int errObsTimePriceList = s_StockDataApi.buildMinTimePriceListObserver(stockID, "2016-04-20", 
 				"09:00:00", "14:55:00", obsTimePriceList);
 		CTest.EXPECT_LONG_EQ(obsTimePriceList.size(), 237);
 		int iCheckCnt = 0;
@@ -197,15 +197,17 @@ public class TestDataEngine {
 	public static void test_getRealTimePrice()
 	{
 		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-		int error = StockDataEngine.instance().loadRealTimeInfo("600000", ctnRealTimeInfo);
+		int error = s_StockDataApi.loadRealTimeInfo("600000", ctnRealTimeInfo);
 		CTest.EXPECT_LONG_EQ(error, 0);
 		CTest.EXPECT_TRUE(ctnRealTimeInfo.curPrice>0);
 		CTest.EXPECT_TRUE(ctnRealTimeInfo.time.length()==8);
 	}
 	
+	
+	public static StockDataApi s_StockDataApi = new StockDataApi("data");
 	public static void main(String[] args) {
 		CSystem.start();
-		CTest.ADD_TEST(TestDataEngine.class);
+		CTest.ADD_TEST(TestStockDataApi.class);
 		CTest.RUN_ALL_TESTS();
 		CSystem.stop();
 	}
