@@ -1,10 +1,10 @@
-package pers.di.dataengine.webdata_test;
+package pers.di.dataengine_test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockDayDetail;
+import pers.di.dataengine.webapi.DataWebStockDayDetail;
 
 public class TestDataWebStockDayDetail {
 	public static void main(String[] args){

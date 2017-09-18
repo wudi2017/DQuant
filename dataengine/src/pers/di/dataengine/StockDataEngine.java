@@ -4,7 +4,7 @@ import java.util.*;
 
 import pers.di.common.*;
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.basedata.*;
+import pers.di.dataengine.baseapi.*;
 
 public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine();  

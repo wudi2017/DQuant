@@ -1,7 +1,7 @@
-package pers.di.dataengine.webdata_test;
+package pers.di.dataengine_test;
 
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
+import pers.di.dataengine.webapi.DataWebStockRealTimeInfo;
 
 public class TestDataWebStockRealTimeInfo {
 

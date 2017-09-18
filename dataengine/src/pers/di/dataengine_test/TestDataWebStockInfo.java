@@ -1,7 +1,7 @@
-package pers.di.dataengine.webdata_test;
+package pers.di.dataengine_test;
 
 import pers.di.dataengine.common.*;
-import pers.di.dataengine.webdata.DataWebStockInfo;
+import pers.di.dataengine.webapi.DataWebStockInfo;
 
 public class TestDataWebStockInfo {
 		public static void main(String[] args){

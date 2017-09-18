@@ -1,4 +1,4 @@
-package pers.di.dataengine.basedata;
+package pers.di.dataengine.baseapi;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,19 +9,17 @@ import java.io.InputStreamReader;
 import java.util.Formatter;
 import java.util.List;
 
-import pers.di.dataengine.webdata.DataWebStockDayDetail;
-import pers.di.dataengine.webdata.DataWebStockDividendPayout;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
+import pers.di.dataengine.webapi.*;
 import pers.di.dataengine.common.*;
 import pers.di.common.*;
 
 public class BaseDataStorage {
 	
 	/*
-	 * 基础数据存储类
+	 * 鍩虹鏁版嵁瀛樺偍绫�
 	 * 
-	 * 参数：
-	 *     dataDir 存储数据路径
+	 * 鍙傛暟锛�
+	 *     dataDir 瀛樺偍鏁版嵁璺緞
 	 */
 	public BaseDataStorage(String dataDir) 
 	{

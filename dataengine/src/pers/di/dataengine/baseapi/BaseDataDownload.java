@@ -1,4 +1,4 @@
-package pers.di.dataengine.basedata;
+package pers.di.dataengine.baseapi;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -6,13 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import pers.di.common.*;
-import pers.di.dataengine.webdata.DataWebStockAllList;
-import pers.di.dataengine.webdata.DataWebStockInfo;
-import pers.di.dataengine.webdata.DataWebStockDayDetail;
-import pers.di.dataengine.webdata.DataWebStockDayK;
-import pers.di.dataengine.webdata.DataWebStockDividendPayout;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
+import pers.di.dataengine.baseapi.*;
 import pers.di.dataengine.common.*;
+import pers.di.dataengine.webapi.*;
 
 public class BaseDataDownload {
 	

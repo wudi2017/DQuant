@@ -1,15 +1,15 @@
-package pers.di.dataengine.basedata;
+package pers.di.dataengine.baseapi;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import pers.di.common.*;
-import pers.di.dataengine.webdata.DataWebStockRealTimeInfo;
+import pers.di.dataengine.webapi.*;
 import pers.di.dataengine.common.*;
 
 /*
- * 股票基础数据层
+ * 鑲＄エ鍩虹鏁版嵁灞�
  */
 public class BaseDataLayer { 
 	public BaseDataLayer (String workDir) 
@@ -19,22 +19,22 @@ public class BaseDataLayer {
 	}
 	
 	/*
-	 * 更新所有股票数据到指定日期
-	 * 参数
-	 *     dateStr： 指定日期 
+	 * 鏇存柊鎵�鏈夎偂绁ㄦ暟鎹埌鎸囧畾鏃ユ湡
+	 * 鍙傛暟
+	 *     dateStr锛� 鎸囧畾鏃ユ湡 
 	 */
 	public int updateLocalAllStocKLine(String dateStr)
 	{
 		return m_cBaseDataDownload.downloadAllStockFullData(dateStr);
 	}
-	// 获取本地总体数据更新时间
+	// 鑾峰彇鏈湴鎬讳綋鏁版嵁鏇存柊鏃堕棿
 	public int getAllStockFullDataTimestamps(CObjectContainer<String> container)
 	{
 		return m_cBaseDataStorage.getAllStockFullDataTimestamps(container);
 	}
 	
 	/*
-	 * 更新某一只股票
+	 * 鏇存柊鏌愪竴鍙偂绁�
 	 */
 	public int updateLocaStocKLine(String stockId, CObjectContainer<Integer> container)
 	{
@@ -43,7 +43,7 @@ public class BaseDataLayer {
 	
 	
 	/*
-	 * 获取本地股票列表
+	 * 鑾峰彇鏈湴鑲＄エ鍒楄〃
 	 */
 	public int getLocalAllStock(ArrayList<StockItem> container)
 	{
@@ -51,7 +51,7 @@ public class BaseDataLayer {
 	}
 	
 	/*
-	 * 获取某只股票基础信息
+	 * 鑾峰彇鏌愬彧鑲＄エ鍩虹淇℃伅
 	 */
 	public int getStockInfo(String id, StockInfo container) 
 	{
@@ -59,7 +59,7 @@ public class BaseDataLayer {
 	}
 	
 	/*
-	 * 获取某只股票日K
+	 * 鑾峰彇鏌愬彧鑲＄エ鏃
 	 */
 	public int getDayKLines(String id, List<KLine> container)
 	{
@@ -67,7 +67,7 @@ public class BaseDataLayer {
 	}
 	
 	/*
-	 * 获取前复权日k
+	 * 鑾峰彇鍓嶅鏉冩棩k
 	 */
 	public int getDayKLinesForwardAdjusted(String id, List<KLine> container)
 	{
@@ -98,7 +98,7 @@ public class BaseDataLayer {
 			{
 				KLine cKLine = container.get(j); 
 				
-				if(cKLine.date.compareTo(cDividendPayout.date) < 0) // 股票日期小于分红派息日期时，进行重新计算
+				if(cKLine.date.compareTo(cDividendPayout.date) < 0) // 鑲＄エ鏃ユ湡灏忎簬鍒嗙孩娲炬伅鏃ユ湡鏃讹紝杩涜閲嶆柊璁＄畻
 				{
 					cKLine.open = (cKLine.open - unitPaiXi)/unitMoreGuRatio;
 					//cKLine.open = (int)(cKLine.open*1000)/(float)1000.0;
@@ -120,7 +120,7 @@ public class BaseDataLayer {
 	}
 	
 	/*
-	 * 获取后复权日k
+	 * 鑾峰彇鍚庡鏉冩棩k
 	 */
 	public int getDayKLinesBackwardAdjusted(String id, List<KLine> container)
 	{
@@ -152,7 +152,7 @@ public class BaseDataLayer {
 			{
 				KLine cKLine = container.get(j); 
 				
-				if(cKLine.date.compareTo(cDividendPayout.date) >= 0) // 股票日期 大于等于分红派息日期时，进行重新计算
+				if(cKLine.date.compareTo(cDividendPayout.date) >= 0) // 鑲＄エ鏃ユ湡 澶т簬绛変簬鍒嗙孩娲炬伅鏃ユ湡鏃讹紝杩涜閲嶆柊璁＄畻
 				{
 					cKLine.open = cKLine.open * unitMoreGuRatio + unitPaiXi;
 					//cKLine.open = (int)(cKLine.open*1000)/(float)1000.0;
@@ -175,7 +175,7 @@ public class BaseDataLayer {
 	}
 	
 	/*
-	 * 获取5分钟级别K
+	 * 鑾峰彇5鍒嗛挓绾у埆K
 	 */
 	public int get5MinKLineOneDay(String id, String date, List<KLine> container)
 	{
@@ -184,7 +184,7 @@ public class BaseDataLayer {
 		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
 		int errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		
-		// 如果本地不存在，下载后获取
+		// 濡傛灉鏈湴涓嶅瓨鍦紝涓嬭浇鍚庤幏鍙�
 		if(0 != errTradeDetail)
 		{
 			m_cBaseDataDownload.downloadStockDetail(id, date);
@@ -200,7 +200,7 @@ public class BaseDataLayer {
             int iSecEnd = 0;
             int iStdSecEnd = 0;
             float preClosePrice = ctnTradeDetail.get(0).price;
-            // add 上午
+            // add 涓婂崍
             for(int i = 0; i < 24; i++)
             {
             	if(0 == i)
@@ -236,7 +236,7 @@ public class BaseDataLayer {
     	            	tmpList.add(cTradeDetail);
     	            }
     	        } 
-    			// 计算5mink后添加到总表
+    			// 璁＄畻5mink鍚庢坊鍔犲埌鎬昏〃
     			//System.out.println("==================================================");
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
@@ -272,7 +272,7 @@ public class BaseDataLayer {
     			//System.out.println("cKLine.datetime:" + cKLine.datetime);
     			preClosePrice = cKLine.close;
             }
-            // add 下午
+            // add 涓嬪崍
             for(int i = 0; i < 24; i++)
             {
             	if(0 == i)
@@ -308,7 +308,7 @@ public class BaseDataLayer {
     	            	tmpList.add(cTradeDetail);
     	            }
     	        } 
-    			// 计算5mink后添加到总表
+    			// 璁＄畻5mink鍚庢坊鍔犲埌鎬昏〃
     			//System.out.println("==================================================");
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
@@ -355,7 +355,7 @@ public class BaseDataLayer {
 	}
 	
 	/*
-	 * 获取1分钟级别K
+	 * 鑾峰彇1鍒嗛挓绾у埆K
 	 */
 	public int get1MinKLineOneDay(String id, String date, List<KLine> container)
 	{
@@ -364,7 +364,7 @@ public class BaseDataLayer {
 		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
 		int errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
 		
-		// 如果本地不存在，下载后获取
+		// 濡傛灉鏈湴涓嶅瓨鍦紝涓嬭浇鍚庤幏鍙�
 		if(0 != errTradeDetail)
 		{
 			m_cBaseDataDownload.downloadStockDetail(id, date);
@@ -381,7 +381,7 @@ public class BaseDataLayer {
             int iSecEnd = 0;
             int iStdSecEnd = 0;
             float preClosePrice = ctnTradeDetail.get(0).price;
-            // add 上午
+            // add 涓婂崍
             for(int i = 0; i < 120; i++)
             {
             	if(0 == i)
@@ -415,7 +415,7 @@ public class BaseDataLayer {
     	            	tmpList.add(cTradeDetail);
     	            }
     	        } 
-    			// 计算5mink后添加到总表
+    			// 璁＄畻5mink鍚庢坊鍔犲埌鎬昏〃
     			//System.out.println("==================================================");
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
@@ -452,7 +452,7 @@ public class BaseDataLayer {
     			//System.out.println("cExKLine.datetime:" + cExKLine.datetime);
     			preClosePrice = cKLine.close;
             }
-            // add 下午
+            // add 涓嬪崍
             for(int i = 0; i < 120; i++)
             {
             	if(0 == i)
@@ -486,7 +486,7 @@ public class BaseDataLayer {
     	            	tmpList.add(cTradeDetail);
     	            }
     	        } 
-    			// 计算5mink后添加到总表
+    			// 璁＄畻5mink鍚庢坊鍔犲埌鎬昏〃
     			//System.out.println("==================================================");
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
@@ -591,12 +591,12 @@ public class BaseDataLayer {
 	}
 	
 	/*
-	 * 校验股票数据,检查股票数据错误
-	 * 成功返回0
+	 * 鏍￠獙鑲＄エ鏁版嵁,妫�鏌ヨ偂绁ㄦ暟鎹敊璇�
+	 * 鎴愬姛杩斿洖0
 	 */
 	public int checkStocKLine(String stockID)
 	{
-		// 检查基本信息
+		// 妫�鏌ュ熀鏈俊鎭�
 		StockInfo ctnStockInfo = new StockInfo();
 		int errStockInfo = m_cBaseDataStorage.getStockInfo(stockID, ctnStockInfo);
 		if(0 != errStockInfo 
@@ -605,7 +605,7 @@ public class BaseDataLayer {
 			return -1;
 		}
 		
-		// 检查前复权日K
+		// 妫�鏌ュ墠澶嶆潈鏃
 		List<KLine> ctnKLine = new ArrayList<KLine>();
 		int errKLine = this.getDayKLinesForwardAdjusted(stockID, ctnKLine);
 		if(0 != errKLine 
@@ -614,7 +614,7 @@ public class BaseDataLayer {
 			return -2;
 		}
 		
-		// 检查前复权日K涨跌幅度, 近若干天没有问题就算没有问题
+		// 妫�鏌ュ墠澶嶆潈鏃娑ㄨ穼骞呭害, 杩戣嫢骞插ぉ娌℃湁闂灏辩畻娌℃湁闂
 		int iBeginCheck = ctnKLine.size() - 500;
 		if(iBeginCheck<=0) iBeginCheck = 0;
 		for(int i=iBeginCheck; i < ctnKLine.size()-1; i++)  
@@ -628,10 +628,10 @@ public class BaseDataLayer {
             float fHighper = Math.abs((nextHigh-close)/close);
             float fLowper = Math.abs((nextLow-close)/close);
             float fCloseper = Math.abs((nextClose-close)/close);
-            if(fCloseper > 0.12) // 收盘涨跌幅度异常
+            if(fCloseper > 0.12) // 鏀剁洏娑ㄨ穼骞呭害寮傚父
         	{
-            	// 数据有中间丢失天的情况，排除这种错误
-            	// 获取当前有效日期，下一个交易日（非周六周日）
+            	// 鏁版嵁鏈変腑闂翠涪澶卞ぉ鐨勬儏鍐碉紝鎺掗櫎杩欑閿欒
+            	// 鑾峰彇褰撳墠鏈夋晥鏃ユ湡锛屼笅涓�涓氦鏄撴棩锛堥潪鍛ㄥ叚鍛ㄦ棩锛�
             	String CurrentDate = cKLine.date;
             	Calendar c = Calendar.getInstance();  
                 Date date = null;  
@@ -653,13 +653,13 @@ public class BaseDataLayer {
         		
         		if(cKLineNext.date.compareTo(curValiddateStr) > 0)
         		{
-        			// 此种情况允许错误，中间缺失了几天数据
+        			// 姝ょ鎯呭喌鍏佽閿欒锛屼腑闂寸己澶变簡鍑犲ぉ鏁版嵁
 //        			System.out.println("Warnning: Check getKLineQianFuQuan NG(miss data)! id:" + stockID
 //                			+ " date:" + cKLine.date);
         		}
         		else
         		{
-        			// 中间未缺失数据，但出现了偏差过大啊，属于错误
+        			// 涓棿鏈己澶辨暟鎹紝浣嗗嚭鐜颁簡鍋忓樊杩囧ぇ鍟婏紝灞炰簬閿欒
                 	System.out.println("Warnning: Check getKLineQianFuQuan error! id:" + stockID
                 			+ " date:" + cKLine.date);
                 	System.out.println("close:" + close);
