@@ -15,7 +15,7 @@ public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine(); 
 	private StockDataEngine ()
 	{
-		m_stockDataApi = new StockDataApi("data");
+		m_stockDataApi = StockDataApi.instance();
 		m_configFailed = false;
 		m_listener = null;
 
@@ -94,6 +94,11 @@ public class StockDataEngine {
 		return 0;
 	}
 	
+	public DataPusher createDataPusher()
+	{
+		return new DataPusher();
+	}
+	
 	public int run()
 	{
 		if(m_configFailed)
@@ -124,6 +129,7 @@ public class StockDataEngine {
 				timestr = "09:27:00";
 				waitForDateTime(dateStr, timestr);
 				CLog.output("QEngine", "[%s %s] listener.onDayBegin ", dateStr, timestr);
+				m_context.setDateTime(dateStr, timestr);
 				m_listener.onDayBegin(m_context);
 				
 				// 9:30-11:30 1:00-3:00 定期间隔进行触发trigger.onEveryMinute
@@ -136,6 +142,7 @@ public class StockDataEngine {
 					if(waitForDateTime(dateStr, timestr))
 					{
 						CLog.output("QEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
+						m_context.setDateTime(dateStr, timestr);
 						m_listener.onTransactionEveryMinute(m_context);
 					}
 					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
@@ -150,6 +157,7 @@ public class StockDataEngine {
 					if(waitForDateTime(dateStr, timestr))
 					{
 						CLog.output("QEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
+						m_context.setDateTime(dateStr, timestr);
 						m_listener.onTransactionEveryMinute(m_context);
 					}
 					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
@@ -168,6 +176,7 @@ public class StockDataEngine {
 				timestr = "21:00:00";
 				waitForDateTime(dateStr, timestr);
 				CLog.output("QEngine", "[%s %s] listener.onDayEnd ", dateStr, timestr);
+				m_context.setDateTime(dateStr, timestr);
 				m_listener.onDayEnd(m_context);
 			}
 			

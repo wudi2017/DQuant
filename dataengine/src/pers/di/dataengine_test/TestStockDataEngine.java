@@ -19,7 +19,7 @@ import pers.di.dataengine.common.TimePrice;
 public class TestStockDataEngine {
 	
 	private static String s_workDir = "data";
-	public static StockDataApi s_StockDataApi = new StockDataApi(s_workDir);
+	public static StockDataApi s_StockDataApi = StockDataApi.instance();
 	private static String s_updateFinish = "updateFinish.txt";
 	private static String s_newestDate = "2017-08-10";
 	private static List<String> s_stockIDs = new ArrayList<String>()
@@ -52,7 +52,7 @@ public class TestStockDataEngine {
 	@CTest.setup
 	public static void setup()
 	{
-		helpTest_InitData(s_newestDate, s_stockIDs);
+		//helpTest_InitData(s_newestDate, s_stockIDs);
 	}
 	
 	public static class TestDataListener extends DataListener
@@ -60,19 +60,19 @@ public class TestStockDataEngine {
 
 		@Override
 		public void onDayBegin(DataContext ctx) {
-			CLog.output("TEST", "TestDataListener.onDayBegin");
+			//CLog.output("TEST", "TestDataListener.onDayBegin");
 			onDayBeginCalled++;
 		}
 
 		@Override
 		public void onTransactionEveryMinute(DataContext ctx) {
-			CLog.output("TEST", "TestDataListener.onTransactionEveryMinute");
+			//CLog.output("TEST", "TestDataListener.onTransactionEveryMinute");
 			onEveryMinuteCalled++;
 		}
 
 		@Override
 		public void onDayEnd(DataContext ctx) {
-			CLog.output("TEST", "TestDataListener.onDayEnd");
+			//CLog.output("TEST", "TestDataListener.onDayEnd");
 			onDayEndCalled++;
 		}
 		

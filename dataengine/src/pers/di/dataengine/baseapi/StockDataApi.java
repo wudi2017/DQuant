@@ -3,11 +3,17 @@ package pers.di.dataengine.baseapi;
 import java.util.*;
 
 import pers.di.common.*;
+import pers.di.dataengine.DataContext;
+import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.common.*;
 
 public class StockDataApi {
 	
-	public StockDataApi(String rootDir) 
+	private static StockDataApi s_instance = new StockDataApi("data"); 
+	public static StockDataApi instance() {  
+		return s_instance;  
+	} 
+	private StockDataApi(String rootDir) 
 	{
 		m_cBaseDataLayer = new BaseDataLayer(rootDir);
 		m_cCache = new StockDataApiCache();
