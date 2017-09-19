@@ -17,7 +17,7 @@ public class StockDataEngine {
 	{
 		m_stockDataApi = StockDataApi.instance();
 		m_configFailed = false;
-		m_listener = null;
+		m_dataListener = null;
 
 		m_curDate = "0000-00-00";
 		m_context = new DataContext();
@@ -88,15 +88,15 @@ public class StockDataEngine {
 		return 0;
 	}
 	
-	public int registerListener(DataListener listener)
+	public int registerDataListener(DataListener dataListener)
 	{
-		m_listener = listener;
+		m_dataListener = dataListener;
 		return 0;
 	}
 	
-	public DataPusher createDataPusher()
+	public EngineListener createListener()
 	{
-		return new DataPusher();
+		return new EngineListener();
 	}
 	
 	public int run()
@@ -130,7 +130,7 @@ public class StockDataEngine {
 				waitForDateTime(dateStr, timestr);
 				CLog.output("QEngine", "[%s %s] listener.onDayBegin ", dateStr, timestr);
 				m_context.setDateTime(dateStr, timestr);
-				m_listener.onDayBegin(m_context);
+				m_dataListener.onDayBegin(m_context);
 				
 				// 9:30-11:30 1:00-3:00 定期间隔进行触发trigger.onEveryMinute
 				int interval_min = 1;
@@ -143,7 +143,7 @@ public class StockDataEngine {
 					{
 						CLog.output("QEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
 						m_context.setDateTime(dateStr, timestr);
-						m_listener.onTransactionEveryMinute(m_context);
+						m_dataListener.onTransactionEveryMinute(m_context);
 					}
 					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
 					if(timestr.compareTo(timestr_end) > 0) break;
@@ -158,7 +158,7 @@ public class StockDataEngine {
 					{
 						CLog.output("QEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
 						m_context.setDateTime(dateStr, timestr);
-						m_listener.onTransactionEveryMinute(m_context);
+						m_dataListener.onTransactionEveryMinute(m_context);
 					}
 					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
 					if(timestr.compareTo(timestr_end) > 0) break;
@@ -177,7 +177,7 @@ public class StockDataEngine {
 				waitForDateTime(dateStr, timestr);
 				CLog.output("QEngine", "[%s %s] listener.onDayEnd ", dateStr, timestr);
 				m_context.setDateTime(dateStr, timestr);
-				m_listener.onDayEnd(m_context);
+				m_dataListener.onDayEnd(m_context);
 			}
 			
 			// 获取下一日期
@@ -304,7 +304,7 @@ public class StockDataEngine {
 	
 	private StockDataApi m_stockDataApi;
 	private boolean m_configFailed;
-	private DataListener m_listener;
+	private DataListener m_dataListener;
 	
 	private String m_curDate;
 	private DataContext m_context;

@@ -11,6 +11,7 @@ import pers.di.common.CTest;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataengine.DataContext;
 import pers.di.dataengine.DataListener;
+import pers.di.dataengine.EngineListener;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.baseapi.StockDataApi;
 import pers.di.dataengine.common.KLine;
@@ -52,7 +53,7 @@ public class TestStockDataEngine {
 	@CTest.setup
 	public static void setup()
 	{
-		//helpTest_InitData(s_newestDate, s_stockIDs);
+		helpTest_InitData(s_newestDate, s_stockIDs);
 	}
 	
 	public static class TestDataListener extends DataListener
@@ -84,17 +85,56 @@ public class TestStockDataEngine {
 	public static int onTimePricesCheckCount = 0;
 	
 	@CTest.test
-	public static void test_StockDataEngine()
+	public static void test_DataListener()
 	{
 		StockDataEngine.instance().config("ListenMode", "HistoryTest 2017-01-01 2017-01-03");
-		StockDataEngine.instance().registerListener(new TestDataListener());
+		StockDataEngine.instance().registerDataListener(new TestDataListener());
+		StockDataEngine.instance().run();
+	}
+	
+	
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public static EngineListener s_listener;
+	
+	public void onTimeMonitor(String date, String time)
+	{
+		CLog.output("TEST", "onTimeMonitor %s %s", date, time);
+	}
+	public void onMarketData(DataContext ctx)
+	{
+		CLog.output("TEST", "onMarketData %s %s", ctx.date(), ctx.time());
+	}
+	
+	@CTest.test
+	public void test_EngineListener()
+	{
+		s_listener = StockDataEngine.instance().createListener();
+		
+		List<String> timeMonitorList = new ArrayList<String>();
+		timeMonitorList.add("08:00:00");
+		s_listener.configTimeMonitorList(timeMonitorList);
+		s_listener.setTimeMonitorMethod(this, "onTimeMonitor");
+		
+		List<String> dataTrigerTimeList = new ArrayList<String>();
+		dataTrigerTimeList.add("09:00:00");
+		dataTrigerTimeList.add("09:30:00");
+		dataTrigerTimeList.add("09:40:00");
+		s_listener.configDataTrigerTimeList(dataTrigerTimeList);
+		List<String> dataSubscribe = new ArrayList<String>();
+		dataSubscribe.add("600000");
+		s_listener.configDataSubscribe(dataSubscribe);
+		s_listener.setDataReceiveMethod(this, "onMarketData");
+//		
+		StockDataEngine.instance().config("ListenMode", "HistoryTest 2017-01-01 2017-01-03");
 		StockDataEngine.instance().run();
 	}
 	
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataEngine.class);
-		CTest.RUN_ALL_TESTS();
+		CTest.RUN_ALL_TESTS("");
 		CSystem.stop();
 	}
 }
