@@ -5,128 +5,64 @@ import java.util.List;
 
 import pers.di.common.CFile;
 import pers.di.common.CLog;
-import pers.di.common.CPath;
+import pers.di.common.CFileSystem;
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
 import pers.di.common.CUtilsDateTime;
-import pers.di.dataengine.DataContext;
-import pers.di.dataengine.DataListener;
-import pers.di.dataengine.EngineListener;
-import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.baseapi.StockDataApi;
+import pers.di.dataengine.*;
+import pers.di.dataengine.baseapi.*;
 import pers.di.dataengine.common.KLine;
 import pers.di.dataengine.common.TimePrice;
 
 public class TestStockDataEngine {
 	
-	private static String s_workDir = "data";
-	public static StockDataApi s_StockDataApi = StockDataApi.instance();
-	private static String s_updateFinish = "updateFinish.txt";
-	private static String s_newestDate = "2017-08-10";
-	private static List<String> s_stockIDs = new ArrayList<String>()
-		{{add("999999");add("300163");add("002468");}};
-		
-	private static void helpTest_InitData(String newestDate, List<String> stockIDs)
-	{
-		CPath.removeDir(s_workDir);
-		CTest.EXPECT_TRUE(!CPath.isDirExist(s_workDir));
-		CPath.createDir(s_workDir);
-		CTest.EXPECT_TRUE(CPath.isDirExist(s_workDir));
-		
-		String fileName = s_workDir + "\\" + s_updateFinish;
-		String tmpDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(newestDate, -5);
-		CFile.fileWrite(fileName, tmpDate, false);
-		CTest.EXPECT_TRUE(CPath.isFileExist(fileName));
-		
-		for(int i=0; i<stockIDs.size();i++)
-		{
-			String stockID = stockIDs.get(i);
-			int ret = s_StockDataApi.updateLocalStocks(stockID, newestDate);
-			CTest.EXPECT_LONG_EQ(0, ret);
-		}
-
-		CFile.fileWrite(fileName, newestDate, false);
-		CTest.EXPECT_STR_EQ(newestDate, CFile.fileRead(fileName));
-		CTest.EXPECT_TRUE(CPath.isFileExist(fileName));
-	}
-	
 	@CTest.setup
 	public static void setup()
 	{
-		helpTest_InitData(s_newestDate, s_stockIDs);
+		TestCommonHelper.InitLocalData();
 	}
 	
-	public static class TestDataListener extends DataListener
+
+	public static class EngineTester
 	{
-
-		@Override
-		public void onDayBegin(DataContext ctx) {
-			//CLog.output("TEST", "TestDataListener.onDayBegin");
-			onDayBeginCalled++;
-		}
-
-		@Override
-		public void onTransactionEveryMinute(DataContext ctx) {
-			//CLog.output("TEST", "TestDataListener.onTransactionEveryMinute");
-			onEveryMinuteCalled++;
-		}
-
-		@Override
-		public void onDayEnd(DataContext ctx) {
-			//CLog.output("TEST", "TestDataListener.onDayEnd");
-			onDayEndCalled++;
+		public EngineTester()
+		{
+			m_timeListener = StockDataEngine.instance().createTimeListener();
+			m_timeListener.configCallback(this, "onTimeListener");
+			List<String> listenTimeList = new ArrayList<String>();
+			listenTimeList.add("08:00:00");
+			m_timeListener.configListenTime(listenTimeList);
+			
+			m_dataPusher = StockDataEngine.instance().createDataPusher();
+			m_dataPusher.configCallback(this, "onDataPush");
+			List<String> pushDataTimeList = new ArrayList<String>();
+			pushDataTimeList.add("09:00:00");
+			pushDataTimeList.add("09:30:00");
+			pushDataTimeList.add("09:40:00");
+			m_dataPusher.configPushTime(pushDataTimeList);
+			List<String> dataList = new ArrayList<String>();
+			dataList.add("600000");
+			m_dataPusher.configPushData(dataList);
 		}
 		
+		public void onTimeListen(String date, String time)
+		{
+			CLog.output("TEST", "onTimeListen %s %s", date, time);
+		}
+		
+		public void onDataPush(DataContext ctx)
+		{
+			CLog.output("TEST", "onDataPush %s %s", ctx.date(), ctx.time());
+		}
+		
+		private EngineTimeListener m_timeListener;
+		private EngineDataPusher m_dataPusher;
 	}
-	
-	public static int onDayBeginCalled = 0;
-	public static int onDayEndCalled = 0;
-	public static int onEveryMinuteCalled = 0;
-	public static int onTimePricesCheckCount = 0;
-	
+
 	@CTest.test
-	public static void test_DataListener()
+	public void test_StockDataEngine()
 	{
-		StockDataEngine.instance().config("ListenMode", "HistoryTest 2017-01-01 2017-01-03");
-		StockDataEngine.instance().registerDataListener(new TestDataListener());
-		StockDataEngine.instance().run();
-	}
-	
-	
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	public static EngineListener s_listener;
-	
-	public void onTimeMonitor(String date, String time)
-	{
-		CLog.output("TEST", "onTimeMonitor %s %s", date, time);
-	}
-	public void onMarketData(DataContext ctx)
-	{
-		CLog.output("TEST", "onMarketData %s %s", ctx.date(), ctx.time());
-	}
-	
-	@CTest.test
-	public void test_EngineListener()
-	{
-		s_listener = StockDataEngine.instance().createListener();
-		
-		List<String> timeMonitorList = new ArrayList<String>();
-		timeMonitorList.add("08:00:00");
-		s_listener.configTimeMonitorList(timeMonitorList);
-		s_listener.setTimeMonitorMethod(this, "onTimeMonitor");
-		
-		List<String> dataTrigerTimeList = new ArrayList<String>();
-		dataTrigerTimeList.add("09:00:00");
-		dataTrigerTimeList.add("09:30:00");
-		dataTrigerTimeList.add("09:40:00");
-		s_listener.configDataTrigerTimeList(dataTrigerTimeList);
-		List<String> dataSubscribe = new ArrayList<String>();
-		dataSubscribe.add("600000");
-		s_listener.configDataSubscribe(dataSubscribe);
-		s_listener.setDataReceiveMethod(this, "onMarketData");
-//		
+		EngineTester cEngineTester = new EngineTester();
 		StockDataEngine.instance().config("ListenMode", "HistoryTest 2017-01-01 2017-01-03");
 		StockDataEngine.instance().run();
 	}

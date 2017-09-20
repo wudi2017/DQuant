@@ -94,9 +94,14 @@ public class StockDataEngine {
 		return 0;
 	}
 	
-	public EngineListener createListener()
+	public EngineTimeListener createTimeListener()
 	{
-		return new EngineListener();
+		return new EngineTimeListener();
+	}
+	
+	public EngineDataPusher createDataPusher()
+	{
+		return new EngineDataPusher();
 	}
 	
 	public int run()
@@ -130,7 +135,8 @@ public class StockDataEngine {
 				waitForDateTime(dateStr, timestr);
 				CLog.output("QEngine", "[%s %s] listener.onDayBegin ", dateStr, timestr);
 				m_context.setDateTime(dateStr, timestr);
-				m_dataListener.onDayBegin(m_context);
+				if(null != m_dataListener)
+					m_dataListener.onDayBegin(m_context);
 				
 				// 9:30-11:30 1:00-3:00 定期间隔进行触发trigger.onEveryMinute
 				int interval_min = 1;
@@ -143,7 +149,8 @@ public class StockDataEngine {
 					{
 						CLog.output("QEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
 						m_context.setDateTime(dateStr, timestr);
-						m_dataListener.onTransactionEveryMinute(m_context);
+						if(null != m_dataListener)
+							m_dataListener.onTransactionEveryMinute(m_context);
 					}
 					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
 					if(timestr.compareTo(timestr_end) > 0) break;
@@ -158,7 +165,8 @@ public class StockDataEngine {
 					{
 						CLog.output("QEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
 						m_context.setDateTime(dateStr, timestr);
-						m_dataListener.onTransactionEveryMinute(m_context);
+						if(null != m_dataListener)
+							m_dataListener.onTransactionEveryMinute(m_context);
 					}
 					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
 					if(timestr.compareTo(timestr_end) > 0) break;
@@ -177,7 +185,8 @@ public class StockDataEngine {
 				waitForDateTime(dateStr, timestr);
 				CLog.output("QEngine", "[%s %s] listener.onDayEnd ", dateStr, timestr);
 				m_context.setDateTime(dateStr, timestr);
-				m_dataListener.onDayEnd(m_context);
+				if(null != m_dataListener)
+					m_dataListener.onDayEnd(m_context);
 			}
 			
 			// 获取下一日期

@@ -1,8 +1,6 @@
 package pers.di.common_test;
 
-import pers.di.common.CHttp;
-import pers.di.common.CLog;
-import pers.di.common.CPath;
+import pers.di.common.*;
 
 public class TestCHttp {
 

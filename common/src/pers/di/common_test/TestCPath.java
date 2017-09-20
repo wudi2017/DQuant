@@ -1,12 +1,11 @@
 package pers.di.common_test;
 
-import pers.di.common.CLog;
-import pers.di.common.CPath;
+import pers.di.common.*;
 
 public class TestCPath {
 	public static void main(String[] args) {
 		
-		CLog.output("TEST", "%s", CPath.getOutputDir());
+		CLog.output("TEST", "%s", CFileSystem.getOutputDir());
 		
 	}
 }

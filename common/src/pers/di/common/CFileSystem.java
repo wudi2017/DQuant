@@ -4,7 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class CPath {
+public class CFileSystem {
 	public static String getOutputDir()
 	{
 		return s_outputDir;

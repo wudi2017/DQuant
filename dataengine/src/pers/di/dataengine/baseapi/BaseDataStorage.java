@@ -24,7 +24,7 @@ public class BaseDataStorage {
 	public BaseDataStorage(String dataDir) 
 	{
 		s_workDir = dataDir;
-		CPath.createDir(s_workDir);
+		CFileSystem.createDir(s_workDir);
 	}
 
 	public int getKLine(String id, List<KLine> container)
@@ -79,7 +79,7 @@ public class BaseDataStorage {
 	public int saveKLine(String id, List<KLine> container)
 	{
 		String stocKLineDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stocKLineDir)) return -10;
+		if(!CFileSystem.createDir(stocKLineDir)) return -10;
 		
 		String stockDayKFileName = s_workDir + "/" + id + "/" + s_daykFile;
 		File cfile=new File(stockDayKFileName);
@@ -151,7 +151,7 @@ public class BaseDataStorage {
 	public int saveDividendPayout(String id, List<DividendPayout> container)
 	{
 		String stocKLineDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stocKLineDir)) return -10;
+		if(!CFileSystem.createDir(stocKLineDir)) return -10;
 		
 		String stockDividendPayoutFileName = s_workDir + "/" + id + "/" + s_DividendPayoutFile;
 		File cfile =new File(stockDividendPayoutFileName);
@@ -222,7 +222,7 @@ public class BaseDataStorage {
 	public int saveDayDetail(String id, String date, List<TradeDetail> container)
 	{
 		String stocKLineDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stocKLineDir)) return -10;
+		if(!CFileSystem.createDir(stocKLineDir)) return -10;
 		
 		String stocKLineDetailFileName = s_workDir + "/" + id + "/" + date + ".txt";
 		try
@@ -290,7 +290,7 @@ public class BaseDataStorage {
 	public int saveStockInfo(String id, StockInfo container) 
 	{
 		String stocKLineDir = s_workDir + "/" + id;
-		if(!CPath.createDir(stocKLineDir)) return -10;
+		if(!CFileSystem.createDir(stocKLineDir)) return -10;
 		
 		String stockBaseInfoFileName = stocKLineDir + "/" + s_BaseInfoFile;
 		

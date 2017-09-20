@@ -209,13 +209,13 @@ public class CLog {
 
 	public static void config_setLogCfg(String dirName, String fileName)
 	{
-		CPath.createDir(dirName);
+		CFileSystem.createDir(dirName);
 		s_strConfig = dirName;
 		s_strLogConfigName = fileName;
 	}
 	public static void config_setLogFile(String dirName, String fileName)
 	{
-		CPath.createDir(dirName);
+		CFileSystem.createDir(dirName);
 		s_strLogDirName = dirName;
 		s_strLogName = fileName;
 	}
@@ -250,7 +250,7 @@ public class CLog {
 						+ "\t<tag name='COMMON' output='1' />\n"
 						+ "\t<tag name='TEST' output='1' />\n"
 						+ "</config>\n";
-				CPath.createDir(s_strConfig);
+				CFileSystem.createDir(s_strConfig);
 				CFile.fileWrite(configFileFullName, defaultContent, false);
 			}
 			BufferedReader reader = new BufferedReader(new FileReader(cfile));
@@ -333,7 +333,7 @@ public class CLog {
 		s_syncObjForTagMap.UnLock();
 		
 		// dir file name check
-		if(null == s_strLogDirName) s_strLogDirName = CPath.getOutputDir();
+		if(null == s_strLogDirName) s_strLogDirName = CFileSystem.getOutputDir();
 		if(null == s_strLogName) s_strLogName = "default.log";
 		
 		String logstr = String.format(format, args);

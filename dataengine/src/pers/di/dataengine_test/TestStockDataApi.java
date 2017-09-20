@@ -23,35 +23,11 @@ public class TestStockDataApi {
 	private static String s_newestDate = "2017-08-10";
 	private static List<String> s_stockIDs = new ArrayList<String>()
 		{{add("600000");add("300163");add("002468");}};
-		
-	private static void helpTest_InitData(String newestDate, List<String> stockIDs)
-	{
-		CPath.removeDir(s_workDir);
-		CTest.EXPECT_TRUE(!CPath.isDirExist(s_workDir));
-		CPath.createDir(s_workDir);
-		CTest.EXPECT_TRUE(CPath.isDirExist(s_workDir));
-		
-		String fileName = s_workDir + "\\" + s_updateFinish;
-		String tmpDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(newestDate, -5);
-		CFile.fileWrite(fileName, tmpDate, false);
-		CTest.EXPECT_TRUE(CPath.isFileExist(fileName));
-		
-		for(int i=0; i<stockIDs.size();i++)
-		{
-			String stockID = stockIDs.get(i);
-			int ret = s_StockDataApi.updateLocalStocks(stockID, newestDate);
-			CTest.EXPECT_LONG_EQ(0, ret);
-		}
-
-		CFile.fileWrite(fileName, newestDate, false);
-		CTest.EXPECT_STR_EQ(newestDate, CFile.fileRead(fileName));
-		CTest.EXPECT_TRUE(CPath.isFileExist(fileName));
-	}
 	
 	@CTest.setup
 	public static void setup()
 	{
-		helpTest_InitData(s_newestDate, s_stockIDs);
+		TestCommonHelper.InitLocalData(s_newestDate, s_stockIDs);
 	}
 	
 	public static void test_updateAllLocalStocks()
@@ -69,11 +45,11 @@ public class TestStockDataApi {
 			
 		String checkFileName = "";
 		checkFileName= s_workDir + "\\" + stockID + "\\" + s_daykFile;
-		CTest.EXPECT_TRUE(CPath.isFileExist(checkFileName));
+		CTest.EXPECT_TRUE(CFileSystem.isFileExist(checkFileName));
 		checkFileName = s_workDir + "\\" + stockID + "\\" + s_DividendPayoutFile;
-		CTest.EXPECT_TRUE(CPath.isFileExist(checkFileName));
+		CTest.EXPECT_TRUE(CFileSystem.isFileExist(checkFileName));
 		checkFileName = s_workDir + "\\" + stockID + "\\" + s_BaseInfoFile;
-		CTest.EXPECT_TRUE(CPath.isFileExist(checkFileName));
+		CTest.EXPECT_TRUE(CFileSystem.isFileExist(checkFileName));
 	}
 
 	@CTest.test
