@@ -40,14 +40,17 @@ public class TestStockDataEngine {
 			pushDataTimeList.add("09:30:00");
 			pushDataTimeList.add("09:40:00");
 			m_dataPusher.configPushTime(pushDataTimeList);
-			List<String> dataList = new ArrayList<String>();
-			dataList.add("600000");
-			m_dataPusher.configPushData(dataList);
 		}
 		
 		public void onTimeListen(String date, String time)
 		{
 			CLog.output("TEST", "onTimeListen %s %s", date, time);
+			if(time.equals("08:00:00"))
+			{
+				List<String> dataList = new ArrayList<String>();
+				dataList.add("600000");
+				m_dataPusher.enableCurrentDayTimePriceNow(dataList);
+			}
 		}
 		
 		public void onDataPush(DataContext ctx)
@@ -69,6 +72,7 @@ public class TestStockDataEngine {
 	
 	public static void main(String[] args) {
 		CSystem.start();
+		CLog.config_setTag("DataEngine", true);
 		CTest.ADD_TEST(TestStockDataEngine.class);
 		CTest.RUN_ALL_TESTS("");
 		CSystem.stop();

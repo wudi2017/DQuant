@@ -17,9 +17,9 @@ public class StockDataEngine {
 	{
 		m_stockDataApi = StockDataApi.instance();
 		m_configFailed = false;
-		m_dataListener = null;
 
 		m_curDate = "0000-00-00";
+		m_curTime = "00:00:00";
 		m_context = new DataContext();
 		
 		m_bHistoryTest = false;
@@ -27,10 +27,40 @@ public class StockDataEngine {
 		m_endDate = "0000-00-00";
 		m_hisTranDate = new ArrayList<String>();
 		
+		m_mainTimeTaskList = new LinkedList<TimeTasks>();
+		
+		m_timeListenerList = new ArrayList<EngineTimeListener>();
+		
 	}
 	public static StockDataEngine instance() {  
 		return s_instance;  
 	} 
+	
+	public static class TimeTasks
+	{
+		public TimeTasks()
+		{
+			time = "00:00:00";
+			tasks = new ArrayList<EngineTask>();
+		}
+		public String time;
+		public List<EngineTask> tasks;
+	}
+	
+	public static class EngineBuildinTask extends EngineTask
+	{
+
+		public EngineBuildinTask(String name) {
+			super(name);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+		}
+	}
 	
 	/*
 	 * 配置量化引擎
@@ -88,20 +118,49 @@ public class StockDataEngine {
 		return 0;
 	}
 	
-	public int registerDataListener(DataListener dataListener)
-	{
-		m_dataListener = dataListener;
-		return 0;
-	}
-	
 	public EngineTimeListener createTimeListener()
 	{
-		return new EngineTimeListener();
+		EngineTimeListener cTimeListener = new EngineTimeListener();
+		m_timeListenerList.add(cTimeListener);
+		return cTimeListener;
 	}
 	
 	public EngineDataPusher createDataPusher()
 	{
 		return new EngineDataPusher();
+	}
+	
+	public boolean scheduleEngineTask(String time, EngineTask task)
+	{
+		TimeTasks cCurTimeTasks = null;
+		
+		for(int i=0; i<m_mainTimeTaskList.size(); i++)
+		{
+			TimeTasks cTimeTasks = m_mainTimeTaskList.get(i);
+			if(time.compareTo(cTimeTasks.time) == 0)
+			{
+				cCurTimeTasks = cTimeTasks;
+				break;
+			}
+			if(time.compareTo(cTimeTasks.time) > 0)
+			{
+				TimeTasks cNewTimeTasks = new TimeTasks();
+				m_mainTimeTaskList.add(i+1, cNewTimeTasks);
+				cCurTimeTasks = cNewTimeTasks;
+				break;
+			}
+		}
+		if(null == cCurTimeTasks)
+		{
+			TimeTasks cNewTimeTasks = new TimeTasks();
+			cNewTimeTasks.time = time;
+			m_mainTimeTaskList.add(0, cNewTimeTasks);
+			cCurTimeTasks = cNewTimeTasks;
+		}
+		
+		cCurTimeTasks.tasks.add(task);
+
+		return false;
 	}
 	
 	public int run()
@@ -110,91 +169,125 @@ public class StockDataEngine {
 		{
 			return 0;
 		}
+		
+		EngineBuildinTask cEngineBuildinTask = new EngineBuildinTask("EngineBuildinTask");
+		scheduleEngineTask("09:30:00", cEngineBuildinTask);
+		
 		CLog.output("DataEngine", "The DataEngine is running now...");
 		
-		// 每天进行循环
 		String dateStr = getStartDate();
-		while(true) 
+		while(null != dateStr) 
 		{
-			String timestr = "00:00:00";
+			CLog.output("DataEngine", "date %s", dateStr);
 			
-			// 09:25确定是否是交易日
-			boolean bIsTranDate = false;
-			timestr = "09:25:00";
-			waitForDateTime(dateStr, timestr);
-			if(isTranDate(dateStr))
+			// do one day all time tasks
+			TimeTasks cTimeTasks = getMainTimeTaskMapFirstTimeTasks();
+			while(null != cTimeTasks)
 			{
-				bIsTranDate = true;
-			}
-			CLog.output("QEngine", "[%s %s] check market day = %b ", dateStr, timestr, bIsTranDate);
-			
-			if(bIsTranDate)
-			{
-				// 09:27 触发onDayBegin
-				timestr = "09:27:00";
-				waitForDateTime(dateStr, timestr);
-				CLog.output("QEngine", "[%s %s] listener.onDayBegin ", dateStr, timestr);
-				m_context.setDateTime(dateStr, timestr);
-				if(null != m_dataListener)
-					m_dataListener.onDayBegin(m_context);
+				String timeStr = cTimeTasks.time;
 				
-				// 9:30-11:30 1:00-3:00 定期间隔进行触发trigger.onEveryMinute
-				int interval_min = 1;
-				String timestr_begin = "09:30:00";
-				String timestr_end = "11:30:00";
-				timestr = timestr_begin;
-				while(true)
-				{
-					if(waitForDateTime(dateStr, timestr))
-					{
-						CLog.output("QEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
-						m_context.setDateTime(dateStr, timestr);
-						if(null != m_dataListener)
-							m_dataListener.onTransactionEveryMinute(m_context);
-					}
-					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
-					if(timestr.compareTo(timestr_end) > 0) break;
-				}
+				waitForDateTime(dateStr, timeStr);
 				
-				timestr_begin = "13:00:00";
-				timestr_end = "15:00:00";
-				timestr = timestr_begin;
-				while(true)
-				{
-					if(waitForDateTime(dateStr, timestr))
-					{
-						CLog.output("QEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
-						m_context.setDateTime(dateStr, timestr);
-						if(null != m_dataListener)
-							m_dataListener.onTransactionEveryMinute(m_context);
-					}
-					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
-					if(timestr.compareTo(timestr_end) > 0) break;
-				}
-
-				// 19:00 更新历史数据
-				timestr = "19:00:00";
-				if(waitForDateTime(dateStr, timestr))
-				{
-					CLog.output("QEngine", "[%s %s] update market data ", dateStr, timestr);
-					m_stockDataApi.updateAllLocalStocks(dateStr);
-				}
+				CLog.output("DataEngine", "[%s %s]", dateStr, timeStr);
+				doAllTask(cTimeTasks);
 				
-				// 20:00 触发trigger.onDayEnd
-				timestr = "21:00:00";
-				waitForDateTime(dateStr, timestr);
-				CLog.output("QEngine", "[%s %s] listener.onDayEnd ", dateStr, timestr);
-				m_context.setDateTime(dateStr, timestr);
-				if(null != m_dataListener)
-					m_dataListener.onDayEnd(m_context);
+				cTimeTasks = getMainTimeTaskMapNextTimeTasks();
 			}
 			
-			// 获取下一日期
 			dateStr = getNextDate();
-			if(null == dateStr) break;
 		}
-				
+		
+//		// 每天进行循环
+//		String dateStr = getStartDate();
+//		while(true) 
+//		{
+//			String timestr = "00:00:00";
+//			
+//			// 09:25确定是否是交易日
+//			boolean bIsTranDate = false;
+//			timestr = "09:25:00";
+//			waitForDateTime(dateStr, timestr);
+//			if(isTranDate(dateStr))
+//			{
+//				bIsTranDate = true;
+//			}
+//			CLog.output("DataEngine", "[%s %s] check market day = %b ", dateStr, timestr, bIsTranDate);
+//			
+//			if(bIsTranDate)
+//			{
+//				// 09:27 触发onDayBegin
+//				timestr = "09:27:00";
+//				waitForDateTime(dateStr, timestr);
+//				CLog.output("DataEngine", "[%s %s] listener.onDayBegin ", dateStr, timestr);
+//				m_context.setDateTime(dateStr, timestr);
+//				
+//				// 9:30-11:30 1:00-3:00 定期间隔进行触发trigger.onEveryMinute
+//				int interval_min = 1;
+//				String timestr_begin = "09:30:00";
+//				String timestr_end = "11:30:00";
+//				timestr = timestr_begin;
+//				while(true)
+//				{
+//					if(waitForDateTime(dateStr, timestr))
+//					{
+//						CLog.output("DataEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
+//						m_context.setDateTime(dateStr, timestr);
+//					}
+//					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
+//					if(timestr.compareTo(timestr_end) > 0) break;
+//				}
+//				
+//				timestr_begin = "13:00:00";
+//				timestr_end = "15:00:00";
+//				timestr = timestr_begin;
+//				while(true)
+//				{
+//					if(waitForDateTime(dateStr, timestr))
+//					{
+//						CLog.output("DataEngine", "[%s %s] listener.onTransactionEveryMinute ", dateStr, timestr);
+//						m_context.setDateTime(dateStr, timestr);
+//					}
+//					timestr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(timestr, interval_min*60);
+//					if(timestr.compareTo(timestr_end) > 0) break;
+//				}
+//
+//				// 19:00 更新历史数据
+//				timestr = "19:00:00";
+//				if(waitForDateTime(dateStr, timestr))
+//				{
+//					CLog.output("DataEngine", "[%s %s] update market data ", dateStr, timestr);
+//					m_stockDataApi.updateAllLocalStocks(dateStr);
+//				}
+//				
+//				// 20:00 触发trigger.onDayEnd
+//				timestr = "21:00:00";
+//				waitForDateTime(dateStr, timestr);
+//				CLog.output("DataEngine", "[%s %s] listener.onDayEnd ", dateStr, timestr);
+//				m_context.setDateTime(dateStr, timestr);
+//			}
+//			
+//			// 获取下一日期
+//			dateStr = getNextDate();
+//			if(null == dateStr) break;
+//		}
+//				
 		return 0;
+	}
+	
+	private void doAllTask(TimeTasks cTimeTasks)
+	{
+		if(null != cTimeTasks && null != cTimeTasks.tasks)
+		{
+			for(int i=0; i<cTimeTasks.tasks.size(); i++)
+			{
+				EngineTask task = cTimeTasks.tasks.get(i);
+				if(null != task)
+				{
+					CLog.output("DataEngine", "    task(%s) run", task.getName());
+					task.run();
+				}
+			}
+		}
 	}
 	
 	private String getStartDate()
@@ -206,9 +299,8 @@ public class StockDataEngine {
 		}
 		else
 		{
-			String curDateStr = CUtilsDateTime.GetCurDateStr();
-			m_curDate = curDateStr;
-			return curDateStr;
+			m_curDate = CUtilsDateTime.GetCurDateStr();
+			return m_curDate;
 		}
 	}
 	private String getNextDate()
@@ -229,6 +321,35 @@ public class StockDataEngine {
 		{
 			return m_curDate;
 		}
+	}
+	
+	private TimeTasks getMainTimeTaskMapFirstTimeTasks()
+	{
+		TimeTasks cTimeTasks = null;
+		m_curTime = "00:00:00";
+		
+		if(m_mainTimeTaskList.size() > 0)
+		{
+			cTimeTasks = m_mainTimeTaskList.get(0);
+			m_curTime = cTimeTasks.time;
+		}
+		
+		return cTimeTasks;
+	}
+	
+	private TimeTasks getMainTimeTaskMapNextTimeTasks()
+	{
+		TimeTasks cTimeTasks = null;
+		for(int i=0; i<m_mainTimeTaskList.size(); i++)
+		{
+			TimeTasks cTmpTimeTasks = m_mainTimeTaskList.get(i);
+			if(cTmpTimeTasks.time.compareTo(m_curTime) > 0)
+			{
+				cTimeTasks = cTmpTimeTasks;
+				m_curTime = cTmpTimeTasks.time;
+			}
+		}
+		return cTimeTasks;
 	}
 	
 	/*
@@ -310,15 +431,19 @@ public class StockDataEngine {
 		}
 	}
 	
-	
 	private StockDataApi m_stockDataApi;
 	private boolean m_configFailed;
-	private DataListener m_dataListener;
 	
 	private String m_curDate;
+	private String m_curTime;
 	private DataContext m_context;
 	private boolean m_bHistoryTest;
 	private String m_beginDate;
 	private String m_endDate;
 	private List<String> m_hisTranDate;
+	
+	// 主时间任务表
+	private List<TimeTasks> m_mainTimeTaskList;
+	
+	private List<EngineTimeListener> m_timeListenerList;
 }

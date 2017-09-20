@@ -18,7 +18,8 @@ public class EngineDataPusher {
 		return false;
 	}
 	
-	public boolean configPushData(List<String> stockID)
+	// 开启当日股票分时数据
+	public boolean enableCurrentDayTimePriceNow(List<String> stockID)
 	{
 		return false;
 	}
