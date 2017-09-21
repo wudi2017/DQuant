@@ -363,10 +363,10 @@ public class TestCUtilsDateTime {
 		String afterTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, 1);
 		CLog.output("TEST", "curDateStr %s beforeTimeStr = %s", curDateStr, beforeTimeStr);
 		CLog.output("TEST", "curDateStr %s afterTimeStr = %s", curDateStr, afterTimeStr);
-		boolean bwaitbefore = CUtilsDateTime.waitFor(curDateStr, beforeTimeStr);
-		CTest.EXPECT_FALSE(bwaitbefore);
-		boolean bwaitafter = CUtilsDateTime.waitFor(curDateStr, afterTimeStr);
-		CTest.EXPECT_TRUE(bwaitafter);
+		CUtilsDateTime.WAITRESULT wr_before = CUtilsDateTime.waitFor(curDateStr, beforeTimeStr);
+		CTest.EXPECT_TRUE(wr_before==CUtilsDateTime.WAITRESULT.TIME_HAS_GONE);
+		CUtilsDateTime.WAITRESULT wr_after = CUtilsDateTime.waitFor(curDateStr, afterTimeStr);
+		CTest.EXPECT_TRUE(wr_after==CUtilsDateTime.WAITRESULT.TIME_IS_UP);
 	}
 	
 	public static class TestThread extends Thread
@@ -390,14 +390,14 @@ public class TestCUtilsDateTime {
 		CLog.output("TEST", "curDateStr %s beforeTimeStr = %s", curDateStr, beforeTimeStr);
 		CLog.output("TEST", "curDateStr %s afterTimeStr = %s", curDateStr, afterTimeStr);
 		CLog.output("TEST", "curDateStr %s afterTimeStr = %s", curDateStr, afterTimeStrlong);
-		boolean bwaitbefore = CUtilsDateTime.waitFor(curDateStr, beforeTimeStr, s_waitObj);
-		CTest.EXPECT_FALSE(bwaitbefore);
-		boolean bwaitafter = CUtilsDateTime.waitFor(curDateStr, afterTimeStr, s_waitObj);
-		CTest.EXPECT_TRUE(bwaitafter);
+		CUtilsDateTime.WAITRESULT wr_before = CUtilsDateTime.waitFor(curDateStr, beforeTimeStr, s_waitObj);
+		CTest.EXPECT_TRUE(wr_before==CUtilsDateTime.WAITRESULT.TIME_HAS_GONE);
+		CUtilsDateTime.WAITRESULT wr_after = CUtilsDateTime.waitFor(curDateStr, afterTimeStr, s_waitObj);
+		CTest.EXPECT_TRUE(wr_after==CUtilsDateTime.WAITRESULT.TIME_IS_UP);
 		TestThread cTestThread = new TestThread();
 		cTestThread.start();
-		boolean bwaitafterlong = CUtilsDateTime.waitFor(curDateStr, afterTimeStrlong, s_waitObj);
-		CTest.EXPECT_TRUE(bwaitafterlong);
+		CUtilsDateTime.WAITRESULT wr_afterlong = CUtilsDateTime.waitFor(curDateStr, afterTimeStrlong, s_waitObj);
+		CTest.EXPECT_TRUE(wr_afterlong==CUtilsDateTime.WAITRESULT.OBJECT_IS_NOTIFIED);
 	}
 
 	@CTest.test

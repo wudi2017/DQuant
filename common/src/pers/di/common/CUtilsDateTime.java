@@ -554,13 +554,20 @@ public class CUtilsDateTime {
         return time;
     }
     
+    public static enum WAITRESULT
+    {
+    	TIME_HAS_GONE,
+    	TIME_IS_UP,
+    	OBJECT_IS_NOTIFIED,
+    }
+    
     /*
      * 等待到某日期时间返回
      * 
      * 等待到时间后返回true
      * 调用时已经超时返回false
      */
-    public static boolean waitFor(String date, String time)
+    public static WAITRESULT waitFor(String date, String time)
     {
     	return waitFor(date,time,new CWaitObject());
     }
@@ -572,14 +579,14 @@ public class CUtilsDateTime {
      * 等待期间对象被notify返回true
      * 调用时已经超时返回false
      */
-    public static boolean waitFor(String date, String time, CWaitObject waitObj)
+    public static WAITRESULT waitFor(String date, String time, CWaitObject waitObj)
     {
     	String waitDateTimeStr = date + " " + time;
     	
     	{
     		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
     		if(curDateTimeStr.compareTo(waitDateTimeStr) > 0) 
-    			return false;
+    			return WAITRESULT.TIME_HAS_GONE;
     	}
     	
     	while(true)
@@ -588,13 +595,13 @@ public class CUtilsDateTime {
     		
     		if(curDateTimeStr.compareTo(waitDateTimeStr) > 0) 
     		{
-    			return true;
+    			return WAITRESULT.TIME_IS_UP;
     		}
   
 			boolean bNotified = waitObj.Wait(300);
 			if(bNotified)
 			{
-				return true;
+				return WAITRESULT.OBJECT_IS_NOTIFIED;
 			}
     	}
     }
