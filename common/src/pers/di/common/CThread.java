@@ -77,7 +77,7 @@ abstract public class CThread {
 			m_cCThreadRef = cCThread;
 			m_bQuit = false;
 			m_bRunning = false;
-			m_cCWaitObj = new CWaitObj();
+			m_cCWaitObject = new CWaitObject();
 		}
 		@Override
         public void run()
@@ -95,12 +95,12 @@ abstract public class CThread {
 		}
 		boolean Wait(long msec)
 		{
-			m_cCWaitObj.Wait(msec);
+			m_cCWaitObject.Wait(msec);
 			return true;
 		}
 		boolean Notify()
 		{
-			m_cCWaitObj.Notify();
+			m_cCWaitObject.Notify();
 			return true;
 		}
 		boolean startThread()
@@ -112,7 +112,7 @@ abstract public class CThread {
 		boolean stopThread()
 		{
 			m_bQuit = true;
-			m_cCWaitObj.Notify();
+			m_cCWaitObject.Notify();
 			try {
 				super.join();
 			} catch (InterruptedException e) {
@@ -123,6 +123,6 @@ abstract public class CThread {
 		private CThread m_cCThreadRef;
 		private boolean m_bQuit;
 		private boolean m_bRunning;
-		private CWaitObj m_cCWaitObj;
+		private CWaitObject m_cCWaitObject;
 	}
 }

@@ -1,12 +1,12 @@
 package pers.di.common_test;
 
 import pers.di.common.CLog;
-import pers.di.common.CWaitObj;
+import pers.di.common.CWaitObject;
 
 public class TestCWatiObj {
 	public static class TestThread extends Thread
 	{
-		public  TestThread(CWaitObj waitObj)
+		public  TestThread(CWaitObject waitObj)
 		{
 			m_WaitObj = waitObj;
 		}
@@ -35,14 +35,14 @@ public class TestCWatiObj {
 			CLog.output("TEST", "TestThread run end\n");
 		}
 		
-		private CWaitObj m_WaitObj;
+		private CWaitObject m_WaitObj;
 	}
 	
 	public static void main(String[] args) {
 		
-		CWaitObj cCWaitObj = new CWaitObj();
+		CWaitObject cCWaitObject = new CWaitObject();
 		
-		TestThread cThread = new TestThread(cCWaitObj);
+		TestThread cThread = new TestThread(cCWaitObject);
 		cThread.start();
 		
 		try {
@@ -51,9 +51,9 @@ public class TestCWatiObj {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		CLog.output("TEST", "CWaitObj.Wait ...1\n");
-		cCWaitObj.Wait(Long.MAX_VALUE);
-		CLog.output("TEST", "CWaitObj.Wait ...1 Return\n");
+		CLog.output("TEST", "CWaitObject.Wait ...1\n");
+		cCWaitObject.Wait(Long.MAX_VALUE);
+		CLog.output("TEST", "CWaitObject.Wait ...1 Return\n");
 		
 		try {
 			Thread.sleep(500);
@@ -61,8 +61,8 @@ public class TestCWatiObj {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		CLog.output("TEST", "CWaitObj.Wait ...2\n");
-		cCWaitObj.Wait(Long.MAX_VALUE);
-		CLog.output("TEST", "CWaitObj.Wait ...2 Return\n");
+		CLog.output("TEST", "CWaitObject.Wait ...2\n");
+		cCWaitObject.Wait(Long.MAX_VALUE);
+		CLog.output("TEST", "CWaitObject.Wait ...2 Return\n");
 	}
 }

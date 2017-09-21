@@ -1,8 +1,8 @@
 package pers.di.common;
 
-public class CWaitObj {
+public class CWaitObject {
 	
-	public CWaitObj()
+	public CWaitObject()
 	{
 		m_sync = new CSyncObj();
 		m_waitObj = new Object();
