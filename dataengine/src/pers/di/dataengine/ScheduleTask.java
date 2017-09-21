@@ -24,7 +24,7 @@ public abstract class ScheduleTask {
 	{
 		m_taskName = name;
 		m_time = time;
-		m_priority = 127;
+		m_priority = 256;
 	}
 	
 	public String getName()

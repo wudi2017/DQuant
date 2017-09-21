@@ -22,6 +22,16 @@ public class ScheduleTaskController {
 		public List<ScheduleTask> tasks;
 	}
 	
+	private static class Buildin_DayEndTask extends ScheduleTask
+	{
+		public Buildin_DayEndTask() {
+			super("Buildin_DayEndTask", "23:59:50");
+		}
+		@Override
+		public void doTask(String date, String time) {
+		}
+	}
+	
 	public ScheduleTaskController()
 	{
 		m_bHistoryTest = false;
@@ -90,6 +100,12 @@ public class ScheduleTaskController {
 			tasks.add(cScheduleTask);
 		}
 		
+		CLog.output("DataEngine", "ScheduleTaskController.schedule Task(%s %s %d)"
+				, cScheduleTask.getName(), cScheduleTask.getTime(), cScheduleTask.getPriority());
+		
+		// notify
+		m_mainTimeTaskListWaitObj.Notify();
+		
 		return true;
 	}
 	
@@ -127,11 +143,14 @@ public class ScheduleTaskController {
 	
 	public boolean run()
 	{
+		// add build in Buildin_DayEndTask task
+		schedule(new Buildin_DayEndTask());
+		
 		m_curDate = getBeginDate();
 		while(null != m_curDate) 
 		{
 			m_curTime = "00:00:00";
-			CLog.output("DataEngine", "(%s %s) new day begin", m_curDate, m_curTime);
+			CLog.output("DataEngine", "(%s %s) <<<<<< ------ new day begin ------ >>>>>>", m_curDate, m_curTime);
 			
 			TimeTasksPair timeTasksPair = getFirstTimeTasksPair();
 			while(null != timeTasksPair)
@@ -142,11 +161,20 @@ public class ScheduleTaskController {
 				{
 					m_curTime = timeTasksPair.time;
 					CLog.output("DataEngine", "(%s %s) doAllTask", m_curDate, m_curTime);
-					doAllTask(timeTasksPair);
-				}
-				else
-				{
-					continue;
+					
+					// do all task begin
+					if(null != timeTasksPair && null != timeTasksPair.tasks)
+					{
+						for(int i=0; i<timeTasksPair.tasks.size(); i++)
+						{
+							ScheduleTask task = timeTasksPair.tasks.get(i);
+							if(null != task)
+							{
+								task.doTask(m_curDate, m_curTime);
+							}
+						}
+					}
+					// do all task end
 				}
 
 				timeTasksPair = getNearestTimeTasksPair();
@@ -155,21 +183,6 @@ public class ScheduleTaskController {
 			m_curDate = getNextDate();
 		}
 		return true;
-	}
-	
-	private void doAllTask(TimeTasksPair cTimeTasksPair)
-	{
-		if(null != cTimeTasksPair && null != cTimeTasksPair.tasks)
-		{
-			for(int i=0; i<cTimeTasksPair.tasks.size(); i++)
-			{
-				ScheduleTask task = cTimeTasksPair.tasks.get(i);
-				if(null != task)
-				{
-					task.doTask(m_curDate, m_curTime);
-				}
-			}
-		}
 	}
 	
 	private CUtilsDateTime.WAITRESULT waitForDateTime(String date, String time, CWaitObject watiObj)
@@ -182,7 +195,7 @@ public class ScheduleTaskController {
 		{
 			CLog.output("DataEngine", "realtime waitting DateTime (%s %s)... ", date, time);
 			CUtilsDateTime.WAITRESULT eWait = CUtilsDateTime.waitFor(date, time, watiObj);
-			CLog.output("DataEngine", "realtime waitting DateTime (%s %s) complete! result(%d)", date, time, eWait);
+			CLog.output("DataEngine", "realtime waitting DateTime (%s %s) complete! result(%s)", date, time, eWait.toString());
 			return eWait;
 		}
 	}
