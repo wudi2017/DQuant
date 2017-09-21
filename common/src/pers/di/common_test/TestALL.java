@@ -9,6 +9,7 @@ public class TestALL {
 	public static void main(String[] args) {
 		CSystem.start();
 		
+		CTest.ADD_TEST(TestCWatiObj.class);
 		CTest.ADD_TEST(TestCThread.class);
 		CTest.ADD_TEST(TestCQThread.class);
 		CTest.ADD_TEST(TestCUtilsDateTime.class);

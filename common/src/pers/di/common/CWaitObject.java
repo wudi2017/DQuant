@@ -1,7 +1,7 @@
 package pers.di.common;
 
 public class CWaitObject {
-	
+
 	public CWaitObject()
 	{
 		m_sync = new CSyncObj();
@@ -11,19 +11,35 @@ public class CWaitObject {
 
 	public boolean Wait(long msec)
 	{
+		boolean isNotifyReturn = false;
+		
+		long TCB = CUtilsDateTime.GetCurrentTimeMillis();
 		try {
 			synchronized(m_waitObj)
 			{
 				if(!m_bNotified)
 				{
 					m_waitObj.wait(msec);
+					long TCE = CUtilsDateTime.GetCurrentTimeMillis();
+					if(TCE - TCB >= msec)
+					{
+						isNotifyReturn = false;
+					}
+					else
+					{
+						isNotifyReturn = true;
+					}
+				}
+				else
+				{
+					isNotifyReturn = true;
 				}
 				m_bNotified = false;
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return true;
+		return isNotifyReturn;
 	}
 	
 	public boolean Notify()

@@ -555,11 +555,24 @@ public class CUtilsDateTime {
     }
     
     /*
-     * 等待日期时间
+     * 等待到某日期时间返回
+     * 
      * 等待到时间后返回true
      * 调用时已经超时返回false
      */
-    public static boolean waitDateTime(String date, String time)
+    public static boolean waitFor(String date, String time)
+    {
+    	return waitFor(date,time,new CWaitObject());
+    }
+    
+    /*
+     * 等待到某日期时间返回 或被Notify返回
+     * 
+     * 等待到时间后返回true
+     * 等待期间对象被notify返回true
+     * 调用时已经超时返回false
+     */
+    public static boolean waitFor(String date, String time, CWaitObject waitObj)
     {
     	String waitDateTimeStr = date + " " + time;
     	
@@ -578,10 +591,10 @@ public class CUtilsDateTime {
     			return true;
     		}
   
-    		try {
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			boolean bNotified = waitObj.Wait(300);
+			if(bNotified)
+			{
+				return true;
 			}
     	}
     }

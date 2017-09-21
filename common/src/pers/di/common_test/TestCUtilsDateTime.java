@@ -359,16 +359,47 @@ public class TestCUtilsDateTime {
 	{
 		String curDateStr = CUtilsDateTime.GetCurDateStr();
 		String curTimeStr = CUtilsDateTime.GetCurTimeStr();
-		String beforeTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, -2);
+		String beforeTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, -1);
 		String afterTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, 1);
 		CLog.output("TEST", "curDateStr %s beforeTimeStr = %s", curDateStr, beforeTimeStr);
 		CLog.output("TEST", "curDateStr %s afterTimeStr = %s", curDateStr, afterTimeStr);
-		boolean bwaitbefore = CUtilsDateTime.waitDateTime(curDateStr, beforeTimeStr);
-		CLog.output("TEST", "waitDateTime beforeTimeStr = %b", bwaitbefore);
-		boolean bwaitafter = CUtilsDateTime.waitDateTime(curDateStr, afterTimeStr);
-		CLog.output("TEST", "waitDateTime bwaitafter = %b", bwaitafter);
+		boolean bwaitbefore = CUtilsDateTime.waitFor(curDateStr, beforeTimeStr);
+		CTest.EXPECT_FALSE(bwaitbefore);
+		boolean bwaitafter = CUtilsDateTime.waitFor(curDateStr, afterTimeStr);
+		CTest.EXPECT_TRUE(bwaitafter);
 	}
 	
+	public static class TestThread extends Thread
+	{
+		@Override
+		public void run()
+		{
+			CThread.msleep(2000);
+			s_waitObj.Notify();
+		}
+	}
+	private static CWaitObject s_waitObj = new CWaitObject();
+	@test
+	public static void test_waitDateTimeWithObject()
+	{
+		String curDateStr = CUtilsDateTime.GetCurDateStr();
+		String curTimeStr = CUtilsDateTime.GetCurTimeStr();
+		String beforeTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, -2);
+		String afterTimeStr = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, 1);
+		String afterTimeStrlong = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTimeStr, 100);
+		CLog.output("TEST", "curDateStr %s beforeTimeStr = %s", curDateStr, beforeTimeStr);
+		CLog.output("TEST", "curDateStr %s afterTimeStr = %s", curDateStr, afterTimeStr);
+		CLog.output("TEST", "curDateStr %s afterTimeStr = %s", curDateStr, afterTimeStrlong);
+		boolean bwaitbefore = CUtilsDateTime.waitFor(curDateStr, beforeTimeStr, s_waitObj);
+		CTest.EXPECT_FALSE(bwaitbefore);
+		boolean bwaitafter = CUtilsDateTime.waitFor(curDateStr, afterTimeStr, s_waitObj);
+		CTest.EXPECT_TRUE(bwaitafter);
+		TestThread cTestThread = new TestThread();
+		cTestThread.start();
+		boolean bwaitafterlong = CUtilsDateTime.waitFor(curDateStr, afterTimeStrlong, s_waitObj);
+		CTest.EXPECT_TRUE(bwaitafterlong);
+	}
+
 	@CTest.test
 	public static void test_subTime()
 	{
@@ -405,7 +436,7 @@ public class TestCUtilsDateTime {
 		CSystem.start();
 		
 		CTest.ADD_TEST(TestCUtilsDateTime.class);
-		CTest.RUN_ALL_TESTS("");
+		CTest.RUN_ALL_TESTS();
 	
 		CSystem.stop();
 	}
