@@ -22,16 +22,6 @@ public class ScheduleTaskController {
 		public List<ScheduleTask> tasks;
 	}
 	
-	private static class Buildin_DayEndTask extends ScheduleTask
-	{
-		public Buildin_DayEndTask() {
-			super("Buildin_DayEndTask", "23:59:50");
-		}
-		@Override
-		public void doTask(String date, String time) {
-		}
-	}
-	
 	public ScheduleTaskController()
 	{
 		m_bHistoryTest = false;
@@ -143,9 +133,6 @@ public class ScheduleTaskController {
 	
 	public boolean run()
 	{
-		// add build in Buildin_DayEndTask task
-		schedule(new Buildin_DayEndTask());
-		
 		m_curDate = getBeginDate();
 		while(null != m_curDate) 
 		{
@@ -153,13 +140,22 @@ public class ScheduleTaskController {
 			CLog.output("DataEngine", "(%s %s) <<<<<< ------ new day begin ------ >>>>>>", m_curDate, m_curTime);
 			
 			TimeTasksPair timeTasksPair = getFirstTimeTasksPair();
-			while(null != timeTasksPair)
+			String waitToTime = ((null!=timeTasksPair)?timeTasksPair.time:"23:59:50");
+			while(waitToTime.compareTo("23:59:00") <= 0)
 			{
-				CUtilsDateTime.WAITRESULT wr = waitForDateTime(m_curDate, timeTasksPair.time, m_mainTimeTaskListWaitObj);
-					
+				CUtilsDateTime.WAITRESULT wr = waitForDateTime(m_curDate, waitToTime, m_mainTimeTaskListWaitObj);
+				
+				// 当天结束判断
+				if(waitToTime.compareTo("23:59:00") >= 0
+						&& (wr == CUtilsDateTime.WAITRESULT.TIME_IS_UP || wr == CUtilsDateTime.WAITRESULT.TIME_HAS_GONE))
+				{
+					break; // 当软任务调度结束
+				}
+				
+				// 任务到时
 				if(CUtilsDateTime.WAITRESULT.TIME_IS_UP == wr)
 				{
-					m_curTime = timeTasksPair.time;
+					m_curTime = waitToTime;
 					CLog.output("DataEngine", "(%s %s) doAllTask", m_curDate, m_curTime);
 					
 					// do all task begin
@@ -176,8 +172,13 @@ public class ScheduleTaskController {
 					}
 					// do all task end
 				}
+				else if(CUtilsDateTime.WAITRESULT.TIME_HAS_GONE == wr)
+				{
+					m_curTime = waitToTime;
+				}
 
-				timeTasksPair = getNearestTimeTasksPair();
+				timeTasksPair = getNearestTimeTasksPair(m_curTime);
+				waitToTime = ((null!=timeTasksPair)?timeTasksPair.time:"23:59:00");
 			}
 
 			m_curDate = getNextDate();
@@ -210,13 +211,13 @@ public class ScheduleTaskController {
 		return cTimeTasksPair;
 	}
 	
-	private TimeTasksPair getNearestTimeTasksPair()
+	private TimeTasksPair getNearestTimeTasksPair(String curTime)
 	{
 		TimeTasksPair cTimeTasksPair = null;
 		for(int i=0; i<m_mainTimeTaskList.size(); i++)
 		{
 			TimeTasksPair cTmpTimeTasksPair = m_mainTimeTaskList.get(i);
-			if(cTmpTimeTasksPair.time.compareTo(m_curTime) > 0)
+			if(cTmpTimeTasksPair.time.compareTo(curTime) > 0)
 			{
 				cTimeTasksPair = cTmpTimeTasksPair;
 				break;

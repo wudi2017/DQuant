@@ -66,7 +66,7 @@ public class TestStockDataEngine {
 	public void test_StockDataEngine()
 	{
 		EngineTester cEngineTester = new EngineTester();
-		StockDataEngine.instance().config("ListenMode", "HistoryTest 2017-01-01 2017-01-03");
+		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-01-03");
 		StockDataEngine.instance().run();
 	}
 	

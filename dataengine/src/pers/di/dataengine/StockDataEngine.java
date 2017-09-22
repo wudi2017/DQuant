@@ -15,17 +15,14 @@ public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine(); 
 	private StockDataEngine ()
 	{
-//		m_stockDataApi = StockDataApi.instance();
-//		m_configFailed = false;
-//
-//		m_curDateIgnore = false;
-//		m_curDate = "0000-00-00";
-//		m_curTime = "00:00:00";
-//		m_context = new DataContext();
-//		
-//		m_bHistoryTest = false;
-//		m_beginDate = "0000-00-00";
-//		m_endDate = "0000-00-00";
+		m_bHistoryTest = false;
+		m_beginDate = "0000-00-00";
+		m_endDate = "0000-00-00";
+		m_configFailed = false;
+		
+		m_ScheduleTaskController = new ScheduleTaskController();
+		m_stockDataApi = StockDataApi.instance();
+
 //		m_hisTranDate = new ArrayList<String>();
 //		
 //		m_mainTimeTaskList = new LinkedList<TimeTasks>();
@@ -59,14 +56,13 @@ public class StockDataEngine {
 	/*
 	 * 配置量化引擎
 	 * 
-	 * key: "ListenMode" 触发模式
+	 * key: "TriggerMode" 触发模式
 	 *     value: "HistoryTest XXXX-XX-XX XXXX-XXXX-XX" 历史回测
 	 *     value: "Realtime" 实时
 	 */
 	public int config(String key, String value)
 	{
-		// init history or realtime
-		if(0 == key.compareTo("ListenMode"))
+		if(0 == key.compareTo("TriggerMode"))
 		{
 			if(value.contains("HistoryTest"))
 			{
@@ -76,38 +72,32 @@ public class StockDataEngine {
 				m_endDate = cols[2];
 			
 				// 初始化历史交易日表
-				if(CUtilsDateTime.CheckValidDate(m_beginDate) 
-						&&CUtilsDateTime.CheckValidDate(m_endDate))
-				{
-					m_hisTranDate = new ArrayList<String>();
-					CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
-					int errKLineListSZZS = m_stockDataApi.buildDayKLineListObserver(
-							"999999", "2008-01-01", "2100-01-01", obsKLineListSZZS);
-					int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_beginDate, true);
-					int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_endDate, true);
-					
-					for(int i = iB; i <= iE; i++)  
-			        {  
-						KLine cStockDayShangZheng = obsKLineListSZZS.get(i);  
-						String curDateStr = cStockDayShangZheng.date;
-						m_hisTranDate.add(curDateStr);
-			        }
-				}
-				else
+				if( !CUtilsDateTime.CheckValidDate(m_beginDate) 
+						|| !CUtilsDateTime.CheckValidDate(m_endDate))
 				{
 					CLog.error("DataEngine", "input parameter error!");
 					m_configFailed = true;
+				}
+				else
+				{
+					m_ScheduleTaskController.config("TriggerMode", value);
 				}
 			}
 			else if(value.contains("Realtime"))
 			{
 				m_bHistoryTest = false;
+				m_ScheduleTaskController.config("TriggerMode", "Realtime");
 			}
 			else
 			{
 				CLog.error("DataEngine", "input parameter error!");
 				m_configFailed = true;
 			}
+		}
+		else
+		{
+			CLog.error("DataEngine", "input parameter error!");
+			m_configFailed = true;
 		}
 		return 0;
 	}
@@ -125,42 +115,14 @@ public class StockDataEngine {
 	
 	public int run()
 	{
+		if(m_configFailed) return -1;
+		
+		// init
+		m_ScheduleTaskController.run();
+		
 		return 0;
 	}
 	
-//	public boolean scheduleEngineTask(String time, EngineTask task)
-//	{
-//		TimeTasks cCurTimeTasks = null;
-//		
-//		for(int i=0; i<m_mainTimeTaskList.size(); i++)
-//		{
-//			TimeTasks cTimeTasks = m_mainTimeTaskList.get(i);
-//			if(time.compareTo(cTimeTasks.time) == 0)
-//			{
-//				cCurTimeTasks = cTimeTasks;
-//				break;
-//			}
-//			if(time.compareTo(cTimeTasks.time) > 0)
-//			{
-//				TimeTasks cNewTimeTasks = new TimeTasks();
-//				m_mainTimeTaskList.add(i+1, cNewTimeTasks);
-//				cCurTimeTasks = cNewTimeTasks;
-//				break;
-//			}
-//		}
-//		if(null == cCurTimeTasks)
-//		{
-//			TimeTasks cNewTimeTasks = new TimeTasks();
-//			cNewTimeTasks.time = time;
-//			m_mainTimeTaskList.add(0, cNewTimeTasks);
-//			cCurTimeTasks = cNewTimeTasks;
-//		}
-//		
-//		cCurTimeTasks.tasks.add(task);
-//
-//		return false;
-//	}
-//	
 //	public int run()
 //	{
 //		if(m_configFailed)
@@ -279,114 +241,20 @@ public class StockDataEngine {
 ////				
 //		return 0;
 //	}
-//	
-//	private void doAllTask(TimeTasks cTimeTasks)
+
+	/*
+	 * realtime模式
+	 * 	一直等待到9:25返回是否是交易日，根据上证指数实时变化确定
+	 * historymock模式
+	 * 	根据上证指数直接确定是否是交易日
+	 */
+//	private static enum TRANCHECKRESULT
 //	{
-//		if(null != cTimeTasks && null != cTimeTasks.tasks)
-//		{
-//			for(int i=0; i<cTimeTasks.tasks.size(); i++)
-//			{
-//				EngineTask task = cTimeTasks.tasks.get(i);
-//				if(null != task)
-//				{
-//					CLog.output("DataEngine", "    task(%s) run", task.getName());
-//					task.run(m_curDate, m_curTime);
-//				}
-//			}
-//		}
+//		UNKNOWN,
+//		TRANDATE_OK,
+//		TRANDATE_NG,
 //	}
-//	
-//	private String getStartDate()
-//	{
-//		if(m_bHistoryTest)
-//		{
-//			m_curDate = m_beginDate;
-//			return m_curDate;
-//		}
-//		else
-//		{
-//			m_curDate = CUtilsDateTime.GetCurDateStr();
-//			return m_curDate;
-//		}
-//	}
-//	private String getNextDate()
-//	{
-//		m_curDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(m_curDate, 1);
-//		if(m_bHistoryTest)
-//		{
-//			if(m_curDate.compareTo(m_endDate) > 0)
-//			{
-//				return null;
-//			}
-//			else
-//			{
-//				return m_curDate;
-//			}
-//		}
-//		else
-//		{
-//			return m_curDate;
-//		}
-//	}
-//	
-//	private TimeTasks getMainTimeTaskMapFirstTimeTasks()
-//	{
-//		TimeTasks cTimeTasks = null;
-//		m_curTime = "00:00:00";
-//		
-//		if(m_mainTimeTaskList.size() > 0)
-//		{
-//			cTimeTasks = m_mainTimeTaskList.get(0);
-//			m_curTime = cTimeTasks.time;
-//		}
-//		
-//		return cTimeTasks;
-//	}
-//	
-//	private TimeTasks getMainTimeTaskMapNextTimeTasks()
-//	{
-//		TimeTasks cTimeTasks = null;
-//		for(int i=0; i<m_mainTimeTaskList.size(); i++)
-//		{
-//			TimeTasks cTmpTimeTasks = m_mainTimeTaskList.get(i);
-//			if(cTmpTimeTasks.time.compareTo(m_curTime) > 0)
-//			{
-//				cTimeTasks = cTmpTimeTasks;
-//				m_curTime = cTmpTimeTasks.time;
-//			}
-//		}
-//		return cTimeTasks;
-//	}
-//	
-//	/*
-//	 * realtime模式
-//	 * 	等待日期时间成功，返回true
-//	 * 	等待失败，返回false，比如等待的时间已经过期
-//	 * historymock模式
-//	 * 	直接返回true
-//	 */
-//	private boolean waitForDateTime(String date, String time)
-//	{
-//		if(m_bHistoryTest)
-//		{
-//			return true;
-//		}
-//		else
-//		{
-//			CLog.output("DataEngine", "realtime waitting DateTime (%s %s)... ", date, time);
-//			boolean bWait = CUtilsDateTime.waitDateTime(date, time);
-//			CLog.output("DataEngine", "realtime waitting DateTime (%s %s) complete! result(%b)", date, time, bWait);
-//			return bWait;
-//		}
-//	}
-//	
-//	/*
-//	 * realtime模式
-//	 * 	一直等待到9:25返回是否是交易日，根据上证指数实时变化确定
-//	 * historymock模式
-//	 * 	根据上证指数直接确定是否是交易日
-//	 */
-//	private void checkTranDate(String date)
+//	private boolean checkTranDate(String date)
 //	{
 //		if(m_bHistoryTest)
 //		{
@@ -398,11 +266,9 @@ public class StockDataEngine {
 //				|| date.equals("2016-11-25")
 //				)
 //			{
-//				m_curDateIgnore = true;
-//				return;
+//				return false;
 //			}
-//			m_curDateIsTranDay =  m_hisTranDate.contains(date);
-//			return;
+//			return m_hisTranDate.contains(date);
 //		}
 //		else
 //		{
@@ -442,19 +308,27 @@ public class StockDataEngine {
 //		}
 //	}
 	
-	private StockDataApi m_stockDataApi;
-	private boolean m_configFailed;
+	
+	
+	
 	
 	private boolean m_curDateIgnore;
-	private String m_curDate;
-	private String m_curTime;
+
 	private DataContext m_context;
-	private boolean m_bHistoryTest;
-	private String m_beginDate;
-	private String m_endDate;
+
 	private List<String> m_hisTranDate;
 	
 
 	
 	private List<EngineTimeListener> m_timeListenerList;
+	
+	/////////////////////////////////////////////////////////////////////////////
+	
+	private boolean m_bHistoryTest;
+	private String m_beginDate;
+	private String m_endDate;
+	private boolean m_configFailed;
+	
+	private ScheduleTaskController m_ScheduleTaskController;
+	private StockDataApi m_stockDataApi;
 }

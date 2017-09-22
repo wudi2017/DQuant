@@ -117,8 +117,8 @@ public class TestScheduleTaskControler {
 		String curTime_add10s = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTime, 10);
 		String curTime_add20s = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(curTime, 20);
 		s_ScheduleTaskController.schedule(new TestScheduleTask("x", curTime_add10s, 5));
-		s_ScheduleTaskController.schedule(new TestScheduleTask("y", curTime_add10s, 1));
-		s_ScheduleTaskController.schedule(new TestScheduleTask("z", curTime_add20s, 6));
+//		s_ScheduleTaskController.schedule(new TestScheduleTask("y", curTime_add10s, 1));
+//		s_ScheduleTaskController.schedule(new TestScheduleTask("z", curTime_add20s, 6));
 		
 		TestInsertThread cTestThread = new TestInsertThread();
 		cTestThread.startThread();
@@ -126,10 +126,10 @@ public class TestScheduleTaskControler {
 	}
 	
 	public static void main(String[] args) {
-		CSystem.start();
-		//CLog.config_setTag("DataEngine", true);
+		//CSystem.start();
+		CLog.config_setTag("DataEngine", true);
 		CTest.ADD_TEST(TestScheduleTaskControler.class);
-		CTest.RUN_ALL_TESTS();
-		CSystem.stop();
+		CTest.RUN_ALL_TESTS("TestScheduleTaskControler.");
+		//CSystem.stop();
 	}
 }
