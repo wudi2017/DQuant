@@ -1,0 +1,8 @@
+package pers.di.dataengine;
+
+public enum ENGINEEVENTID {
+	TRADINGDAYSTART,
+	TRADINGDAYFINISH,
+	MINUTEDATAPUSH,
+	DAYDATAPUSH,
+}

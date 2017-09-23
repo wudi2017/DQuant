@@ -27,39 +27,31 @@ public class TestStockDataEngine {
 	{
 		public EngineTester()
 		{
-			m_timeListener = StockDataEngine.instance().createTimeListener();
-			m_timeListener.configCallback(this, "onTimeListener");
-			List<String> listenTimeList = new ArrayList<String>();
-			listenTimeList.add("08:00:00");
-			m_timeListener.configListenTime(listenTimeList);
-			
-			m_dataPusher = StockDataEngine.instance().createDataPusher();
-			m_dataPusher.configCallback(this, "onDataPush");
-			List<String> pushDataTimeList = new ArrayList<String>();
-			pushDataTimeList.add("09:00:00");
-			pushDataTimeList.add("09:30:00");
-			pushDataTimeList.add("09:40:00");
-			m_dataPusher.configPushTime(pushDataTimeList);
+			m_listener = StockDataEngine.instance().createListener();
+			m_listener.subscribe(ENGINEEVENTID.TRADINGDAYSTART, this, "onTradingDayStart");
+			m_listener.subscribe(ENGINEEVENTID.TRADINGDAYFINISH, this, "onTradingDayFinish");
+			m_listener.subscribe(ENGINEEVENTID.DAYDATAPUSH, this, "onDayDataPush");
 		}
 		
-		public void onTimeListen(String date, String time)
+		public void onTradingDayStart(EngineEventContext ctx, EngineEventObject ev)
 		{
-			CLog.output("TEST", "onTimeListen %s %s", date, time);
-			if(time.equals("08:00:00"))
-			{
-				List<String> dataList = new ArrayList<String>();
-				dataList.add("600000");
-				m_dataPusher.enableCurrentDayTimePriceNow(dataList);
-			}
+			CLog.output("TEST", "onNewDayStart %s %s", ctx.date(), ctx.time());
+			List<String> stockIDs = new ArrayList<String>();
+			stockIDs.equals("600000");
+			m_listener.setInterestMinuteDataID(stockIDs);
 		}
 		
-		public void onDataPush(DataContext ctx)
+		public void onTradingDayFinish(EngineEventContext ctx, EngineEventObject ev)
 		{
-			CLog.output("TEST", "onDataPush %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "onNewDayFinish %s %s", ctx.date(), ctx.time());
 		}
 		
-		private EngineTimeListener m_timeListener;
-		private EngineDataPusher m_dataPusher;
+		public void onDayDataPush(EngineEventContext ctx, EngineEventObject ev)
+		{
+			CLog.output("TEST", "onDayDataPush %s %s", ctx.date(), ctx.time());
+		}
+		
+		private EngineListener m_listener;
 	}
 
 	@CTest.test

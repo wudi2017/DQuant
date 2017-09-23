@@ -4,6 +4,7 @@ import java.util.*;
 
 import pers.di.common.*;
 import pers.di.dataengine.*;
+import pers.di.dataengine.StockDataEngine.EngineTask_MinuteDataPush;
 
 public class TestScheduleTaskControler {
 	
@@ -31,7 +32,7 @@ public class TestScheduleTaskControler {
 		s_ScheduleTaskController = new ScheduleTaskController();
 		testKeyList.clear();
 		
-		s_ScheduleTaskController.config("TriggerMode", "HistoryTest 2017-01-01 2017-12-03");
+		s_ScheduleTaskController.config("TriggerMode", "HistoryTest 2016-01-01 2017-01-03");
 		
 		s_ScheduleTaskController.schedule(new TestScheduleTask("80a", "08:00:00", 5));
 		s_ScheduleTaskController.schedule(new TestScheduleTask("80b", "08:00:00", 6));
@@ -89,6 +90,27 @@ public class TestScheduleTaskControler {
 		s_ScheduleTaskController = null;
 	}
 	
+	@CTest.test
+	public void performacecheck()
+	{
+		s_ScheduleTaskController = new ScheduleTaskController();
+		s_ScheduleTaskController.config("TriggerMode", "HistoryTest 2016-01-01 2017-01-03");
+		
+		for(String time="09:30:00"; time.compareTo("11:30:00")<=0; 
+				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
+		{
+			s_ScheduleTaskController.schedule(new TestScheduleTask("", time, 0));
+		}
+		for(String time="13:00:00"; time.compareTo("15:00:00")<=0; 
+				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
+		{
+			s_ScheduleTaskController.schedule(new TestScheduleTask("", time, 0));
+		}
+		
+		s_ScheduleTaskController.run();
+		
+		s_ScheduleTaskController = null;
+	}
 	public static class TestInsertThread extends CThread
 	{
 
@@ -127,7 +149,7 @@ public class TestScheduleTaskControler {
 	
 	public static void main(String[] args) {
 		//CSystem.start();
-		CLog.config_setTag("DataEngine", true);
+		//CLog.config_setTag("DataEngine", true);
 		CTest.ADD_TEST(TestScheduleTaskControler.class);
 		CTest.RUN_ALL_TESTS("TestScheduleTaskControler.");
 		//CSystem.stop();

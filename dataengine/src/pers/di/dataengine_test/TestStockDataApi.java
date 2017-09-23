@@ -180,7 +180,7 @@ public class TestStockDataApi {
 	}
 	
 	
-	public static StockDataApi s_StockDataApi = StockDataApi.instance();;
+	public static StockDataApi s_StockDataApi = StockDataApi.instance();
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);

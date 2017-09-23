@@ -94,17 +94,6 @@ public class StockDataEngine_backup {
 		return 0;
 	}
 	
-	public EngineTimeListener createTimeListener()
-	{
-		EngineTimeListener cTimeListener = new EngineTimeListener();
-		return cTimeListener;
-	}
-	
-	public EngineDataPusher createDataPusher()
-	{
-		return new EngineDataPusher();
-	}
-	
 	public int run()
 	{
 		if(m_configFailed) return -1;
@@ -312,9 +301,6 @@ public class StockDataEngine_backup {
 
 	private List<String> m_hisTranDate;
 	
-
-	
-	private List<EngineTimeListener> m_timeListenerList;
 	
 	/////////////////////////////////////////////////////////////////////////////
 	
