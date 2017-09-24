@@ -13,11 +13,6 @@ import pers.di.dataengine.common.StockUtils;
 
 public class StockDataEngine {
 	
-	public static String ENGINEEVENTID_NEWDAYSTART = "NewDayStart";
-	public static String ENGINEEVENTID_NEWDAYFINISH = "NewDayFinish";
-	public static String ENGINEEVENTID_MINUTEDATAPUSH = "MinuteDataPush";
-	public static String ENGINEEVENTID_DAYDATAPUSH = "DayDataPush";
-	
 	public static class TaskSharedSession
 	{
 		boolean bIsTranDate;
@@ -112,6 +107,11 @@ public class StockDataEngine {
 				}
 			}
 			CLog.output("DataEngine", "(%s %s) TrandingDayCheck bIsTranDate=%b", date, time, m_taskSharedSession.bIsTranDate);
+			
+			if(m_taskSharedSession.bIsTranDate)
+			{
+				//call listener
+			}
 		}
 		public List<String> m_hisTranDate;
 		private StockDataEngine m_stockDataEngine;
