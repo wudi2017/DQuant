@@ -90,7 +90,7 @@ public class ScheduleTaskController {
 			tasks.add(cScheduleTask);
 		}
 		
-		CLog.output("DataEngine", "ScheduleTaskController.schedule Task(%s %s %d)"
+		CLog.output("TaskController", "ScheduleTaskController.schedule Task(%s %s %d)"
 				, cScheduleTask.getName(), cScheduleTask.getTime(), cScheduleTask.getPriority());
 		
 		// notify
@@ -125,7 +125,7 @@ public class ScheduleTaskController {
 			}
 			else
 			{
-				CLog.error("DataEngine", "input parameter error!");
+				CLog.error("TaskController", "input parameter error!");
 			}
 		}
 		return 0;
@@ -137,7 +137,7 @@ public class ScheduleTaskController {
 		while(null != m_curDate) 
 		{
 			m_curTime = "00:00:00";
-			CLog.output("DataEngine", "(%s %s) <<<<<< ------ new day begin ------ >>>>>>", m_curDate, m_curTime);
+			CLog.output("TaskController", "(%s %s) <<<<<< ------ new day begin ------ >>>>>>", m_curDate, m_curTime);
 			
 			TimeTasksPair timeTasksPair = getFirstTimeTasksPair();
 			String waitToTime = ((null!=timeTasksPair)?timeTasksPair.time:"23:59:50");
@@ -156,7 +156,7 @@ public class ScheduleTaskController {
 				if(CUtilsDateTime.WAITRESULT.TIME_IS_UP == wr)
 				{
 					m_curTime = waitToTime;
-					CLog.output("DataEngine", "(%s %s) doAllTask", m_curDate, m_curTime);
+					CLog.output("TaskController", "(%s %s) doAllTask", m_curDate, m_curTime);
 					
 					// do all task begin
 					if(null != timeTasksPair && null != timeTasksPair.tasks)
@@ -194,9 +194,9 @@ public class ScheduleTaskController {
 		}
 		else
 		{
-			CLog.output("DataEngine", "realtime waitting DateTime (%s %s)... ", date, time);
+			CLog.output("TaskController", "realtime waitting DateTime (%s %s)... ", date, time);
 			CUtilsDateTime.WAITRESULT eWait = CUtilsDateTime.waitFor(date, time, watiObj);
-			CLog.output("DataEngine", "realtime waitting DateTime (%s %s) complete! result(%s)", date, time, eWait.toString());
+			CLog.output("TaskController", "realtime waitting DateTime (%s %s) complete! result(%s)", date, time, eWait.toString());
 			return eWait;
 		}
 	}

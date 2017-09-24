@@ -18,17 +18,47 @@ public class StockDataEngine {
 	public static String ENGINEEVENTID_MINUTEDATAPUSH = "MinuteDataPush";
 	public static String ENGINEEVENTID_DAYDATAPUSH = "DayDataPush";
 	
+	public static class TaskSharedSession
+	{
+		boolean bIsTranDate;
+	}
+	
 	public static class EngineTask_TrandingDayCheck extends ScheduleTask
 	{
-		public EngineTask_TrandingDayCheck(String time, StockDataEngine sde) {
+		public EngineTask_TrandingDayCheck(String time, StockDataEngine sde, TaskSharedSession tss) {
 			super("TrandingDayCheck", time, 16);
-			m_dataEngine = sde;
+			m_hisTranDate = null;
+			m_stockDataEngine = sde;
+			m_taskSharedSession = tss;
+		}
+		public void initializeHistoryTranDate()
+		{
+			m_hisTranDate = new ArrayList<String>();
+			CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
+			int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
+					"999999", "2008-01-01", "2100-01-01", obsKLineListSZZS);
+			int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_stockDataEngine.m_beginDate, true);
+			int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_stockDataEngine.m_endDate, true);
+			
+			for(int i = iB; i <= iE; i++)  
+	        {  
+				KLine cStockDayShangZheng = obsKLineListSZZS.get(i);  
+				String curDateStr = cStockDayShangZheng.date;
+				m_hisTranDate.add(curDateStr);
+	        }
 		}
 		@Override
 		public void doTask(String date, String time) {
-			CLog.output("DataEngine", "(%s %s) TrandingDayCheck", date, time);
-			if(m_dataEngine.m_bHistoryTest)
+			CLog.output("DataEngine", "(%s %s) TrandingDayCheck...", date, time);
+			m_taskSharedSession.bIsTranDate = false;
+			
+			if(m_stockDataEngine.m_bHistoryTest)
 			{
+				if(null == m_hisTranDate)
+				{
+					initializeHistoryTranDate();
+				}
+				
 				// 数据错误排除,经过测试 次日期内无法从网络获取数据
 				if(
 					date.equals("2013-03-08")
@@ -37,17 +67,20 @@ public class StockDataEngine {
 					|| date.equals("2016-11-25")
 					)
 				{
-					return false;
+					m_taskSharedSession.bIsTranDate = false;
 				}
-				return m_hisTranDate.contains(date);
+				else
+				{
+					m_taskSharedSession.bIsTranDate = m_hisTranDate.contains(date);
+				}
 			}
 			else
 			{
 				// 确认今天是否是交易日
-				String yesterdayDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(m_curDate, -1);
-				StockDataEngine.instance().updateLocalStocks("999999", yesterdayDate);
+				String yesterdayDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(date, -1);
+				StockDataApi.instance().updateLocalStocks("999999", yesterdayDate);
 				CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
-				int errKLineListSZZS = StockDataEngine.instance().buildDayKLineListObserver(
+				int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
 						"999999", "2000-01-01", "2100-01-01", obsKLineListSZZS);
 				for(int i = 0; i < obsKLineListSZZS.size(); i++)  
 		        {  
@@ -55,61 +88,87 @@ public class StockDataEngine {
 					String checkDateStr = cStockDayShangZheng.date;
 					if(checkDateStr.equals(date))
 					{
-						return true;
+						m_taskSharedSession.bIsTranDate = true;
+						break;
 					}
 		        }
 				
-				for(int i = 0; i < 5; i++) // 试图5次来确认
+				if(false == m_taskSharedSession.bIsTranDate)
 				{
-					RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-					int errRealTimeInfo = StockDataEngine.instance().loadRealTimeInfo("999999", ctnRealTimeInfo);
-					if(0 == errRealTimeInfo)
+					for(int i = 0; i < 5; i++) // 试图5次来确认
 					{
-						if(ctnRealTimeInfo.date.compareTo(date) == 0)
+						RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
+						int errRealTimeInfo = StockDataApi.instance().loadRealTimeInfo("999999", ctnRealTimeInfo);
+						if(0 == errRealTimeInfo)
 						{
-							return true;
+							if(ctnRealTimeInfo.date.compareTo(date) == 0)
+							{
+								m_taskSharedSession.bIsTranDate = true;
+								break;
+							}
 						}
+						CThread.msleep(1000);
 					}
-					CThread.msleep(1000);
 				}
-				return false;
 			}
+			CLog.output("DataEngine", "(%s %s) TrandingDayCheck bIsTranDate=%b", date, time, m_taskSharedSession.bIsTranDate);
 		}
-		
-		private StockDataEngine m_dataEngine;
+		public List<String> m_hisTranDate;
+		private StockDataEngine m_stockDataEngine;
+		private TaskSharedSession m_taskSharedSession;
 	}
 	
 	public static class EngineTask_MinuteDataPush extends ScheduleTask
 	{
-		public EngineTask_MinuteDataPush(String time) {
+		public EngineTask_MinuteDataPush(String time, TaskSharedSession tss) {
 			super("MinuteDataPush", time, 16);
+			m_taskSharedSession = tss;
 		}
 		@Override
 		public void doTask(String date, String time) {
+			if(!m_taskSharedSession.bIsTranDate)
+			{
+				return;
+			}
 			CLog.output("DataEngine", "MinuteDataPush");
 		}
+		private TaskSharedSession m_taskSharedSession;
 	}
 	
 	public static class EngineTask_AllDataUpdate extends ScheduleTask
 	{
-		public EngineTask_AllDataUpdate(String time) {
+		public EngineTask_AllDataUpdate(String time, TaskSharedSession tss) {
 			super("AllDataUpdate", time, 16);
+			m_taskSharedSession = tss;
 		}
 		@Override
 		public void doTask(String date, String time) {
-			CLog.output("DataEngine", "AllDataUpdate");
+			if(!m_taskSharedSession.bIsTranDate)
+			{
+				return;
+			}
+			CLog.output("DataEngine", "(%s %s) AllDataUpdate...", date, time);
+			StockDataApi.instance().updateAllLocalStocks(date);
+			CLog.output("DataEngine", "(%s %s) AllDataUpdate Success", date, time);
 		}
+		private TaskSharedSession m_taskSharedSession;
 	}
 	
 	public static class EngineTask_DayFinish extends ScheduleTask
 	{
-		public EngineTask_DayFinish(String time) {
+		public EngineTask_DayFinish(String time, TaskSharedSession tss) {
 			super("DayFinish", time, 16);
+			m_taskSharedSession = tss;
 		}
 		@Override
 		public void doTask(String date, String time) {
+			if(!m_taskSharedSession.bIsTranDate)
+			{
+				return;
+			}
 			CLog.output("DataEngine", "DayFinish");
 		}
+		private TaskSharedSession m_taskSharedSession;
 	}
 	
 	
@@ -207,19 +266,20 @@ public class StockDataEngine {
 		if(m_configFailed) return -1;
 		
 		// init all task
-		m_ScheduleTaskController.schedule(new EngineTask_TrandingDayCheck("09:27:00"));
+		TaskSharedSession cTaskSharedSession = new TaskSharedSession();
+		m_ScheduleTaskController.schedule(new EngineTask_TrandingDayCheck("09:27:00", this, cTaskSharedSession));
 		for(String time="09:30:00"; time.compareTo("11:30:00")<=0; 
 				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
 		{
-			m_ScheduleTaskController.schedule(new EngineTask_MinuteDataPush(time));
+			m_ScheduleTaskController.schedule(new EngineTask_MinuteDataPush(time, cTaskSharedSession));
 		}
 		for(String time="13:00:00"; time.compareTo("15:00:00")<=0; 
 				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
 		{
-			m_ScheduleTaskController.schedule(new EngineTask_MinuteDataPush(time));
+			m_ScheduleTaskController.schedule(new EngineTask_MinuteDataPush(time, cTaskSharedSession));
 		}
-		m_ScheduleTaskController.schedule(new EngineTask_AllDataUpdate("19:00:00"));
-		m_ScheduleTaskController.schedule(new EngineTask_DayFinish("21:00:00"));
+		m_ScheduleTaskController.schedule(new EngineTask_AllDataUpdate("19:00:00", cTaskSharedSession));
+		m_ScheduleTaskController.schedule(new EngineTask_DayFinish("21:00:00", cTaskSharedSession));
 		
 		// run ScheduleTaskController
 		m_ScheduleTaskController.run();
