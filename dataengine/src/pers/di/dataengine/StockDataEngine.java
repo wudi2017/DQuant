@@ -112,14 +112,12 @@ public class StockDataEngine {
 	
 	public void subscribe(EngineListener listener, ENGINEEVENTID ID, Object obj, String methodname)
 	{
-		if(ID == ENGINEEVENTID.TRADINGDAYSTART)
-		{
-		}
+		m_EngineTaskSharedSession.subscribe(listener, ID, obj, methodname);
 	}
 	
 	public void setInterestMinuteDataID(EngineListener listener, List<String> stockIDs)
 	{
-		
+		m_EngineTaskSharedSession.setInterestMinuteDataID(listener, stockIDs);
 	}
 	
 	private EngineTaskSharedSession m_EngineTaskSharedSession;

@@ -58,13 +58,13 @@ public class TestStockDataEngine {
 	public void test_StockDataEngine()
 	{
 		EngineTester cEngineTester = new EngineTester();
-		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-01-03");
+		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2016-01-01 2017-01-03");
 		StockDataEngine.instance().run();
 	}
 	
 	public static void main(String[] args) {
 		CSystem.start();
-		CLog.config_setTag("DataEngine", true);
+		//CLog.config_setTag("DataEngine", true);
 		CTest.ADD_TEST(TestStockDataEngine.class);
 		CTest.RUN_ALL_TESTS("");
 		CSystem.stop();

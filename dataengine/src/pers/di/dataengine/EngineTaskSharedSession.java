@@ -1,7 +1,22 @@
 package pers.di.dataengine;
 
+import java.lang.reflect.Method;
+import java.util.*;
+
+import org.json.JSONObject;
+
+import pers.di.common.CLog;
+
 public class EngineTaskSharedSession {
 	
+	public EngineTaskSharedSession()
+	{
+		m_lcb_tranDayStart = new ArrayList<ListenerCallback>();
+	}
+	
+	/*
+	 * bIsTranDate
+	 */
 	public boolean bIsTranDate()
 	{
 		return bIsTranDate;
@@ -12,6 +27,9 @@ public class EngineTaskSharedSession {
 	private boolean bIsTranDate;
 	
 	
+	/*
+	 * bHistoryTest
+	 */
 	public boolean bHistoryTest()
 	{
 		return m_bHistoryTest;
@@ -21,7 +39,9 @@ public class EngineTaskSharedSession {
 	}
 	private boolean m_bHistoryTest;
 	
-	
+	/*
+	 * beginDate
+	 */
 	public String beginDate()
 	{
 		return m_beginDate;
@@ -31,7 +51,9 @@ public class EngineTaskSharedSession {
 	}
 	private String m_beginDate;
 	
-	
+	/*
+	 * endDate
+	 */
 	public String endDate()
 	{
 		return m_endDate;
@@ -41,7 +63,9 @@ public class EngineTaskSharedSession {
 	}
 	private String m_endDate;
 	
-	
+	/*
+	 * bConfigFailed
+	 */
 	public boolean bConfigFailed()
 	{
 		return m_configFailed;
@@ -50,4 +74,44 @@ public class EngineTaskSharedSession {
 		m_configFailed = configFailed;
 	}
 	private boolean m_configFailed;
+	
+	
+	/*
+	 * subscribe
+	 */
+	public class ListenerCallback
+	{
+		public EngineListener listener;
+		public Object obj;
+		public Method md;
+	}
+	private List<ListenerCallback> m_lcb_tranDayStart;
+	public void subscribe(EngineListener listener, ENGINEEVENTID ID, Object obj, String methodname)
+	{
+		if(ID == ENGINEEVENTID.TRADINGDAYSTART)
+		{
+			try {
+				if(null != obj && null!= methodname)
+				{
+					Class<?> clz = Class.forName(obj.getClass().getName());
+					Method md = clz.getMethod(methodname, EngineEventContext.class, EngineEventObject.class);
+					ListenerCallback lcb = new ListenerCallback();
+					lcb.listener = listener;
+					lcb.obj = obj;
+					lcb.md = md;
+					m_lcb_tranDayStart.add(lcb);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	public List<ListenerCallback> getLCBTranDayStart()
+	{
+		return m_lcb_tranDayStart;
+	}
+	
+	public void setInterestMinuteDataID(EngineListener listener, List<String> stockIDs)
+	{
+	}
 }

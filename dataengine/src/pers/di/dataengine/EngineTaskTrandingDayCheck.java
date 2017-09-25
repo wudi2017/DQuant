@@ -1,5 +1,6 @@
 package pers.di.dataengine;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import pers.di.common.CListObserver;
 import pers.di.common.CLog;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
+import pers.di.dataengine.EngineTaskSharedSession.ListenerCallback;
 import pers.di.dataengine.baseapi.StockDataApi;
 import pers.di.dataengine.common.KLine;
 import pers.di.dataengine.common.RealTimeInfo;
@@ -109,6 +111,16 @@ public class EngineTaskTrandingDayCheck extends ScheduleTask
 		if(m_taskSharedSession.bIsTranDate())
 		{
 			//call listener
+			List<ListenerCallback> lcbs = m_taskSharedSession.getLCBTranDayStart();
+			for(int i=0; i<lcbs.size(); i++)
+			{
+				ListenerCallback lcb = lcbs.get(i);
+				try {
+					lcb.md.invoke(lcb.obj, new EngineEventContext(date, time), new EngineEventObject());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	public List<String> m_hisTranDate;
