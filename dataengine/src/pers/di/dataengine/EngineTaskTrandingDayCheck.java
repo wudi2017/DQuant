@@ -106,11 +106,11 @@ public class EngineTaskTrandingDayCheck extends ScheduleTask
 		}
 		
 		m_taskSharedSession.setIsTranDate(bIsTranDate);
-		CLog.output("DataEngine", "(%s %s) TrandingDayCheck bIsTranDate=%b", date, time, bIsTranDate);
+		CLog.output("DataEngine", "(%s %s) EngineTaskTrandingDayCheck bIsTranDate=%b", date, time, bIsTranDate);
 		
 		if(m_taskSharedSession.bIsTranDate())
 		{
-			//call listener
+			//call listener: TRADINGDAYSTART
 			List<ListenerCallback> lcbs = m_taskSharedSession.getLCBTranDayStart();
 			for(int i=0; i<lcbs.size(); i++)
 			{

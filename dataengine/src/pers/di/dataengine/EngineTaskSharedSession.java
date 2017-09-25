@@ -12,6 +12,7 @@ public class EngineTaskSharedSession {
 	public EngineTaskSharedSession()
 	{
 		m_lcb_tranDayStart = new ArrayList<ListenerCallback>();
+		m_lcb_tranDayFinish = new ArrayList<ListenerCallback>();
 	}
 	
 	/*
@@ -86,6 +87,7 @@ public class EngineTaskSharedSession {
 		public Method md;
 	}
 	private List<ListenerCallback> m_lcb_tranDayStart;
+	private List<ListenerCallback> m_lcb_tranDayFinish;
 	public void subscribe(EngineListener listener, ENGINEEVENTID ID, Object obj, String methodname)
 	{
 		if(ID == ENGINEEVENTID.TRADINGDAYSTART)
@@ -105,10 +107,31 @@ public class EngineTaskSharedSession {
 				e.printStackTrace();
 			}
 		}
+		else if(ID == ENGINEEVENTID.TRADINGDAYFINISH)
+		{
+			try {
+				if(null != obj && null!= methodname)
+				{
+					Class<?> clz = Class.forName(obj.getClass().getName());
+					Method md = clz.getMethod(methodname, EngineEventContext.class, EngineEventObject.class);
+					ListenerCallback lcb = new ListenerCallback();
+					lcb.listener = listener;
+					lcb.obj = obj;
+					lcb.md = md;
+					m_lcb_tranDayFinish.add(lcb);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	public List<ListenerCallback> getLCBTranDayStart()
 	{
 		return m_lcb_tranDayStart;
+	}
+	public List<ListenerCallback> getLCBTranDayFinish()
+	{
+		return m_lcb_tranDayFinish;
 	}
 	
 	public void setInterestMinuteDataID(EngineListener listener, List<String> stockIDs)

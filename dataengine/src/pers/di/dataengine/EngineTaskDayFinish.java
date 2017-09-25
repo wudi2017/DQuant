@@ -1,6 +1,9 @@
 package pers.di.dataengine;
 
+import java.util.List;
+
 import pers.di.common.CLog;
+import pers.di.dataengine.EngineTaskSharedSession.ListenerCallback;
 
 public class EngineTaskDayFinish extends ScheduleTask 
 {
@@ -14,7 +17,18 @@ public class EngineTaskDayFinish extends ScheduleTask
 		{
 			return;
 		}
-		CLog.output("DataEngine", "DayFinish");
+		CLog.output("DataEngine", "(%s %s) EngineTaskDayFinish", date, time);
+		//call listener
+		List<ListenerCallback> lcbs = m_taskSharedSession.getLCBTranDayFinish();
+		for(int i=0; i<lcbs.size(); i++)
+		{
+			ListenerCallback lcb = lcbs.get(i);
+			try {
+				lcb.md.invoke(lcb.obj, new EngineEventContext(date, time), new EngineEventObject());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	private EngineTaskSharedSession m_taskSharedSession;
 }

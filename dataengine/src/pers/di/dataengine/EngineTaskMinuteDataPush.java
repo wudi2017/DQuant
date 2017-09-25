@@ -14,7 +14,7 @@ public class EngineTaskMinuteDataPush extends ScheduleTask
 		{
 			return;
 		}
-		CLog.output("DataEngine", "MinuteDataPush");
+		CLog.output("DataEngine", "(%s %s) EngineTaskMinuteDataPush", date, time);
 	}
 	private EngineTaskSharedSession m_taskSharedSession;
 }
