@@ -4,7 +4,6 @@ import java.util.*;
 
 import pers.di.common.*;
 import pers.di.dataengine.*;
-import pers.di.dataengine.StockDataEngine.EngineTask_MinuteDataPush;
 
 public class TestScheduleTaskControler {
 	
