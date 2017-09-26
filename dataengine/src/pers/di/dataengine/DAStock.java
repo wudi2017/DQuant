@@ -1,8 +1,8 @@
 package pers.di.dataengine;
 
 import pers.di.common.CObjectObserver;
-import pers.di.dataengine.baseapi.StockDataApi;
-import pers.di.dataengine.common.StockInfo;
+import pers.di.dataapi.common.StockInfo;
+import pers.di.dataapi.StockDataApi;
 
 public class DAStock {
 	

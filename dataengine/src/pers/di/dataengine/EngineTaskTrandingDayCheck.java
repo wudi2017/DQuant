@@ -8,11 +8,11 @@ import pers.di.common.CListObserver;
 import pers.di.common.CLog;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
+import pers.di.dataapi.common.KLine;
+import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.StockUtils;
 import pers.di.dataengine.EngineTaskSharedSession.ListenerCallback;
-import pers.di.dataengine.baseapi.StockDataApi;
-import pers.di.dataengine.common.KLine;
-import pers.di.dataengine.common.RealTimeInfo;
-import pers.di.dataengine.common.StockUtils;
+import pers.di.dataapi.StockDataApi;
 
 public class EngineTaskTrandingDayCheck extends ScheduleTask
 {

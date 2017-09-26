@@ -1,6 +1,8 @@
 package pers.di.quantengine_test;
 
 import pers.di.common.CLog;
+import pers.di.dataapi.common.KLine;
+import pers.di.dataapi.common.TimePrice;
 import pers.di.dataengine.common.*;
 import pers.di.quantengine.*;
 import pers.di.quantengine.dataaccessor.*;

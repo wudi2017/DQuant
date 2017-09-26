@@ -1,8 +1,8 @@
 package pers.di.dataengine;
 
 import pers.di.common.CListObserver;
-import pers.di.dataengine.baseapi.StockDataApi;
-import pers.di.dataengine.common.TimePrice;
+import pers.di.dataapi.common.TimePrice;
+import pers.di.dataapi.StockDataApi;
 
 public class DATimePrices {
 	public DATimePrices(DAPool pool, String stockID, String date)

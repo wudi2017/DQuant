@@ -3,6 +3,8 @@ package pers.di.quantengine.dataaccessor;
 import java.util.*;
 
 import pers.di.common.*;
+import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.TimePrice;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.common.*;
 

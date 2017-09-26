@@ -1,7 +1,7 @@
 package pers.di.dataengine;
 
 import pers.di.common.CListObserver;
-import pers.di.dataengine.baseapi.StockDataApi;
+import pers.di.dataapi.StockDataApi;
 
 public class DAPool {
 	

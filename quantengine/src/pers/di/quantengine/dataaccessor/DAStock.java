@@ -1,6 +1,7 @@
 package pers.di.quantengine.dataaccessor;
 
 import pers.di.common.*;
+import pers.di.dataapi.common.StockInfo;
 import pers.di.dataengine.StockDataEngine;
 import pers.di.dataengine.common.*;
 import pers.di.common.*;

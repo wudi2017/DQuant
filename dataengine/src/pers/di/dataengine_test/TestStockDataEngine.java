@@ -9,10 +9,11 @@ import pers.di.common.CFileSystem;
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
 import pers.di.common.CUtilsDateTime;
+import pers.di.dataapi.common.KLine;
+import pers.di.dataapi.common.TimePrice;
+import pers.di.dataapi_test.TestCommonHelper;
 import pers.di.dataengine.*;
-import pers.di.dataengine.baseapi.*;
-import pers.di.dataengine.common.KLine;
-import pers.di.dataengine.common.TimePrice;
+import pers.di.dataapi.*;
 
 public class TestStockDataEngine {
 	
