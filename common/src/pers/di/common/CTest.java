@@ -223,7 +223,7 @@ public abstract class CTest {
 							&& !filter.equals(""))
 					{
 						String testName= clsSimpleName + "." + methodName;
-						if(testName.startsWith(filter))
+						if(testName.contains(filter))
 						{
 							bCallTest = true;
 						}
