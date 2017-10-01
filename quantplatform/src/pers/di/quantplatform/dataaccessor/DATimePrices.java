@@ -10,9 +10,25 @@ public class DATimePrices {
 	{
 		m_obsTimePriceList = new CListObserver<TimePrice>();
 		int errObsTimePriceList = -1;
-		errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
-				stockID, date, 
-				"09:30:00", "15:00:00", m_obsTimePriceList);
+		int cmp = date.compareTo(pool.date());
+		if(cmp < 0)
+		{
+			// 获取日期是测试日期之前的天，加载引擎数据，全天数据build
+			errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
+					stockID, date, 
+					"09:30:00", "15:00:00", m_obsTimePriceList);
+		}
+		else if(cmp == 0)
+		{
+			// 获取日期在测试日期当天，从当天缓存中加载
+			pool.currentDayTimePriceCache().buildMinTimePriceListObserver(
+					stockID, 
+					m_obsTimePriceList);
+		}
+		else
+		{
+			// 获取日期在测试日期之后，不进行build
+		}
 	}
 	public int size()
 	{

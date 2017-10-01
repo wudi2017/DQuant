@@ -99,9 +99,10 @@ public class QuantSession {
 				timestr = "09:27:00";
 				waitForDateTime(dateStr, timestr);
 				CLog.output("QEngine", "[%s %s] triger.onDayBegin ", dateStr, timestr);
-				m_context.setDateTime(dateStr, timestr);
 				if(null != m_stratety)
 				{
+					m_context.setCurrentDayInterestMinuteDataIDs(m_stratety.getCurrentDayInterestMinuteDataIDs());
+					m_context.setDateTime(dateStr, timestr);
 					m_stratety.onDayStart(m_context);
 				}
 
@@ -115,9 +116,9 @@ public class QuantSession {
 					if(waitForDateTime(dateStr, timestr))
 					{
 						CLog.output("QEngine", "[%s %s] triger.onEveryMinute ", dateStr, timestr);
-						m_context.setDateTime(dateStr, timestr);
 						if(null != m_stratety)
 						{
+							m_context.setDateTime(dateStr, timestr);
 							m_stratety.onMinuteData(m_context);
 						}
 					}
@@ -133,9 +134,9 @@ public class QuantSession {
 					if(waitForDateTime(dateStr, timestr))
 					{
 						CLog.output("QEngine", "[%s %s] triger.onEveryMinute ", dateStr, timestr);
-						m_context.setDateTime(dateStr, timestr);
 						if(null != m_stratety)
 						{
+							m_context.setDateTime(dateStr, timestr);
 							m_stratety.onMinuteData(m_context);
 						}
 					}
@@ -155,10 +156,11 @@ public class QuantSession {
 				timestr = "21:00:00";
 				waitForDateTime(dateStr, timestr);
 				CLog.output("QEngine", "[%s %s] triger.onDayEnd ", dateStr, timestr);
-				m_context.setDateTime(dateStr, timestr);
 				if(null != m_stratety)
 				{
+					m_context.setDateTime(dateStr, timestr);
 					m_stratety.onDayFinish(m_context);
+					m_context.clearCurrentDayInterestMinuteDataIDs();
 				}
 			}
 			

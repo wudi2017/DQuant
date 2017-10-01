@@ -1,5 +1,7 @@
 package pers.di.quantplatform;
 
+import java.util.*;
+
 import pers.di.quantplatform.accountproxy.*;
 import pers.di.quantplatform.dataaccessor.*;
 
@@ -19,6 +21,16 @@ public class QuantContext {
 	public String time()
 	{
 		return m_time;
+	}
+	
+	public void setCurrentDayInterestMinuteDataIDs(List<String> IDs)
+	{
+		m_dataAccessPool.setCurrentDayInterestMinuteDataIDs(IDs);
+	}
+	
+	public void clearCurrentDayInterestMinuteDataIDs()
+	{
+		m_dataAccessPool.clearCurrentDayInterestMinuteDataIDs();
 	}
 	
 	public void setDateTime(String date, String time)
