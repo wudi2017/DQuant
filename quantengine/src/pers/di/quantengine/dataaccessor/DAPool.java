@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.common.*;
-import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.StockDataEngine.*;
-import pers.di.dataengine.common.*;
+import pers.di.dataapi.*;
+import pers.di.dataapi.common.*;
 
 
 /*
@@ -27,7 +26,7 @@ public class DAPool {
 	{
 		// 构建所有股票ID
 		m_obsStockIDList = new CListObserver<String>();
-		StockDataEngine.instance().buildAllStockIDObserver(m_obsStockIDList);
+		StockDataApi.instance().buildAllStockIDObserver(m_obsStockIDList);
 		
 		// 构建当日缓存数据
 		if(!m_date.equals(date))

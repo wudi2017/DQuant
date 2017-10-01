@@ -8,10 +8,7 @@ import pers.di.common.*;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.StockUtils;
-import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.StockDataEngine.*;
-import pers.di.dataengine.common.*;
-import pers.di.quantengine.dataaccessor.*;
+import pers.di.dataapi.*;
 
 public class QuantEngine {
 	/*
@@ -44,7 +41,7 @@ public class QuantEngine {
 				{
 					m_hisTranDate = new ArrayList<String>();
 					CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
-					int errKLineListSZZS = StockDataEngine.instance().buildDayKLineListObserver(
+					int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
 							"999999", "2008-01-01", "2100-01-01", obsKLineListSZZS);
 					int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_beginDate, true);
 					int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_endDate, true);
@@ -143,7 +140,7 @@ public class QuantEngine {
 				if(waitForDateTime(dateStr, timestr))
 				{
 					CLog.output("QEngine", "[%s %s] update market data ", dateStr, timestr);
-					StockDataEngine.instance().updateAllLocalStocks(dateStr);
+					StockDataApi.instance().updateAllLocalStocks(dateStr);
 				}
 				
 				// 20:00 触发trigger.onDayEnd
@@ -212,7 +209,8 @@ public class QuantEngine {
 		else
 		{
 			CLog.output("QEngine", "realtime waitting DateTime (%s %s)... ", date, time);
-			boolean bWait = CUtilsDateTime.waitDateTime(date, time);
+			CUtilsDateTime.WAITRESULT wr =  CUtilsDateTime.waitFor(date, time);
+			boolean bWait = wr==CUtilsDateTime.WAITRESULT.TIME_IS_UP?true:false;
 			CLog.output("QEngine", "realtime waitting DateTime (%s %s) complete! result(%b)", date, time, bWait);
 			return bWait;
 		}
@@ -244,9 +242,9 @@ public class QuantEngine {
 		{
 			// 确认今天是否是交易日
 			String yesterdayDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(m_curDate, -1);
-			StockDataEngine.instance().updateLocalStocks("999999", yesterdayDate);
+			StockDataApi.instance().updateLocalStocks("999999", yesterdayDate);
 			CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
-			int errKLineListSZZS = StockDataEngine.instance().buildDayKLineListObserver(
+			int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
 					"999999", "2000-01-01", "2100-01-01", obsKLineListSZZS);
 			for(int i = 0; i < obsKLineListSZZS.size(); i++)  
 	        {  
@@ -261,7 +259,7 @@ public class QuantEngine {
 			for(int i = 0; i < 5; i++) // 试图5次来确认
 			{
 				RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-				int errRealTimeInfo = StockDataEngine.instance().loadRealTimeInfo("999999", ctnRealTimeInfo);
+				int errRealTimeInfo = StockDataApi.instance().loadRealTimeInfo("999999", ctnRealTimeInfo);
 				if(0 == errRealTimeInfo)
 				{
 					if(ctnRealTimeInfo.date.compareTo(date) == 0)

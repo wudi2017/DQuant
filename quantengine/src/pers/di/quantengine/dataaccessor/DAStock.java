@@ -1,9 +1,8 @@
 package pers.di.quantengine.dataaccessor;
 
 import pers.di.common.*;
-import pers.di.dataapi.common.StockInfo;
-import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.common.*;
+import pers.di.dataapi.*;
+import pers.di.dataapi.common.*;
 import pers.di.common.*;
 
 public class DAStock {
@@ -13,7 +12,7 @@ public class DAStock {
 		m_pool = pool;
 		m_stockID = stockID;
 		obsStockInfo = new CObjectObserver<StockInfo>();
-		int errStockInfo = StockDataEngine.instance().buildStockInfoObserver(stockID, obsStockInfo);
+		int errStockInfo = StockDataApi.instance().buildStockInfoObserver(stockID, obsStockInfo);
 		if(0 != errStockInfo)
 		{
 			obsStockInfo.build(new StockInfo());

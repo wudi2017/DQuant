@@ -10,7 +10,7 @@ public abstract class QuantStrategy {
 	
 	public abstract void onDayFinish(QuantContext ctx);
 	
-	public final boolean setCurrentDayInterestMinuteDataID(String ID)
+	public final boolean addCurrentDayInterestMinuteDataID(String ID)
 	{
 		return true;
 	}

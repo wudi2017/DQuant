@@ -2,8 +2,8 @@ package pers.di.quantengine.dataaccessor;
 
 import pers.di.common.*;
 import pers.di.dataapi.common.KLine;
-import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.common.*;
+import pers.di.dataapi.*;
+import pers.di.dataapi.common.*;
 
 /*
  * -----------------------------------------------------------------------
@@ -14,7 +14,7 @@ public class DAKLines
 	public DAKLines(DAPool pool, String stockID)
 	{
 		m_obsKLineList = new CListObserver<KLine>();
-		StockDataEngine.instance().buildDayKLineListObserver(
+		StockDataApi.instance().buildDayKLineListObserver(
 				stockID, "2000-01-01", pool.date(), m_obsKLineList);
 		
 	}

@@ -5,8 +5,8 @@ import java.util.*;
 import pers.di.common.*;
 import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.TimePrice;
-import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.common.*;
+import pers.di.dataapi.*;
+import pers.di.dataapi.common.*;
 
 public class CurrentDayTimePriceCache {
 	
@@ -62,14 +62,14 @@ public class CurrentDayTimePriceCache {
 			{
 				// 缓存中有数据，加载后面的部分
 				String beginTime = cObsTimePrice.get(0).time;
-				int errObsTimePriceList = StockDataEngine.instance().buildMinTimePriceListObserver(
+				int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
 						stockID, m_date, 
 						beginTime, m_time, cObsTimePrice);
 			}
 			else
 			{
 				// 缓存中没数据, 只从历史数据中加载当时时间的
-				int errObsTimePriceList = StockDataEngine.instance().buildMinTimePriceListObserver(
+				int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
 						stockID, m_date, 
 						m_time, m_time, cObsTimePrice);
 			}
@@ -115,7 +115,7 @@ public class CurrentDayTimePriceCache {
 			{
 				// 添加实时数据
 				RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-				int error = StockDataEngine.instance().loadRealTimeInfo(stockID, ctnRealTimeInfo);
+				int error = StockDataApi.instance().loadRealTimeInfo(stockID, ctnRealTimeInfo);
 				if(0 == error)
 				{
 					TimePrice cTimePrice = new TimePrice();

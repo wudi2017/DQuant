@@ -138,6 +138,14 @@ public class EngineTaskSharedSession {
 		return m_lcb_tranDayFinish;
 	}
 	
+	
+	/*
+	 * InterestMinuteDataID
+	 */
+	public class ListenerInterestMinuteIDs
+	{
+		
+	}
 	public void setInterestMinuteDataID(EngineListener listener, List<String> stockIDs)
 	{
 	}

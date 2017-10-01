@@ -5,6 +5,12 @@ import pers.di.quantplatform.dataaccessor.*;
 
 public class QuantContext {
 	
+	public QuantContext(AccountProxy acountProxy)
+	{
+		m_dataAccessPool = new DAPool(); 
+		m_accountProxy = acountProxy;
+	}
+	
 	public String date()
 	{
 		return m_date;
@@ -15,16 +21,26 @@ public class QuantContext {
 		return m_time;
 	}
 	
-	public AccountProxy accountProxy()
+	public void setDateTime(String date, String time)
 	{
-		return null;
+		m_date = date;
+		m_time = time;
+		m_dataAccessPool.build(m_date, m_time);
 	}
 	
-	public DAPool dataPool()
+	public AccountProxy ap()
 	{
-		return new DAPool();
+		return m_accountProxy;
+	}
+	
+	public DAPool pool()
+	{
+		return m_dataAccessPool;
 	}
 	
 	private String m_date;
 	private String m_time;
+	
+	private DAPool m_dataAccessPool;
+	private AccountProxy m_accountProxy;
 }

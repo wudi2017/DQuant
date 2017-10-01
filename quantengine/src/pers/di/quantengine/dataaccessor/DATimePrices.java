@@ -2,8 +2,8 @@ package pers.di.quantengine.dataaccessor;
 
 import pers.di.common.*;
 import pers.di.dataapi.common.TimePrice;
-import pers.di.dataengine.StockDataEngine;
-import pers.di.dataengine.common.*;
+import pers.di.dataapi.*;
+import pers.di.dataapi.common.*;
 
 public class DATimePrices {
 	
@@ -15,7 +15,7 @@ public class DATimePrices {
 		if(cmp < 0)
 		{
 			// 获取日期是测试日期之前的天，加载引擎数据，全天数据build
-			errObsTimePriceList = StockDataEngine.instance().buildMinTimePriceListObserver(
+			errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
 					stockID, date, 
 					"09:30:00", "15:00:00", m_obsTimePriceList);
 		}
