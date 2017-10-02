@@ -36,6 +36,9 @@ public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			// clearCurrentDayInterestMinuteDataIDs
+			cDAContext.clearCurrentDayInterestMinuteDataIDs();
 		}
 	}
 	private SharedSession m_taskSharedSession;

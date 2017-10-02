@@ -7,8 +7,8 @@ import pers.di.accountengine.*;
 import pers.di.common.*;
 import pers.di.dataapi.common.*;
 import pers.di.dataapi_test.TestCommonHelper;
+import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
-import pers.di.quantplatform.dataaccessor.*;
 
 public class SampleTestStrategy {
 	
@@ -80,7 +80,8 @@ public class SampleTestStrategy {
 				"HistoryTest 2017-01-01 2017-02-03", 
 				AccountPool.instance().account("mock001", "18982"), 
 				new TestStrategy());
-		qSession.run();
+		
+		QuantSession.run();
 	}
 	
 	public static void main(String[] args) {

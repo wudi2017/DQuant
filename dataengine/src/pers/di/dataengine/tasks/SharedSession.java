@@ -9,6 +9,7 @@ public class SharedSession {
 	public SharedSession()
 	{
 		bIsTranDate = false;
+		initializeCbs = new ArrayList<ListenerCallback>();
 		tranDayStartCbs = new ArrayList<ListenerCallback>();
 		minuteTimePricesCbs = new ArrayList<ListenerCallback>();
 		tranDayFinishCbs = new ArrayList<ListenerCallback>();
@@ -23,6 +24,7 @@ public class SharedSession {
 	
 	// running variable
 	public boolean bIsTranDate;
+	public List<ListenerCallback> initializeCbs;
 	public List<ListenerCallback> tranDayStartCbs;
 	public List<ListenerCallback> minuteTimePricesCbs;
 	public List<ListenerCallback> tranDayFinishCbs;

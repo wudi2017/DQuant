@@ -8,10 +8,8 @@ import pers.di.common.*;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.TimePrice;
 import pers.di.dataapi_test.TestCommonHelper;
+import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
-import pers.di.quantplatform.dataaccessor.DAKLines;
-import pers.di.quantplatform.dataaccessor.DAStock;
-import pers.di.quantplatform.dataaccessor.DATimePrices;
 
 public class TestQuantSession {
 

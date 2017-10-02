@@ -2,15 +2,22 @@ package pers.di.quantplatform;
 
 import java.util.*;
 
+import pers.di.dataengine.*;
 import pers.di.quantplatform.accountproxy.*;
-import pers.di.quantplatform.dataaccessor.*;
 
 public class QuantContext {
 	
 	public QuantContext(AccountProxy acountProxy)
 	{
-		m_dataAccessPool = new DAPool(); 
+		m_dataAccessPool = null; 
 		m_accountProxy = acountProxy;
+	}
+	
+	public void set(String date, String time, DAPool dataAccessPool)
+	{
+		m_date = date;
+		m_time = time;
+		m_dataAccessPool = dataAccessPool;
 	}
 	
 	public String date()
@@ -22,24 +29,7 @@ public class QuantContext {
 	{
 		return m_time;
 	}
-	
-	public void setCurrentDayInterestMinuteDataIDs(List<String> IDs)
-	{
-		m_dataAccessPool.setCurrentDayInterestMinuteDataIDs(IDs);
-	}
-	
-	public void clearCurrentDayInterestMinuteDataIDs()
-	{
-		m_dataAccessPool.clearCurrentDayInterestMinuteDataIDs();
-	}
-	
-	public void setDateTime(String date, String time)
-	{
-		m_date = date;
-		m_time = time;
-		m_dataAccessPool.build(m_date, m_time);
-	}
-	
+
 	public AccountProxy ap()
 	{
 		return m_accountProxy;
@@ -52,7 +42,6 @@ public class QuantContext {
 	
 	private String m_date;
 	private String m_time;
-	
-	private DAPool m_dataAccessPool;
 	private AccountProxy m_accountProxy;
+	private DAPool m_dataAccessPool;
 }

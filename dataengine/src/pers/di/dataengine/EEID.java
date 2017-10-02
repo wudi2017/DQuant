@@ -2,6 +2,7 @@ package pers.di.dataengine;
 
 public enum EEID {
 	INVALID,
+	INITIALIZE,
 	TRADINGDAYSTART,
 	MINUTETIMEPRICES,
 	TRADINGDAYFINISH,

@@ -97,6 +97,20 @@ public class StockDataEngine {
 		m_CScheduleTaskController.schedule(new EngineTaskAllDataUpdate("19:00:00", m_SharedSession));
 		m_CScheduleTaskController.schedule(new EngineTaskDayFinish("21:00:00", m_SharedSession));
 		
+		
+		// call initialize
+		List<ListenerCallback> lcbs = m_SharedSession.initializeCbs;
+		for(int i=0; i<lcbs.size(); i++)
+		{
+			ListenerCallback lcb = lcbs.get(i);
+			EEInitialize ev = new EEInitialize();
+			try {
+				lcb.md.invoke(lcb.obj, ev);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		// run CScheduleTaskController
 		m_CScheduleTaskController.run();
 		
@@ -105,7 +119,24 @@ public class StockDataEngine {
 	
 	public void subscribe(EngineListener listener, EEID eID, Object obj, String methodname)
 	{
-		if(eID == EEID.TRADINGDAYSTART)
+		if(eID == EEID.INITIALIZE)
+		{
+			try {
+				if(null != obj && null!= methodname)
+				{
+					Class<?> clz = Class.forName(obj.getClass().getName());
+					Method md = clz.getMethod(methodname, EEObject.class);
+					ListenerCallback lcb = new ListenerCallback();
+					lcb.listener = listener;
+					lcb.obj = obj;
+					lcb.md = md;
+					m_SharedSession.initializeCbs.add(lcb);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if(eID == EEID.TRADINGDAYSTART)
 		{
 			try {
 				if(null != obj && null!= methodname)

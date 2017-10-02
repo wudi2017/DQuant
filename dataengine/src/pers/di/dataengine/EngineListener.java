@@ -24,6 +24,13 @@ public class EngineListener {
 	{
 		m_stockDataEngine.addCurrentDayInterestMinuteDataID(this, dataID);
 	}
+	public void addCurrentDayInterestMinuteDataIDs(List<String> dataIDs)
+	{
+		for(int i=0; i<dataIDs.size();i++)
+		{
+			m_stockDataEngine.addCurrentDayInterestMinuteDataID(this, dataIDs.get(i));
+		}
+	}
 	
 	private StockDataEngine m_stockDataEngine;
 }
