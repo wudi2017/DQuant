@@ -1,15 +1,58 @@
-package pers.di.dataengine.taskcontroller;
+package pers.di.common;
 
 import java.util.*;
 
 import pers.di.common.*;
-import pers.di.dataapi.common.KLine;
-import pers.di.dataapi.common.StockUtils;
 
 /*
  * 计划任务控制器
  */
-public class ScheduleTaskController {
+public class CScheduleTaskController {
+	
+	public abstract static class ScheduleTask {
+		
+		abstract public void doTask(String date, String time);
+		
+		
+		/**
+		 * 
+		 * @param name 计划任务名称
+		 * @param datetime 计划任务执行时间
+		 *        08:20:30
+		 * @param priority 计划任务执行优先级  约小约高 同一时间触发时按优先级执行
+		 *             
+		 */
+		public ScheduleTask(String name, String time, int priority)
+		{
+			m_taskName = name;
+			m_time = time;
+			m_priority = priority;
+		}
+		
+		public ScheduleTask(String name, String time)
+		{
+			m_taskName = name;
+			m_time = time;
+			m_priority = 256;
+		}
+		
+		public String getName()
+		{
+			return m_taskName;
+		}
+		public String getTime()
+		{
+			return m_time;
+		}
+		public int getPriority()
+		{
+			return m_priority;
+		}
+		
+		private String m_taskName;
+		private String m_time;
+		private int m_priority;
+	}
 	
 	private static class TimeTasksPair
 	{
@@ -22,7 +65,7 @@ public class ScheduleTaskController {
 		public List<ScheduleTask> tasks;
 	}
 	
-	public ScheduleTaskController()
+	public CScheduleTaskController()
 	{
 		m_bHistoryTest = false;
 		m_beginDate = "0000-00-00";

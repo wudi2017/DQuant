@@ -4,14 +4,10 @@ import java.util.*;
 
 import org.json.JSONObject;
 
-import pers.di.common.CListObserver;
-import pers.di.common.CLog;
-import pers.di.common.CThread;
-import pers.di.common.CUtilsDateTime;
+import pers.di.common.*;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.StockUtils;
-import pers.di.dataengine.taskcontroller.*;
 import pers.di.dataengine.tasks.*;
 import pers.di.dataapi.StockDataApi;
 
@@ -25,7 +21,7 @@ public class StockDataEngine {
 		m_EngineTaskSharedSession.setEndDate("0000-00-00");
 		m_EngineTaskSharedSession.setConfigFailed(false);
 		
-		m_ScheduleTaskController = new ScheduleTaskController();
+		m_CScheduleTaskController = new CScheduleTaskController();
 	}
 	public static StockDataEngine instance() {  
 		return s_instance;  
@@ -57,7 +53,7 @@ public class StockDataEngine {
 				}
 				else
 				{
-					m_ScheduleTaskController.config("TriggerMode", value);
+					m_CScheduleTaskController.config("TriggerMode", value);
 					m_EngineTaskSharedSession.setHistoryTest(true);
 					m_EngineTaskSharedSession.setBeginDate(beginDate);
 					m_EngineTaskSharedSession.setEndDate(endDate);
@@ -66,7 +62,7 @@ public class StockDataEngine {
 			else if(value.contains("Realtime"))
 			{
 				m_EngineTaskSharedSession.setHistoryTest(false);
-				m_ScheduleTaskController.config("TriggerMode", "Realtime");
+				m_CScheduleTaskController.config("TriggerMode", "Realtime");
 			}
 			else
 			{
@@ -92,22 +88,22 @@ public class StockDataEngine {
 		if(m_EngineTaskSharedSession.bConfigFailed()) return -1;
 		
 		// init all task
-		m_ScheduleTaskController.schedule(new EngineTaskTrandingDayCheck("09:27:00", this, m_EngineTaskSharedSession));
+		m_CScheduleTaskController.schedule(new EngineTaskTrandingDayCheck("09:27:00", this, m_EngineTaskSharedSession));
 		for(String time="09:30:00"; time.compareTo("11:30:00")<=0; 
 				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
 		{
-			m_ScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_EngineTaskSharedSession));
+			m_CScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_EngineTaskSharedSession));
 		}
 		for(String time="13:00:00"; time.compareTo("15:00:00")<=0; 
 				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
 		{
-			m_ScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_EngineTaskSharedSession));
+			m_CScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_EngineTaskSharedSession));
 		}
-		m_ScheduleTaskController.schedule(new EngineTaskAllDataUpdate("19:00:00", m_EngineTaskSharedSession));
-		m_ScheduleTaskController.schedule(new EngineTaskDayFinish("21:00:00", m_EngineTaskSharedSession));
+		m_CScheduleTaskController.schedule(new EngineTaskAllDataUpdate("19:00:00", m_EngineTaskSharedSession));
+		m_CScheduleTaskController.schedule(new EngineTaskDayFinish("21:00:00", m_EngineTaskSharedSession));
 		
-		// run ScheduleTaskController
-		m_ScheduleTaskController.run();
+		// run CScheduleTaskController
+		m_CScheduleTaskController.run();
 		
 		return 0;
 	}
@@ -123,5 +119,5 @@ public class StockDataEngine {
 	}
 	
 	private EngineTaskSharedSession m_EngineTaskSharedSession;
-	private ScheduleTaskController m_ScheduleTaskController;
+	private CScheduleTaskController m_CScheduleTaskController;
 }

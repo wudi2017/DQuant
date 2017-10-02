@@ -2,12 +2,11 @@ package pers.di.dataengine.tasks;
 
 import java.util.List;
 
-import pers.di.common.CLog;
-import pers.di.dataengine.taskcontroller.ScheduleTask;
+import pers.di.common.*;
 import pers.di.dataengine.tasks.EngineTaskSharedSession.ListenerCallback;
 import pers.di.dataengine.*;
 
-public class EngineTaskDayFinish extends ScheduleTask 
+public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
 {
 	public EngineTaskDayFinish(String time, EngineTaskSharedSession tss) {
 		super("DayFinish", time, 16);

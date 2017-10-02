@@ -6,17 +6,17 @@ import java.util.List;
 
 import pers.di.common.CListObserver;
 import pers.di.common.CLog;
+import pers.di.common.CScheduleTaskController;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.StockUtils;
-import pers.di.dataengine.taskcontroller.ScheduleTask;
 import pers.di.dataengine.tasks.EngineTaskSharedSession.ListenerCallback;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataengine.*;
 
-public class EngineTaskTrandingDayCheck extends ScheduleTask
+public class EngineTaskTrandingDayCheck extends CScheduleTaskController.ScheduleTask 
 {
 
 	public EngineTaskTrandingDayCheck(String time, StockDataEngine sde, EngineTaskSharedSession tss) {

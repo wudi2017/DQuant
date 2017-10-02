@@ -22,7 +22,7 @@ public class SampleTestStrategy {
 		@Override
 		public void onDayStart(QuantContext ctx) {
 			//CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
-			super.addCurrentDayInterestMinuteDataID("600001");
+			super.addCurrentDayInterestMinuteDataID("600000");
 		}
 
 		@Override

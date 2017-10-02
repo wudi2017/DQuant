@@ -1,10 +1,9 @@
 package pers.di.dataengine.tasks;
 
-import pers.di.common.CLog;
-import pers.di.dataengine.taskcontroller.ScheduleTask;
+import pers.di.common.*;
 import pers.di.dataengine.*;
 
-public class EngineTaskMinuteDataPush extends ScheduleTask 
+public class EngineTaskMinuteDataPush extends CScheduleTaskController.ScheduleTask 
 {
 	public EngineTaskMinuteDataPush(String time, EngineTaskSharedSession tss) {
 		super("MinuteDataPush", time, 16);

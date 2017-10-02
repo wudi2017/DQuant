@@ -1,11 +1,10 @@
 package pers.di.dataengine.tasks;
 
-import pers.di.common.CLog;
+import pers.di.common.*;
 import pers.di.dataapi.StockDataApi;
-import pers.di.dataengine.taskcontroller.ScheduleTask;
 import pers.di.dataengine.*;
 
-public class EngineTaskAllDataUpdate extends ScheduleTask
+public class EngineTaskAllDataUpdate extends CScheduleTaskController.ScheduleTask
 {
 	public EngineTaskAllDataUpdate(String time, EngineTaskSharedSession tss) {
 		super("AllDataUpdate", time, 16);

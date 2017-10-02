@@ -37,9 +37,7 @@ public class TestStockDataEngine {
 		public void onTradingDayStart(EngineEventContext ctx, EngineEventObject ev)
 		{
 			CLog.output("TEST", "onNewDayStart %s %s", ctx.date(), ctx.time());
-			List<String> stockIDs = new ArrayList<String>();
-			stockIDs.equals("600000");
-			m_listener.setInterestMinuteDataID(stockIDs);
+			m_listener.addCurrentDayInterestMinuteDataID("600000");
 		}
 		
 		public void onTradingDayFinish(EngineEventContext ctx, EngineEventObject ev)
@@ -59,7 +57,7 @@ public class TestStockDataEngine {
 	public void test_StockDataEngine()
 	{
 		EngineTester cEngineTester = new EngineTester();
-		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-01-03");
+		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-02-03");
 		StockDataEngine.instance().run();
 	}
 	

@@ -20,12 +20,9 @@ public class EngineListener {
 	}
 	
 	// 隔天后自动失效
-	public void setInterestMinuteDataID(List<String> stockIDs)
+	public void addCurrentDayInterestMinuteDataID(String ID)
 	{
-		if(null != m_stockDataEngine)
-		{
-			m_stockDataEngine.setInterestMinuteDataID(this, stockIDs);
-		}
+
 	}
 	
 	private StockDataEngine m_stockDataEngine;
