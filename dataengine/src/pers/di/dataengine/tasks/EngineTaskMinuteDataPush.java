@@ -11,7 +11,7 @@ public class EngineTaskMinuteDataPush extends CScheduleTaskController.ScheduleTa
 	}
 	@Override
 	public void doTask(String date, String time) {
-		if(!m_taskSharedSession.bIsTranDate())
+		if(!m_taskSharedSession.bIsTranDate)
 		{
 			return;
 		}

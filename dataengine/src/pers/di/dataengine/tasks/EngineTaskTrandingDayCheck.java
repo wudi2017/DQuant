@@ -12,7 +12,6 @@ import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.StockUtils;
-import pers.di.dataengine.tasks.EngineTaskSharedSession.ListenerCallback;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataengine.*;
 
@@ -31,8 +30,8 @@ public class EngineTaskTrandingDayCheck extends CScheduleTaskController.Schedule
 		CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
 		int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
 				"999999", "2008-01-01", "2100-01-01", obsKLineListSZZS);
-		int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_taskSharedSession.beginDate(), true);
-		int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_taskSharedSession.endDate(), true);
+		int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_taskSharedSession.beginDate, true);
+		int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_taskSharedSession.endDate, true);
 		
 		for(int i = iB; i <= iE; i++)  
         {  
@@ -47,7 +46,7 @@ public class EngineTaskTrandingDayCheck extends CScheduleTaskController.Schedule
 		
 		boolean bIsTranDate = false;
 
-		if(m_taskSharedSession.bHistoryTest())
+		if(m_taskSharedSession.bHistoryTest)
 		{
 			if(null == m_hisTranDate)
 			{
@@ -107,13 +106,13 @@ public class EngineTaskTrandingDayCheck extends CScheduleTaskController.Schedule
 			}
 		}
 		
-		m_taskSharedSession.setIsTranDate(bIsTranDate);
+		m_taskSharedSession.bIsTranDate = bIsTranDate;
 		CLog.output("DataEngine", "(%s %s) EngineTaskTrandingDayCheck bIsTranDate=%b", date, time, bIsTranDate);
 		
-		if(m_taskSharedSession.bIsTranDate())
+		if(m_taskSharedSession.bIsTranDate)
 		{
 			//call listener: TRADINGDAYSTART
-			List<ListenerCallback> lcbs = m_taskSharedSession.getLCBTranDayStart();
+			List<ListenerCallback> lcbs = m_taskSharedSession.tranDayStartCbs;
 			for(int i=0; i<lcbs.size(); i++)
 			{
 				ListenerCallback lcb = lcbs.get(i);

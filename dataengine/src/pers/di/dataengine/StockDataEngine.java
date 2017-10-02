@@ -1,13 +1,10 @@
 package pers.di.dataengine;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 import org.json.JSONObject;
-
 import pers.di.common.*;
-import pers.di.dataapi.common.KLine;
-import pers.di.dataapi.common.RealTimeInfo;
-import pers.di.dataapi.common.StockUtils;
 import pers.di.dataengine.tasks.*;
 import pers.di.dataapi.StockDataApi;
 
@@ -16,11 +13,6 @@ public class StockDataEngine {
 	private StockDataEngine ()
 	{
 		m_EngineTaskSharedSession = new EngineTaskSharedSession();
-		m_EngineTaskSharedSession.setHistoryTest(false);
-		m_EngineTaskSharedSession.setBeginDate("0000-00-00");
-		m_EngineTaskSharedSession.setEndDate("0000-00-00");
-		m_EngineTaskSharedSession.setConfigFailed(false);
-		
 		m_CScheduleTaskController = new CScheduleTaskController();
 	}
 	public static StockDataEngine instance() {  
@@ -49,31 +41,31 @@ public class StockDataEngine {
 						|| !CUtilsDateTime.CheckValidDate(endDate))
 				{
 					CLog.error("DataEngine", "input parameter error!");
-					m_EngineTaskSharedSession.setConfigFailed(true);
+					m_EngineTaskSharedSession.bConfigFailed = true;
 				}
 				else
 				{
 					m_CScheduleTaskController.config("TriggerMode", value);
-					m_EngineTaskSharedSession.setHistoryTest(true);
-					m_EngineTaskSharedSession.setBeginDate(beginDate);
-					m_EngineTaskSharedSession.setEndDate(endDate);
+					m_EngineTaskSharedSession.bHistoryTest = true;
+					m_EngineTaskSharedSession.beginDate = beginDate;
+					m_EngineTaskSharedSession.endDate = endDate;
 				}
 			}
 			else if(value.contains("Realtime"))
 			{
-				m_EngineTaskSharedSession.setHistoryTest(false);
+				m_EngineTaskSharedSession.bHistoryTest = false;
 				m_CScheduleTaskController.config("TriggerMode", "Realtime");
 			}
 			else
 			{
 				CLog.error("DataEngine", "input parameter error!");
-				m_EngineTaskSharedSession.setConfigFailed(true);
+				m_EngineTaskSharedSession.bConfigFailed = true;
 			}
 		}
 		else
 		{
 			CLog.error("DataEngine", "input parameter error!");
-			m_EngineTaskSharedSession.setConfigFailed(true);
+			m_EngineTaskSharedSession.bConfigFailed = true;
 		}
 		return 0;
 	}
@@ -85,7 +77,7 @@ public class StockDataEngine {
 	
 	public int run()
 	{
-		if(m_EngineTaskSharedSession.bConfigFailed()) return -1;
+		if(m_EngineTaskSharedSession.bConfigFailed) return -1;
 		
 		// init all task
 		m_CScheduleTaskController.schedule(new EngineTaskTrandingDayCheck("09:27:00", this, m_EngineTaskSharedSession));
@@ -110,12 +102,40 @@ public class StockDataEngine {
 	
 	public void subscribe(EngineListener listener, ENGINEEVENTID ID, Object obj, String methodname)
 	{
-		m_EngineTaskSharedSession.subscribe(listener, ID, obj, methodname);
-	}
-	
-	public void setInterestMinuteDataID(EngineListener listener, List<String> stockIDs)
-	{
-		m_EngineTaskSharedSession.setInterestMinuteDataID(listener, stockIDs);
+		if(ID == ENGINEEVENTID.TRADINGDAYSTART)
+		{
+			try {
+				if(null != obj && null!= methodname)
+				{
+					Class<?> clz = Class.forName(obj.getClass().getName());
+					Method md = clz.getMethod(methodname, EngineEventContext.class, EngineEventObject.class);
+					ListenerCallback lcb = new ListenerCallback();
+					lcb.listener = listener;
+					lcb.obj = obj;
+					lcb.md = md;
+					m_EngineTaskSharedSession.tranDayStartCbs.add(lcb);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if(ID == ENGINEEVENTID.TRADINGDAYFINISH)
+		{
+			try {
+				if(null != obj && null!= methodname)
+				{
+					Class<?> clz = Class.forName(obj.getClass().getName());
+					Method md = clz.getMethod(methodname, EngineEventContext.class, EngineEventObject.class);
+					ListenerCallback lcb = new ListenerCallback();
+					lcb.listener = listener;
+					lcb.obj = obj;
+					lcb.md = md;
+					m_EngineTaskSharedSession.tranDayFinishCbs.add(lcb);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private EngineTaskSharedSession m_EngineTaskSharedSession;

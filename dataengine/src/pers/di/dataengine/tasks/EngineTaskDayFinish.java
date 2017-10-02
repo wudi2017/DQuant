@@ -3,7 +3,6 @@ package pers.di.dataengine.tasks;
 import java.util.List;
 
 import pers.di.common.*;
-import pers.di.dataengine.tasks.EngineTaskSharedSession.ListenerCallback;
 import pers.di.dataengine.*;
 
 public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
@@ -14,13 +13,13 @@ public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
 	}
 	@Override
 	public void doTask(String date, String time) {
-		if(!m_taskSharedSession.bIsTranDate())
+		if(!m_taskSharedSession.bIsTranDate)
 		{
 			return;
 		}
 		CLog.output("DataEngine", "(%s %s) EngineTaskDayFinish", date, time);
 		//call listener
-		List<ListenerCallback> lcbs = m_taskSharedSession.getLCBTranDayFinish();
+		List<ListenerCallback> lcbs = m_taskSharedSession.tranDayFinishCbs;
 		for(int i=0; i<lcbs.size(); i++)
 		{
 			ListenerCallback lcb = lcbs.get(i);

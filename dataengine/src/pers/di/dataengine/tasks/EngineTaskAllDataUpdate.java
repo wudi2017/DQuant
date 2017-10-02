@@ -12,7 +12,7 @@ public class EngineTaskAllDataUpdate extends CScheduleTaskController.ScheduleTas
 	}
 	@Override
 	public void doTask(String date, String time) {
-		if(!m_taskSharedSession.bIsTranDate())
+		if(!m_taskSharedSession.bIsTranDate)
 		{
 			return;
 		}
