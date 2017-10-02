@@ -19,16 +19,18 @@ public class EngineTaskMinuteDataPush extends CScheduleTaskController.ScheduleTa
 		}
 		CLog.output("DataEngine", "(%s %s) EngineTaskMinuteDataPush", date, time);
 		
-		// create event
-		EETimePricesData ev = new EETimePricesData();
-		m_taskSharedSession.dACtx.setDateTime(date, time);
-		ev.ctx = m_taskSharedSession.dACtx;
-		
 		//call listener
 		List<ListenerCallback> lcbs = m_taskSharedSession.minuteTimePricesCbs;
 		for(int i=0; i<lcbs.size(); i++)
 		{
 			ListenerCallback lcb = lcbs.get(i);
+			
+			// create event
+			EETimePricesData ev = new EETimePricesData();
+			DAContext cDAContext = m_taskSharedSession.listenerDataContext.get(lcb.listener);
+			cDAContext.setDateTime(date, time);
+			ev.ctx = cDAContext;
+						
 			try {
 				lcb.md.invoke(lcb.obj, ev);
 			} catch (Exception e) {

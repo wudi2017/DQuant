@@ -72,7 +72,10 @@ public class StockDataEngine {
 	
 	public EngineListener createListener()
 	{
-		return new EngineListener(this);
+		EngineListener cEngineListener = new EngineListener(this);
+		DAContext cDAContext = new DAContext();
+		m_SharedSession.listenerDataContext.put(cEngineListener, cDAContext);
+		return cEngineListener ;
 	}
 	
 	public int run()
@@ -157,7 +160,11 @@ public class StockDataEngine {
 	
 	public void addCurrentDayInterestMinuteDataID(EngineListener listener, String dataID)
 	{
-		m_SharedSession.dACtx.addCurrentDayInterestMinuteDataID(dataID);
+		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
+		if(null != cDAContext)
+		{
+			cDAContext.addCurrentDayInterestMinuteDataID(dataID);
+		}
 	}
 	
 	private SharedSession m_SharedSession;

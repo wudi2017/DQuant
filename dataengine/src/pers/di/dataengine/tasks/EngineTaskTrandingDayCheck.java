@@ -111,16 +111,18 @@ public class EngineTaskTrandingDayCheck extends CScheduleTaskController.Schedule
 		
 		if(m_taskSharedSession.bIsTranDate)
 		{
-			// create event
-			EETradingDayStart ev = new EETradingDayStart();
-			m_taskSharedSession.dACtx.setDateTime(date, time);
-			ev.ctx = m_taskSharedSession.dACtx;
-			
 			//call listener: TRADINGDAYSTART
 			List<ListenerCallback> lcbs = m_taskSharedSession.tranDayStartCbs;
 			for(int i=0; i<lcbs.size(); i++)
 			{
 				ListenerCallback lcb = lcbs.get(i);
+				
+				// create event
+				EETradingDayStart ev = new EETradingDayStart();
+				DAContext cDAContext = m_taskSharedSession.listenerDataContext.get(lcb.listener);
+				cDAContext.setDateTime(date, time);
+				ev.ctx = cDAContext;
+				
 				try {
 					lcb.md.invoke(lcb.obj, ev);
 				} catch (Exception e) {

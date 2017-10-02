@@ -26,9 +26,9 @@ public class TestStockDataEngine {
 		TestCommonHelper.InitLocalData(newestDate, stockIDs);
 	}
 
-	public static class EngineTester
+	public static class EngineListenerTesterX
 	{
-		public EngineTester()
+		public EngineListenerTesterX()
 		{
 			m_listener = StockDataEngine.instance().createListener();
 			m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
@@ -41,7 +41,7 @@ public class TestStockDataEngine {
 			EETradingDayStart e = (EETradingDayStart)ev;
 			DAContext ctx = e.ctx;
 			
-			CLog.output("TEST", "onNewDayStart %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "EngineListenerTesterX.onNewDayStart %s %s", ctx.date(), ctx.time());
 			
 			String logstr = "";
 			for(int i=0; i<ctx.pool().size(); i++)
@@ -59,7 +59,7 @@ public class TestStockDataEngine {
 			EETimePricesData e = (EETimePricesData)ev;
 			DAContext ctx = e.ctx;
 			
-			CLog.output("TEST", "onDayDataPush %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "EngineListenerTesterX.onDayDataPush %s %s", ctx.date(), ctx.time());
 		
 			CLog.output("TEST", "    600000 cDATimePrices size %d", 
 					ctx.pool().get("600000").timePrices().size());
@@ -74,7 +74,7 @@ public class TestStockDataEngine {
 			EETradingDayFinish e = (EETradingDayFinish)ev;
 			DAContext ctx = e.ctx;
 			
-			CLog.output("TEST", "onNewDayFinish %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "EngineListenerTesterX.onNewDayFinish %s %s", ctx.date(), ctx.time());
 			
 			String logstr = "";
 			for(int i=0; i<ctx.pool().size(); i++)
@@ -87,11 +87,67 @@ public class TestStockDataEngine {
 
 		private EngineListener m_listener;
 	}
+	
+	public static class EngineListenerTesterY
+	{
+		public EngineListenerTesterY()
+		{
+			m_listener = StockDataEngine.instance().createListener();
+			m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
+			m_listener.subscribe(EEID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
+			m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
+		}
+		
+		public void onTradingDayStart(EEObject ev)
+		{
+			EETradingDayStart e = (EETradingDayStart)ev;
+			DAContext ctx = e.ctx;
+			CLog.output("TEST", "EngineListenerTesterY.onNewDayStart %s %s", ctx.date(), ctx.time());
+			
+			m_listener.addCurrentDayInterestMinuteDataID("600000");
+		}
+		
+		public void onMinuteTimePrices(EEObject ev)
+		{
+			EETimePricesData e = (EETimePricesData)ev;
+			DAContext ctx = e.ctx;
+			
+			CLog.output("TEST", "EngineListenerTesterY.onDayDataPush %s %s", ctx.date(), ctx.time());
+		
+			CLog.output("TEST", "    600000 cDATimePrices size %d", 
+					ctx.pool().get("600000").timePrices().size());
+			CLog.output("TEST", "    300163 cDATimePrices size %d", 
+					ctx.pool().get("300163").timePrices().size());
+			CLog.output("TEST", "    002468 cDATimePrices size %d", 
+					ctx.pool().get("002468").timePrices().size());
+		}
+		
+		public void onTradingDayFinish(EEObject ev)
+		{
+			EETradingDayFinish e = (EETradingDayFinish)ev;
+			DAContext ctx = e.ctx;
+			
+			CLog.output("TEST", "EngineListenerTesterY.onNewDayFinish %s %s", ctx.date(), ctx.time());
+			
+			String logstr = "";
+			for(int i=0; i<ctx.pool().size(); i++)
+			{
+				logstr = logstr + " " + ctx.pool().get(i).ID();
+			}
+			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
+			
+		}
+
+		private EngineListener m_listener;
+	}
+	
 
 	@CTest.test
 	public void test_StockDataEngine()
 	{
-		EngineTester cEngineTester = new EngineTester();
+		EngineListenerTesterX cEngineListenerTesterX = new EngineListenerTesterX();
+		EngineListenerTesterY cEngineListenerTesterY = new EngineListenerTesterY();
+		
 		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-01-03");
 		StockDataEngine.instance().run();
 	}
@@ -99,7 +155,7 @@ public class TestStockDataEngine {
 	public static void main(String[] args) {
 		CSystem.start();
 		//CLog.config_setTag("DataEngine", true);
-		//CLog.config_setTag("TEST", true);
+		CLog.config_setTag("TEST", false);
 		CTest.ADD_TEST(TestStockDataEngine.class);
 		CTest.RUN_ALL_TESTS("");
 		CSystem.stop();

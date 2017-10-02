@@ -12,7 +12,7 @@ public class SharedSession {
 		tranDayStartCbs = new ArrayList<ListenerCallback>();
 		minuteTimePricesCbs = new ArrayList<ListenerCallback>();
 		tranDayFinishCbs = new ArrayList<ListenerCallback>();
-		dACtx = new DAContext();
+		listenerDataContext = new HashMap<EngineListener, DAContext>();
 	}
 	
 	// base parameter
@@ -26,5 +26,5 @@ public class SharedSession {
 	public List<ListenerCallback> tranDayStartCbs;
 	public List<ListenerCallback> minuteTimePricesCbs;
 	public List<ListenerCallback> tranDayFinishCbs;
-	public DAContext dACtx;
+	public Map<EngineListener, DAContext> listenerDataContext;
 }

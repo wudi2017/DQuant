@@ -19,16 +19,18 @@ public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
 		}
 		CLog.output("DataEngine", "(%s %s) EngineTaskDayFinish", date, time);
 		
-		// create event
-		EETradingDayFinish ev = new EETradingDayFinish();
-		m_taskSharedSession.dACtx.setDateTime(date, time);
-		ev.ctx = m_taskSharedSession.dACtx;
-		
 		//call listener
 		List<ListenerCallback> lcbs = m_taskSharedSession.tranDayFinishCbs;
 		for(int i=0; i<lcbs.size(); i++)
 		{
 			ListenerCallback lcb = lcbs.get(i);
+			
+			// create event
+			EETradingDayFinish ev = new EETradingDayFinish();
+			DAContext cDAContext = m_taskSharedSession.listenerDataContext.get(lcb.listener);
+			cDAContext.setDateTime(date, time);
+			ev.ctx = cDAContext;
+			
 			try {
 				lcb.md.invoke(lcb.obj, ev);
 			} catch (Exception e) {
