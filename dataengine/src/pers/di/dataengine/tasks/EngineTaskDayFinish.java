@@ -21,8 +21,6 @@ public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
 		
 		// create event
 		EETradingDayFinish ev = new EETradingDayFinish();
-		ev.setDate(date);
-		ev.setTime(time);
 		m_taskSharedSession.dACtx.setDateTime(date, time);
 		ev.ctx = m_taskSharedSession.dACtx;
 		

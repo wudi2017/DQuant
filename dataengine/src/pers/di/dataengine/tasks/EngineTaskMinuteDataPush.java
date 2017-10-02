@@ -21,8 +21,6 @@ public class EngineTaskMinuteDataPush extends CScheduleTaskController.ScheduleTa
 		
 		// create event
 		EETimePricesData ev = new EETimePricesData();
-		ev.setDate(date);
-		ev.setTime(time);
 		m_taskSharedSession.dACtx.setDateTime(date, time);
 		ev.ctx = m_taskSharedSession.dACtx;
 		
