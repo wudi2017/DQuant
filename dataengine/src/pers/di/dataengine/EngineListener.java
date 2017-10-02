@@ -10,19 +10,19 @@ public class EngineListener {
 	}
 	
 	// callback 
-	// void callback(EngineEventContext ctx, EngineEvent ev)
-	public void subscribe(ENGINEEVENTID ID, Object obj, String methodname)
+	// void callback(EE_Object ev)
+	public void subscribe(EE_ID eID, Object obj, String methodname)
 	{
 		if(null != m_stockDataEngine)
 		{
-			m_stockDataEngine.subscribe(this, ID, obj, methodname);
+			m_stockDataEngine.subscribe(this, eID, obj, methodname);
 		}
 	}
 	
 	// 隔天后自动失效
-	public void addCurrentDayInterestMinuteDataID(String ID)
+	public void addCurrentDayInterestMinuteDataID(String dataID)
 	{
-
+		m_stockDataEngine.addCurrentDayInterestMinuteDataID(this, dataID);
 	}
 	
 	private StockDataEngine m_stockDataEngine;

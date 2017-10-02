@@ -20,36 +20,69 @@ public class TestStockDataEngine {
 	@CTest.setup
 	public static void setup()
 	{
-		TestCommonHelper.InitLocalData();
+		String newestDate = "2017-08-10";
+		 List<String> stockIDs = new ArrayList<String>()
+			{{add("999999");add("600000");add("300163");add("002468");}};
+		TestCommonHelper.InitLocalData(newestDate, stockIDs);
 	}
-	
 
 	public static class EngineTester
 	{
 		public EngineTester()
 		{
 			m_listener = StockDataEngine.instance().createListener();
-			m_listener.subscribe(ENGINEEVENTID.TRADINGDAYSTART, this, "onTradingDayStart");
-			m_listener.subscribe(ENGINEEVENTID.TRADINGDAYFINISH, this, "onTradingDayFinish");
-			m_listener.subscribe(ENGINEEVENTID.DAYDATAPUSH, this, "onDayDataPush");
+			m_listener.subscribe(EE_ID.TRADINGDAYSTART, this, "onTradingDayStart");
+			m_listener.subscribe(EE_ID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
+			m_listener.subscribe(EE_ID.TRADINGDAYFINISH, this, "onTradingDayFinish");
 		}
 		
-		public void onTradingDayStart(EngineEventContext ctx, EngineEventObject ev)
+		public void onTradingDayStart(EE_Object ev)
 		{
+			EE_TradingDayStart e = (EE_TradingDayStart)ev;
+			DAContext ctx = e.ctx;
+			
 			CLog.output("TEST", "onNewDayStart %s %s", ctx.date(), ctx.time());
+			
+			String logstr = "";
+			for(int i=0; i<ctx.pool().size(); i++)
+			{
+				logstr = logstr + " " + ctx.pool().get(i).ID();
+			}
+			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
+			
 			m_listener.addCurrentDayInterestMinuteDataID("600000");
+			m_listener.addCurrentDayInterestMinuteDataID("300163");
 		}
 		
-		public void onTradingDayFinish(EngineEventContext ctx, EngineEventObject ev)
+		public void onMinuteTimePrices(EE_Object ev)
 		{
-			CLog.output("TEST", "onNewDayFinish %s %s", ctx.date(), ctx.time());
-		}
-		
-		public void onDayDataPush(EngineEventContext ctx, EngineEventObject ev)
-		{
+			EE_TimePricesData e = (EE_TimePricesData)ev;
+			DAContext ctx = e.ctx;
+			
 			CLog.output("TEST", "onDayDataPush %s %s", ctx.date(), ctx.time());
+		
+			CLog.output("TEST", "    600000 cDATimePrices size %d", 
+					ctx.pool().get("600000").timePrices().size());
+			CLog.output("TEST", "    300163 cDATimePrices size %d", 
+					ctx.pool().get("300163").timePrices().size());
 		}
 		
+		public void onTradingDayFinish(EE_Object ev)
+		{
+			EE_TradingDayFinish e = (EE_TradingDayFinish)ev;
+			DAContext ctx = e.ctx;
+			
+			CLog.output("TEST", "onNewDayFinish %s %s", ctx.date(), ctx.time());
+			
+			String logstr = "";
+			for(int i=0; i<ctx.pool().size(); i++)
+			{
+				logstr = logstr + " " + ctx.pool().get(i).ID();
+			}
+			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
+			
+		}
+
 		private EngineListener m_listener;
 	}
 
@@ -57,7 +90,7 @@ public class TestStockDataEngine {
 	public void test_StockDataEngine()
 	{
 		EngineTester cEngineTester = new EngineTester();
-		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-02-03");
+		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-01-03");
 		StockDataEngine.instance().run();
 	}
 	

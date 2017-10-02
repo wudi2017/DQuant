@@ -1,30 +1,30 @@
 package pers.di.dataengine.tasks;
 
-import java.lang.reflect.Method;
 import java.util.*;
+import pers.di.common.*;
+import pers.di.dataengine.*;
 
-import org.json.JSONObject;
-
-import pers.di.common.CLog;
-import pers.di.dataengine.ENGINEEVENTID;
-import pers.di.dataengine.EngineEventContext;
-import pers.di.dataengine.EngineEventObject;
-import pers.di.dataengine.EngineListener;
-
-public class EngineTaskSharedSession {
+public class SharedSession {
 	
-	public EngineTaskSharedSession()
+	public SharedSession()
 	{
 		bIsTranDate = false;
 		tranDayStartCbs = new ArrayList<ListenerCallback>();
+		minuteTimePricesCbs = new ArrayList<ListenerCallback>();
 		tranDayFinishCbs = new ArrayList<ListenerCallback>();
+		dACtx = new DAContext();
 	}
 	
+	// base parameter
 	public boolean bHistoryTest;
 	public String beginDate;
 	public String endDate;
-	public boolean bIsTranDate;
 	public boolean bConfigFailed;
+	
+	// running variable
+	public boolean bIsTranDate;
 	public List<ListenerCallback> tranDayStartCbs;
+	public List<ListenerCallback> minuteTimePricesCbs;
 	public List<ListenerCallback> tranDayFinishCbs;
+	public DAContext dACtx;
 }

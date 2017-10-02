@@ -5,6 +5,7 @@ import pers.di.dataapi.common.TimePrice;
 import pers.di.dataapi.StockDataApi;
 
 public class DATimePrices {
+
 	public DATimePrices(DAPool pool, String stockID, String date)
 	{
 		m_obsTimePriceList = new CListObserver<TimePrice>();
@@ -20,7 +21,9 @@ public class DATimePrices {
 		else if(cmp == 0)
 		{
 			// 获取日期在测试日期当天，从当天缓存中加载
-
+			pool.currentDayTimePriceCache().buildMinTimePriceListObserver(
+					stockID, 
+					m_obsTimePriceList);
 		}
 		else
 		{

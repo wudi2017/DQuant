@@ -5,7 +5,7 @@ import pers.di.dataapi.common.StockInfo;
 import pers.di.dataapi.StockDataApi;
 
 public class DAStock {
-	
+
 	public DAStock(DAPool pool, String stockID)
 	{
 		m_pool = pool;
@@ -45,11 +45,6 @@ public class DAStock {
 	
 	/*
 	 * 获取某日分时线
-	 * 注意：
-	 *     1.获取历史日期的分时线，是标准分钟级分时线
-	 *     2.获取当日实时分时线，是根据上次获取时的时间点价格的缓存累积，
-	 *       即如果从未获取过，那只能取到当时一个点价格
-	 *       如果第二次获取，同分钟内时只能取到一个点价格，变分钟后能取到2个点价格
 	 */
 	public DATimePrices timePrices(String date)
 	{

@@ -18,7 +18,7 @@ import pers.di.dataengine.*;
 public class EngineTaskTrandingDayCheck extends CScheduleTaskController.ScheduleTask 
 {
 
-	public EngineTaskTrandingDayCheck(String time, StockDataEngine sde, EngineTaskSharedSession tss) {
+	public EngineTaskTrandingDayCheck(String time, StockDataEngine sde, SharedSession tss) {
 		super("TrandingDayCheck", time, 16);
 		m_hisTranDate = null;
 		m_stockDataEngine = sde;
@@ -111,13 +111,20 @@ public class EngineTaskTrandingDayCheck extends CScheduleTaskController.Schedule
 		
 		if(m_taskSharedSession.bIsTranDate)
 		{
+			// create event
+			EE_TradingDayStart ev = new EE_TradingDayStart();
+			ev.setDate(date);
+			ev.setTime(time);
+			m_taskSharedSession.dACtx.setDateTime(date, time);
+			ev.ctx = m_taskSharedSession.dACtx;
+			
 			//call listener: TRADINGDAYSTART
 			List<ListenerCallback> lcbs = m_taskSharedSession.tranDayStartCbs;
 			for(int i=0; i<lcbs.size(); i++)
 			{
 				ListenerCallback lcb = lcbs.get(i);
 				try {
-					lcb.md.invoke(lcb.obj, new EngineEventContext(date, time), new EngineEventObject());
+					lcb.md.invoke(lcb.obj, ev);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -126,6 +133,6 @@ public class EngineTaskTrandingDayCheck extends CScheduleTaskController.Schedule
 	}
 	public List<String> m_hisTranDate;
 	private StockDataEngine m_stockDataEngine;
-	private EngineTaskSharedSession m_taskSharedSession;
+	private SharedSession m_taskSharedSession;
 
 }

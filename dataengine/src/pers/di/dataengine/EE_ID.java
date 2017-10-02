@@ -1,8 +1,8 @@
 package pers.di.dataengine;
 
-public enum ENGINEEVENTID {
+public enum EE_ID {
+	INVALID,
 	TRADINGDAYSTART,
+	MINUTETIMEPRICES,
 	TRADINGDAYFINISH,
-	MINUTEDATAPUSH,
-	DAYDATAPUSH,
 }

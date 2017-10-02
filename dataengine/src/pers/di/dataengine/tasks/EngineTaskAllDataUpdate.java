@@ -6,7 +6,7 @@ import pers.di.dataengine.*;
 
 public class EngineTaskAllDataUpdate extends CScheduleTaskController.ScheduleTask
 {
-	public EngineTaskAllDataUpdate(String time, EngineTaskSharedSession tss) {
+	public EngineTaskAllDataUpdate(String time, SharedSession tss) {
 		super("AllDataUpdate", time, 16);
 		m_taskSharedSession = tss;
 	}
@@ -20,5 +20,5 @@ public class EngineTaskAllDataUpdate extends CScheduleTaskController.ScheduleTas
 		StockDataApi.instance().updateAllLocalStocks(date);
 		CLog.output("DataEngine", "(%s %s) AllDataUpdate Success", date, time);
 	}
-	private EngineTaskSharedSession m_taskSharedSession;
+	private SharedSession m_taskSharedSession;
 }

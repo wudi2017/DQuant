@@ -7,7 +7,7 @@ import pers.di.dataengine.*;
 
 public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
 {
-	public EngineTaskDayFinish(String time, EngineTaskSharedSession tss) {
+	public EngineTaskDayFinish(String time, SharedSession tss) {
 		super("DayFinish", time, 16);
 		m_taskSharedSession = tss;
 	}
@@ -18,17 +18,25 @@ public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
 			return;
 		}
 		CLog.output("DataEngine", "(%s %s) EngineTaskDayFinish", date, time);
+		
+		// create event
+		EE_TradingDayFinish ev = new EE_TradingDayFinish();
+		ev.setDate(date);
+		ev.setTime(time);
+		m_taskSharedSession.dACtx.setDateTime(date, time);
+		ev.ctx = m_taskSharedSession.dACtx;
+		
 		//call listener
 		List<ListenerCallback> lcbs = m_taskSharedSession.tranDayFinishCbs;
 		for(int i=0; i<lcbs.size(); i++)
 		{
 			ListenerCallback lcb = lcbs.get(i);
 			try {
-				lcb.md.invoke(lcb.obj, new EngineEventContext(date, time), new EngineEventObject());
+				lcb.md.invoke(lcb.obj, ev);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	private EngineTaskSharedSession m_taskSharedSession;
+	private SharedSession m_taskSharedSession;
 }

@@ -12,7 +12,7 @@ public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine(); 
 	private StockDataEngine ()
 	{
-		m_EngineTaskSharedSession = new EngineTaskSharedSession();
+		m_SharedSession = new SharedSession();
 		m_CScheduleTaskController = new CScheduleTaskController();
 	}
 	public static StockDataEngine instance() {  
@@ -41,31 +41,31 @@ public class StockDataEngine {
 						|| !CUtilsDateTime.CheckValidDate(endDate))
 				{
 					CLog.error("DataEngine", "input parameter error!");
-					m_EngineTaskSharedSession.bConfigFailed = true;
+					m_SharedSession.bConfigFailed = true;
 				}
 				else
 				{
 					m_CScheduleTaskController.config("TriggerMode", value);
-					m_EngineTaskSharedSession.bHistoryTest = true;
-					m_EngineTaskSharedSession.beginDate = beginDate;
-					m_EngineTaskSharedSession.endDate = endDate;
+					m_SharedSession.bHistoryTest = true;
+					m_SharedSession.beginDate = beginDate;
+					m_SharedSession.endDate = endDate;
 				}
 			}
 			else if(value.contains("Realtime"))
 			{
-				m_EngineTaskSharedSession.bHistoryTest = false;
+				m_SharedSession.bHistoryTest = false;
 				m_CScheduleTaskController.config("TriggerMode", "Realtime");
 			}
 			else
 			{
 				CLog.error("DataEngine", "input parameter error!");
-				m_EngineTaskSharedSession.bConfigFailed = true;
+				m_SharedSession.bConfigFailed = true;
 			}
 		}
 		else
 		{
 			CLog.error("DataEngine", "input parameter error!");
-			m_EngineTaskSharedSession.bConfigFailed = true;
+			m_SharedSession.bConfigFailed = true;
 		}
 		return 0;
 	}
@@ -77,22 +77,22 @@ public class StockDataEngine {
 	
 	public int run()
 	{
-		if(m_EngineTaskSharedSession.bConfigFailed) return -1;
+		if(m_SharedSession.bConfigFailed) return -1;
 		
 		// init all task
-		m_CScheduleTaskController.schedule(new EngineTaskTrandingDayCheck("09:27:00", this, m_EngineTaskSharedSession));
+		m_CScheduleTaskController.schedule(new EngineTaskTrandingDayCheck("09:27:00", this, m_SharedSession));
 		for(String time="09:30:00"; time.compareTo("11:30:00")<=0; 
 				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
 		{
-			m_CScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_EngineTaskSharedSession));
+			m_CScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_SharedSession));
 		}
 		for(String time="13:00:00"; time.compareTo("15:00:00")<=0; 
 				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
 		{
-			m_CScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_EngineTaskSharedSession));
+			m_CScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_SharedSession));
 		}
-		m_CScheduleTaskController.schedule(new EngineTaskAllDataUpdate("19:00:00", m_EngineTaskSharedSession));
-		m_CScheduleTaskController.schedule(new EngineTaskDayFinish("21:00:00", m_EngineTaskSharedSession));
+		m_CScheduleTaskController.schedule(new EngineTaskAllDataUpdate("19:00:00", m_SharedSession));
+		m_CScheduleTaskController.schedule(new EngineTaskDayFinish("21:00:00", m_SharedSession));
 		
 		// run CScheduleTaskController
 		m_CScheduleTaskController.run();
@@ -100,37 +100,54 @@ public class StockDataEngine {
 		return 0;
 	}
 	
-	public void subscribe(EngineListener listener, ENGINEEVENTID ID, Object obj, String methodname)
+	public void subscribe(EngineListener listener, EE_ID eID, Object obj, String methodname)
 	{
-		if(ID == ENGINEEVENTID.TRADINGDAYSTART)
+		if(eID == EE_ID.TRADINGDAYSTART)
 		{
 			try {
 				if(null != obj && null!= methodname)
 				{
 					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EngineEventContext.class, EngineEventObject.class);
+					Method md = clz.getMethod(methodname, EE_Object.class);
 					ListenerCallback lcb = new ListenerCallback();
 					lcb.listener = listener;
 					lcb.obj = obj;
 					lcb.md = md;
-					m_EngineTaskSharedSession.tranDayStartCbs.add(lcb);
+					m_SharedSession.tranDayStartCbs.add(lcb);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		else if(ID == ENGINEEVENTID.TRADINGDAYFINISH)
+		else if(eID == EE_ID.MINUTETIMEPRICES)
 		{
 			try {
 				if(null != obj && null!= methodname)
 				{
 					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EngineEventContext.class, EngineEventObject.class);
+					Method md = clz.getMethod(methodname, EE_Object.class);
 					ListenerCallback lcb = new ListenerCallback();
 					lcb.listener = listener;
 					lcb.obj = obj;
 					lcb.md = md;
-					m_EngineTaskSharedSession.tranDayFinishCbs.add(lcb);
+					m_SharedSession.minuteTimePricesCbs.add(lcb);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if(eID == EE_ID.TRADINGDAYFINISH)
+		{
+			try {
+				if(null != obj && null!= methodname)
+				{
+					Class<?> clz = Class.forName(obj.getClass().getName());
+					Method md = clz.getMethod(methodname, EE_Object.class);
+					ListenerCallback lcb = new ListenerCallback();
+					lcb.listener = listener;
+					lcb.obj = obj;
+					lcb.md = md;
+					m_SharedSession.tranDayFinishCbs.add(lcb);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -138,6 +155,11 @@ public class StockDataEngine {
 		}
 	}
 	
-	private EngineTaskSharedSession m_EngineTaskSharedSession;
+	public void addCurrentDayInterestMinuteDataID(EngineListener listener, String dataID)
+	{
+		m_SharedSession.dACtx.addCurrentDayInterestMinuteDataID(dataID);
+	}
+	
+	private SharedSession m_SharedSession;
 	private CScheduleTaskController m_CScheduleTaskController;
 }
