@@ -10,8 +10,8 @@ public class EngineListener {
 	}
 	
 	// callback 
-	// void callback(EE_Object ev)
-	public void subscribe(EE_ID eID, Object obj, String methodname)
+	// void callback(EEObject ev)
+	public void subscribe(EEID eID, Object obj, String methodname)
 	{
 		if(null != m_stockDataEngine)
 		{

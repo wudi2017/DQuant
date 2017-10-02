@@ -1,6 +1,6 @@
 package pers.di.dataengine;
 
-public enum EE_ID {
+public enum EEID {
 	INVALID,
 	TRADINGDAYSTART,
 	MINUTETIMEPRICES,

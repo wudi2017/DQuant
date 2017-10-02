@@ -112,7 +112,7 @@ public class EngineTaskTrandingDayCheck extends CScheduleTaskController.Schedule
 		if(m_taskSharedSession.bIsTranDate)
 		{
 			// create event
-			EE_TradingDayStart ev = new EE_TradingDayStart();
+			EETradingDayStart ev = new EETradingDayStart();
 			ev.setDate(date);
 			ev.setTime(time);
 			m_taskSharedSession.dACtx.setDateTime(date, time);

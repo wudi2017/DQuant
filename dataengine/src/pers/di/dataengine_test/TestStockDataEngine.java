@@ -31,14 +31,14 @@ public class TestStockDataEngine {
 		public EngineTester()
 		{
 			m_listener = StockDataEngine.instance().createListener();
-			m_listener.subscribe(EE_ID.TRADINGDAYSTART, this, "onTradingDayStart");
-			m_listener.subscribe(EE_ID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
-			m_listener.subscribe(EE_ID.TRADINGDAYFINISH, this, "onTradingDayFinish");
+			m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
+			m_listener.subscribe(EEID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
+			m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
 		}
 		
-		public void onTradingDayStart(EE_Object ev)
+		public void onTradingDayStart(EEObject ev)
 		{
-			EE_TradingDayStart e = (EE_TradingDayStart)ev;
+			EETradingDayStart e = (EETradingDayStart)ev;
 			DAContext ctx = e.ctx;
 			
 			CLog.output("TEST", "onNewDayStart %s %s", ctx.date(), ctx.time());
@@ -54,9 +54,9 @@ public class TestStockDataEngine {
 			m_listener.addCurrentDayInterestMinuteDataID("300163");
 		}
 		
-		public void onMinuteTimePrices(EE_Object ev)
+		public void onMinuteTimePrices(EEObject ev)
 		{
-			EE_TimePricesData e = (EE_TimePricesData)ev;
+			EETimePricesData e = (EETimePricesData)ev;
 			DAContext ctx = e.ctx;
 			
 			CLog.output("TEST", "onDayDataPush %s %s", ctx.date(), ctx.time());
@@ -65,11 +65,13 @@ public class TestStockDataEngine {
 					ctx.pool().get("600000").timePrices().size());
 			CLog.output("TEST", "    300163 cDATimePrices size %d", 
 					ctx.pool().get("300163").timePrices().size());
+			CLog.output("TEST", "    002468 cDATimePrices size %d", 
+					ctx.pool().get("002468").timePrices().size());
 		}
 		
-		public void onTradingDayFinish(EE_Object ev)
+		public void onTradingDayFinish(EEObject ev)
 		{
-			EE_TradingDayFinish e = (EE_TradingDayFinish)ev;
+			EETradingDayFinish e = (EETradingDayFinish)ev;
 			DAContext ctx = e.ctx;
 			
 			CLog.output("TEST", "onNewDayFinish %s %s", ctx.date(), ctx.time());

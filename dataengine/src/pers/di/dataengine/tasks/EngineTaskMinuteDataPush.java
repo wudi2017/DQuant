@@ -20,7 +20,7 @@ public class EngineTaskMinuteDataPush extends CScheduleTaskController.ScheduleTa
 		CLog.output("DataEngine", "(%s %s) EngineTaskMinuteDataPush", date, time);
 		
 		// create event
-		EE_TimePricesData ev = new EE_TimePricesData();
+		EETimePricesData ev = new EETimePricesData();
 		ev.setDate(date);
 		ev.setTime(time);
 		m_taskSharedSession.dACtx.setDateTime(date, time);

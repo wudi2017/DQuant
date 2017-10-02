@@ -100,15 +100,15 @@ public class StockDataEngine {
 		return 0;
 	}
 	
-	public void subscribe(EngineListener listener, EE_ID eID, Object obj, String methodname)
+	public void subscribe(EngineListener listener, EEID eID, Object obj, String methodname)
 	{
-		if(eID == EE_ID.TRADINGDAYSTART)
+		if(eID == EEID.TRADINGDAYSTART)
 		{
 			try {
 				if(null != obj && null!= methodname)
 				{
 					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EE_Object.class);
+					Method md = clz.getMethod(methodname, EEObject.class);
 					ListenerCallback lcb = new ListenerCallback();
 					lcb.listener = listener;
 					lcb.obj = obj;
@@ -119,13 +119,13 @@ public class StockDataEngine {
 				e.printStackTrace();
 			}
 		}
-		else if(eID == EE_ID.MINUTETIMEPRICES)
+		else if(eID == EEID.MINUTETIMEPRICES)
 		{
 			try {
 				if(null != obj && null!= methodname)
 				{
 					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EE_Object.class);
+					Method md = clz.getMethod(methodname, EEObject.class);
 					ListenerCallback lcb = new ListenerCallback();
 					lcb.listener = listener;
 					lcb.obj = obj;
@@ -136,13 +136,13 @@ public class StockDataEngine {
 				e.printStackTrace();
 			}
 		}
-		else if(eID == EE_ID.TRADINGDAYFINISH)
+		else if(eID == EEID.TRADINGDAYFINISH)
 		{
 			try {
 				if(null != obj && null!= methodname)
 				{
 					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EE_Object.class);
+					Method md = clz.getMethod(methodname, EEObject.class);
 					ListenerCallback lcb = new ListenerCallback();
 					lcb.listener = listener;
 					lcb.obj = obj;

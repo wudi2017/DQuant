@@ -20,7 +20,7 @@ public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
 		CLog.output("DataEngine", "(%s %s) EngineTaskDayFinish", date, time);
 		
 		// create event
-		EE_TradingDayFinish ev = new EE_TradingDayFinish();
+		EETradingDayFinish ev = new EETradingDayFinish();
 		ev.setDate(date);
 		ev.setTime(time);
 		m_taskSharedSession.dACtx.setDateTime(date, time);
