@@ -1,5 +1,10 @@
 package pers.di.accountengine;
 
-public class Account {
+import pers.di.accountengine.common.*;
 
+public abstract class Account {
+
+	public abstract ACCOUNTTYPE type();
+	public abstract String ID();
+	public abstract String password();
 }
