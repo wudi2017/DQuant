@@ -16,51 +16,60 @@ public class SampleTestStrategy {
 	{
 		@Override
 		public void onInit(QuantContext ctx) {
-			//CLog.output("TEST", "TestStrategy.onInit %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "TestStrategy.onInit %s %s", ctx.date(), ctx.time());
 		}
 	
 		@Override
 		public void onDayStart(QuantContext ctx) {
-			//CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
 			super.addCurrentDayInterestMinuteDataID("600000");
 		}
 
 		@Override
 		public void onMinuteData(QuantContext ctx) {
-			//CLog.output("TEST", "TestStrategy.onMinuteData %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "TestStrategy.onMinuteData %s %s", ctx.date(), ctx.time());
 
-			// 遍历所有股票
-			for(int i=0; i<ctx.pool().size(); i++)
-			{
-				DAStock stock = ctx.pool().get(i);
-				//CLog.output("TEST", "stock %s %s", stock.ID(), stock.name());
-			}
-			
-			String StockID = "600000";
-			
-			// 遍历某只股票日K线
-			DAKLines cKLines = ctx.pool().get(StockID).dayKLines();
-			for(int i=0; i<cKLines.size(); i++)
-			{
-				KLine cKLine = cKLines.get(i);
-				//CLog.output("TEST", "date %s close %.3f", cKLine.date, cKLine.close);
-			}
-			
 			// 遍历某只股票某日分时线
-			DATimePrices cTimePrices = ctx.pool().get(StockID).timePrices(ctx.date());
-			for(int i=0; i<cTimePrices.size(); i++)
-			{
-				TimePrice cTimePrice = cTimePrices.get(i);
-				//CLog.output("TEST", "%s %s %s %.3f", StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
-			}
 			
-			// 调用账户代理发送交易命令
-			ctx.ap().pushBuyOrder("", 0, 100);
+			if(ctx.time().equals("09:50:00"))
+			{
+				String StockID = "600000";
+				DATimePrices cTimePrices = ctx.pool().get(StockID).timePrices(ctx.date());
+				for(int i=0; i<cTimePrices.size(); i++)
+				{
+					TimePrice cTimePrice = cTimePrices.get(i);
+					CLog.output("TEST", "    %s %s %.3f", StockID,cTimePrice.time, cTimePrice.price);
+				}
+				
+				// 调用账户代理发送交易命令
+				ctx.ap().pushBuyOrder(StockID, 0, 100);
+			}
 		}
 
 		@Override
 		public void onDayFinish(QuantContext ctx) {
-			//CLog.output("TEST", "TestStrategy.onDayFinish %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "TestStrategy.onDayFinish %s %s", ctx.date(), ctx.time());
+			
+			// 遍历所有股票
+			CLog.output("TEST", "    Traversal All Stocks");
+			for(int i=0; i<ctx.pool().size(); i++)
+			{
+				DAStock stock = ctx.pool().get(i);
+				CLog.output("TEST", "        stock %s %s", stock.ID(), stock.name());
+			}
+			
+			// 遍历某只股票日K线
+			String StockID = "600000";
+			CLog.output("TEST", "    Traversal day KLine : %s", StockID);
+			DAKLines cKLines = ctx.pool().get(StockID).dayKLines();
+			for(int i=0; i<cKLines.size(); i++)
+			{
+				if(i > cKLines.size() - 10)
+				{
+					KLine cKLine = cKLines.get(i);
+					CLog.output("TEST", "        date %s close %.3f", cKLine.date, cKLine.close);
+				}
+			}
 		}
 	}
 	
@@ -77,7 +86,7 @@ public class SampleTestStrategy {
 	public static void Sample()
 	{
 		QuantSession qSession = new QuantSession(
-				"HistoryTest 2017-01-01 2017-02-03", 
+				"HistoryTest 2017-01-01 2017-01-03", 
 				AccountPool.instance().account("mock001", "18982"), 
 				new TestStrategy());
 		

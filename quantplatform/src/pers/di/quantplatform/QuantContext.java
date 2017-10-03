@@ -3,7 +3,6 @@ package pers.di.quantplatform;
 import java.util.*;
 
 import pers.di.dataengine.*;
-import pers.di.quantplatform.accountproxy.*;
 
 public class QuantContext {
 	

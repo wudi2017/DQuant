@@ -9,7 +9,6 @@ import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataapi.common.*;
 import pers.di.dataengine.*;
-import pers.di.quantplatform.accountproxy.*;
 
 public class QuantSession {
 	

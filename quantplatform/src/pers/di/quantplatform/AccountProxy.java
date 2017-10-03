@@ -1,4 +1,4 @@
-package pers.di.quantplatform.accountproxy;
+package pers.di.quantplatform;
 
 import pers.di.accountengine.*;
 import pers.di.common.*;
