@@ -13,9 +13,6 @@ public class TestRealAccountOpe {
 	{
 		RealAccountOpe cRealAccountOpe = new RealAccountOpe();
 		
-		int iFlush = cRealAccountOpe.flush();
-		CTest.EXPECT_LONG_EQ(0, iFlush);
-		
 		int iInit = cRealAccountOpe.newDayInit(CUtilsDateTime.GetCurDateStr(), CUtilsDateTime.GetCurTimeStr());
 		CTest.EXPECT_LONG_EQ(0, iInit);
 		

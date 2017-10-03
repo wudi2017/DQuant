@@ -16,12 +16,6 @@ public class RealAccountOpe extends IAccountOpe {
 	}
 	
 	@Override
-	public int flush() {
-		// do nothing
-		return 0;
-	}
-	
-	@Override
 	public int newDayInit(String date, String time) {
 		int iInitRet = THSApi.initialize();
 		CLog.output("ACCOUNT", " @RealAccountOpe newDayInit err(%d) [%s %s]\n", 
