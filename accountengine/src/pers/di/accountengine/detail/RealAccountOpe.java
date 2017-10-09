@@ -2,6 +2,7 @@ package pers.di.accountengine.detail;
 
 import java.util.*;
 
+import pers.di.accountengine.common.ACCOUNTTYPE;
 import pers.di.accountengine.common.HoldStock;
 import pers.di.common.*;
 import pers.di.thsapi.*;
@@ -13,6 +14,24 @@ public class RealAccountOpe extends IAccountOpe {
 	{
 		int iInitRet = THSApi.initialize();
 		CLog.output("ACCOUNT", " @RealAccountOpe Constructerr(%d)\n", iInitRet);
+	}
+	
+	@Override
+	public String ID()
+	{
+		return "THSAccount";
+	}
+	
+	@Override
+	public String password()
+	{
+		return "defaultPassword";
+	}
+	
+	@Override
+	public ACCOUNTTYPE type()
+	{
+		return ACCOUNTTYPE.REAL;
 	}
 	
 	@Override

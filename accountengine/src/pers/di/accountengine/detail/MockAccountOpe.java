@@ -2,6 +2,7 @@ package pers.di.accountengine.detail;
 
 import java.util.*;
 
+import pers.di.accountengine.common.ACCOUNTTYPE;
 import pers.di.accountengine.common.HoldStock;
 import pers.di.accountengine.detail.MockAccountOpeStore.StoreEntity;
 import pers.di.common.*;
@@ -34,6 +35,24 @@ public class MockAccountOpe extends IAccountOpe {
 
 		CLog.output("ACCOUNT", " @MockAccountOpe Construct AccountID:%s Password:%s money:%.2f transactionCostsRatio:%.4f\n", 
 				m_accountID, password, m_money, m_transactionCostsRatio);
+	}
+	
+	@Override
+	public String ID()
+	{
+		return m_accountID;
+	}
+	
+	@Override
+	public String password()
+	{
+		return m_password;
+	}
+	
+	@Override
+	public ACCOUNTTYPE type()
+	{
+		return ACCOUNTTYPE.MOCK;
 	}
 	
 	@Override

@@ -7,6 +7,11 @@ import pers.di.common.*;
 
 abstract public class IAccountOpe {
 	public IAccountOpe() { }
+
+	abstract public String ID();
+	abstract public String password();
+	abstract public ACCOUNTTYPE type();
+	
 	// 隔日开始账户初始化
 	abstract public int newDayInit(String date, String time);
 	// 隔日开始账户交易结束
