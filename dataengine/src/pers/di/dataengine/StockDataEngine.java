@@ -13,7 +13,7 @@ public class StockDataEngine {
 	private StockDataEngine ()
 	{
 		m_SharedSession = new SharedSession();
-		m_CScheduleTaskController = new CScheduleTaskController();
+		m_CDateTimeThruster = new CDateTimeThruster();
 	}
 	public static StockDataEngine instance() {  
 		return s_instance;  
@@ -45,7 +45,7 @@ public class StockDataEngine {
 				}
 				else
 				{
-					m_CScheduleTaskController.config("TriggerMode", value);
+					m_CDateTimeThruster.config("TriggerMode", value);
 					m_SharedSession.bHistoryTest = true;
 					m_SharedSession.beginDate = beginDate;
 					m_SharedSession.endDate = endDate;
@@ -54,7 +54,7 @@ public class StockDataEngine {
 			else if(value.contains("Realtime"))
 			{
 				m_SharedSession.bHistoryTest = false;
-				m_CScheduleTaskController.config("TriggerMode", "Realtime");
+				m_CDateTimeThruster.config("TriggerMode", "Realtime");
 			}
 			else
 			{
@@ -83,19 +83,19 @@ public class StockDataEngine {
 		if(m_SharedSession.bConfigFailed) return -1;
 		
 		// init all task
-		m_CScheduleTaskController.schedule(new EngineTaskTrandingDayCheck("09:27:00", this, m_SharedSession));
+		m_CDateTimeThruster.schedule(new EngineTaskTrandingDayCheck("09:27:00", this, m_SharedSession));
 		for(String time="09:30:00"; time.compareTo("11:30:00")<=0; 
 				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
 		{
-			m_CScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_SharedSession));
+			m_CDateTimeThruster.schedule(new EngineTaskMinuteDataPush(time, m_SharedSession));
 		}
 		for(String time="13:00:00"; time.compareTo("15:00:00")<=0; 
 				time=CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(time, 60))
 		{
-			m_CScheduleTaskController.schedule(new EngineTaskMinuteDataPush(time, m_SharedSession));
+			m_CDateTimeThruster.schedule(new EngineTaskMinuteDataPush(time, m_SharedSession));
 		}
-		m_CScheduleTaskController.schedule(new EngineTaskAllDataUpdate("19:00:00", m_SharedSession));
-		m_CScheduleTaskController.schedule(new EngineTaskDayFinish("21:00:00", m_SharedSession));
+		m_CDateTimeThruster.schedule(new EngineTaskAllDataUpdate("19:00:00", m_SharedSession));
+		m_CDateTimeThruster.schedule(new EngineTaskDayFinish("21:00:00", m_SharedSession));
 		
 		
 		// call initialize
@@ -111,8 +111,8 @@ public class StockDataEngine {
 			}
 		}
 		
-		// run CScheduleTaskController
-		m_CScheduleTaskController.run();
+		// run CDateTimeThruster
+		m_CDateTimeThruster.run();
 		
 		return 0;
 	}
@@ -199,5 +199,5 @@ public class StockDataEngine {
 	}
 	
 	private SharedSession m_SharedSession;
-	private CScheduleTaskController m_CScheduleTaskController;
+	private CDateTimeThruster m_CDateTimeThruster;
 }

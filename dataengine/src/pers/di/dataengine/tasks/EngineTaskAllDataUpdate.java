@@ -4,7 +4,7 @@ import pers.di.common.*;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataengine.*;
 
-public class EngineTaskAllDataUpdate extends CScheduleTaskController.ScheduleTask
+public class EngineTaskAllDataUpdate extends CDateTimeThruster.ScheduleTask
 {
 	public EngineTaskAllDataUpdate(String time, SharedSession tss) {
 		super("AllDataUpdate", time, 16);

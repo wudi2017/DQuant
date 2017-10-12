@@ -5,7 +5,7 @@ import java.util.List;
 import pers.di.common.*;
 import pers.di.dataengine.*;
 
-public class EngineTaskMinuteDataPush extends CScheduleTaskController.ScheduleTask 
+public class EngineTaskMinuteDataPush extends CDateTimeThruster.ScheduleTask 
 {
 	public EngineTaskMinuteDataPush(String time, SharedSession tss) {
 		super("MinuteDataPush", time, 16);

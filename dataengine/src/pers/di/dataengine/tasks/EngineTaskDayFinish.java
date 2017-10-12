@@ -5,7 +5,7 @@ import java.util.List;
 import pers.di.common.*;
 import pers.di.dataengine.*;
 
-public class EngineTaskDayFinish extends CScheduleTaskController.ScheduleTask
+public class EngineTaskDayFinish extends CDateTimeThruster.ScheduleTask
 {
 	public EngineTaskDayFinish(String time, SharedSession tss) {
 		super("DayFinish", time, 16);

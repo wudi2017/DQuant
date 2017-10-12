@@ -154,7 +154,7 @@ public class TestStockDataEngine {
 		EngineListenerTesterX cEngineListenerTesterX = new EngineListenerTesterX();
 		EngineListenerTesterY cEngineListenerTesterY = new EngineListenerTesterY();
 		
-		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-01-03");
+		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-02-03");
 		StockDataEngine.instance().run();
 	}
 	

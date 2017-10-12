@@ -5,9 +5,9 @@ import java.util.*;
 import pers.di.common.*;
 
 /*
- * 计划任务控制器
+ * 时间推进器, 可定制计划任务
  */
-public class CScheduleTaskController {
+public class CDateTimeThruster {
 	
 	public abstract static class ScheduleTask {
 		
@@ -65,7 +65,7 @@ public class CScheduleTaskController {
 		public List<ScheduleTask> tasks;
 	}
 	
-	public CScheduleTaskController()
+	public CDateTimeThruster()
 	{
 		m_bHistoryTest = false;
 		m_beginDate = "0000-00-00";
@@ -174,6 +174,16 @@ public class CScheduleTaskController {
 		return 0;
 	}
 	
+	public String GetDateStr()
+	{
+		return m_curDate;
+	}
+	
+	public String GetTimeStr()
+	{
+		return m_curTime;
+	}
+	
 	public boolean run()
 	{
 		m_curDate = getBeginDate();
@@ -184,7 +194,7 @@ public class CScheduleTaskController {
 			
 			TimeTasksPair timeTasksPair = getFirstTimeTasksPair();
 			String waitToTime = ((null!=timeTasksPair)?timeTasksPair.time:"23:59:50");
-			while(waitToTime.compareTo("23:59:00") <= 0)
+			while(waitToTime.compareTo("23:59:50") <= 0)
 			{
 				CUtilsDateTime.WAITRESULT wr = waitForDateTime(m_curDate, waitToTime, m_mainTimeTaskListWaitObj);
 				
