@@ -6,11 +6,14 @@ import pers.di.accountengine.Account;
 import pers.di.accountengine.common.*;
 import pers.di.accountengine.detail.AccountStore.StoreEntity;
 import pers.di.common.CObjectContainer;
+import pers.di.common.CUtilsDateTime;
 
 public class AccountEntity extends Account {
 	
 	public AccountEntity(IAccountOpe cIAccountOpe)
 	{
+		m_date = CUtilsDateTime.GetCurDateStr();
+		m_time = CUtilsDateTime.GetCurTimeStr();
 		m_cIAccountOpe = cIAccountOpe;
 		
 		m_lockedMoney = 100000.0f; // 默认锁定10w
@@ -20,7 +23,7 @@ public class AccountEntity extends Account {
 		m_accountStore = new AccountStore(m_cIAccountOpe.ID(), m_cIAccountOpe.password());
 
 		load(); // 加载数据
-		store(null, null); // 存储数据
+		store(); // 存储数据
 	}
 	
 	@Override
@@ -39,72 +42,17 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int newDayBegin(String date, String time) {
-		load();
-		int iNewDayInit = m_cIAccountOpe.newDayInit(date, time);
-		return iNewDayInit;
-	}
-
-	@Override
-	public int newDayEnd(String date, String time) {
-		int iNewDayTranEnd = m_cIAccountOpe.newDayTranEnd(date, time);
-		if(0 == iNewDayTranEnd)
-		{
-			// 更新调查天数map
-			Map<String, Integer> newholdStockInvestigationDaysMap = new HashMap<String, Integer>();
-			
-			List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
-			int iGetHoldStockList = getHoldStockList(date, time, cHoldStockList);
-			if(0 == iGetHoldStockList)
-			{
-				for(int i=0; i<cHoldStockList.size();i++)
-				{
-					HoldStock cHoldStock = cHoldStockList.get(i);
-					newholdStockInvestigationDaysMap.put(cHoldStock.stockID, 0);
-				}
-				for(Map.Entry<String, Integer> entry:newholdStockInvestigationDaysMap.entrySet()){   
-					String key = entry.getKey();
-					int iInvestigationDays = 0;
-					if(m_holdStockInvestigationDaysMap.containsKey(key))
-					{
-						iInvestigationDays = m_holdStockInvestigationDaysMap.get(key);
-					}
-					entry.setValue(iInvestigationDays);
-				} 
-				for(Map.Entry<String, Integer> entry:newholdStockInvestigationDaysMap.entrySet()){   
-					int iInvestigationDays = entry.getValue();
-					entry.setValue(iInvestigationDays+1);
-				} 
-				m_holdStockInvestigationDaysMap.clear();
-				m_holdStockInvestigationDaysMap.putAll(newholdStockInvestigationDaysMap);
-				
-				store(date, time);
-			}
-			else
-			{
-				iNewDayTranEnd = -201;
-			}
-			
-			// 清空委托表
-			m_commissionOrderList.clear();
-			store(date, time);
-		}
-		
-		return iNewDayTranEnd; 
-	}
-
-	@Override
-	public int getTotalAssets(String date, String time, CObjectContainer<Float> ctnTotalAssets) {
+	public int getTotalAssets(CObjectContainer<Float> ctnTotalAssets) {
 		float all_marketval = 0.0f;
 		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
-		int iRetHoldStock = getHoldStockList(date, time, cHoldStockList);
+		int iRetHoldStock = getHoldStockList(cHoldStockList);
 		for(int i=0;i<cHoldStockList.size();i++)
 		{
 			HoldStock cHoldStock = cHoldStockList.get(i);
 			all_marketval = all_marketval + cHoldStock.curPrice*cHoldStock.totalAmount;
 		}
 		CObjectContainer<Float> money = new  CObjectContainer<Float>();
-		int iRetMoney = getMoney(date, time, money);
+		int iRetMoney = getMoney(money);
 		ctnTotalAssets.set(all_marketval + money.get());
 		if(0 == iRetHoldStock && 0 == iRetMoney)
 		{
@@ -114,10 +62,10 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int getMoney(String date, String time, CObjectContainer<Float> ctnMoney) {
+	public int getMoney(CObjectContainer<Float> ctnMoney) {
 		
 		CObjectContainer<Float> ctnOriginMoney= new CObjectContainer<Float>();
-		int iRetGetAvailableMoney = m_cIAccountOpe.getAvailableMoney(date, time, ctnOriginMoney);
+		int iRetGetAvailableMoney = m_cIAccountOpe.getAvailableMoney(ctnOriginMoney);
 		
 		CObjectContainer<Float> lockedMoney= new CObjectContainer<Float>();
 		int iRetGetLockedMoney = this.getLockedMoney(lockedMoney);
@@ -133,10 +81,10 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int getAvailableMoney(String date, String time, CObjectContainer<Float> ctnAvailableMoney) {
+	public int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney) {
 		
 		CObjectContainer<Float> ctnOriginAvailableMoney= new CObjectContainer<Float>();
-		int iRetGetAvailableMoney = m_cIAccountOpe.getAvailableMoney(date, time, ctnOriginAvailableMoney);
+		int iRetGetAvailableMoney = m_cIAccountOpe.getAvailableMoney(ctnOriginAvailableMoney);
 		
 		CObjectContainer<Float> lockedMoney= new CObjectContainer<Float>();
 		int iRetGetLockedMoney = this.getLockedMoney(lockedMoney);
@@ -152,36 +100,36 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int pushBuyOrder(String date, String time, String stockID, int amount, float price) {
-		int ret = m_cIAccountOpe.pushBuyOrder(date, time, stockID, amount, price);
+	public int pushBuyOrder(String stockID, int amount, float price) {
+		int ret = m_cIAccountOpe.pushBuyOrder(stockID, amount, price);
 		if(0 == ret)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
-			cCommissionOrder.time = time;
+			cCommissionOrder.time = m_time;
 			cCommissionOrder.tranAct = TRANACT.BUY;
 			cCommissionOrder.stockID = stockID;
 			cCommissionOrder.amount = amount;
 			cCommissionOrder.price = price;
 			m_commissionOrderList.add(cCommissionOrder);
 		}
-		store(date, time);
+		store();
 		return ret;
 	}
 
 	@Override
-	public int pushSellOrder(String date, String time, String stockID, int amount, float price) {
-		int ret = m_cIAccountOpe.pushSellOrder(date, time, stockID, amount, price);
+	public int pushSellOrder(String stockID, int amount, float price) {
+		int ret = m_cIAccountOpe.pushSellOrder(stockID, amount, price);
 		if(0 == ret)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
-			cCommissionOrder.time = time;
+			cCommissionOrder.time = m_time;
 			cCommissionOrder.tranAct = TRANACT.SELL;
 			cCommissionOrder.stockID = stockID;
 			cCommissionOrder.amount = amount;
 			cCommissionOrder.price = price;
 			m_commissionOrderList.add(cCommissionOrder);
 		}
-		store(date, time);
+		store();
 		return ret;
 	}
 
@@ -229,8 +177,8 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int getHoldStockList(String date, String time, List<HoldStock> ctnList) {
-		int iGetHoldStockList = m_cIAccountOpe.getHoldStockList(date, time, ctnList);
+	public int getHoldStockList(List<HoldStock> ctnList) {
+		int iGetHoldStockList = m_cIAccountOpe.getHoldStockList(ctnList);
 		if(0 == iGetHoldStockList)
 		{
 			for(int i=0;i<ctnList.size();i++)
@@ -250,9 +198,9 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int getHoldStock(String date, String time, String stockID, CObjectContainer<HoldStock> ctnHoldStock) {
+	public int getHoldStock(String stockID, CObjectContainer<HoldStock> ctnHoldStock) {
 		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
-		int iRet = getHoldStockList(date, time, cHoldStockList);
+		int iRet = getHoldStockList(cHoldStockList);
 		for(int i=0;i<cHoldStockList.size();i++)
 		{
 			if(cHoldStockList.get(i).stockID.equals(stockID))
@@ -263,6 +211,59 @@ public class AccountEntity extends Account {
 			}
 		}
 		return iRet;
+	}
+	
+	public int newDayBegin() {
+		load();
+		int iNewDayInit = m_cIAccountOpe.newDayInit();
+		return iNewDayInit;
+	}
+
+	public int newDayEnd() {
+		int iNewDayTranEnd = m_cIAccountOpe.newDayTranEnd();
+		if(0 == iNewDayTranEnd)
+		{
+			// 更新调查天数map
+			Map<String, Integer> newholdStockInvestigationDaysMap = new HashMap<String, Integer>();
+			
+			List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
+			int iGetHoldStockList = getHoldStockList(cHoldStockList);
+			if(0 == iGetHoldStockList)
+			{
+				for(int i=0; i<cHoldStockList.size();i++)
+				{
+					HoldStock cHoldStock = cHoldStockList.get(i);
+					newholdStockInvestigationDaysMap.put(cHoldStock.stockID, 0);
+				}
+				for(Map.Entry<String, Integer> entry:newholdStockInvestigationDaysMap.entrySet()){   
+					String key = entry.getKey();
+					int iInvestigationDays = 0;
+					if(m_holdStockInvestigationDaysMap.containsKey(key))
+					{
+						iInvestigationDays = m_holdStockInvestigationDaysMap.get(key);
+					}
+					entry.setValue(iInvestigationDays);
+				} 
+				for(Map.Entry<String, Integer> entry:newholdStockInvestigationDaysMap.entrySet()){   
+					int iInvestigationDays = entry.getValue();
+					entry.setValue(iInvestigationDays+1);
+				} 
+				m_holdStockInvestigationDaysMap.clear();
+				m_holdStockInvestigationDaysMap.putAll(newholdStockInvestigationDaysMap);
+				
+				store();
+			}
+			else
+			{
+				iNewDayTranEnd = -201;
+			}
+			
+			// 清空委托表
+			m_commissionOrderList.clear();
+			store();
+		}
+		
+		return iNewDayTranEnd; 
 	}
 	
 	// 加载锁定资金，选股表，股票调查天数表
@@ -292,11 +293,11 @@ public class AccountEntity extends Account {
 		}
 	}
 	// 保存选股表
-	private void store(String date, String time)
+	private void store()
 	{
 		StoreEntity cStoreEntity = new StoreEntity();
-		cStoreEntity.date = date;
-		cStoreEntity.time = time;
+		cStoreEntity.date = m_date;
+		cStoreEntity.time = m_time;
 		// locked money
 		cStoreEntity.lockedMoney = m_lockedMoney;
 		// stockSelectList
@@ -318,6 +319,8 @@ public class AccountEntity extends Account {
 	 * ******************************************************************************************
 	 */
 
+	private String m_date;
+	private String m_time;
 	private IAccountOpe m_cIAccountOpe;
 	
 	private float m_lockedMoney;

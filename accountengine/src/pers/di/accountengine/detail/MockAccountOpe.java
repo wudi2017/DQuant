@@ -56,13 +56,13 @@ public class MockAccountOpe extends IAccountOpe {
 	}
 	
 	@Override
-	public int newDayInit(String date, String time) 
+	public int newDayInit() 
 	{
 		return 0; 
 	}
 
 	@Override
-	public int newDayTranEnd(String date, String time) {
+	public int newDayTranEnd() {
 		
 		// 所有持股均可卖
 		HoldStock cHoldStock = null;
@@ -74,13 +74,13 @@ public class MockAccountOpe extends IAccountOpe {
 		
 		// 更新现价
 		List<HoldStock> list = new ArrayList<HoldStock>();
-		getHoldStockList(date, time, list); 
+		getHoldStockList(list); 
 		store(); // 保存
 		return 0;
 	}
 	
 	@Override
-	public int pushBuyOrder(String date, String time, String stockID, int amount, float price) {
+	public int pushBuyOrder(String stockID, int amount, float price) {
 		
 		// 买入量标准化
 		int maxBuyAmount = (int)(m_money/price);
@@ -121,8 +121,7 @@ public class MockAccountOpe extends IAccountOpe {
 		
 		m_money = m_money - realBuyAmount*price;
 		
-		CLog.output("ACCOUNT", " @MockAccountOpe pushBuyOrder [%s %s] [%s %d %.3f %.3f(%.3f) %.3f] \n", 
-				date, time,
+		CLog.output("ACCOUNT", " @MockAccountOpe pushBuyOrder [%s %d %.3f %.3f(%.3f) %.3f] \n",
 				stockID, realBuyAmount, price, realBuyAmount*price, transactionCosts, m_money);
 		
 		store();
@@ -131,7 +130,7 @@ public class MockAccountOpe extends IAccountOpe {
 	}
 
 	@Override
-	public int pushSellOrder(String date, String time, String stockID, int amount, float price) {
+	public int pushSellOrder(String stockID, int amount, float price) {
 		
 		// 获取持有对象
 		HoldStock cHoldStock = null;
@@ -173,8 +172,7 @@ public class MockAccountOpe extends IAccountOpe {
 				m_holdStockList.remove(cHoldStock);
 			}
 			
-			CLog.output("ACCOUNT", " @MockAccountOpe pushSellOrder [%s %s] [%s %d %.3f %.3f(%.3f) %.3f] \n", 
-					date, time,
+			CLog.output("ACCOUNT", " @MockAccountOpe pushSellOrder [%s %d %.3f %.3f(%.3f) %.3f] \n", 
 					stockID, realSellAmount, price, realSellAmount*price, transactionCosts, m_money);
 
 			store();
@@ -186,19 +184,19 @@ public class MockAccountOpe extends IAccountOpe {
 	}
 
 	@Override
-	public int getAvailableMoney(String date, String time, CObjectContainer<Float> ctnAvailableMoney) {
+	public int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney) {
 		ctnAvailableMoney.set(m_money);
 		return 0;
 	}
 	
 	@Override
-	public int getMoney(String date, String time, CObjectContainer<Float> ctnMoney) {
+	public int getMoney(CObjectContainer<Float> ctnMoney) {
 		ctnMoney.set(m_money);
 		return 0;
 	}
 	
 	@Override
-	public int getHoldStockList(String date, String time, List<HoldStock> out_list) {
+	public int getHoldStockList(List<HoldStock> out_list) {
 		out_list.addAll(m_holdStockList);
 		return 0;
 	}

@@ -35,42 +35,39 @@ public class RealAccountOpe extends IAccountOpe {
 	}
 	
 	@Override
-	public int newDayInit(String date, String time) {
+	public int newDayInit() {
 		int iInitRet = THSApi.initialize();
-		CLog.output("ACCOUNT", " @RealAccountOpe newDayInit err(%d) [%s %s]\n", 
-				iInitRet,
-				date, time);
+		CLog.output("ACCOUNT", " @RealAccountOpe newDayInit err(%d)\n", 
+				iInitRet);
 		return iInitRet;
 	}
 
 	@Override
-	public int newDayTranEnd(String date, String time) {
+	public int newDayTranEnd() {
 		// do nothing
 		return 0;
 	}
 	
 	@Override
-	public int pushBuyOrder(String date, String time, String id, int amount, float price) {
+	public int pushBuyOrder(String id, int amount, float price) {
 		int iBuyRet = THSApi.buyStock(id, amount, price);
-		CLog.output("ACCOUNT", " @RealAccountOpe pushBuyOrder err(%d) [%s %s] [%s %d %.3f %.3f] \n", 
-				iBuyRet, 
-				date, time,
+		CLog.output("ACCOUNT", " @RealAccountOpe pushBuyOrder err(%d) [%s %d %.3f %.3f] \n", 
+				iBuyRet,
 				id, amount, price, amount*price);
 		return iBuyRet;
 	}
 
 	@Override
-	public int pushSellOrder(String date, String time, String id, int amount, float price) {
+	public int pushSellOrder(String id, int amount, float price) {
 		int iSellRet = THSApi.sellStock(id, amount, price);
-		CLog.output("ACCOUNT", " @RealAccountOpe pushSellOrder err(%d) [%s %s] [%s %d %.3f %.3f] \n", 
-				iSellRet, 
-				date, time,
+		CLog.output("ACCOUNT", " @RealAccountOpe pushSellOrder err(%d) [%s %d %.3f %.3f] \n", 
+				iSellRet,
 				id, amount, price, amount*price);
 		return 0;
 	}
 
 	@Override
-	public int getAvailableMoney(String date, String time, CObjectContainer<Float> ctnAvailableMoney) {
+	public int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney) {
 		
 		ObjectContainer<Float> container = new ObjectContainer<Float>();
         int ret = THSApi.getAvailableMoney(container);
@@ -85,7 +82,7 @@ public class RealAccountOpe extends IAccountOpe {
 	}
 	
 	@Override
-	public int getMoney(String date, String time, CObjectContainer<Float> ctnMoney) {
+	public int getMoney(CObjectContainer<Float> ctnMoney) {
 		
 		List<pers.di.thsapi.THSApi.HoldStock> containerHoldStock = new ArrayList<pers.di.thsapi.THSApi.HoldStock>();
         int retHoldStock = THSApi.getHoldStockList(containerHoldStock);
@@ -117,7 +114,7 @@ public class RealAccountOpe extends IAccountOpe {
 	}
 	
 	@Override
-	public int getHoldStockList(String date, String time, List<HoldStock> out_list) {
+	public int getHoldStockList(List<HoldStock> out_list) {
 		
 		out_list.clear();
 		
