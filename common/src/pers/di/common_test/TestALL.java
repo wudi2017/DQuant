@@ -13,7 +13,7 @@ public class TestALL {
 		CTest.ADD_TEST(TestCThread.class);
 		CTest.ADD_TEST(TestCQThread.class);
 		CTest.ADD_TEST(TestCUtilsDateTime.class);
-		CTest.ADD_TEST(TestCScheduleTaskControler.class);
+		CTest.ADD_TEST(TestCDateTimeThruster.class);
 	
 		CTest.RUN_ALL_TESTS("");
 		CSystem.stop();

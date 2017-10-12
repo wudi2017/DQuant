@@ -4,7 +4,7 @@ import java.util.*;
 
 import pers.di.common.*;
 
-public class TestCScheduleTaskControler {
+public class TestCDateTimeThruster {
 	
 	public static CDateTimeThruster s_CDateTimeThruster = null;
 	
@@ -151,7 +151,7 @@ public class TestCScheduleTaskControler {
 	public static void main(String[] args) {
 		//CSystem.start();
 		//CLog.config_setTag("DataEngine", true);
-		CTest.ADD_TEST(TestCScheduleTaskControler.class);
+		CTest.ADD_TEST(TestCDateTimeThruster.class);
 		CTest.RUN_ALL_TESTS("TestCScheduleTaskControler.");
 		//CSystem.stop();
 	}
