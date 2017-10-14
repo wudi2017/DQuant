@@ -28,17 +28,12 @@ public class AccountEntity extends Account {
 	
 	@Override
 	public ACCOUNTTYPE type() {
-		return m_cIAccountOpe.type();
+		return null;
 	}
 
 	@Override
 	public String ID() {
 		return m_cIAccountOpe.ID();
-	}
-
-	@Override
-	public String password() {
-		return m_cIAccountOpe.password();
 	}
 
 	@Override
@@ -211,6 +206,22 @@ public class AccountEntity extends Account {
 			}
 		}
 		return iRet;
+	}
+	
+	public int initialize(IAccountOpe cIAccountOpe)
+	{
+		m_date = CUtilsDateTime.GetCurDateStr();
+		m_time = CUtilsDateTime.GetCurTimeStr();
+		m_cIAccountOpe = cIAccountOpe;
+		
+		m_lockedMoney = 100000.0f; // 默认锁定10w
+		m_stockSelectList = new ArrayList<String>();
+		m_commissionOrderList = new ArrayList<CommissionOrder>();
+		m_holdStockInvestigationDaysMap = new HashMap<String, Integer>();
+		m_accountStore = new AccountStore(m_cIAccountOpe.ID(), m_cIAccountOpe.password());
+
+		load(); // 加载数据
+		store(); // 存储数据
 	}
 	
 	public int newDayBegin() {

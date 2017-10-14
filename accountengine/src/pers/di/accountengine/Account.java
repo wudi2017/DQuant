@@ -9,7 +9,6 @@ public abstract class Account {
 
 	public abstract ACCOUNTTYPE type();
 	public abstract String ID();
-	public abstract String password();
 	
 	public abstract int getTotalAssets(CObjectContainer<Float> ctnTotalAssets);
 	public abstract int getMoney(CObjectContainer<Float> ctnMoney);

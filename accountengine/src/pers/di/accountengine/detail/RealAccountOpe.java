@@ -27,13 +27,7 @@ public class RealAccountOpe extends IAccountOpe {
 	{
 		return "defaultPassword";
 	}
-	
-	@Override
-	public ACCOUNTTYPE type()
-	{
-		return ACCOUNTTYPE.REAL;
-	}
-	
+
 	@Override
 	public int newDayInit() {
 		int iInitRet = THSApi.initialize();

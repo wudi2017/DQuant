@@ -158,7 +158,7 @@ public class TestQuantSession {
 	{
 		QuantSession qSession = new QuantSession(
 				"HistoryTest 2017-01-01 2017-02-03", 
-				AccountPool.instance().account("mock001", "18982"), 
+				AccountPool.instance().account("mock001"), 
 				new TestStrategy());
 		qSession.run();
 		

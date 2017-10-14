@@ -10,7 +10,6 @@ abstract public class IAccountOpe {
 
 	abstract public String ID();
 	abstract public String password();
-	abstract public ACCOUNTTYPE type();
 	
 	// 隔日开始账户初始化
 	abstract public int newDayInit();

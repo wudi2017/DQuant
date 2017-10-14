@@ -9,7 +9,7 @@ import pers.di.common.*;
 
 public class MockAccountOpe extends IAccountOpe {
 	
-	public MockAccountOpe(String accountID, String password, boolean connectFlag)
+	public MockAccountOpe(String accountID, String password)
 	{
 		super();
 		
@@ -17,8 +17,7 @@ public class MockAccountOpe extends IAccountOpe {
 		
 		m_accountID = accountID;
 		m_password = password;
-		
-		m_dataSyncFlag = connectFlag;
+
 		m_mockAccountOpeStore = new MockAccountOpeStore(m_accountID, m_password);
 
 		// 交易流数据
@@ -47,12 +46,6 @@ public class MockAccountOpe extends IAccountOpe {
 	public String password()
 	{
 		return m_password;
-	}
-	
-	@Override
-	public ACCOUNTTYPE type()
-	{
-		return ACCOUNTTYPE.MOCK;
 	}
 	
 	@Override
@@ -203,27 +196,21 @@ public class MockAccountOpe extends IAccountOpe {
 	
 	private void load()
 	{
-		if(m_dataSyncFlag)
+		StoreEntity cStoreEntity = m_mockAccountOpeStore.load();
+		if(null != cStoreEntity)
 		{
-			StoreEntity cStoreEntity = m_mockAccountOpeStore.load();
-			if(null != cStoreEntity)
-			{
-			    m_money = cStoreEntity.money;
-			    m_holdStockList.clear();
-			    m_holdStockList.addAll(cStoreEntity.holdStockList);
-			}
+		    m_money = cStoreEntity.money;
+		    m_holdStockList.clear();
+		    m_holdStockList.addAll(cStoreEntity.holdStockList);
 		}
 	}
 	
 	private void store()
 	{
-		if(m_dataSyncFlag)
-		{
-			StoreEntity cStoreEntity = new StoreEntity();
-			cStoreEntity.money = m_money;
-			cStoreEntity.holdStockList = m_holdStockList;
-			m_mockAccountOpeStore.store(cStoreEntity);
-		}
+		StoreEntity cStoreEntity = new StoreEntity();
+		cStoreEntity.money = m_money;
+		cStoreEntity.holdStockList = m_holdStockList;
+		m_mockAccountOpeStore.store(cStoreEntity);
 	}
 
 	/**
@@ -234,7 +221,6 @@ public class MockAccountOpe extends IAccountOpe {
 	private String m_accountID;
 	private String m_password;
 	
-	private boolean m_dataSyncFlag;
 	private MockAccountOpeStore m_mockAccountOpeStore;
 	
 	private float m_money;

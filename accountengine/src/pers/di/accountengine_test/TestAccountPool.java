@@ -23,7 +23,7 @@ public class TestAccountPool {
 		
 		TestDataSource cTestDataSource = new TestDataSource();
 		
-		AccountPool.instance().initialize(dateTimeThruster, cTestDataSource);
+		AccountPool.instance().loadAccount("Mock001", "passwd");
 		
 		dateTimeThruster.run();
 	}

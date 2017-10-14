@@ -14,14 +14,21 @@ public class AccountPool {
 		m_dataSource = null;
 	}
 	
-	public boolean initialize(CDateTimeThruster dateTimeThruster, IDataSource dataSource)
+	/*
+	 * ******************************************************************
+	 */
+	
+	public int flush(String date, String time)
 	{
-		m_dateTimeThruster = dateTimeThruster;
-		m_dataSource = dataSource;
-		return true;
+		return 0;
 	}
 	
-	public Account account(String accID, String accPassword)
+	public int loadAccount(String accID, String accPassword)
+	{
+		return 0;
+	}
+
+	public Account account(String accID)
 	{
 		return null;
 	}
