@@ -10,20 +10,8 @@ import pers.di.common.CUtilsDateTime;
 
 public class AccountEntity extends Account {
 	
-	public AccountEntity(IAccountOpe cIAccountOpe)
+	public AccountEntity()
 	{
-		m_date = CUtilsDateTime.GetCurDateStr();
-		m_time = CUtilsDateTime.GetCurTimeStr();
-		m_cIAccountOpe = cIAccountOpe;
-		
-		m_lockedMoney = 100000.0f; // 默认锁定10w
-		m_stockSelectList = new ArrayList<String>();
-		m_commissionOrderList = new ArrayList<CommissionOrder>();
-		m_holdStockInvestigationDaysMap = new HashMap<String, Integer>();
-		m_accountStore = new AccountStore(m_cIAccountOpe.ID(), m_cIAccountOpe.password());
-
-		load(); // 加载数据
-		store(); // 存储数据
 	}
 	
 	@Override
@@ -222,6 +210,8 @@ public class AccountEntity extends Account {
 
 		load(); // 加载数据
 		store(); // 存储数据
+		
+		return 0;
 	}
 	
 	public int newDayBegin() {

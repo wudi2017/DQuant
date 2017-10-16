@@ -9,31 +9,15 @@ import pers.di.common.*;
 
 public class MockAccountOpe extends IAccountOpe {
 	
-	public MockAccountOpe(String accountID, String password)
+	public MockAccountOpe()
 	{
 		super();
-		
 		m_transactionCostsRatio = 0.0016f;
-		
-		m_accountID = accountID;
-		m_password = password;
-
-		m_mockAccountOpeStore = new MockAccountOpeStore(m_accountID, m_password);
-
-		// 交易流数据
-		{
-			m_money = 200000.00f; // 模拟账户默认20w
-			m_holdStockList = new ArrayList<HoldStock>();
-			
-			//load
-			load();
-			
-			//store
-			store();
-		}
-
-		CLog.output("ACCOUNT", " @MockAccountOpe Construct AccountID:%s Password:%s money:%.2f transactionCostsRatio:%.4f\n", 
-				m_accountID, password, m_money, m_transactionCostsRatio);
+		m_accountID = null;
+		m_password = null;
+		m_mockAccountOpeStore = null;
+		m_money = 0.00f;
+		m_holdStockList = null;
 	}
 	
 	@Override
@@ -191,6 +175,33 @@ public class MockAccountOpe extends IAccountOpe {
 	@Override
 	public int getHoldStockList(List<HoldStock> out_list) {
 		out_list.addAll(m_holdStockList);
+		return 0;
+	}
+	
+	public int initialize(String accountID, String password)
+	{
+		m_transactionCostsRatio = 0.0016f;
+		
+		m_accountID = accountID;
+		m_password = password;
+
+		m_mockAccountOpeStore = new MockAccountOpeStore(m_accountID, m_password);
+
+		// 交易流数据
+		{
+			m_money = 200000.00f; // 模拟账户默认20w
+			m_holdStockList = new ArrayList<HoldStock>();
+			
+			//load
+			load();
+			
+			//store
+			store();
+		}
+
+		CLog.output("ACCOUNT", " @MockAccountOpe initialize AccountID:%s Password:%s money:%.2f transactionCostsRatio:%.4f\n", 
+				m_accountID, password, m_money, m_transactionCostsRatio);
+		
 		return 0;
 	}
 	

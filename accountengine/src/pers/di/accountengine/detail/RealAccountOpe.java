@@ -12,8 +12,6 @@ public class RealAccountOpe extends IAccountOpe {
 
 	public RealAccountOpe()
 	{
-		int iInitRet = THSApi.initialize();
-		CLog.output("ACCOUNT", " @RealAccountOpe Constructerr(%d)\n", iInitRet);
 	}
 	
 	@Override
@@ -135,5 +133,12 @@ public class RealAccountOpe extends IAccountOpe {
 	        
 		return retHoldStock;
 		
+	}
+	
+	public int initialize(String accountID, String password)
+	{
+		int iInitRet = THSApi.initialize();
+		CLog.output("ACCOUNT", " @RealAccountOpe initialize(%d)\n", iInitRet);
+		return 0;
 	}
 }
