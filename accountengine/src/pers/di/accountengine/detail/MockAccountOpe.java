@@ -21,6 +21,12 @@ public class MockAccountOpe extends IAccountOpe {
 	}
 	
 	@Override
+	public ACCOUNTTYPE type()
+	{
+		return ACCOUNTTYPE.MOCK;
+	}
+	
+	@Override
 	public String ID()
 	{
 		return m_accountID;

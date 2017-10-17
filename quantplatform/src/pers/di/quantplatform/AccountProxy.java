@@ -5,7 +5,7 @@ import pers.di.common.*;
 
 public class AccountProxy {
 	
-	public AccountProxy(Account account)
+	public AccountProxy(AccoutDriver accoutDriver)
 	{
 	}
 	

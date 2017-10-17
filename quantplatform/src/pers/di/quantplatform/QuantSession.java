@@ -12,7 +12,7 @@ import pers.di.dataengine.*;
 
 public class QuantSession {
 	
-	public QuantSession(String triggerCfgStr, Account accout, QuantStrategy strategy)
+	public QuantSession(String triggerCfgStr, AccoutDriver accoutDriver, QuantStrategy strategy)
 	{
 		// init m_listener and StockDataEngine
 		m_listener = StockDataEngine.instance().createListener();
@@ -23,7 +23,7 @@ public class QuantSession {
 		StockDataEngine.instance().config("TriggerMode", triggerCfgStr);
 
 		// init m_accountProxy
-		m_accountProxy = new AccountProxy(accout);
+		m_accountProxy = new AccountProxy(accoutDriver);
 		
 		// init m_stratety
 		m_stratety = strategy;

@@ -15,6 +15,12 @@ public class RealAccountOpe extends IAccountOpe {
 	}
 	
 	@Override
+	public ACCOUNTTYPE type()
+	{
+		return ACCOUNTTYPE.REAL;
+	}
+	
+	@Override
 	public String ID()
 	{
 		return "THSAccount";

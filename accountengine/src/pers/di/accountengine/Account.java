@@ -11,7 +11,6 @@ public abstract class Account {
 	public abstract String ID();
 	
 	public abstract int getTotalAssets(CObjectContainer<Float> ctnTotalAssets);
-	public abstract int getMoney(CObjectContainer<Float> ctnMoney);
 	public abstract int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney);
 	
 	public abstract int pushBuyOrder(String stockID, int amount, float price);

@@ -8,6 +8,7 @@ import pers.di.common.*;
 abstract public class IAccountOpe {
 	public IAccountOpe() { }
 
+	abstract public ACCOUNTTYPE type();
 	abstract public String ID();
 	abstract public String password();
 	

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.accountengine.*;
+import pers.di.accountengine.common.ACCOUNTTYPE;
 import pers.di.common.*;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.TimePrice;
@@ -156,9 +157,12 @@ public class TestQuantSession {
 	@CTest.test
 	public void test_QuantSession()
 	{
+		AccoutDriver cAccoutDriver = new AccoutDriver();
+		cAccoutDriver.load(ACCOUNTTYPE.MOCK, "mock001", "password");
+		
 		QuantSession qSession = new QuantSession(
 				"HistoryTest 2017-01-01 2017-02-03", 
-				AccountPool.instance().account("mock001"), 
+				cAccoutDriver, 
 				new TestStrategy());
 		qSession.run();
 		

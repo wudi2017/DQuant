@@ -10,13 +10,9 @@ import pers.di.common.CUtilsDateTime;
 
 public class AccountEntity extends Account {
 	
-	public AccountEntity()
-	{
-	}
-	
 	@Override
 	public ACCOUNTTYPE type() {
-		return null;
+		return m_cIAccountOpe.type();
 	}
 
 	@Override
@@ -27,6 +23,7 @@ public class AccountEntity extends Account {
 	@Override
 	public int getTotalAssets(CObjectContainer<Float> ctnTotalAssets) {
 		float all_marketval = 0.0f;
+		
 		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
 		int iRetHoldStock = getHoldStockList(cHoldStockList);
 		for(int i=0;i<cHoldStockList.size();i++)
@@ -34,52 +31,22 @@ public class AccountEntity extends Account {
 			HoldStock cHoldStock = cHoldStockList.get(i);
 			all_marketval = all_marketval + cHoldStock.curPrice*cHoldStock.totalAmount;
 		}
+		
 		CObjectContainer<Float> money = new  CObjectContainer<Float>();
-		int iRetMoney = getMoney(money);
+		int iRetMoney = m_cIAccountOpe.getMoney(money);
+		
 		ctnTotalAssets.set(all_marketval + money.get());
 		if(0 == iRetHoldStock && 0 == iRetMoney)
 		{
 			return 0;
 		}
+		
 		return -99;
 	}
 
 	@Override
-	public int getMoney(CObjectContainer<Float> ctnMoney) {
-		
-		CObjectContainer<Float> ctnOriginMoney= new CObjectContainer<Float>();
-		int iRetGetAvailableMoney = m_cIAccountOpe.getAvailableMoney(ctnOriginMoney);
-		
-		CObjectContainer<Float> lockedMoney= new CObjectContainer<Float>();
-		int iRetGetLockedMoney = this.getLockedMoney(lockedMoney);
-		
-		Float money = ctnOriginMoney.get() - lockedMoney.get();
-		if(money < 0)
-		{
-			money = 0.0f;
-		}
-		ctnMoney.set(money);
-		
-		return iRetGetAvailableMoney + iRetGetLockedMoney;
-	}
-
-	@Override
 	public int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney) {
-		
-		CObjectContainer<Float> ctnOriginAvailableMoney= new CObjectContainer<Float>();
-		int iRetGetAvailableMoney = m_cIAccountOpe.getAvailableMoney(ctnOriginAvailableMoney);
-		
-		CObjectContainer<Float> lockedMoney= new CObjectContainer<Float>();
-		int iRetGetLockedMoney = this.getLockedMoney(lockedMoney);
-		
-		Float availableMoney = ctnOriginAvailableMoney.get() - lockedMoney.get();
-		if(availableMoney < 0)
-		{
-			availableMoney = 0.0f;
-		}
-		ctnAvailableMoney.set(availableMoney);
-		
-		return iRetGetAvailableMoney + iRetGetLockedMoney;
+		return m_cIAccountOpe.getAvailableMoney(ctnAvailableMoney);
 	}
 
 	@Override
@@ -196,13 +163,20 @@ public class AccountEntity extends Account {
 		return iRet;
 	}
 	
+	/*
+	 * ******************************************************************************************
+	 */
+	
+	public AccountEntity()
+	{
+	}
+	
 	public int initialize(IAccountOpe cIAccountOpe)
 	{
 		m_date = CUtilsDateTime.GetCurDateStr();
 		m_time = CUtilsDateTime.GetCurTimeStr();
 		m_cIAccountOpe = cIAccountOpe;
 		
-		m_lockedMoney = 100000.0f; // 默认锁定10w
 		m_stockSelectList = new ArrayList<String>();
 		m_commissionOrderList = new ArrayList<CommissionOrder>();
 		m_holdStockInvestigationDaysMap = new HashMap<String, Integer>();
@@ -211,6 +185,18 @@ public class AccountEntity extends Account {
 		load(); // 加载数据
 		store(); // 存储数据
 		
+		return 0;
+	}
+	
+	public int setDateTime(String date, String time)
+	{
+		m_date = date;
+		m_time = time;
+		return 0;
+	}
+	
+	public int flushCurrentPrice(String stockID, float price)
+	{
 		return 0;
 	}
 	
@@ -273,10 +259,6 @@ public class AccountEntity extends Account {
 		StoreEntity cStoreEntity = m_accountStore.load();
 		if(null != cStoreEntity)
 		{
-			// load lockedMoney
-			if(null != cStoreEntity.lockedMoney)
-				m_lockedMoney = cStoreEntity.lockedMoney;
-			
 			// load stockSelectList
 		    m_stockSelectList.clear();
 		    if(null != cStoreEntity.stockSelectList)
@@ -299,8 +281,6 @@ public class AccountEntity extends Account {
 		StoreEntity cStoreEntity = new StoreEntity();
 		cStoreEntity.date = m_date;
 		cStoreEntity.time = m_time;
-		// locked money
-		cStoreEntity.lockedMoney = m_lockedMoney;
 		// stockSelectList
 		cStoreEntity.stockSelectList = m_stockSelectList;
 		// commissionOrderList
@@ -308,12 +288,6 @@ public class AccountEntity extends Account {
 		// holdStockInvestigationDaysMap
 		cStoreEntity.holdStockInvestigationDaysMap = m_holdStockInvestigationDaysMap;
 		m_accountStore.store(cStoreEntity);
-	}
-	
-	public int getLockedMoney(CObjectContainer<Float> ctnLockedMoney)
-	{
-		ctnLockedMoney.set(m_lockedMoney);
-		return 0;
 	}
 	
 	/*
@@ -324,7 +298,6 @@ public class AccountEntity extends Account {
 	private String m_time;
 	private IAccountOpe m_cIAccountOpe;
 	
-	private float m_lockedMoney;
 	private List<String> m_stockSelectList; // 选股列表
 	private List<CommissionOrder> m_commissionOrderList; // 委托列表
 	private Map<String, Integer> m_holdStockInvestigationDaysMap; // 持股调查表

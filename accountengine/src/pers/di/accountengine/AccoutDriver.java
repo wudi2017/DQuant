@@ -1,6 +1,6 @@
 package pers.di.accountengine;
 
-import java.util.List;
+import java.util.*;
 
 import pers.di.accountengine.common.*;
 import pers.di.accountengine.detail.*;
@@ -39,9 +39,13 @@ public class AccoutDriver {
 		// init m_accountEntity
 		if(null != cIAccOpe)
 		{
-			m_accountEntity = new AccountEntity();
-			int iRet = m_accountEntity.initialize(cIAccOpe);
-			if(0 != iRet)
+			AccountEntity cAccountEntity =  new AccountEntity();
+			int iRet = cAccountEntity.initialize(cIAccOpe);
+			if(0 == iRet)
+			{
+				m_accountEntity = cAccountEntity;
+			}
+			else
 			{
 				CLog.error("ACCOUNT", "AccoutDriver init AccountEntity failed\n");
 			}
@@ -66,27 +70,47 @@ public class AccoutDriver {
 	// set date time
 	public int setDateTime(String date, String time)
 	{
-		return 0;
+		if(null == m_accountEntity) return -1;
+		return m_accountEntity.setDateTime(date, time);
 	}
 	
 	// update current hold stock price
 	public int getHoldStockList(List<String> ctnHoldList)
 	{
-		return 0;
+		if(null == m_accountEntity) return -1;
+		if(null == ctnHoldList) return -1;
+		List<HoldStock> ctnList = new ArrayList<HoldStock>();
+		int iRet = m_accountEntity.getHoldStockList(ctnList);
+		if(0 == iRet)
+		{
+			for(int i=0; i<ctnList.size(); i++)
+			{
+				HoldStock cHoldStock = ctnList.get(i);
+				ctnHoldList.add(cHoldStock.stockID);
+			}
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
 	}
 	public int flushCurrentPrice(String stockID, float price)
 	{
-		return 0;
+		if(null == m_accountEntity) return -1;
+		return m_accountEntity.flushCurrentPrice(stockID, price);
 	}
 	
 	// new day begin and end
 	public int newDayBegin()
 	{
-		return 0;
+		if(null == m_accountEntity) return -1;
+		return m_accountEntity.newDayBegin();
 	}
 	public int newDayEnd()
 	{
-		return 0;
+		if(null == m_accountEntity) return -1;
+		return m_accountEntity.newDayEnd();
 	}
 	
 	private AccountEntity m_accountEntity;

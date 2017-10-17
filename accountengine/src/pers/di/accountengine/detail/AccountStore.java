@@ -40,14 +40,12 @@ public class AccountStore {
 		{
 			date = null;
 			time = null;
-			lockedMoney = null;
 			stockSelectList = null;
 			commissionOrderList = null;
 			holdStockInvestigationDaysMap = null;
 		}
 		public String date;
 		public String time;
-		public Float lockedMoney;
 		public List<String> stockSelectList;
 		public List<CommissionOrder> commissionOrderList;
 		public Map<String, Integer> holdStockInvestigationDaysMap;
@@ -137,15 +135,6 @@ public class AccountStore {
         	if(null != cStoreEntity.time)
         	{
         		root.setAttribute("time", cStoreEntity.time);
-        	}
-        	
-        	// locked Money
-        	if(null != cStoreEntity.lockedMoney)
-        	{
-        		String sLockedMoney = Float.toString(cStoreEntity.lockedMoney);
-        		Element Node_LockedMoney = doc.createElement("LockedMoney");
-        		Node_LockedMoney.setAttribute("value", sLockedMoney);
-        		root.appendChild(Node_LockedMoney);
         	}
         	
         	// StockSelectList
@@ -406,7 +395,6 @@ public class AccountStore {
 		    StoreEntity cStoreEntity = new StoreEntity();
 		    cStoreEntity.date = accDate;
 		    cStoreEntity.time = accTime;
-		    cStoreEntity.lockedMoney = lockedMoney;
 		    cStoreEntity.stockSelectList = stockSelectList;
 		    cStoreEntity.commissionOrderList = commissionOrderList;
 		    cStoreEntity.holdStockInvestigationDaysMap = holdStockInvestigationDaysMap;
