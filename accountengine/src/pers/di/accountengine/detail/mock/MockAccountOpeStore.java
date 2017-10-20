@@ -1,4 +1,4 @@
-package pers.di.accountengine.detail;
+package pers.di.accountengine.detail.mock;
 
 import java.io.*;
 import java.util.*;
@@ -25,15 +25,26 @@ public class MockAccountOpeStore {
 	
 	public static class StoreEntity
 	{
+		public StoreEntity()
+		{
+			money = 0.0f;
+			holdStockList = new ArrayList<HoldStock>();
+		}
 		public float money;
-		List<HoldStock> holdStockList;
+		public List<HoldStock> holdStockList;
 	}
 	
 	public MockAccountOpeStore(String accountID, String password)
 	{
+		m_storeEntity = null;
 		m_accountID = accountID;
 		m_password = password;
 		m_accXMLFile = "rw\\MOCK_ACCOUNT_" + m_accountID + ".xml";
+	}
+	
+	public StoreEntity storeEntity()
+	{
+		return m_storeEntity;
 	}
 	
 	public boolean storeInit()
@@ -76,10 +87,11 @@ public class MockAccountOpeStore {
 			}
 		}
 
+		m_storeEntity = new StoreEntity();
 		return true;
 	}
 	
-	public boolean store(StoreEntity cStoreEntity)
+	public boolean flush()
 	{
 		File cfile=new File(m_accXMLFile);
 		if(cfile.exists())
@@ -103,10 +115,10 @@ public class MockAccountOpeStore {
 		root.setAttribute("password", m_password);
         doc.appendChild(root);
         
-        if(null != cStoreEntity)
+        if(null != m_storeEntity)
         {
         	// money
-        	String totalVal = String.format("%.3f", cStoreEntity.money);
+        	String totalVal = String.format("%.3f", m_storeEntity.money);
         	Element Node_Money=doc.createElement("Money");
         	Node_Money.setAttribute("total", totalVal);
         	root.appendChild(Node_Money);
@@ -114,9 +126,9 @@ public class MockAccountOpeStore {
         	// HoldStockList
         	Element Node_HoldStockList=doc.createElement("HoldStockList");
         	root.appendChild(Node_HoldStockList);
-        	for(int i=0;i<cStoreEntity.holdStockList.size();i++)
+        	for(int i=0;i<m_storeEntity.holdStockList.size();i++)
         	{
-        		HoldStock cHoldStock = cStoreEntity.holdStockList.get(i);
+        		HoldStock cHoldStock = m_storeEntity.holdStockList.get(i);
         		String totalAmountVal =String.format("%d", cHoldStock.totalAmount);
         		String availableAmountVal =String.format("%d", cHoldStock.availableAmount);
         		String refPrimeCostPriceVal =String.format("%.3f", cHoldStock.refPrimeCostPrice);
@@ -183,7 +195,7 @@ public class MockAccountOpeStore {
 		return true;
 	}
 	
-	public StoreEntity load()
+	public boolean load()
 	{
 		CLog.output("ACCOUNT", "MockAccountOpeStore load\n");
 		
@@ -192,8 +204,7 @@ public class MockAccountOpeStore {
 		if(!cfile.exists())
 		{
 			CLog.output("ACCOUNT", "MockAccountOpeStore storeInit (no file)\n");
-			storeInit();
-			return null; // 没有文件 load失败
+			return false; // 没有文件 load失败
 		}
 		
 		try
@@ -212,8 +223,7 @@ public class MockAccountOpeStore {
 			if(xmlStr.length()<=0)
 			{
 				CLog.output("ACCOUNT", "MockAccountOpeStore storeInit (no content)\n");
-				storeInit(); 
-				return null; // 没有内容 load失败
+				return false; // 没有内容 load失败
 			}
 			
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -227,8 +237,7 @@ public class MockAccountOpeStore {
 		    if(!rootElement.getTagName().contains("account")) 
 			{
 		    	CLog.output("ACCOUNT", "MockAccountOpeStore storeInit (no account root)\n");
-				storeInit(); 
-				return null; // 没有root load失败
+				return false; // 没有root load失败
 			}
 		    
 		    // 账户属性判断并加载
@@ -237,7 +246,7 @@ public class MockAccountOpeStore {
 		    if(!accountID.equals(m_accountID) || !password.equals(m_password))
 			{
 		    	CLog.error("ACCOUNT", "MockAccountOpeStore storeInit (accountID or password error)\n");
-				return null; // 账号秘密不对 load失败
+				return false; // 账号秘密不对 load失败
 			}
 		    
 		    String acc_date = rootElement.getAttribute("date");
@@ -286,21 +295,21 @@ public class MockAccountOpeStore {
 	        	}
 		    }
 		    
-		    StoreEntity cStoreEntity = new StoreEntity();
-		    cStoreEntity.money = money;
-		    cStoreEntity.holdStockList = holdStockList;
-		    return cStoreEntity;
+		    m_storeEntity.money = money;
+		    m_storeEntity.holdStockList = holdStockList;
+		    return true;
 		}
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			return null;
+			return false;
 		}
 	}
 
 	/**
 	 * 成员-----------------------------------------------------------------------
 	 */
+	private StoreEntity m_storeEntity;
 	private String m_accountID;
 	private String m_password;
 	private String m_accXMLFile;

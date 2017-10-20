@@ -5,6 +5,7 @@ import java.util.*;
 import pers.di.accountengine.Account;
 import pers.di.accountengine.common.*;
 import pers.di.accountengine.detail.AccountStore.StoreEntity;
+import pers.di.common.CLog;
 import pers.di.common.CObjectContainer;
 import pers.di.common.CUtilsDateTime;
 
@@ -12,16 +13,25 @@ public class AccountEntity extends Account {
 	
 	@Override
 	public ACCOUNTTYPE type() {
+		
+		if(!m_initFlag) return null;
+		
 		return m_cIAccountOpe.type();
 	}
 
 	@Override
 	public String ID() {
+		
+		if(!m_initFlag) return null;
+		
 		return m_cIAccountOpe.ID();
 	}
 
 	@Override
 	public int getTotalAssets(CObjectContainer<Float> ctnTotalAssets) {
+		
+		if(!m_initFlag) return -1;
+		
 		float all_marketval = 0.0f;
 		
 		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
@@ -46,52 +56,65 @@ public class AccountEntity extends Account {
 
 	@Override
 	public int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney) {
+		
+		if(!m_initFlag) return -1;
+		
 		return m_cIAccountOpe.getAvailableMoney(ctnAvailableMoney);
 	}
 
 	@Override
 	public int pushBuyOrder(String stockID, int amount, float price) {
+		
+		if(!m_initFlag) return -1;
+		
 		int ret = m_cIAccountOpe.pushBuyOrder(stockID, amount, price);
 		if(0 == ret)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
-			cCommissionOrder.time = m_time;
+			cCommissionOrder.time = m_accountStore.storeEntity().time;
 			cCommissionOrder.tranAct = TRANACT.BUY;
 			cCommissionOrder.stockID = stockID;
 			cCommissionOrder.amount = amount;
 			cCommissionOrder.price = price;
-			m_commissionOrderList.add(cCommissionOrder);
+			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
 		}
-		store();
 		return ret;
 	}
 
 	@Override
 	public int pushSellOrder(String stockID, int amount, float price) {
+		
+		if(!m_initFlag) return -1;
+		
 		int ret = m_cIAccountOpe.pushSellOrder(stockID, amount, price);
 		if(0 == ret)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
-			cCommissionOrder.time = m_time;
+			cCommissionOrder.time = m_accountStore.storeEntity().time;
 			cCommissionOrder.tranAct = TRANACT.SELL;
 			cCommissionOrder.stockID = stockID;
 			cCommissionOrder.amount = amount;
 			cCommissionOrder.price = price;
-			m_commissionOrderList.add(cCommissionOrder);
+			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
 		}
-		store();
 		return ret;
 	}
 
 	@Override
 	public int getCommissionOrderList(List<CommissionOrder> ctnList) {
+		
+		if(!m_initFlag) return -1;
+		
 		ctnList.clear();
-		ctnList.addAll(m_commissionOrderList);
+		ctnList.addAll(m_accountStore.storeEntity().commissionOrderList);
 		return 0;
 	}
 
 	@Override
 	public int getBuyCommissionOrderList(List<CommissionOrder> ctnList) {
+		
+		if(!m_initFlag) return -1;
+		
 		ctnList.clear();
 		List<CommissionOrder> cCommissionOrderList = new ArrayList<CommissionOrder>();
 		int iRet = this.getCommissionOrderList(cCommissionOrderList);
@@ -110,6 +133,9 @@ public class AccountEntity extends Account {
 
 	@Override
 	public int getSellCommissionOrderList(List<CommissionOrder> ctnList) {
+		
+		if(!m_initFlag) return -1;
+		
 		ctnList.clear();
 		List<CommissionOrder> cCommissionOrderList = new ArrayList<CommissionOrder>();
 		int iRet = this.getCommissionOrderList(cCommissionOrderList);
@@ -128,15 +154,18 @@ public class AccountEntity extends Account {
 
 	@Override
 	public int getHoldStockList(List<HoldStock> ctnList) {
+		
+		if(!m_initFlag) return -1;
+		
 		int iGetHoldStockList = m_cIAccountOpe.getHoldStockList(ctnList);
 		if(0 == iGetHoldStockList)
 		{
 			for(int i=0;i<ctnList.size();i++)
 	        {
 	        	HoldStock cHoldStock = ctnList.get(i);
-	        	if(m_holdStockInvestigationDaysMap.containsKey(cHoldStock.stockID))
+	        	if(m_accountStore.storeEntity().holdStockInvestigationDaysMap.containsKey(cHoldStock.stockID))
 	        	{
-	        		cHoldStock.investigationDays = m_holdStockInvestigationDaysMap.get(cHoldStock.stockID);
+	        		cHoldStock.investigationDays = m_accountStore.storeEntity().holdStockInvestigationDaysMap.get(cHoldStock.stockID);
 	        	}
 	        	else
 	        	{
@@ -149,6 +178,9 @@ public class AccountEntity extends Account {
 
 	@Override
 	public int getHoldStock(String stockID, CObjectContainer<HoldStock> ctnHoldStock) {
+		
+		if(!m_initFlag) return -1;
+		
 		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
 		int iRet = getHoldStockList(cHoldStockList);
 		for(int i=0;i<cHoldStockList.size();i++)
@@ -169,44 +201,68 @@ public class AccountEntity extends Account {
 	
 	public AccountEntity()
 	{
+		m_cIAccountOpe = null;
+		m_accountStore = null;
+		m_initFlag = false;
 	}
 	
 	public int initialize(IAccountOpe cIAccountOpe)
 	{
-		m_date = CUtilsDateTime.GetCurDateStr();
-		m_time = CUtilsDateTime.GetCurTimeStr();
 		m_cIAccountOpe = cIAccountOpe;
-		
-		m_stockSelectList = new ArrayList<String>();
-		m_commissionOrderList = new ArrayList<CommissionOrder>();
-		m_holdStockInvestigationDaysMap = new HashMap<String, Integer>();
-		m_accountStore = new AccountStore(m_cIAccountOpe.ID(), m_cIAccountOpe.password());
-
-		load(); // 加载数据
-		store(); // 存储数据
-		
-		return 0;
+		if(null != m_cIAccountOpe.ID())
+		{
+			m_accountStore = new AccountStore(m_cIAccountOpe.ID(), m_cIAccountOpe.password());
+			boolean bLoad = m_accountStore.load();
+			if(bLoad)
+			{
+				CLog.output("ACCOUNT", " @AccountEntity initialize AccountID:%s Password:%s OK~\n", 
+						m_cIAccountOpe.ID(), m_cIAccountOpe.password());
+				m_initFlag = true;
+				return 0;
+			}
+			else
+			{
+				CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_accountStore.load err!\n");
+				return -1;
+			}
+		}
+		else
+		{
+			CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_cIAccountOpe err!\n");
+			return -1;
+		}
 	}
 	
 	public int setDateTime(String date, String time)
 	{
-		m_date = date;
-		m_time = time;
+		if(!m_initFlag) return -1;
+		
+		m_accountStore.storeEntity().date = date;
+		m_accountStore.storeEntity().time = time;
+		
 		return 0;
 	}
 	
 	public int flushCurrentPrice(String stockID, float price)
 	{
+		if(!m_initFlag) return -1;
+		
 		return 0;
 	}
 	
 	public int newDayBegin() {
-		load();
+		
+		if(!m_initFlag) return -1;
+		
 		int iNewDayInit = m_cIAccountOpe.newDayInit();
+		
 		return iNewDayInit;
 	}
 
 	public int newDayEnd() {
+		
+		if(!m_initFlag) return -1;
+		
 		int iNewDayTranEnd = m_cIAccountOpe.newDayTranEnd();
 		if(0 == iNewDayTranEnd)
 		{
@@ -225,9 +281,9 @@ public class AccountEntity extends Account {
 				for(Map.Entry<String, Integer> entry:newholdStockInvestigationDaysMap.entrySet()){   
 					String key = entry.getKey();
 					int iInvestigationDays = 0;
-					if(m_holdStockInvestigationDaysMap.containsKey(key))
+					if(m_accountStore.storeEntity().holdStockInvestigationDaysMap.containsKey(key))
 					{
-						iInvestigationDays = m_holdStockInvestigationDaysMap.get(key);
+						iInvestigationDays = m_accountStore.storeEntity().holdStockInvestigationDaysMap.get(key);
 					}
 					entry.setValue(iInvestigationDays);
 				} 
@@ -235,10 +291,10 @@ public class AccountEntity extends Account {
 					int iInvestigationDays = entry.getValue();
 					entry.setValue(iInvestigationDays+1);
 				} 
-				m_holdStockInvestigationDaysMap.clear();
-				m_holdStockInvestigationDaysMap.putAll(newholdStockInvestigationDaysMap);
+				m_accountStore.storeEntity().holdStockInvestigationDaysMap.clear();
+				m_accountStore.storeEntity().holdStockInvestigationDaysMap.putAll(newholdStockInvestigationDaysMap);
 				
-				store();
+				m_accountStore.flush();
 			}
 			else
 			{
@@ -246,60 +302,17 @@ public class AccountEntity extends Account {
 			}
 			
 			// 清空委托表
-			m_commissionOrderList.clear();
-			store();
+			m_accountStore.storeEntity().commissionOrderList.clear();
+			m_accountStore.flush();
 		}
 		
 		return iNewDayTranEnd; 
 	}
 	
-	// 加载锁定资金，选股表，股票调查天数表
-	private void load()
-	{
-		StoreEntity cStoreEntity = m_accountStore.load();
-		if(null != cStoreEntity)
-		{
-			// load stockSelectList
-		    m_stockSelectList.clear();
-		    if(null != cStoreEntity.stockSelectList)
-		    	m_stockSelectList.addAll(cStoreEntity.stockSelectList);
-		    
-		    // 
-		    m_commissionOrderList.clear();
-		    if(null != cStoreEntity.commissionOrderList)
-		    	m_commissionOrderList.addAll(cStoreEntity.commissionOrderList);
-		    
-		    // load holdStockInvestigationDaysMap
-		    m_holdStockInvestigationDaysMap.clear();
-			if(null != cStoreEntity.holdStockInvestigationDaysMap)
-		    	m_holdStockInvestigationDaysMap.putAll(cStoreEntity.holdStockInvestigationDaysMap);
-		}
-	}
-	// 保存选股表
-	private void store()
-	{
-		StoreEntity cStoreEntity = new StoreEntity();
-		cStoreEntity.date = m_date;
-		cStoreEntity.time = m_time;
-		// stockSelectList
-		cStoreEntity.stockSelectList = m_stockSelectList;
-		// commissionOrderList
-		cStoreEntity.commissionOrderList = m_commissionOrderList;
-		// holdStockInvestigationDaysMap
-		cStoreEntity.holdStockInvestigationDaysMap = m_holdStockInvestigationDaysMap;
-		m_accountStore.store(cStoreEntity);
-	}
-	
 	/*
 	 * ******************************************************************************************
 	 */
-
-	private String m_date;
-	private String m_time;
 	private IAccountOpe m_cIAccountOpe;
-	
-	private List<String> m_stockSelectList; // 选股列表
-	private List<CommissionOrder> m_commissionOrderList; // 委托列表
-	private Map<String, Integer> m_holdStockInvestigationDaysMap; // 持股调查表
 	private AccountStore m_accountStore;
+	private boolean m_initFlag;
 }

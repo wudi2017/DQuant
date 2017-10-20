@@ -40,22 +40,26 @@ public class AccountStore {
 		{
 			date = null;
 			time = null;
-			stockSelectList = null;
 			commissionOrderList = null;
 			holdStockInvestigationDaysMap = null;
 		}
 		public String date;
 		public String time;
-		public List<String> stockSelectList;
 		public List<CommissionOrder> commissionOrderList;
 		public Map<String, Integer> holdStockInvestigationDaysMap;
 	}
 	
 	public AccountStore(String accountID, String password)
 	{
+		m_storeEntity = null;
 		m_accountID = accountID;
 		m_password = password;
 		m_accXMLFile = "rw\\ACCOUNT_EXTEND_" + m_accountID + ".xml";
+	}
+	
+	public StoreEntity storeEntity()
+	{
+		return m_storeEntity;
 	}
 	
 	public boolean storeInit()
@@ -101,7 +105,7 @@ public class AccountStore {
 		return true;
 	}
 	
-	public boolean store(StoreEntity cStoreEntity)
+	public boolean flush()
 	{
 		File cfile=new File(m_accXMLFile);
 		if(cfile.exists())
@@ -125,40 +129,26 @@ public class AccountStore {
 		root.setAttribute("password", m_password);
         doc.appendChild(root);
         
-        if(null != cStoreEntity)
+        if(null != m_storeEntity)
         {
         	// date time
-        	if(null != cStoreEntity.date)
+        	if(null != m_storeEntity.date)
         	{
-        		root.setAttribute("date", cStoreEntity.date);
+        		root.setAttribute("date", m_storeEntity.date);
         	}
-        	if(null != cStoreEntity.time)
+        	if(null != m_storeEntity.time)
         	{
-        		root.setAttribute("time", cStoreEntity.time);
+        		root.setAttribute("time", m_storeEntity.time);
         	}
-        	
-        	// StockSelectList
-        	if(null != cStoreEntity.stockSelectList)
-        	{
-            	Element Node_StockSelectList=doc.createElement("SelectList");
-            	root.appendChild(Node_StockSelectList);
-            	for(int i=0;i<cStoreEntity.stockSelectList.size();i++)
-            	{
-            		String stockID = cStoreEntity.stockSelectList.get(i);
-            		Element Node_Stock = doc.createElement("Stock");
-            		Node_Stock.setAttribute("stockID", stockID);
-            		Node_StockSelectList.appendChild(Node_Stock);
-            	}
-        	}
-        	
+
         	// CommissionOrderList
-        	if(null != cStoreEntity.commissionOrderList)
+        	if(null != m_storeEntity.commissionOrderList)
         	{
         		Element Node_CommissionOrderList=doc.createElement("CommissionOrderList");
             	root.appendChild(Node_CommissionOrderList);
-            	for(int i=0;i<cStoreEntity.commissionOrderList.size();i++)
+            	for(int i=0;i<m_storeEntity.commissionOrderList.size();i++)
             	{
-            		CommissionOrder cCommissionOrder = cStoreEntity.commissionOrderList.get(i);
+            		CommissionOrder cCommissionOrder = m_storeEntity.commissionOrderList.get(i);
             		String tranactVal = "";
             		if(cCommissionOrder.tranAct == TRANACT.BUY) tranactVal= "BUY";
             		if(cCommissionOrder.tranAct == TRANACT.SELL) tranactVal= "SELL";
@@ -177,11 +167,11 @@ public class AccountStore {
         	}
 
         	// holdStockInvestigationDaysMap
-        	if(null != cStoreEntity.holdStockInvestigationDaysMap)
+        	if(null != m_storeEntity.holdStockInvestigationDaysMap)
         	{
             	Element Node_holdStockInvestigationDaysMap=doc.createElement("holdStockInvestigationDaysMap");
             	root.appendChild(Node_holdStockInvestigationDaysMap);
-            	for (Map.Entry<String, Integer> entry : cStoreEntity.holdStockInvestigationDaysMap.entrySet()) {  
+            	for (Map.Entry<String, Integer> entry : m_storeEntity.holdStockInvestigationDaysMap.entrySet()) {  
             		String stockID = entry.getKey();
             		Integer investigationDays = entry.getValue();
             		Element Node_StockInvestigation = doc.createElement("StockInvestigation");
@@ -242,15 +232,14 @@ public class AccountStore {
 		return true;
 	}
 	
-	public StoreEntity load()
+	public boolean load()
 	{
 		String xmlStr = "";
 		File cfile=new File(m_accXMLFile);
 		if(!cfile.exists())
 		{
 			CLog.output("ACCOUNT", "AccountStore storeInit (no file)\n");
-			storeInit();
-			return null; // 没有文件 load失败
+			return false; // 没有文件 load失败
 		}
 		
 		try
@@ -269,8 +258,7 @@ public class AccountStore {
 			if(xmlStr.length()<=0)
 			{
 				CLog.output("ACCOUNT", "AccountStore storeInit (no content)\n");
-				storeInit(); 
-				return null; // 没有内容 load失败
+				return false; // 没有内容 load失败
 			}
 			
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -284,8 +272,7 @@ public class AccountStore {
 		    if(!rootElement.getTagName().contains("account")) 
 			{
 		    	CLog.output("ACCOUNT", "AccountStore storeInit (no account root)\n");
-				storeInit(); 
-				return null; // 没有root load失败
+				return false; // 没有root load失败
 			}
 		    
 		    // 账户属性判断并加载
@@ -294,27 +281,12 @@ public class AccountStore {
 		    if(!accountID.equals(m_accountID) || !password.equals(m_password))
 			{
 		    	CLog.error("ACCOUNT", "AccountStore storeInit (accountID or password error)\n");
-				return null; // 账号秘密不对 load失败
+				return false; // 账号秘密不对 load失败
 			}
 		    
         	// date time
 		    String accDate = rootElement.getAttribute("date");
 		    String accTime = rootElement.getAttribute("time");
-		    
-		    // 加载锁定资金
-		    Float lockedMoney = null;
-		    {
-		    	NodeList nodelist_LockedMoney = rootElement.getElementsByTagName("LockedMoney");
-		        if(nodelist_LockedMoney.getLength() == 1)
-	        	{
-		        	Node node_LockedMoney = nodelist_LockedMoney.item(0);
-		        	if(node_LockedMoney.getNodeType() == Node.ELEMENT_NODE)
-		        	{
-			        	String sLockedMoney = ((Element)node_LockedMoney).getAttribute("value");
-			        	lockedMoney = Float.parseFloat(sLockedMoney);
-		        	}
-	        	}
-		    }
 		    
 		    // 选股列表加载
 		    List<String> stockSelectList = null;
@@ -392,24 +364,22 @@ public class AccountStore {
 	        	}
 		    }
 		 
-		    StoreEntity cStoreEntity = new StoreEntity();
-		    cStoreEntity.date = accDate;
-		    cStoreEntity.time = accTime;
-		    cStoreEntity.stockSelectList = stockSelectList;
-		    cStoreEntity.commissionOrderList = commissionOrderList;
-		    cStoreEntity.holdStockInvestigationDaysMap = holdStockInvestigationDaysMap;
-		    return cStoreEntity;
+		    m_storeEntity.date = accDate;
+		    m_storeEntity.time = accTime;
+		    m_storeEntity.commissionOrderList = commissionOrderList;
+		    return true;
 		}
 		catch(Exception e)
 		{
 			System.out.println(e.getMessage()); 
-			return null;
+			return false;
 		}
 	}
 	
 	/**
 	 * 成员-----------------------------------------------------------------------
 	 */
+	private StoreEntity m_storeEntity;
 	private String m_accountID;
 	private String m_password;
 	private String m_accXMLFile;

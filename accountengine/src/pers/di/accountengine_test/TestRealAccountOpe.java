@@ -4,6 +4,7 @@ import java.util.*;
 
 import pers.di.accountengine.common.HoldStock;
 import pers.di.accountengine.detail.*;
+import pers.di.accountengine.detail.real.RealAccountOpe;
 import pers.di.common.*;
 
 public class TestRealAccountOpe {
