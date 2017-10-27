@@ -14,11 +14,11 @@ public class TestRealAccountOpe {
 	{
 		RealAccountOpe cRealAccountOpe = new RealAccountOpe();
 		
-		int iInit = cRealAccountOpe.newDayInit();
-		CTest.EXPECT_LONG_EQ(0, iInit);
-		
-		int iEnd = cRealAccountOpe.newDayTranEnd();
-		CTest.EXPECT_LONG_EQ(0, iEnd);
+//		int iInit = cRealAccountOpe.newDayInit();
+//		CTest.EXPECT_LONG_EQ(0, iInit);
+//		
+//		int iEnd = cRealAccountOpe.newDayTranEnd();
+//		CTest.EXPECT_LONG_EQ(0, iEnd);
 		
 //		int iBuy = cRealAccountOpe.pushBuyOrder(CUtilsDateTime.GetCurDateStr(), CUtilsDateTime.GetCurTimeStr(), 
 //				"601988", 100, 0.99f);
@@ -32,10 +32,10 @@ public class TestRealAccountOpe {
 		int iAvailableMoney = cRealAccountOpe.getAvailableMoney(ctnAvailableMoney);
 		CTest.EXPECT_LONG_EQ(0, iAvailableMoney);
 		
-		CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
-		int iMoney = cRealAccountOpe.getMoney(ctnMoney);
-		CTest.EXPECT_LONG_EQ(0, iMoney);
-		CTest.EXPECT_TRUE(ctnMoney.get() > 100.0f);
+//		CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+//		int iMoney = cRealAccountOpe.getMoney(ctnMoney);
+//		CTest.EXPECT_LONG_EQ(0, iMoney);
+//		CTest.EXPECT_TRUE(ctnMoney.get() > 100.0f);
 		
 		List<HoldStock> ctnHoldStock = new ArrayList<HoldStock>();
 		int iHold = cRealAccountOpe.getHoldStockList(ctnHoldStock);

@@ -17,7 +17,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return null;
 		
-		return m_cIMarketAccountOpe.ID();
+		return "local";
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class AccountEntity extends Account {
 		}
 		
 		CObjectContainer<Float> money = new  CObjectContainer<Float>();
-		int iRetMoney = m_cIMarketAccountOpe.getMoney(money);
+		int iRetMoney = m_cIMarketAccountOpe.getAvailableMoney(money);
 		
 		ctnTotalAssets.set(all_marketval + money.get());
 		if(0 == iRetHoldStock && 0 == iRetMoney)
@@ -201,29 +201,30 @@ public class AccountEntity extends Account {
 	
 	public int initialize(IMarketAccountOpe cIMarketAccountOpe)
 	{
-		m_cIMarketAccountOpe = cIMarketAccountOpe;
-		if(null != m_cIMarketAccountOpe.ID())
-		{
-			m_accountStore = new AccountStore(m_cIMarketAccountOpe.ID(), m_cIMarketAccountOpe.password());
-			boolean bLoad = m_accountStore.load();
-			if(bLoad)
-			{
-				CLog.output("ACCOUNT", " @AccountEntity initialize AccountID:%s Password:%s OK~\n", 
-						m_cIMarketAccountOpe.ID(), m_cIMarketAccountOpe.password());
-				m_initFlag = true;
-				return 0;
-			}
-			else
-			{
-				CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_accountStore.load err!\n");
-				return -1;
-			}
-		}
-		else
-		{
-			CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_cIMarketAccountOpe err!\n");
-			return -1;
-		}
+		return 0;
+//		m_cIMarketAccountOpe = cIMarketAccountOpe;
+//		if(null != m_cIMarketAccountOpe.ID())
+//		{
+//			m_accountStore = new AccountStore(m_cIMarketAccountOpe.ID(), m_cIMarketAccountOpe.password());
+//			boolean bLoad = m_accountStore.load();
+//			if(bLoad)
+//			{
+//				CLog.output("ACCOUNT", " @AccountEntity initialize AccountID:%s Password:%s OK~\n", 
+//						m_cIMarketAccountOpe.ID(), m_cIMarketAccountOpe.password());
+//				m_initFlag = true;
+//				return 0;
+//			}
+//			else
+//			{
+//				CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_accountStore.load err!\n");
+//				return -1;
+//			}
+//		}
+//		else
+//		{
+//			CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_cIMarketAccountOpe err!\n");
+//			return -1;
+//		}
 	}
 	
 	public int setDateTime(String date, String time)
@@ -245,18 +246,14 @@ public class AccountEntity extends Account {
 	
 	public int newDayBegin() {
 		
-		if(!m_initFlag) return -1;
-		
-		int iNewDayInit = m_cIMarketAccountOpe.newDayInit();
-		
-		return iNewDayInit;
+		return 0;
 	}
 
 	public int newDayEnd() {
 		
 		if(!m_initFlag) return -1;
 		
-		int iNewDayTranEnd = m_cIMarketAccountOpe.newDayTranEnd();
+		int iNewDayTranEnd = 0;
 		if(0 == iNewDayTranEnd)
 		{
 			// 更新调查天数map

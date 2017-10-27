@@ -22,43 +22,6 @@ public class MockAccountOpe extends IMarketAccountOpe {
 	}
 	
 	@Override
-	public String ID()
-	{
-		return m_accountID;
-	}
-	
-	@Override
-	public String password()
-	{
-		return m_password;
-	}
-	
-	@Override
-	public int newDayInit() 
-	{
-		if(!m_initFlag) return -1;
-		
-		return 0; 
-	}
-
-	@Override
-	public int newDayTranEnd() {
-		
-		if(!m_initFlag) return -1;
-		
-		// 所有持股均可卖
-		HoldStock cHoldStock = null;
-		for(int i = 0; i< m_mockAccountOpeStore.storeEntity().holdStockList.size(); i++)
-		{
-			cHoldStock = m_mockAccountOpeStore.storeEntity().holdStockList.get(i);
-			cHoldStock.availableAmount = cHoldStock.totalAmount;
-		}
-		m_mockAccountOpeStore.flush();
-		
-		return 0;
-	}
-	
-	@Override
 	public int pushBuyOrder(String stockID, int amount, float price) {
 		
 		if(!m_initFlag) return -1;
@@ -173,16 +136,6 @@ public class MockAccountOpe extends IMarketAccountOpe {
 	}
 	
 	@Override
-	public int getMoney(CObjectContainer<Float> ctnMoney) {
-		
-		if(!m_initFlag) return -1;
-		
-		ctnMoney.set(m_mockAccountOpeStore.storeEntity().money);
-		
-		return 0;
-	}
-	
-	@Override
 	public int getHoldStockList(List<HoldStock> out_list) {
 		
 		if(!m_initFlag) return -1;
@@ -225,4 +178,5 @@ public class MockAccountOpe extends IMarketAccountOpe {
 
 	private MockAccountOpeStore m_mockAccountOpeStore;
 	private boolean m_initFlag;
+
 }
