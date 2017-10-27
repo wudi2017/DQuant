@@ -87,7 +87,7 @@ public class SampleTestStrategy {
 	public static void Sample()
 	{
 		AccoutDriver cAccoutDriver = new AccoutDriver();
-		cAccoutDriver.load(ACCOUNTTYPE.MOCK, "mock001", "password");
+		//cAccoutDriver.load(...);
 		
 		QuantSession qSession = new QuantSession(
 				"HistoryTest 2017-01-01 2017-01-03", 

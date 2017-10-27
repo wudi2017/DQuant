@@ -1,12 +1,12 @@
-package pers.di.accountengine.detail;
+package pers.di.accountengine;
 
 import java.util.*;
 
 import pers.di.accountengine.common.*;
 import pers.di.common.*;
 
-abstract public class IAccountOpe {
-	public IAccountOpe() { }
+abstract public class IMarketAccountOpe {
+	public IMarketAccountOpe() { }
 
 	abstract public ACCOUNTTYPE type();
 	abstract public String ID();

@@ -10,7 +10,7 @@ public class TestAccountDriver {
 	public static void test_accountDriver()
 	{
 		AccoutDriver cAccoutDriver = new AccoutDriver();
-		cAccoutDriver.load(ACCOUNTTYPE.MOCK, "mock001", "password");
+		cAccoutDriver.load("mock001", "password", null);
 		
 		Account acc = cAccoutDriver.account();
 	}

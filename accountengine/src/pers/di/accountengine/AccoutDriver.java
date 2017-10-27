@@ -4,8 +4,6 @@ import java.util.*;
 
 import pers.di.accountengine.common.*;
 import pers.di.accountengine.detail.*;
-import pers.di.accountengine.detail.mock.MockAccountOpe;
-import pers.di.accountengine.detail.real.RealAccountOpe;
 import pers.di.common.CLog;
 
 public class AccoutDriver {
@@ -15,34 +13,13 @@ public class AccoutDriver {
 		m_accountEntity = null;
 	}
 
-	public int load(ACCOUNTTYPE type, String accID, String accPassword)
+	public int load(String accID, String accPassword, IMarketAccountOpe cIMarketAccountOpe)
 	{
-		// create IAccountOpe
-		IAccountOpe cIAccOpe = null;
-		if(type == ACCOUNTTYPE.MOCK)
-		{
-			MockAccountOpe cMockAccountOpe = new MockAccountOpe();
-			int iRet = cMockAccountOpe.initialize(accID, accPassword);
-			if(0 == iRet)
-			{
-				cIAccOpe = cMockAccountOpe;
-			}
-		}
-		else
-		{
-			RealAccountOpe cRealAccountOpe = new RealAccountOpe();
-			int iRet = cRealAccountOpe.initialize(accID, accPassword);
-			if(0 == iRet)
-			{
-				cIAccOpe = cRealAccountOpe;
-			}
-		}
-
 		// init m_accountEntity
-		if(null != cIAccOpe)
+		if(null != cIMarketAccountOpe)
 		{
 			AccountEntity cAccountEntity =  new AccountEntity();
-			int iRet = cAccountEntity.initialize(cIAccOpe);
+			int iRet = cAccountEntity.initialize(cIMarketAccountOpe);
 			if(0 == iRet)
 			{
 				m_accountEntity = cAccountEntity;
@@ -54,7 +31,7 @@ public class AccoutDriver {
 		}
 		else
 		{
-			CLog.error("ACCOUNT", "AccoutDriver init IAccountOpe failed\n");
+			CLog.error("ACCOUNT", "AccoutDriver init IMarketAccountOpe failed\n");
 		}
 		return 0;
 	}

@@ -1,4 +1,4 @@
-package pers.di.accountengine.detail.mock;
+package pers.di.marketaccount.mock;
 
 import java.io.*;
 import java.util.*;

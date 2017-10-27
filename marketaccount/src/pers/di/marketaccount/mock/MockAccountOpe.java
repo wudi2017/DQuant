@@ -1,13 +1,14 @@
-package pers.di.accountengine.detail.mock;
+package pers.di.marketaccount.mock;
 
 import java.util.*;
 
+import pers.di.accountengine.IMarketAccountOpe;
 import pers.di.accountengine.common.ACCOUNTTYPE;
 import pers.di.accountengine.common.HoldStock;
 import pers.di.accountengine.detail.*;
 import pers.di.common.*;
 
-public class MockAccountOpe extends IAccountOpe {
+public class MockAccountOpe extends IMarketAccountOpe {
 	
 	public MockAccountOpe()
 	{

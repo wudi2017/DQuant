@@ -3,6 +3,7 @@ package pers.di.accountengine.detail;
 import java.util.*;
 
 import pers.di.accountengine.Account;
+import pers.di.accountengine.IMarketAccountOpe;
 import pers.di.accountengine.common.*;
 import pers.di.accountengine.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
@@ -16,7 +17,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return null;
 		
-		return m_cIAccountOpe.type();
+		return m_cIMarketAccountOpe.type();
 	}
 
 	@Override
@@ -24,7 +25,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return null;
 		
-		return m_cIAccountOpe.ID();
+		return m_cIMarketAccountOpe.ID();
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class AccountEntity extends Account {
 		}
 		
 		CObjectContainer<Float> money = new  CObjectContainer<Float>();
-		int iRetMoney = m_cIAccountOpe.getMoney(money);
+		int iRetMoney = m_cIMarketAccountOpe.getMoney(money);
 		
 		ctnTotalAssets.set(all_marketval + money.get());
 		if(0 == iRetHoldStock && 0 == iRetMoney)
@@ -59,7 +60,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		return m_cIAccountOpe.getAvailableMoney(ctnAvailableMoney);
+		return m_cIMarketAccountOpe.getAvailableMoney(ctnAvailableMoney);
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int ret = m_cIAccountOpe.pushBuyOrder(stockID, amount, price);
+		int ret = m_cIMarketAccountOpe.pushBuyOrder(stockID, amount, price);
 		if(0 == ret)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
@@ -86,7 +87,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int ret = m_cIAccountOpe.pushSellOrder(stockID, amount, price);
+		int ret = m_cIMarketAccountOpe.pushSellOrder(stockID, amount, price);
 		if(0 == ret)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
@@ -157,7 +158,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int iGetHoldStockList = m_cIAccountOpe.getHoldStockList(ctnList);
+		int iGetHoldStockList = m_cIMarketAccountOpe.getHoldStockList(ctnList);
 		if(0 == iGetHoldStockList)
 		{
 			for(int i=0;i<ctnList.size();i++)
@@ -201,22 +202,22 @@ public class AccountEntity extends Account {
 	
 	public AccountEntity()
 	{
-		m_cIAccountOpe = null;
+		m_cIMarketAccountOpe = null;
 		m_accountStore = null;
 		m_initFlag = false;
 	}
 	
-	public int initialize(IAccountOpe cIAccountOpe)
+	public int initialize(IMarketAccountOpe cIMarketAccountOpe)
 	{
-		m_cIAccountOpe = cIAccountOpe;
-		if(null != m_cIAccountOpe.ID())
+		m_cIMarketAccountOpe = cIMarketAccountOpe;
+		if(null != m_cIMarketAccountOpe.ID())
 		{
-			m_accountStore = new AccountStore(m_cIAccountOpe.ID(), m_cIAccountOpe.password());
+			m_accountStore = new AccountStore(m_cIMarketAccountOpe.ID(), m_cIMarketAccountOpe.password());
 			boolean bLoad = m_accountStore.load();
 			if(bLoad)
 			{
 				CLog.output("ACCOUNT", " @AccountEntity initialize AccountID:%s Password:%s OK~\n", 
-						m_cIAccountOpe.ID(), m_cIAccountOpe.password());
+						m_cIMarketAccountOpe.ID(), m_cIMarketAccountOpe.password());
 				m_initFlag = true;
 				return 0;
 			}
@@ -228,7 +229,7 @@ public class AccountEntity extends Account {
 		}
 		else
 		{
-			CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_cIAccountOpe err!\n");
+			CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_cIMarketAccountOpe err!\n");
 			return -1;
 		}
 	}
@@ -254,7 +255,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int iNewDayInit = m_cIAccountOpe.newDayInit();
+		int iNewDayInit = m_cIMarketAccountOpe.newDayInit();
 		
 		return iNewDayInit;
 	}
@@ -263,7 +264,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int iNewDayTranEnd = m_cIAccountOpe.newDayTranEnd();
+		int iNewDayTranEnd = m_cIMarketAccountOpe.newDayTranEnd();
 		if(0 == iNewDayTranEnd)
 		{
 			// 更新调查天数map
@@ -312,7 +313,7 @@ public class AccountEntity extends Account {
 	/*
 	 * ******************************************************************************************
 	 */
-	private IAccountOpe m_cIAccountOpe;
+	private IMarketAccountOpe m_cIMarketAccountOpe;
 	private AccountStore m_accountStore;
 	private boolean m_initFlag;
 }

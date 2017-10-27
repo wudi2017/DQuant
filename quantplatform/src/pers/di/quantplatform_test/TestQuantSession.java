@@ -158,7 +158,7 @@ public class TestQuantSession {
 	public void test_QuantSession()
 	{
 		AccoutDriver cAccoutDriver = new AccoutDriver();
-		cAccoutDriver.load(ACCOUNTTYPE.MOCK, "mock001", "password");
+		//cAccoutDriver.load(...);
 		
 		QuantSession qSession = new QuantSession(
 				"HistoryTest 2017-01-01 2017-02-03", 

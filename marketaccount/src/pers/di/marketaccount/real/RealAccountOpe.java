@@ -1,15 +1,15 @@
-package pers.di.accountengine.detail.real;
+package pers.di.marketaccount.real;
 
 import java.util.*;
 
+import pers.di.accountengine.IMarketAccountOpe;
 import pers.di.accountengine.common.ACCOUNTTYPE;
 import pers.di.accountengine.common.HoldStock;
-import pers.di.accountengine.detail.IAccountOpe;
 import pers.di.common.*;
 import pers.di.thsapi.*;
 import pers.di.thsapi.THSApi.*;
 
-public class RealAccountOpe extends IAccountOpe {
+public class RealAccountOpe extends IMarketAccountOpe {
 
 	public RealAccountOpe()
 	{
