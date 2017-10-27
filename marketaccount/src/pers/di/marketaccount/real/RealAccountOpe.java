@@ -2,9 +2,8 @@ package pers.di.marketaccount.real;
 
 import java.util.*;
 
-import pers.di.accountengine.IMarketAccountOpe;
-import pers.di.accountengine.common.ACCOUNTTYPE;
-import pers.di.accountengine.common.HoldStock;
+import pers.di.account.IMarketAccountOpe;
+import pers.di.account.common.HoldStock;
 import pers.di.common.*;
 import pers.di.thsapi.*;
 import pers.di.thsapi.THSApi.*;
@@ -13,12 +12,6 @@ public class RealAccountOpe extends IMarketAccountOpe {
 
 	public RealAccountOpe()
 	{
-	}
-	
-	@Override
-	public ACCOUNTTYPE type()
-	{
-		return ACCOUNTTYPE.REAL;
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package pers.di.accountengine.detail;
+package pers.di.account.detail;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,7 +29,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import pers.di.accountengine.common.*;
+import pers.di.account.common.*;
 import pers.di.common.*;
 
 public class AccountStore {

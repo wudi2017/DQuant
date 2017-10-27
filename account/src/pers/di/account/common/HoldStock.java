@@ -1,4 +1,4 @@
-package pers.di.accountengine.common;
+package pers.di.account.common;
 
 public class HoldStock {
 	

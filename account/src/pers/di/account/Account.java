@@ -1,13 +1,12 @@
-package pers.di.accountengine;
+package pers.di.account;
 
 import java.util.List;
 
-import pers.di.accountengine.common.*;
+import pers.di.account.common.*;
 import pers.di.common.*;
 
 public abstract class Account {
 
-	public abstract ACCOUNTTYPE type();
 	public abstract String ID();
 	
 	public abstract int getTotalAssets(CObjectContainer<Float> ctnTotalAssets);

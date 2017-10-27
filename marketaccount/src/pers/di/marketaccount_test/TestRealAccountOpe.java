@@ -2,8 +2,8 @@ package pers.di.marketaccount_test;
 
 import java.util.*;
 
-import pers.di.accountengine.common.HoldStock;
-import pers.di.accountengine.detail.*;
+import pers.di.account.common.HoldStock;
+import pers.di.account.detail.*;
 import pers.di.common.*;
 import pers.di.marketaccount.real.RealAccountOpe;
 

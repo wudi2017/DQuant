@@ -3,8 +3,7 @@ package pers.di.quantplatform_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.accountengine.*;
-import pers.di.accountengine.common.ACCOUNTTYPE;
+import pers.di.account.*;
 import pers.di.common.*;
 import pers.di.dataapi.common.*;
 import pers.di.dataapi_test.TestCommonHelper;

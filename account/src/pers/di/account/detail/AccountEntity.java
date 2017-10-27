@@ -1,25 +1,17 @@
-package pers.di.accountengine.detail;
+package pers.di.account.detail;
 
 import java.util.*;
 
-import pers.di.accountengine.Account;
-import pers.di.accountengine.IMarketAccountOpe;
-import pers.di.accountengine.common.*;
-import pers.di.accountengine.detail.AccountStore.StoreEntity;
+import pers.di.account.Account;
+import pers.di.account.IMarketAccountOpe;
+import pers.di.account.common.*;
+import pers.di.account.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
 import pers.di.common.CObjectContainer;
 import pers.di.common.CUtilsDateTime;
 
 public class AccountEntity extends Account {
 	
-	@Override
-	public ACCOUNTTYPE type() {
-		
-		if(!m_initFlag) return null;
-		
-		return m_cIMarketAccountOpe.type();
-	}
-
 	@Override
 	public String ID() {
 		

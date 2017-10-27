@@ -14,6 +14,6 @@
 	<classpathentry kind="lib" path="/external/jar/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/external/jar/THSApi.jar"/>
 	<classpathentry kind="lib" path="/external/jar/xmlParserAPIs-2.0.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/virtualaccount"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/account"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

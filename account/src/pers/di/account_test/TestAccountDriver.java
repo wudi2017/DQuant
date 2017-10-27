@@ -1,7 +1,7 @@
-package pers.di.accountengine_test;
+package pers.di.account_test;
 
-import pers.di.accountengine.*;
-import pers.di.accountengine.common.*;
+import pers.di.account.*;
+import pers.di.account.common.*;
 import pers.di.common.*;
 
 public class TestAccountDriver {

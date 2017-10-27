@@ -2,10 +2,9 @@ package pers.di.marketaccount.mock;
 
 import java.util.*;
 
-import pers.di.accountengine.IMarketAccountOpe;
-import pers.di.accountengine.common.ACCOUNTTYPE;
-import pers.di.accountengine.common.HoldStock;
-import pers.di.accountengine.detail.*;
+import pers.di.account.IMarketAccountOpe;
+import pers.di.account.common.HoldStock;
+import pers.di.account.detail.*;
 import pers.di.common.*;
 
 public class MockAccountOpe extends IMarketAccountOpe {
@@ -20,12 +19,6 @@ public class MockAccountOpe extends IMarketAccountOpe {
 		
 		m_mockAccountOpeStore = null;
 		m_initFlag = false;
-	}
-	
-	@Override
-	public ACCOUNTTYPE type()
-	{
-		return ACCOUNTTYPE.MOCK;
 	}
 	
 	@Override

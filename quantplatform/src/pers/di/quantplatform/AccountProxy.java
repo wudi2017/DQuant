@@ -1,6 +1,6 @@
 package pers.di.quantplatform;
 
-import pers.di.accountengine.*;
+import pers.di.account.*;
 import pers.di.common.*;
 
 public class AccountProxy {

@@ -1,15 +1,15 @@
-package pers.di.accountengine.common;
+package pers.di.account.common;
 
-public class DealOrder {
+public class CommissionOrder {
 	
 	public String date;
 	public String time;
 	public String stockID;
 	public TRANACT tranAct;
-	public int amount; // 成交数量
-	public float price; // 成交价格
+	public int amount; // 委托数量
+	public float price; // 委托价格
 	
-	public void CopyFrom(DealOrder c)
+	public void CopyFrom(CommissionOrder c)
 	{
 		date = c.date;
 		time = c.time;
