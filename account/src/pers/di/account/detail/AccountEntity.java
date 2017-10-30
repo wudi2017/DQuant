@@ -3,7 +3,7 @@ package pers.di.account.detail;
 import java.util.*;
 
 import pers.di.account.Account;
-import pers.di.account.IMarketAccountOpe;
+import pers.di.account.IMarketOpe;
 import pers.di.account.common.*;
 import pers.di.account.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
@@ -35,15 +35,15 @@ public class AccountEntity extends Account {
 			all_marketval = all_marketval + cHoldStock.curPrice*cHoldStock.totalAmount;
 		}
 		
-		CObjectContainer<Float> money = new  CObjectContainer<Float>();
-		int iRetMoney = m_cIMarketAccountOpe.getAvailableMoney(money);
-		
-		ctnTotalAssets.set(all_marketval + money.get());
-		if(0 == iRetHoldStock && 0 == iRetMoney)
-		{
-			return 0;
-		}
-		
+//		CObjectContainer<Float> money = new  CObjectContainer<Float>();
+//		int iRetMoney = m_cIMarketOpe.getAvailableMoney(money);
+//		
+//		ctnTotalAssets.set(all_marketval + money.get());
+//		if(0 == iRetHoldStock && 0 == iRetMoney)
+//		{
+//			return 0;
+//		}
+//		
 		return -99;
 	}
 
@@ -52,7 +52,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		return m_cIMarketAccountOpe.getAvailableMoney(ctnAvailableMoney);
+		return 0;
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int ret = m_cIMarketAccountOpe.pushBuyOrder(stockID, amount, price);
+		int ret = m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
 		if(0 == ret)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
@@ -79,7 +79,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int ret = m_cIMarketAccountOpe.pushSellOrder(stockID, amount, price);
+		int ret = m_cIMarketOpe.postTradeRequest(TRANACT.SELL, stockID, amount, price);
 		if(0 == ret)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
@@ -150,22 +150,23 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int iGetHoldStockList = m_cIMarketAccountOpe.getHoldStockList(ctnList);
-		if(0 == iGetHoldStockList)
-		{
-			for(int i=0;i<ctnList.size();i++)
-	        {
-	        	HoldStock cHoldStock = ctnList.get(i);
-	        	if(m_accountStore.storeEntity().holdStockInvestigationDaysMap.containsKey(cHoldStock.stockID))
-	        	{
-	        		cHoldStock.investigationDays = m_accountStore.storeEntity().holdStockInvestigationDaysMap.get(cHoldStock.stockID);
-	        	}
-	        	else
-	        	{
-	        		cHoldStock.investigationDays = 0;
-	        	}
-	        }
-		}
+		int iGetHoldStockList = 0;
+//		iGetHoldStockList = m_cIMarketOpe.getHoldStockList(ctnList);
+//		if(0 == iGetHoldStockList)
+//		{
+//			for(int i=0;i<ctnList.size();i++)
+//	        {
+//	        	HoldStock cHoldStock = ctnList.get(i);
+//	        	if(m_accountStore.storeEntity().holdStockInvestigationDaysMap.containsKey(cHoldStock.stockID))
+//	        	{
+//	        		cHoldStock.investigationDays = m_accountStore.storeEntity().holdStockInvestigationDaysMap.get(cHoldStock.stockID);
+//	        	}
+//	        	else
+//	        	{
+//	        		cHoldStock.investigationDays = 0;
+//	        	}
+//	        }
+//		}
 		return iGetHoldStockList;
 	}
 
@@ -194,23 +195,23 @@ public class AccountEntity extends Account {
 	
 	public AccountEntity()
 	{
-		m_cIMarketAccountOpe = null;
+		m_cIMarketOpe = null;
 		m_accountStore = null;
 		m_initFlag = false;
 	}
 	
-	public int initialize(IMarketAccountOpe cIMarketAccountOpe)
+	public int initialize(IMarketOpe cIMarketOpe)
 	{
 		return 0;
-//		m_cIMarketAccountOpe = cIMarketAccountOpe;
-//		if(null != m_cIMarketAccountOpe.ID())
+//		m_cIMarketOpe = cIMarketOpe;
+//		if(null != m_cIMarketOpe.ID())
 //		{
-//			m_accountStore = new AccountStore(m_cIMarketAccountOpe.ID(), m_cIMarketAccountOpe.password());
+//			m_accountStore = new AccountStore(m_cIMarketOpe.ID(), m_cIMarketOpe.password());
 //			boolean bLoad = m_accountStore.load();
 //			if(bLoad)
 //			{
 //				CLog.output("ACCOUNT", " @AccountEntity initialize AccountID:%s Password:%s OK~\n", 
-//						m_cIMarketAccountOpe.ID(), m_cIMarketAccountOpe.password());
+//						m_cIMarketOpe.ID(), m_cIMarketOpe.password());
 //				m_initFlag = true;
 //				return 0;
 //			}
@@ -222,7 +223,7 @@ public class AccountEntity extends Account {
 //		}
 //		else
 //		{
-//			CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_cIMarketAccountOpe err!\n");
+//			CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_cIMarketOpe err!\n");
 //			return -1;
 //		}
 	}
@@ -302,7 +303,7 @@ public class AccountEntity extends Account {
 	/*
 	 * ******************************************************************************************
 	 */
-	private IMarketAccountOpe m_cIMarketAccountOpe;
+	private IMarketOpe m_cIMarketOpe;
 	private AccountStore m_accountStore;
 	private boolean m_initFlag;
 }

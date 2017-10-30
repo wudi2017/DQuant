@@ -28,18 +28,18 @@ public class TestRealAccountOpe {
 //				"601988", 100, 0.99f);
 //		CTest.EXPECT_LONG_EQ(0, iSell);
 		
-		CObjectContainer<Float> ctnAvailableMoney = new CObjectContainer<Float>();
-		int iAvailableMoney = cRealAccountOpe.getAvailableMoney(ctnAvailableMoney);
-		CTest.EXPECT_LONG_EQ(0, iAvailableMoney);
+//		CObjectContainer<Float> ctnAvailableMoney = new CObjectContainer<Float>();
+//		int iAvailableMoney = cRealAccountOpe.getAvailableMoney(ctnAvailableMoney);
+//		CTest.EXPECT_LONG_EQ(0, iAvailableMoney);
 		
 //		CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
 //		int iMoney = cRealAccountOpe.getMoney(ctnMoney);
 //		CTest.EXPECT_LONG_EQ(0, iMoney);
 //		CTest.EXPECT_TRUE(ctnMoney.get() > 100.0f);
 		
-		List<HoldStock> ctnHoldStock = new ArrayList<HoldStock>();
-		int iHold = cRealAccountOpe.getHoldStockList(ctnHoldStock);
-		CTest.EXPECT_LONG_EQ(0, iHold);
+//		List<HoldStock> ctnHoldStock = new ArrayList<HoldStock>();
+//		int iHold = cRealAccountOpe.getHoldStockList(ctnHoldStock);
+//		CTest.EXPECT_LONG_EQ(0, iHold);
 	}
 
 	public static void main(String[] args) {

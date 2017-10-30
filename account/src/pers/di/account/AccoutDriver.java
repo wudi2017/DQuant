@@ -13,13 +13,13 @@ public class AccoutDriver {
 		m_accountEntity = null;
 	}
 
-	public int load(String accID, String accPassword, IMarketAccountOpe cIMarketAccountOpe)
+	public int load(String accID, String accPassword, IMarketOpe cIMarketOpe)
 	{
 		// init m_accountEntity
-		if(null != cIMarketAccountOpe)
+		if(null != cIMarketOpe)
 		{
 			AccountEntity cAccountEntity =  new AccountEntity();
-			int iRet = cAccountEntity.initialize(cIMarketAccountOpe);
+			int iRet = cAccountEntity.initialize(cIMarketOpe);
 			if(0 == iRet)
 			{
 				m_accountEntity = cAccountEntity;
@@ -31,7 +31,7 @@ public class AccoutDriver {
 		}
 		else
 		{
-			CLog.error("ACCOUNT", "AccoutDriver init IMarketAccountOpe failed\n");
+			CLog.error("ACCOUNT", "AccoutDriver init IMarketOpe failed\n");
 		}
 		return 0;
 	}
