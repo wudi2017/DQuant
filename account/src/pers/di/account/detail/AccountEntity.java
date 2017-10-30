@@ -99,30 +99,35 @@ public class AccountEntity extends Account {
 	
 	public int load(String accID, IMarketOpe cIMarketOpe, boolean bCreate)
 	{
+		
+		m_cIMarketOpe = cIMarketOpe;
+		
+		m_accountStore = new AccountStore(accID);
+		if(!m_accountStore.sync2File())
+		{
+			if(bCreate)
+			{
+				boolean iStoreInit = m_accountStore.storeInit();
+				if(iStoreInit)
+				{
+					return 0;
+				}
+				else
+				{
+					CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!\n", accID);
+					return -1;
+				}
+			}
+			else
+			{
+				CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!\n", accID);
+				return -1;
+			}
+		}
+		
+		m_initFlag = true;
+		CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s OK~\n", accID);
 		return 0;
-//		m_cIMarketOpe = cIMarketOpe;
-//		if(null != m_cIMarketOpe.ID())
-//		{
-//			m_accountStore = new AccountStore(m_cIMarketOpe.ID(), m_cIMarketOpe.password());
-//			boolean bLoad = m_accountStore.load();
-//			if(bLoad)
-//			{
-//				CLog.output("ACCOUNT", " @AccountEntity initialize AccountID:%s Password:%s OK~\n", 
-//						m_cIMarketOpe.ID(), m_cIMarketOpe.password());
-//				m_initFlag = true;
-//				return 0;
-//			}
-//			else
-//			{
-//				CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_accountStore.load err!\n");
-//				return -1;
-//			}
-//		}
-//		else
-//		{
-//			CLog.output("ACCOUNT", " @AccountEntity initialize failed, m_cIMarketOpe err!\n");
-//			return -1;
-//		}
 	}
 	
 	public int setDateTime(String date, String time)
@@ -182,7 +187,7 @@ public class AccountEntity extends Account {
 				m_accountStore.storeEntity().holdStockInvestigationDaysMap.clear();
 				m_accountStore.storeEntity().holdStockInvestigationDaysMap.putAll(newholdStockInvestigationDaysMap);
 				
-				m_accountStore.flush();
+				m_accountStore.sync2File();
 			}
 			else
 			{
@@ -191,7 +196,7 @@ public class AccountEntity extends Account {
 			
 			// Çå¿ÕÎ¯ÍÐ±í
 			m_accountStore.storeEntity().commissionOrderList.clear();
-			m_accountStore.flush();
+			m_accountStore.sync2File();
 		}
 		
 		return iNewDayTranEnd; 

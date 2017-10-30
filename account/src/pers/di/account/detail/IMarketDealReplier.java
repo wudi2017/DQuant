@@ -1,4 +1,4 @@
-package pers.di.account;
+package pers.di.account.detail;
 
 import pers.di.account.common.TRANACT;
 

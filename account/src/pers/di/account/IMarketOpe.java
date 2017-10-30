@@ -3,6 +3,7 @@ package pers.di.account;
 import java.util.*;
 
 import pers.di.account.common.*;
+import pers.di.account.detail.IMarketDealReplier;
 import pers.di.common.*;
 
 /*

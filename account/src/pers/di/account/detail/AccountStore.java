@@ -49,63 +49,34 @@ public class AccountStore {
 		public Map<String, Integer> holdStockInvestigationDaysMap;
 	}
 	
-	public AccountStore(String accountID, String password)
+	public AccountStore(String accountID)
 	{
-		m_storeEntity = null;
+		// init root dir
+		if(!CFileSystem.isDirExist(s_accountDataRoot))
+		{
+			CFileSystem.createDir(s_accountDataRoot);
+		}
+		
 		m_accountID = accountID;
-		m_password = password;
-		m_accXMLFile = "rw\\ACCOUNT_EXTEND_" + m_accountID + ".xml";
+		m_accXMLFile = s_accountDataRoot + "\\" + m_accountID + ".xml";
+		m_storeEntity = new StoreEntity();
 	}
 	
 	public StoreEntity storeEntity()
 	{
 		return m_storeEntity;
 	}
-	
+
 	public boolean storeInit()
 	{
-		Document doc=null;
-		DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder builder= factory.newDocumentBuilder();
-			doc=builder.newDocument();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		// 创建元素
-		Element root=doc.createElement("account");
-		root.setAttribute("ID", m_accountID);
-		root.setAttribute("password", m_password);
-        doc.appendChild(root);
-		
-		TransformerFactory tfactory=TransformerFactory.newInstance();
-		Transformer transformer = null;
-		try {
-			transformer = tfactory.newTransformer();
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if(null != doc && null != transformer)
-		{
-			DOMSource source=new DOMSource(doc);
-			StreamResult result=new StreamResult(new File(m_accXMLFile));
-			transformer.setOutputProperty("encoding","GBK");
-			try {
-				transformer.transform(source,result);
-			} catch (TransformerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return true;
+        m_storeEntity.date = CUtilsDateTime.GetCurDateStr();
+        m_storeEntity.time = CUtilsDateTime.GetCurTimeStr();
+        m_storeEntity.commissionOrderList = null;
+        m_storeEntity.holdStockInvestigationDaysMap = null;
+		return sync2File();
 	}
 	
-	public boolean flush()
+	public boolean sync2File()
 	{
 		File cfile=new File(m_accXMLFile);
 		if(cfile.exists())
@@ -126,7 +97,6 @@ public class AccountStore {
 		// 创建元素
 		Element root=doc.createElement("account");
 		root.setAttribute("ID", m_accountID);
-		root.setAttribute("password", m_password);
         doc.appendChild(root);
         
         if(null != m_storeEntity)
@@ -232,7 +202,7 @@ public class AccountStore {
 		return true;
 	}
 	
-	public boolean load()
+	public boolean sync2Mem()
 	{
 		String xmlStr = "";
 		File cfile=new File(m_accXMLFile);
@@ -273,15 +243,6 @@ public class AccountStore {
 			{
 		    	CLog.output("ACCOUNT", "AccountStore storeInit (no account root)\n");
 				return false; // 没有root load失败
-			}
-		    
-		    // 账户属性判断并加载
-		    String accountID = rootElement.getAttribute("ID");
-		    String password = rootElement.getAttribute("password");
-		    if(!accountID.equals(m_accountID) || !password.equals(m_password))
-			{
-		    	CLog.error("ACCOUNT", "AccountStore storeInit (accountID or password error)\n");
-				return false; // 账号秘密不对 load失败
 			}
 		    
         	// date time
@@ -379,8 +340,9 @@ public class AccountStore {
 	/**
 	 * 成员-----------------------------------------------------------------------
 	 */
-	private StoreEntity m_storeEntity;
+	private static String s_accountDataRoot = "rw\\account";
+	
 	private String m_accountID;
-	private String m_password;
 	private String m_accXMLFile;
+	private StoreEntity m_storeEntity;
 }

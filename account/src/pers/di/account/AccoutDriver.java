@@ -68,8 +68,6 @@ public class AccoutDriver {
 		}
 	}
 	
-
-	
 	// get account
 	public Account account()
 	{

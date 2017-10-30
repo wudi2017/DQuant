@@ -1,6 +1,7 @@
 */bin/*
 */output/*
 */data/*
+*/rw/*
 *.txt
 *log*.xml
 RemoteSystemsTempFiles
