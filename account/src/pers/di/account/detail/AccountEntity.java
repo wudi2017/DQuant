@@ -21,76 +21,51 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int getTotalAssets(CObjectContainer<Float> ctnTotalAssets) {
-		
-		if(!m_initFlag) return -1;
-		
-		float all_marketval = 0.0f;
-		
-		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
-		int iRetHoldStock = getHoldStockList(cHoldStockList);
-		for(int i=0;i<cHoldStockList.size();i++)
-		{
-			HoldStock cHoldStock = cHoldStockList.get(i);
-			all_marketval = all_marketval + cHoldStock.curPrice*cHoldStock.totalAmount;
-		}
-		
-//		CObjectContainer<Float> money = new  CObjectContainer<Float>();
-//		int iRetMoney = m_cIMarketOpe.getAvailableMoney(money);
-//		
-//		ctnTotalAssets.set(all_marketval + money.get());
-//		if(0 == iRetHoldStock && 0 == iRetMoney)
-//		{
-//			return 0;
-//		}
-//		
-		return -99;
-	}
-
-	@Override
-	public int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney) {
+	public int getMoney(CObjectContainer<Float> ctnMoney) {
 		
 		if(!m_initFlag) return -1;
 		
 		return 0;
 	}
-
+	
 	@Override
-	public int pushBuyOrder(String stockID, int amount, float price) {
-		
+	public int postTradeOrder(TRANACT tranact, String stockID, int amount, float price)
+	{
 		if(!m_initFlag) return -1;
 		
-		int ret = m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
-		if(0 == ret)
+		if(tranact == TRANACT.BUY)
 		{
-			CommissionOrder cCommissionOrder = new CommissionOrder();
-			cCommissionOrder.time = m_accountStore.storeEntity().time;
-			cCommissionOrder.tranAct = TRANACT.BUY;
-			cCommissionOrder.stockID = stockID;
-			cCommissionOrder.amount = amount;
-			cCommissionOrder.price = price;
-			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
+			int ret = m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
+			if(0 == ret)
+			{
+				CommissionOrder cCommissionOrder = new CommissionOrder();
+				cCommissionOrder.time = m_accountStore.storeEntity().time;
+				cCommissionOrder.tranAct = TRANACT.BUY;
+				cCommissionOrder.stockID = stockID;
+				cCommissionOrder.amount = amount;
+				cCommissionOrder.price = price;
+				m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
+			}
+			return ret;
 		}
-		return ret;
-	}
-
-	@Override
-	public int pushSellOrder(String stockID, int amount, float price) {
 		
-		if(!m_initFlag) return -1;
-		
-		int ret = m_cIMarketOpe.postTradeRequest(TRANACT.SELL, stockID, amount, price);
-		if(0 == ret)
+		if(tranact == TRANACT.SELL)
 		{
-			CommissionOrder cCommissionOrder = new CommissionOrder();
-			cCommissionOrder.time = m_accountStore.storeEntity().time;
-			cCommissionOrder.tranAct = TRANACT.SELL;
-			cCommissionOrder.stockID = stockID;
-			cCommissionOrder.amount = amount;
-			cCommissionOrder.price = price;
-			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
+			int ret = m_cIMarketOpe.postTradeRequest(TRANACT.SELL, stockID, amount, price);
+			if(0 == ret)
+			{
+				CommissionOrder cCommissionOrder = new CommissionOrder();
+				cCommissionOrder.time = m_accountStore.storeEntity().time;
+				cCommissionOrder.tranAct = TRANACT.SELL;
+				cCommissionOrder.stockID = stockID;
+				cCommissionOrder.amount = amount;
+				cCommissionOrder.price = price;
+				m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
+			}
+			return ret;
 		}
-		return ret;
+		
+		return -1;
 	}
 
 	@Override
@@ -104,91 +79,13 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int getBuyCommissionOrderList(List<CommissionOrder> ctnList) {
-		
-		if(!m_initFlag) return -1;
-		
-		ctnList.clear();
-		List<CommissionOrder> cCommissionOrderList = new ArrayList<CommissionOrder>();
-		int iRet = this.getCommissionOrderList(cCommissionOrderList);
-		for(int i= 0;i<cCommissionOrderList.size();i++)
-		{
-			CommissionOrder cCommissionOrder = cCommissionOrderList.get(i);
-			if(cCommissionOrder.tranAct == TRANACT.BUY)
-			{
-				CommissionOrder cNewCommissionOrder = new CommissionOrder();
-				cNewCommissionOrder.CopyFrom(cCommissionOrder);
-				ctnList.add(cNewCommissionOrder);
-			}
-		}
-		return iRet;
-	}
-
-	@Override
-	public int getSellCommissionOrderList(List<CommissionOrder> ctnList) {
-		
-		if(!m_initFlag) return -1;
-		
-		ctnList.clear();
-		List<CommissionOrder> cCommissionOrderList = new ArrayList<CommissionOrder>();
-		int iRet = this.getCommissionOrderList(cCommissionOrderList);
-		for(int i= 0;i<cCommissionOrderList.size();i++)
-		{
-			CommissionOrder cCommissionOrder = cCommissionOrderList.get(i);
-			if(cCommissionOrder.tranAct == TRANACT.SELL)
-			{
-				CommissionOrder cNewCommissionOrder = new CommissionOrder();
-				cNewCommissionOrder.CopyFrom(cCommissionOrder);
-				ctnList.add(cNewCommissionOrder);
-			}
-		}
-		return iRet;
-	}
-
-	@Override
 	public int getHoldStockList(List<HoldStock> ctnList) {
 		
 		if(!m_initFlag) return -1;
 		
-		int iGetHoldStockList = 0;
-//		iGetHoldStockList = m_cIMarketOpe.getHoldStockList(ctnList);
-//		if(0 == iGetHoldStockList)
-//		{
-//			for(int i=0;i<ctnList.size();i++)
-//	        {
-//	        	HoldStock cHoldStock = ctnList.get(i);
-//	        	if(m_accountStore.storeEntity().holdStockInvestigationDaysMap.containsKey(cHoldStock.stockID))
-//	        	{
-//	        		cHoldStock.investigationDays = m_accountStore.storeEntity().holdStockInvestigationDaysMap.get(cHoldStock.stockID);
-//	        	}
-//	        	else
-//	        	{
-//	        		cHoldStock.investigationDays = 0;
-//	        	}
-//	        }
-//		}
-		return iGetHoldStockList;
+		return 0;
 	}
 
-	@Override
-	public int getHoldStock(String stockID, CObjectContainer<HoldStock> ctnHoldStock) {
-		
-		if(!m_initFlag) return -1;
-		
-		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
-		int iRet = getHoldStockList(cHoldStockList);
-		for(int i=0;i<cHoldStockList.size();i++)
-		{
-			if(cHoldStockList.get(i).stockID.equals(stockID))
-			{
-				HoldStock cNewHoldStock = cHoldStockList.get(i);
-				ctnHoldStock.set(cNewHoldStock);
-				break;
-			}
-		}
-		return iRet;
-	}
-	
 	/*
 	 * ******************************************************************************************
 	 */
@@ -200,7 +97,7 @@ public class AccountEntity extends Account {
 		m_initFlag = false;
 	}
 	
-	public int initialize(IMarketOpe cIMarketOpe)
+	public int load(String accID, IMarketOpe cIMarketOpe, boolean bCreate)
 	{
 		return 0;
 //		m_cIMarketOpe = cIMarketOpe;
@@ -298,6 +195,16 @@ public class AccountEntity extends Account {
 		}
 		
 		return iNewDayTranEnd; 
+	}
+	
+	public void onDeal(TRANACT tranact, String id, int amount, float price, float cost) 
+	{
+		
+	}
+	
+	public int reset(float fInitMoney)
+	{
+		return 0;
 	}
 	
 	/*

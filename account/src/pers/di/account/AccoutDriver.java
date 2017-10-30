@@ -8,25 +8,42 @@ import pers.di.common.CLog;
 
 public class AccoutDriver {
 	
+	public static class InnerMarketReplier extends IMarketDealReplier
+	{
+		public InnerMarketReplier(AccoutDriver cAccoutDriver)
+		{
+			m_cAccoutDriver = cAccoutDriver;
+		}
+		@Override
+		public void onDeal(TRANACT tranact, String id, int amount, float price, float cost) {
+			m_cAccoutDriver.onDeal(tranact, id, amount, price, cost);
+		}	
+		private AccoutDriver m_cAccoutDriver;
+	}
+	
 	public AccoutDriver()
 	{
 		m_accountEntity = null;
+		m_innerMarketReplier = null;
 	}
-
-	public int load(String accID, String accPassword, IMarketOpe cIMarketOpe)
+	
+	// load account entity, 
+	// if bCreate is true, will try create new account when open account failed
+	public int load(String accID, IMarketOpe cIMarketOpe, boolean bCreate)
 	{
-		// init m_accountEntity
+		// init m_accountEntity m_innerMarketReplier
 		if(null != cIMarketOpe)
 		{
-			AccountEntity cAccountEntity =  new AccountEntity();
-			int iRet = cAccountEntity.initialize(cIMarketOpe);
-			if(0 == iRet)
+			m_innerMarketReplier = new InnerMarketReplier(this);
+			if( 0 != cIMarketOpe.registerDealReplier(m_innerMarketReplier))
 			{
-				m_accountEntity = cAccountEntity;
+				CLog.error("ACCOUNT", "AccoutDriver init cIMarketOpe.registerDealReplier failed\n");
 			}
-			else
+			
+			m_accountEntity =  new AccountEntity();
+			if(0 != m_accountEntity.load(accID, cIMarketOpe, bCreate))
 			{
-				CLog.error("ACCOUNT", "AccoutDriver init AccountEntity failed\n");
+				CLog.error("ACCOUNT", "AccoutDriver init m_accountEntity.load failed\n");
 			}
 		}
 		else
@@ -36,6 +53,24 @@ public class AccoutDriver {
 		return 0;
 	}
 	
+	// reset account entity
+	public int reset(float fInitMoney)
+	{
+		return m_accountEntity.reset(fInitMoney);
+	}
+	
+	// market deal callback
+	public void onDeal(TRANACT tranact, String id, int amount, float price, float cost) 
+	{
+		if(null != m_accountEntity)
+		{
+			m_accountEntity.onDeal(tranact, id, amount, price, cost);
+		}
+	}
+	
+
+	
+	// get account
 	public Account account()
 	{
 		Account acc = null;
@@ -53,7 +88,7 @@ public class AccoutDriver {
 		return m_accountEntity.setDateTime(date, time);
 	}
 	
-	// update current hold stock price
+	// get hold stocks
 	public int getHoldStockList(List<String> ctnHoldList)
 	{
 		if(null == m_accountEntity) return -1;
@@ -74,18 +109,22 @@ public class AccoutDriver {
 			return -1;
 		}
 	}
+	
+	// flush current price
 	public int flushCurrentPrice(String stockID, float price)
 	{
 		if(null == m_accountEntity) return -1;
 		return m_accountEntity.flushCurrentPrice(stockID, price);
 	}
 	
-	// new day begin and end
+	// new day begin
 	public int newDayBegin()
 	{
 		if(null == m_accountEntity) return -1;
 		return m_accountEntity.newDayBegin();
 	}
+	
+	// new day end
 	public int newDayEnd()
 	{
 		if(null == m_accountEntity) return -1;
@@ -93,4 +132,5 @@ public class AccoutDriver {
 	}
 	
 	private AccountEntity m_accountEntity;
+	private InnerMarketReplier m_innerMarketReplier;
 }
