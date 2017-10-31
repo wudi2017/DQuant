@@ -21,7 +21,9 @@ public class TestAccountDriver {
 		AccoutDriver cAccoutDriver = new AccoutDriver();
 		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
 		cAccoutDriver.reset(10*10000f);
+		
 		Account acc = cAccoutDriver.account();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.01f);
 		
 	}
 	

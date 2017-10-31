@@ -8,6 +8,7 @@ public class DealOrder {
 	public TRANACT tranAct;
 	public int amount; // 成交数量
 	public float price; // 成交价格
+	public float cost; // 成交费用
 	
 	public void CopyFrom(DealOrder c)
 	{

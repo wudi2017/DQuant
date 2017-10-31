@@ -103,7 +103,7 @@ public class AccountEntity extends Account {
 		m_cIMarketOpe = cIMarketOpe;
 		
 		m_accountStore = new AccountStore(accID);
-		if(!m_accountStore.sync2File())
+		if(!m_accountStore.sync2Mem())
 		{
 			if(bCreate)
 			{
@@ -156,59 +156,58 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		int iNewDayTranEnd = 0;
-		if(0 == iNewDayTranEnd)
+		// 清空委托表
+		m_accountStore.storeEntity().commissionOrderList.clear();
+
+		// 股票全部可卖
+		for(int i=0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
 		{
-			// 更新调查天数map
-			Map<String, Integer> newholdStockInvestigationDaysMap = new HashMap<String, Integer>();
-			
-			List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
-			int iGetHoldStockList = getHoldStockList(cHoldStockList);
-			if(0 == iGetHoldStockList)
-			{
-				for(int i=0; i<cHoldStockList.size();i++)
-				{
-					HoldStock cHoldStock = cHoldStockList.get(i);
-					newholdStockInvestigationDaysMap.put(cHoldStock.stockID, 0);
-				}
-				for(Map.Entry<String, Integer> entry:newholdStockInvestigationDaysMap.entrySet()){   
-					String key = entry.getKey();
-					int iInvestigationDays = 0;
-					if(m_accountStore.storeEntity().holdStockInvestigationDaysMap.containsKey(key))
-					{
-						iInvestigationDays = m_accountStore.storeEntity().holdStockInvestigationDaysMap.get(key);
-					}
-					entry.setValue(iInvestigationDays);
-				} 
-				for(Map.Entry<String, Integer> entry:newholdStockInvestigationDaysMap.entrySet()){   
-					int iInvestigationDays = entry.getValue();
-					entry.setValue(iInvestigationDays+1);
-				} 
-				m_accountStore.storeEntity().holdStockInvestigationDaysMap.clear();
-				m_accountStore.storeEntity().holdStockInvestigationDaysMap.putAll(newholdStockInvestigationDaysMap);
-				
-				m_accountStore.sync2File();
-			}
-			else
-			{
-				iNewDayTranEnd = -201;
-			}
-			
-			// 清空委托表
-			m_accountStore.storeEntity().commissionOrderList.clear();
-			m_accountStore.sync2File();
+			m_accountStore.storeEntity().holdStockList.get(i).availableAmount = m_accountStore.storeEntity().holdStockList.get(i).totalAmount;
 		}
 		
-		return iNewDayTranEnd; 
+		m_accountStore.sync2File();
+		
+		return 0; 
 	}
 	
-	public void onDeal(TRANACT tranact, String id, int amount, float price, float cost) 
+	public void onDeal(TRANACT tranact, String stockID, int amount, float price, float cost) 
 	{
-		
+		if(tranact == TRANACT.BUY)
+		{
+//			// 获取持有对象
+//			HoldStock cHoldStock = null;
+//			for(int i = 0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
+//			{
+//				HoldStock cTmpHoldStock = m_accountStore.storeEntity().holdStockList.get(i);
+//				if(cTmpHoldStock.stockID == stockID)
+//				{
+//					cHoldStock = cTmpHoldStock;
+//					break;
+//				}
+//			}
+//			if(null == cHoldStock)
+//			{
+//				HoldStock cNewHoldStock = new HoldStock();
+//				cNewHoldStock.createDate = m_accountStore.storeEntity().date;
+//				cNewHoldStock.stockID = stockID;
+//				cNewHoldStock.totalAmount = amount;
+//				cNewHoldStock.availableAmount = 0;
+//				cNewHoldStock.refPrimeCostPrice = price;
+//				cNewHoldStock.curPrice = price;
+//				cHoldStock = cNewHoldStock;
+//				m_accountStore.storeEntity().holdStockList.add(cNewHoldStock);
+//			}
+		}
+		else if(tranact == TRANACT.SELL)
+		{
+			
+		}
 	}
 	
 	public int reset(float fInitMoney)
 	{
+		m_accountStore.storeEntity().reset();
+		m_accountStore.sync2File();
 		return 0;
 	}
 	

@@ -38,15 +38,22 @@ public class AccountStore {
 	{
 		public StoreEntity()
 		{
-			date = null;
-			time = null;
-			commissionOrderList = null;
-			holdStockInvestigationDaysMap = null;
+			date = CUtilsDateTime.GetCurDateStr();
+		    time = CUtilsDateTime.GetCurTimeStr();
+		    commissionOrderList = new ArrayList<CommissionOrder>();
+		    holdStockList = new ArrayList<HoldStock>();
+		}
+		public void reset()
+		{
+			date = CUtilsDateTime.GetCurDateStr();
+		    time = CUtilsDateTime.GetCurTimeStr();
+		    commissionOrderList.clear();
+		    holdStockList.clear();
 		}
 		public String date;
 		public String time;
 		public List<CommissionOrder> commissionOrderList;
-		public Map<String, Integer> holdStockInvestigationDaysMap;
+		public List<HoldStock> holdStockList;
 	}
 	
 	public AccountStore(String accountID)
@@ -69,10 +76,7 @@ public class AccountStore {
 
 	public boolean storeInit()
 	{
-        m_storeEntity.date = CUtilsDateTime.GetCurDateStr();
-        m_storeEntity.time = CUtilsDateTime.GetCurTimeStr();
-        m_storeEntity.commissionOrderList = null;
-        m_storeEntity.holdStockInvestigationDaysMap = null;
+        m_storeEntity.reset();
 		return sync2File();
 	}
 	
@@ -125,31 +129,43 @@ public class AccountStore {
             		String amountVal = String.format("%d", cCommissionOrder.amount);
             		String priceVal =String.format("%.3f", cCommissionOrder.price);
             				
-            		Element Node_Stock = doc.createElement("Stock");
-            		Node_Stock.setAttribute("time", cCommissionOrder.time);
-            		Node_Stock.setAttribute("tranAct", tranactVal);
-            		Node_Stock.setAttribute("stockID", cCommissionOrder.stockID);
-            		Node_Stock.setAttribute("amount", amountVal);
-            		Node_Stock.setAttribute("price", priceVal);
+            		Element Node_commissionOrder = doc.createElement("commissionOrder");
+            		Node_commissionOrder.setAttribute("time", cCommissionOrder.time);
+            		Node_commissionOrder.setAttribute("tranAct", tranactVal);
+            		Node_commissionOrder.setAttribute("stockID", cCommissionOrder.stockID);
+            		Node_commissionOrder.setAttribute("amount", amountVal);
+            		Node_commissionOrder.setAttribute("price", priceVal);
             		
-            		Node_CommissionOrderList.appendChild(Node_Stock);
+            		Node_CommissionOrderList.appendChild(Node_commissionOrder);
             	}
         	}
-
-        	// holdStockInvestigationDaysMap
-        	if(null != m_storeEntity.holdStockInvestigationDaysMap)
+        	
+        	// holdStockList
+        	if(null != m_storeEntity.holdStockList)
         	{
-            	Element Node_holdStockInvestigationDaysMap=doc.createElement("holdStockInvestigationDaysMap");
-            	root.appendChild(Node_holdStockInvestigationDaysMap);
-            	for (Map.Entry<String, Integer> entry : m_storeEntity.holdStockInvestigationDaysMap.entrySet()) {  
-            		String stockID = entry.getKey();
-            		Integer investigationDays = entry.getValue();
-            		Element Node_StockInvestigation = doc.createElement("StockInvestigation");
-            		Node_StockInvestigation.setAttribute("stockID", stockID);
-            		Node_StockInvestigation.setAttribute("investigationDays", investigationDays.toString());
-            		Node_holdStockInvestigationDaysMap.appendChild(Node_StockInvestigation);
-            	} 
+        		Element Node_holdStockList=doc.createElement("holdStockList");
+            	root.appendChild(Node_holdStockList);
+            	for(int i=0;i<m_storeEntity.holdStockList.size();i++)
+            	{
+            		HoldStock cHoldStock = m_storeEntity.holdStockList.get(i);
+  
+            		String totalAmount = String.format("%d", cHoldStock.totalAmount);
+            		String availableAmount = String.format("%d", cHoldStock.availableAmount);
+            		String refPrimeCostPrice =String.format("%.3f", cHoldStock.refPrimeCostPrice);
+            		String curPrice =String.format("%.3f", cHoldStock.curPrice);
+            				
+            		Element Node_holdStock = doc.createElement("holdStock");
+            		Node_holdStock.setAttribute("createDate", cHoldStock.createDate);
+            		Node_holdStock.setAttribute("stockID", cHoldStock.stockID);
+            		Node_holdStock.setAttribute("totalAmount", totalAmount);
+            		Node_holdStock.setAttribute("availableAmount", availableAmount);
+            		Node_holdStock.setAttribute("refPrimeCostPrice", refPrimeCostPrice);
+            		Node_holdStock.setAttribute("curPrice", curPrice);
+            		
+            		Node_holdStockList.appendChild(Node_holdStock);
+            	}
         	}
+        	
         }
 		
 		TransformerFactory tfactory=TransformerFactory.newInstance();
@@ -248,29 +264,7 @@ public class AccountStore {
         	// date time
 		    String accDate = rootElement.getAttribute("date");
 		    String accTime = rootElement.getAttribute("time");
-		    
-		    // 选股列表加载
-		    List<String> stockSelectList = null;
-		    {
-		    	NodeList nodelist_SelectList = rootElement.getElementsByTagName("SelectList");
-		        if(nodelist_SelectList.getLength() == 1)
-	        	{
-		        	stockSelectList = new ArrayList<String>();
-		        	
-		        	Node Node_SelectList = nodelist_SelectList.item(0);
-		        	NodeList nodelist_Stock = Node_SelectList.getChildNodes();
-			        for (int i = 0; i < nodelist_Stock.getLength(); i++) {
-			        	Node node_Stock = nodelist_Stock.item(i);
-			        	if(node_Stock.getNodeType() == Node.ELEMENT_NODE)
-			        	{
-				        	String stockID = ((Element)node_Stock).getAttribute("stockID");
-				        	//CLog.output("ACCOUNT", "stockID:%s \n", stockID);
-				        	stockSelectList.add(stockID); 
-			        	}
-			        }
-	        	}
-		    }
-		    
+
 		    // 委托单加载
 		    List<CommissionOrder> commissionOrderList = new ArrayList<CommissionOrder>();
 		    {
@@ -278,16 +272,16 @@ public class AccountStore {
 		        if(nodelist_CommissionOrderList.getLength() == 1)
 	        	{
 		        	Node Node_CommissionOrderList = nodelist_CommissionOrderList.item(0);
-		        	NodeList nodelist_Stock = Node_CommissionOrderList.getChildNodes();
-			        for (int i = 0; i < nodelist_Stock.getLength(); i++) {
-			        	Node node_Stock = nodelist_Stock.item(i);
-			        	if(node_Stock.getNodeType() == Node.ELEMENT_NODE)
+		        	NodeList nodelist_commissionOrder = Node_CommissionOrderList.getChildNodes();
+			        for (int i = 0; i < nodelist_commissionOrder.getLength(); i++) {
+			        	Node node_commissionOrder = nodelist_commissionOrder.item(i);
+			        	if(node_commissionOrder.getNodeType() == Node.ELEMENT_NODE)
 			        	{
-			        		String time = ((Element)node_Stock).getAttribute("time");
-				        	String tranAct = ((Element)node_Stock).getAttribute("tranAct");
-				        	String stockID = ((Element)node_Stock).getAttribute("stockID");
-				        	String amount = ((Element)node_Stock).getAttribute("amount");
-				        	String price = ((Element)node_Stock).getAttribute("price");
+			        		String time = ((Element)node_commissionOrder).getAttribute("time");
+				        	String tranAct = ((Element)node_commissionOrder).getAttribute("tranAct");
+				        	String stockID = ((Element)node_commissionOrder).getAttribute("stockID");
+				        	String amount = ((Element)node_commissionOrder).getAttribute("amount");
+				        	String price = ((Element)node_commissionOrder).getAttribute("price");
 				        	
 				        	CommissionOrder cCommissionOrder = new CommissionOrder();
 				        	cCommissionOrder.time = time;
@@ -302,32 +296,42 @@ public class AccountStore {
 	        	}
 		    }
 		    
-        	// holdStockInvestigationDaysMap
-		    Map<String, Integer> holdStockInvestigationDaysMap = null;
+		    // 委托单加载
+		    List<HoldStock> holdStockList = new ArrayList<HoldStock>();
 		    {
-		    	NodeList nodelist_HoldStockInvestigationDaysMap = rootElement.getElementsByTagName("holdStockInvestigationDaysMap");
-		    	if(nodelist_HoldStockInvestigationDaysMap.getLength() == 1)
+		    	NodeList nodelist_holdStockList = rootElement.getElementsByTagName("holdStockList");
+		        if(nodelist_holdStockList.getLength() == 1)
 	        	{
-		    		holdStockInvestigationDaysMap = new HashMap<String, Integer>();
-		    		
-		        	Node HoldStockInvestigationDaysMap = nodelist_HoldStockInvestigationDaysMap.item(0);
-		        	NodeList nodelist_StockInvestigation = HoldStockInvestigationDaysMap.getChildNodes();
-			        for (int i = 0; i < nodelist_StockInvestigation.getLength(); i++) {
-			        	Node node_StockInvestigation = nodelist_StockInvestigation.item(i);
-			        	if(node_StockInvestigation.getNodeType() == Node.ELEMENT_NODE)
+		        	Node Node_holdStockList = nodelist_holdStockList.item(0);
+		        	NodeList nodelist_holdStock = Node_holdStockList.getChildNodes();
+			        for (int i = 0; i < nodelist_holdStock.getLength(); i++) {
+			        	Node node_holdStock = nodelist_holdStock.item(i);
+			        	if(node_holdStock.getNodeType() == Node.ELEMENT_NODE)
 			        	{
-			        		String stockID = ((Element)node_StockInvestigation).getAttribute("stockID");
-			        		String investigationDays = ((Element)node_StockInvestigation).getAttribute("investigationDays");
-				        	//CLog.output("ACCOUNT", "stockID:%s \n", stockID);
-			        		holdStockInvestigationDaysMap.put(stockID, Integer.parseInt(investigationDays));
+			        		String createDate = ((Element)node_holdStock).getAttribute("createDate");
+				        	String stockID = ((Element)node_holdStock).getAttribute("stockID");
+				        	String totalAmount = ((Element)node_holdStock).getAttribute("totalAmount");
+				        	String availableAmount = ((Element)node_holdStock).getAttribute("availableAmount");
+				        	String refPrimeCostPrice = ((Element)node_holdStock).getAttribute("refPrimeCostPrice");
+				        	String curPrice = ((Element)node_holdStock).getAttribute("curPrice");
+				        	
+				        	HoldStock cHoldStock = new HoldStock();
+				        	cHoldStock.createDate = createDate;
+				        	cHoldStock.stockID = stockID;
+				        	cHoldStock.totalAmount = Integer.parseInt(totalAmount);
+				        	cHoldStock.availableAmount = Integer.parseInt(availableAmount);
+				        	cHoldStock.refPrimeCostPrice = Float.parseFloat(refPrimeCostPrice);
+				        	cHoldStock.curPrice = Float.parseFloat(curPrice);
+				        	holdStockList.add(cHoldStock);
 			        	}
 			        }
 	        	}
 		    }
-		 
+		    
 		    m_storeEntity.date = accDate;
 		    m_storeEntity.time = accTime;
 		    m_storeEntity.commissionOrderList = commissionOrderList;
+		    m_storeEntity.holdStockList = holdStockList;
 		    return true;
 		}
 		catch(Exception e)
