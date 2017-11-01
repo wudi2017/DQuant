@@ -139,6 +139,11 @@ public class AccountEntity extends Account {
 	{
 		if(!m_initFlag) return -1;
 		
+		if(!m_accountStore.storeEntity().date.equals(date))
+		{
+			newDayEnd();
+		}
+		
 		m_accountStore.storeEntity().date = date;
 		m_accountStore.storeEntity().time = time;
 		
@@ -211,6 +216,9 @@ public class AccountEntity extends Account {
 			cHoldStock.avePrimeCostPrice = (oriHoldAvePrice*oriTotalAmount + price*amount)/cHoldStock.totalAmount;
 			cHoldStock.curPrice = price;
 			cHoldStock.cost = cHoldStock.cost + cost;
+			
+			// ¸üÐÂ money
+			m_accountStore.storeEntity().money = m_accountStore.storeEntity().money - price*amount;
 			
 		}
 		else if(tranact == TRANACT.SELL)

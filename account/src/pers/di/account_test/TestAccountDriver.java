@@ -50,6 +50,57 @@ public class TestAccountDriver {
 		}
 	}
 	
+	@CTest.test
+	public static void test_accountDriver_buy()
+	{
+		AccoutDriver cAccoutDriver = new AccoutDriver();
+		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
+		cAccoutDriver.reset(10*10000f);
+		
+		Account acc = cAccoutDriver.account();
+		
+		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
+		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
+		//cAccoutDriver.newDayEnd();
+		
+		cAccoutDriver.setDateTime("2017-11-11", "13:38:55");
+		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
+		
+		// check
+		{
+			CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f - 100*1.60f - 200*2.00f - 500*10.6f, 2);
+			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+			CTest.EXPECT_TRUE(ctnHoldList.size() == 2);
+			
+			for(int i=0; i<ctnHoldList.size(); i++)
+			{
+				HoldStock cHoldStock = ctnHoldList.get(i);
+				if(cHoldStock.stockID.equals("600001"))
+				{
+					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
+					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
+					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.avePrimeCostPrice, 1.867, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.cost, (100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
+				}
+				if(cHoldStock.stockID.equals("300002"))
+				{
+					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-11-11");
+					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 500);
+					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 0);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.avePrimeCostPrice, 10.6, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 10.6, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.cost, (500*10.60f)*s_transactionCostsRatioBuy, 2);
+				}
+			}
+		}
+	}
+	
 	
 	@CTest.test
 	public static void test_accountDriver()
