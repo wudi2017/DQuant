@@ -25,6 +25,8 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
+		ctnMoney.set(m_accountStore.storeEntity().money);
+		
 		return 0;
 	}
 	
@@ -82,6 +84,9 @@ public class AccountEntity extends Account {
 	public int getHoldStockList(List<HoldStock> ctnList) {
 		
 		if(!m_initFlag) return -1;
+		
+		ctnList.clear();
+		ctnList.addAll(m_accountStore.storeEntity().holdStockList);
 		
 		return 0;
 	}
@@ -174,39 +179,51 @@ public class AccountEntity extends Account {
 	{
 		if(tranact == TRANACT.BUY)
 		{
-//			// 获取持有对象
-//			HoldStock cHoldStock = null;
-//			for(int i = 0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
-//			{
-//				HoldStock cTmpHoldStock = m_accountStore.storeEntity().holdStockList.get(i);
-//				if(cTmpHoldStock.stockID == stockID)
-//				{
-//					cHoldStock = cTmpHoldStock;
-//					break;
-//				}
-//			}
-//			if(null == cHoldStock)
-//			{
-//				HoldStock cNewHoldStock = new HoldStock();
-//				cNewHoldStock.createDate = m_accountStore.storeEntity().date;
-//				cNewHoldStock.stockID = stockID;
-//				cNewHoldStock.totalAmount = amount;
-//				cNewHoldStock.availableAmount = 0;
-//				cNewHoldStock.refPrimeCostPrice = price;
-//				cNewHoldStock.curPrice = price;
-//				cHoldStock = cNewHoldStock;
-//				m_accountStore.storeEntity().holdStockList.add(cNewHoldStock);
-//			}
+			// 获取持有对象
+			HoldStock cHoldStock = null;
+			for(int i = 0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
+			{
+				HoldStock cTmpHoldStock = m_accountStore.storeEntity().holdStockList.get(i);
+				if(cTmpHoldStock.stockID.equals(stockID))
+				{
+					cHoldStock = cTmpHoldStock;
+					break;
+				}
+			}
+			if(null == cHoldStock)
+			{
+				HoldStock cNewHoldStock = new HoldStock();
+				cNewHoldStock.createDate = m_accountStore.storeEntity().date;
+				cNewHoldStock.stockID = stockID;
+				cNewHoldStock.totalAmount = 0;
+				cNewHoldStock.availableAmount = 0;
+				cNewHoldStock.avePrimeCostPrice = 0;
+				cNewHoldStock.curPrice = 0;
+				cNewHoldStock.cost = 0;
+				cHoldStock = cNewHoldStock;
+				m_accountStore.storeEntity().holdStockList.add(cNewHoldStock);
+			}
+			
+			// 重置对象 (交易费用直接体现在参考成本价里)
+			int oriTotalAmount = cHoldStock.totalAmount;
+			float oriHoldAvePrice = cHoldStock.avePrimeCostPrice;
+			cHoldStock.totalAmount = cHoldStock.totalAmount + amount;
+			cHoldStock.avePrimeCostPrice = (oriHoldAvePrice*oriTotalAmount + price*amount)/cHoldStock.totalAmount;
+			cHoldStock.curPrice = price;
+			cHoldStock.cost = cHoldStock.cost + cost;
+			
 		}
 		else if(tranact == TRANACT.SELL)
 		{
 			
 		}
+		
+		m_accountStore.sync2File();
 	}
 	
 	public int reset(float fInitMoney)
 	{
-		m_accountStore.storeEntity().reset();
+		m_accountStore.storeEntity().reset(fInitMoney);
 		m_accountStore.sync2File();
 		return 0;
 	}

@@ -6,9 +6,9 @@ public class HoldStock {
 	public String stockID; // 股票ID
 	public int totalAmount; // 持有总量（股）
 	public int availableAmount; // 可卖数量
-	public float refPrimeCostPrice; // 参考成本价
+	public float avePrimeCostPrice; // 平均成本价（未去除费用）
 	public float curPrice; // 当前价
-	
+	public float cost; // 未结算交易费用
 	
 	public HoldStock()
 	{
@@ -21,8 +21,9 @@ public class HoldStock {
 		stockID = "";
 		totalAmount = 0;
 		availableAmount = 0;
-		refPrimeCostPrice = 0.0f;
+		avePrimeCostPrice = 0.0f;
 		curPrice = 0.0f;
+		cost = 0.0f;
 	}
 	
 	public void CopyFrom(HoldStock c)
@@ -31,17 +32,18 @@ public class HoldStock {
 		stockID = c.stockID;
 		totalAmount = c.totalAmount;
 		availableAmount = c.availableAmount;
-		refPrimeCostPrice = c.refPrimeCostPrice;
+		avePrimeCostPrice = c.avePrimeCostPrice;
 		curPrice = c.curPrice;
+		cost = c.cost;
 	}
 	
 	public float profit() // 利润值（盈亏金额，不计算交易费用）
 	{
-		return (curPrice - refPrimeCostPrice)*totalAmount;
+		return (curPrice - avePrimeCostPrice)*totalAmount - cost;
 	}
 	
 	public float profitRatio() // 利润比（盈亏比例）
 	{
-		return (curPrice - refPrimeCostPrice)/refPrimeCostPrice;
+		return profit()/(curPrice*totalAmount - cost);
 	}
 }

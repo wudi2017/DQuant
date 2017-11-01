@@ -40,18 +40,21 @@ public class AccountStore {
 		{
 			date = CUtilsDateTime.GetCurDateStr();
 		    time = CUtilsDateTime.GetCurTimeStr();
+		    money = 0.0f;
 		    commissionOrderList = new ArrayList<CommissionOrder>();
 		    holdStockList = new ArrayList<HoldStock>();
 		}
-		public void reset()
+		public void reset(float fInitMoney)
 		{
 			date = CUtilsDateTime.GetCurDateStr();
 		    time = CUtilsDateTime.GetCurTimeStr();
+		    money = fInitMoney;
 		    commissionOrderList.clear();
 		    holdStockList.clear();
 		}
 		public String date;
 		public String time;
+		public float money;
 		public List<CommissionOrder> commissionOrderList;
 		public List<HoldStock> holdStockList;
 	}
@@ -76,7 +79,7 @@ public class AccountStore {
 
 	public boolean storeInit()
 	{
-        m_storeEntity.reset();
+        m_storeEntity.reset(0.0f);
 		return sync2File();
 	}
 	
@@ -113,6 +116,14 @@ public class AccountStore {
         	if(null != m_storeEntity.time)
         	{
         		root.setAttribute("time", m_storeEntity.time);
+        	}
+        	
+        	// money
+        	{
+        		Element Node_Money = doc.createElement("Money");
+        		root.appendChild(Node_Money);
+        		String money =String.format("%.3f", m_storeEntity.money);
+        		Node_Money.setAttribute("value", money);
         	}
 
         	// CommissionOrderList
@@ -151,16 +162,18 @@ public class AccountStore {
   
             		String totalAmount = String.format("%d", cHoldStock.totalAmount);
             		String availableAmount = String.format("%d", cHoldStock.availableAmount);
-            		String refPrimeCostPrice =String.format("%.3f", cHoldStock.refPrimeCostPrice);
+            		String avePrimeCostPrice =String.format("%.3f", cHoldStock.avePrimeCostPrice);
             		String curPrice =String.format("%.3f", cHoldStock.curPrice);
+            		String cost =String.format("%.3f", cHoldStock.cost);
             				
             		Element Node_holdStock = doc.createElement("holdStock");
             		Node_holdStock.setAttribute("createDate", cHoldStock.createDate);
             		Node_holdStock.setAttribute("stockID", cHoldStock.stockID);
             		Node_holdStock.setAttribute("totalAmount", totalAmount);
             		Node_holdStock.setAttribute("availableAmount", availableAmount);
-            		Node_holdStock.setAttribute("refPrimeCostPrice", refPrimeCostPrice);
+            		Node_holdStock.setAttribute("avePrimeCostPrice", avePrimeCostPrice);
             		Node_holdStock.setAttribute("curPrice", curPrice);
+            		Node_holdStock.setAttribute("cost", cost);
             		
             		Node_holdStockList.appendChild(Node_holdStock);
             	}
@@ -264,6 +277,18 @@ public class AccountStore {
         	// date time
 		    String accDate = rootElement.getAttribute("date");
 		    String accTime = rootElement.getAttribute("time");
+		    
+		    // money
+		    float money = 0.0f;
+		    {
+		    	NodeList nodelist_Money = rootElement.getElementsByTagName("Money");
+		    	if(nodelist_Money.getLength() == 1)
+	        	{
+		        	Node Node_Money = nodelist_Money.item(0);
+		        	String value = ((Element)Node_Money).getAttribute("value");
+		        	money = Float.parseFloat(value);
+	        	}
+		    }
 
 		    // Î¯ÍÐµ¥¼ÓÔØ
 		    List<CommissionOrder> commissionOrderList = new ArrayList<CommissionOrder>();
@@ -312,16 +337,18 @@ public class AccountStore {
 				        	String stockID = ((Element)node_holdStock).getAttribute("stockID");
 				        	String totalAmount = ((Element)node_holdStock).getAttribute("totalAmount");
 				        	String availableAmount = ((Element)node_holdStock).getAttribute("availableAmount");
-				        	String refPrimeCostPrice = ((Element)node_holdStock).getAttribute("refPrimeCostPrice");
+				        	String avePrimeCostPrice = ((Element)node_holdStock).getAttribute("avePrimeCostPrice");
 				        	String curPrice = ((Element)node_holdStock).getAttribute("curPrice");
+				        	String cost = ((Element)node_holdStock).getAttribute("cost");
 				        	
 				        	HoldStock cHoldStock = new HoldStock();
 				        	cHoldStock.createDate = createDate;
 				        	cHoldStock.stockID = stockID;
 				        	cHoldStock.totalAmount = Integer.parseInt(totalAmount);
 				        	cHoldStock.availableAmount = Integer.parseInt(availableAmount);
-				        	cHoldStock.refPrimeCostPrice = Float.parseFloat(refPrimeCostPrice);
+				        	cHoldStock.avePrimeCostPrice = Float.parseFloat(avePrimeCostPrice);
 				        	cHoldStock.curPrice = Float.parseFloat(curPrice);
+				        	cHoldStock.cost = Float.parseFloat(cost);
 				        	holdStockList.add(cHoldStock);
 			        	}
 			        }
@@ -330,6 +357,7 @@ public class AccountStore {
 		    
 		    m_storeEntity.date = accDate;
 		    m_storeEntity.time = accTime;
+		    m_storeEntity.money = money;
 		    m_storeEntity.commissionOrderList = commissionOrderList;
 		    m_storeEntity.holdStockList = holdStockList;
 		    return true;
