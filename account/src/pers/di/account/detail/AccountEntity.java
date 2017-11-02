@@ -37,33 +37,31 @@ public class AccountEntity extends Account {
 		
 		if(tranact == TRANACT.BUY)
 		{
+			CommissionOrder cCommissionOrder = new CommissionOrder();
+			cCommissionOrder.time = m_accountStore.storeEntity().time;
+			cCommissionOrder.tranAct = TRANACT.BUY;
+			cCommissionOrder.stockID = stockID;
+			cCommissionOrder.amount = amount;
+			cCommissionOrder.price = price;
+			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
+			m_accountStore.sync2File();
+			
 			int ret = m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
-			if(0 == ret)
-			{
-				CommissionOrder cCommissionOrder = new CommissionOrder();
-				cCommissionOrder.time = m_accountStore.storeEntity().time;
-				cCommissionOrder.tranAct = TRANACT.BUY;
-				cCommissionOrder.stockID = stockID;
-				cCommissionOrder.amount = amount;
-				cCommissionOrder.price = price;
-				m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
-			}
 			return ret;
 		}
 		
 		if(tranact == TRANACT.SELL)
 		{
+			CommissionOrder cCommissionOrder = new CommissionOrder();
+			cCommissionOrder.time = m_accountStore.storeEntity().time;
+			cCommissionOrder.tranAct = TRANACT.SELL;
+			cCommissionOrder.stockID = stockID;
+			cCommissionOrder.amount = amount;
+			cCommissionOrder.price = price;
+			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
+			m_accountStore.sync2File();
+			
 			int ret = m_cIMarketOpe.postTradeRequest(TRANACT.SELL, stockID, amount, price);
-			if(0 == ret)
-			{
-				CommissionOrder cCommissionOrder = new CommissionOrder();
-				cCommissionOrder.time = m_accountStore.storeEntity().time;
-				cCommissionOrder.tranAct = TRANACT.SELL;
-				cCommissionOrder.stockID = stockID;
-				cCommissionOrder.amount = amount;
-				cCommissionOrder.price = price;
-				m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
-			}
 			return ret;
 		}
 		
@@ -223,7 +221,46 @@ public class AccountEntity extends Account {
 		}
 		else if(tranact == TRANACT.SELL)
 		{
+			HoldStock cHoldStock = null;
+			for(int i = 0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
+			{
+				HoldStock cTmpHoldStock = m_accountStore.storeEntity().holdStockList.get(i);
+				if(cTmpHoldStock.stockID.equals(stockID))
+				{
+					cHoldStock = cTmpHoldStock;
+					break;
+				}
+			}
 			
+			if(null != cHoldStock)
+			{
+				// 重置对象 (交易费用在卖出价钱中扣除)
+				int oriTotalAmount = cHoldStock.totalAmount;
+				float oriHoldAvePrice = cHoldStock.avePrimeCostPrice;
+				cHoldStock.totalAmount = cHoldStock.totalAmount - amount;
+				cHoldStock.availableAmount = cHoldStock.availableAmount - amount;
+				cHoldStock.avePrimeCostPrice = (oriHoldAvePrice*oriTotalAmount - price*amount)/cHoldStock.totalAmount;
+				cHoldStock.curPrice = price;
+				cHoldStock.cost = cHoldStock.cost + cost;
+				
+				// 清仓计算
+				if(cHoldStock.totalAmount != 0)
+				{
+					// 更新 money
+					m_accountStore.storeEntity().money = m_accountStore.storeEntity().money + price*amount;
+					
+				}
+				else
+				{
+					// 更新 money
+					m_accountStore.storeEntity().money = m_accountStore.storeEntity().money + price*amount - cHoldStock.cost;
+					m_accountStore.storeEntity().holdStockList.remove(cHoldStock);
+				}
+			}
+			else
+			{
+				CLog.error("ACCOUNT", "@AccountEntity.onDeal SELL err!\n");
+			}
 		}
 		
 		m_accountStore.sync2File();
