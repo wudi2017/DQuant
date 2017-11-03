@@ -1,5 +1,6 @@
 package pers.di.account_test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,8 @@ import pers.di.account.common.*;
 import pers.di.common.*;
 
 public class TestAccountDriver {
+	
+	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 	
 	public static float s_transactionCostsRatioBuy = 0.02f;
 	public static float s_transactionCostsRatioSell = 0.05f;
@@ -31,7 +34,7 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_reset()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver();
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
 		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
 		Account acc = cAccoutDriver.account();
 		
@@ -60,7 +63,7 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_buy()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver();
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
 		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
 		cAccoutDriver.reset(10*10000f);
 		
@@ -116,7 +119,7 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_sell()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver();
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
 		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
 		cAccoutDriver.reset(10*10000f);
 		
@@ -214,7 +217,7 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_flushCurrentPrice()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver();
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
 		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
 		cAccoutDriver.reset(10*10000f);
 		
@@ -256,7 +259,7 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_CommissionOrder()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver();
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
 		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
 		cAccoutDriver.reset(10*10000f);
 		
@@ -303,6 +306,7 @@ public class TestAccountDriver {
 		CSystem.start();
 		CTest.ADD_TEST(TestAccountDriver.class);
 		CTest.RUN_ALL_TESTS("TestAccountDriver.");
+		CLog.output("TEST", "END");
 		CSystem.stop();
 	}
 }

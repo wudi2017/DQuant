@@ -59,9 +59,13 @@ public class AccountStore {
 		public List<HoldStock> holdStockList;
 	}
 	
-	public AccountStore(String accountID)
+	public AccountStore(String dataRoot, String accountID)
 	{
 		// init root dir
+		if(null != dataRoot)
+		{
+			s_accountDataRoot = dataRoot;
+		}
 		if(!CFileSystem.isDirExist(s_accountDataRoot))
 		{
 			CFileSystem.createDir(s_accountDataRoot);

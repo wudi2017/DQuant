@@ -333,7 +333,7 @@ public class CLog {
 		s_syncObjForTagMap.UnLock();
 		
 		// dir file name check
-		if(null == s_strLogDirName) s_strLogDirName = CFileSystem.getOutputDir();
+		if(null == s_strLogDirName) s_strLogDirName = "output";
 		if(null == s_strLogName) s_strLogName = "default.log";
 		
 		String logstr = String.format(format, args);

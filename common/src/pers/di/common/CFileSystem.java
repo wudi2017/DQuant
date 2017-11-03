@@ -5,10 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CFileSystem {
-	public static String getOutputDir()
-	{
-		return s_outputDir;
-	}
+
 	public static boolean isDirExist(String dirName)
 	{
 		File folder = new File(dirName);
@@ -69,6 +66,12 @@ public class CFileSystem {
 		}
 	}
 	
+	public static String getParentDir(String dirStr)
+	{
+		File file = new File(dirStr);
+		return file.getParent();
+	}
+	
 	/*
 	 * ********************************************************************
 	 */
@@ -99,14 +102,4 @@ public class CFileSystem {
 	    } 
 	    return 0;
 	}  
-	
-	private static String initOutputDir()
-	{
-		String outputDir = "output\\";
-		SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMddHHmmss");
-		outputDir = outputDir + sdf.format(new Date());
-		createDir(outputDir);
-		return outputDir;
-	}
-	private static String s_outputDir = initOutputDir();
 }

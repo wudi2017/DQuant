@@ -21,8 +21,9 @@ public class AccoutDriver {
 		private AccoutDriver m_cAccoutDriver;
 	}
 	
-	public AccoutDriver()
+	public AccoutDriver(String dataRoot)
 	{
+		m_dataRoot = dataRoot;
 		m_accountEntity = null;
 		m_innerMarketReplier = null;
 	}
@@ -41,7 +42,7 @@ public class AccoutDriver {
 			}
 			
 			m_accountEntity =  new AccountEntity();
-			if(0 != m_accountEntity.load(accID, cIMarketOpe, bCreate))
+			if(0 != m_accountEntity.load(m_dataRoot, accID, cIMarketOpe, bCreate))
 			{
 				CLog.error("ACCOUNT", "AccoutDriver init m_accountEntity.load failed\n");
 			}
@@ -129,6 +130,7 @@ public class AccoutDriver {
 		return m_accountEntity.newDayEnd();
 	}
 	
+	private String m_dataRoot;
 	private AccountEntity m_accountEntity;
 	private InnerMarketReplier m_innerMarketReplier;
 }

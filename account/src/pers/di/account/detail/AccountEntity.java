@@ -102,12 +102,12 @@ public class AccountEntity extends Account {
 		m_initFlag = false;
 	}
 	
-	public int load(String accID, IMarketOpe cIMarketOpe, boolean bCreate)
+	public int load(String dataRoot, String accID, IMarketOpe cIMarketOpe, boolean bCreate)
 	{
 		
 		m_cIMarketOpe = cIMarketOpe;
 		
-		m_accountStore = new AccountStore(accID);
+		m_accountStore = new AccountStore(dataRoot, accID);
 		if(!m_accountStore.sync2Mem())
 		{
 			if(bCreate)
@@ -115,6 +115,7 @@ public class AccountEntity extends Account {
 				boolean iStoreInit = m_accountStore.storeInit();
 				if(iStoreInit)
 				{
+					m_initFlag = true;
 					return 0;
 				}
 				else
