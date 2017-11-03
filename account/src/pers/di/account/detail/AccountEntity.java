@@ -17,7 +17,7 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return null;
 		
-		return "local";
+		return m_accountStore.accountID();
 	}
 
 	@Override
@@ -38,6 +38,7 @@ public class AccountEntity extends Account {
 		if(tranact == TRANACT.BUY)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
+			cCommissionOrder.date = m_accountStore.storeEntity().date;
 			cCommissionOrder.time = m_accountStore.storeEntity().time;
 			cCommissionOrder.tranAct = TRANACT.BUY;
 			cCommissionOrder.stockID = stockID;
@@ -53,6 +54,7 @@ public class AccountEntity extends Account {
 		if(tranact == TRANACT.SELL)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
+			cCommissionOrder.date = m_accountStore.storeEntity().date;
 			cCommissionOrder.time = m_accountStore.storeEntity().time;
 			cCommissionOrder.tranAct = TRANACT.SELL;
 			cCommissionOrder.stockID = stockID;
@@ -136,12 +138,7 @@ public class AccountEntity extends Account {
 	public int setDateTime(String date, String time)
 	{
 		if(!m_initFlag) return -1;
-		
-		if(!m_accountStore.storeEntity().date.equals(date))
-		{
-			newDayEnd();
-		}
-		
+
 		m_accountStore.storeEntity().date = date;
 		m_accountStore.storeEntity().time = time;
 		
@@ -151,6 +148,15 @@ public class AccountEntity extends Account {
 	public int flushCurrentPrice(String stockID, float price)
 	{
 		if(!m_initFlag) return -1;
+		
+		for(int i=0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
+		{
+			HoldStock cHoldStock = m_accountStore.storeEntity().holdStockList.get(i);
+			if(stockID.equals(cHoldStock.stockID))
+			{
+				cHoldStock.curPrice = price;
+			}
+		}
 		
 		return 0;
 	}

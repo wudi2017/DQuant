@@ -67,10 +67,13 @@ public class TestAccountDriver {
 		Account acc = cAccoutDriver.account();
 		
 		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+		cAccoutDriver.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
+		cAccoutDriver.newDayEnd();
 		
 		cAccoutDriver.setDateTime("2017-11-11", "13:38:55");
+		cAccoutDriver.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
 		
 		// check
@@ -206,6 +209,93 @@ public class TestAccountDriver {
 				}
 			}
 		}
+	}
+	
+	@CTest.test
+	public static void test_accountDriver_flushCurrentPrice()
+	{
+		AccoutDriver cAccoutDriver = new AccoutDriver();
+		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
+		cAccoutDriver.reset(10*10000f);
+		
+		Account acc = cAccoutDriver.account();
+		
+		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+		cAccoutDriver.newDayBegin();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
+		cAccoutDriver.newDayEnd();
+		
+		cAccoutDriver.setDateTime("2017-10-11", "14:30:01");
+		cAccoutDriver.newDayBegin();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
+		cAccoutDriver.newDayEnd();
+		
+		List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+		CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+		CTest.EXPECT_TRUE(ctnHoldList.size() == 1);
+		for(int i=0; i<ctnHoldList.size(); i++)
+		{
+			HoldStock cHoldStock = ctnHoldList.get(i);
+			if(cHoldStock.stockID.equals("600001"))
+			{
+				CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
+				CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
+				CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
+				CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, 
+						(100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
+				CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
+				CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
+						(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300, 2);
+				
+				cAccoutDriver.flushCurrentPrice("600001", 3.14f);
+				CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 3.14, 2);
+			}
+		}
+	}
+	
+	@CTest.test
+	public static void test_accountDriver_CommissionOrder()
+	{
+		AccoutDriver cAccoutDriver = new AccoutDriver();
+		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
+		cAccoutDriver.reset(10*10000f);
+		
+		Account acc = cAccoutDriver.account();
+		
+		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+		cAccoutDriver.newDayBegin();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
+		cAccoutDriver.newDayEnd();
+		
+		cAccoutDriver.setDateTime("2017-10-11", "14:30:01");
+		cAccoutDriver.newDayBegin();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
+		cAccoutDriver.setDateTime("2017-10-11", "14:32:01");
+		acc.postTradeOrder(TRANACT.SELL, "600001", 100, 1.12f);
+		
+		List<CommissionOrder> ctnCommissionList = new ArrayList<CommissionOrder>();
+		CTest.EXPECT_TRUE(acc.getCommissionOrderList(ctnCommissionList) == 0);
+		CTest.EXPECT_LONG_EQ(ctnCommissionList.size(), 2);
+
+		if(ctnCommissionList.size() == 2)
+		{
+			CommissionOrder cCommissionOrder0 = ctnCommissionList.get(0);
+			CTest.EXPECT_STR_EQ(cCommissionOrder0.date, "2017-10-11");
+			CTest.EXPECT_STR_EQ(cCommissionOrder0.time, "14:30:01");
+			CTest.EXPECT_LONG_EQ(cCommissionOrder0.amount, 200);
+			CTest.EXPECT_DOUBLE_EQ(cCommissionOrder0.price, 2.0f, 2);
+			CTest.EXPECT_TRUE(0 == cCommissionOrder0.tranAct.compareTo(TRANACT.BUY));
+			
+			CommissionOrder cCommissionOrder1 = ctnCommissionList.get(1);
+			CTest.EXPECT_STR_EQ(cCommissionOrder1.date, "2017-10-11");
+			CTest.EXPECT_STR_EQ(cCommissionOrder1.time, "14:32:01");
+			CTest.EXPECT_LONG_EQ(cCommissionOrder1.amount, 100);
+			CTest.EXPECT_DOUBLE_EQ(cCommissionOrder1.price, 1.12f, 2);
+			CTest.EXPECT_TRUE(0 == cCommissionOrder1.tranAct.compareTo(TRANACT.SELL));
+		}
+		
+		cAccoutDriver.newDayEnd();
+		
 	}
 	
 	public static void main(String[] args) {

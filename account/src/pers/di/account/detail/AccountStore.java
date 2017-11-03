@@ -72,6 +72,11 @@ public class AccountStore {
 		m_storeEntity = new StoreEntity();
 	}
 	
+	public String accountID()
+	{
+		return m_accountID;
+	}
+	
 	public StoreEntity storeEntity()
 	{
 		return m_storeEntity;
