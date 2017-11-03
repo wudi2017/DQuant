@@ -200,20 +200,21 @@ public class AccountEntity extends Account {
 				cNewHoldStock.stockID = stockID;
 				cNewHoldStock.totalAmount = 0;
 				cNewHoldStock.availableAmount = 0;
-				cNewHoldStock.avePrimeCostPrice = 0;
+				cNewHoldStock.totalBuyCost = 0;
 				cNewHoldStock.curPrice = 0;
-				cNewHoldStock.cost = 0;
+				cNewHoldStock.refPrimeCostPrice = 0;
 				cHoldStock = cNewHoldStock;
 				m_accountStore.storeEntity().holdStockList.add(cNewHoldStock);
 			}
 			
 			// 重置对象 (交易费用直接体现在参考成本价里)
 			int oriTotalAmount = cHoldStock.totalAmount;
-			float oriHoldAvePrice = cHoldStock.avePrimeCostPrice;
 			cHoldStock.totalAmount = cHoldStock.totalAmount + amount;
-			cHoldStock.avePrimeCostPrice = (oriHoldAvePrice*oriTotalAmount + price*amount)/cHoldStock.totalAmount;
+			cHoldStock.availableAmount = cHoldStock.availableAmount;
+			cHoldStock.totalBuyCost = cHoldStock.totalBuyCost + cost;
 			cHoldStock.curPrice = price;
-			cHoldStock.cost = cHoldStock.cost + cost;
+			cHoldStock.refPrimeCostPrice = 
+					(cHoldStock.refPrimeCostPrice*oriTotalAmount + price*amount + cost)/cHoldStock.totalAmount;
 			
 			// 更新 money
 			m_accountStore.storeEntity().money = m_accountStore.storeEntity().money - price*amount;
@@ -234,26 +235,24 @@ public class AccountEntity extends Account {
 			
 			if(null != cHoldStock)
 			{
+				float oriAveBuyCost = cHoldStock.totalBuyCost/cHoldStock.totalAmount;
+				float balanceBuyCost = oriAveBuyCost*amount; // 计算买入费用
+				float balanceSellCost = cost; //结算卖出费用
+				
 				// 重置对象 (交易费用在卖出价钱中扣除)
 				int oriTotalAmount = cHoldStock.totalAmount;
-				float oriHoldAvePrice = cHoldStock.avePrimeCostPrice;
 				cHoldStock.totalAmount = cHoldStock.totalAmount - amount;
 				cHoldStock.availableAmount = cHoldStock.availableAmount - amount;
-				cHoldStock.avePrimeCostPrice = (oriHoldAvePrice*oriTotalAmount - price*amount)/cHoldStock.totalAmount;
+				cHoldStock.totalBuyCost = cHoldStock.totalBuyCost - balanceBuyCost;
 				cHoldStock.curPrice = price;
-				cHoldStock.cost = cHoldStock.cost + cost;
+				cHoldStock.refPrimeCostPrice = 
+						(cHoldStock.refPrimeCostPrice*oriTotalAmount - price*amount + balanceSellCost)/cHoldStock.totalAmount;
 				
-				// 清仓计算
-				if(cHoldStock.totalAmount != 0)
+				m_accountStore.storeEntity().money = 
+						m_accountStore.storeEntity().money + price*amount - balanceBuyCost - balanceSellCost;
+				// 清仓
+				if(cHoldStock.totalAmount == 0)
 				{
-					// 更新 money
-					m_accountStore.storeEntity().money = m_accountStore.storeEntity().money + price*amount;
-					
-				}
-				else
-				{
-					// 更新 money
-					m_accountStore.storeEntity().money = m_accountStore.storeEntity().money + price*amount - cHoldStock.cost;
 					m_accountStore.storeEntity().holdStockList.remove(cHoldStock);
 				}
 			}

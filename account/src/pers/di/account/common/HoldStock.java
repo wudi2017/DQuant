@@ -2,13 +2,17 @@ package pers.di.account.common;
 
 public class HoldStock {
 	
+	/*
+	 * 注：参考XX是指针对本次建仓后，经过不断买卖而形成的原始参考数值
+	 */
+	
 	public String createDate; // 建仓日期
 	public String stockID; // 股票ID
 	public int totalAmount; // 持有总量（股）
 	public int availableAmount; // 可卖数量
-	public float avePrimeCostPrice; // 平均成本价（未去除费用）
+	public float totalBuyCost; // 买入费用总计
 	public float curPrice; // 当前价
-	public float cost; // 未结算交易费用
+	public float refPrimeCostPrice; // 参考成本价（只做本次仓位建仓后的参考成本价格，未有实际用途）
 	
 	public HoldStock()
 	{
@@ -21,9 +25,9 @@ public class HoldStock {
 		stockID = "";
 		totalAmount = 0;
 		availableAmount = 0;
-		avePrimeCostPrice = 0.0f;
+		totalBuyCost = 0.0f;
 		curPrice = 0.0f;
-		cost = 0.0f;
+		refPrimeCostPrice = 0.0f;
 	}
 	
 	public void CopyFrom(HoldStock c)
@@ -32,18 +36,18 @@ public class HoldStock {
 		stockID = c.stockID;
 		totalAmount = c.totalAmount;
 		availableAmount = c.availableAmount;
-		avePrimeCostPrice = c.avePrimeCostPrice;
+		totalBuyCost = c.totalBuyCost;
 		curPrice = c.curPrice;
-		cost = c.cost;
+		refPrimeCostPrice = c.refPrimeCostPrice;
 	}
 	
-	public float profit() // 利润值（盈亏金额，不计算交易费用）
+	public float refProfit() // 参考利润值（只做本次仓位建仓后的参考盈亏金额，不计算交易费用）
 	{
-		return (curPrice - avePrimeCostPrice)*totalAmount - cost;
+		return (curPrice - refPrimeCostPrice)*totalAmount;
 	}
 	
-	public float profitRatio() // 利润比（盈亏比例）
+	public float refProfitRatio() // 参考利润比（只做本次仓位建仓后的参考盈亏比例）
 	{
-		return profit()/(curPrice*totalAmount - cost);
+		return (curPrice - refPrimeCostPrice)/refPrimeCostPrice;
 	}
 }

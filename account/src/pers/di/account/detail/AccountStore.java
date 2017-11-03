@@ -162,18 +162,18 @@ public class AccountStore {
   
             		String totalAmount = String.format("%d", cHoldStock.totalAmount);
             		String availableAmount = String.format("%d", cHoldStock.availableAmount);
-            		String avePrimeCostPrice =String.format("%.3f", cHoldStock.avePrimeCostPrice);
             		String curPrice =String.format("%.3f", cHoldStock.curPrice);
-            		String cost =String.format("%.3f", cHoldStock.cost);
+            		String totalBuyCost =String.format("%.3f", cHoldStock.totalBuyCost);
+            		String refPrimeCostPrice =String.format("%.3f", cHoldStock.refPrimeCostPrice);
             				
             		Element Node_holdStock = doc.createElement("holdStock");
             		Node_holdStock.setAttribute("createDate", cHoldStock.createDate);
             		Node_holdStock.setAttribute("stockID", cHoldStock.stockID);
             		Node_holdStock.setAttribute("totalAmount", totalAmount);
             		Node_holdStock.setAttribute("availableAmount", availableAmount);
-            		Node_holdStock.setAttribute("avePrimeCostPrice", avePrimeCostPrice);
+            		Node_holdStock.setAttribute("totalBuyCost", totalBuyCost);
             		Node_holdStock.setAttribute("curPrice", curPrice);
-            		Node_holdStock.setAttribute("cost", cost);
+            		Node_holdStock.setAttribute("refPrimeCostPrice", refPrimeCostPrice);
             		
             		Node_holdStockList.appendChild(Node_holdStock);
             	}
@@ -337,18 +337,18 @@ public class AccountStore {
 				        	String stockID = ((Element)node_holdStock).getAttribute("stockID");
 				        	String totalAmount = ((Element)node_holdStock).getAttribute("totalAmount");
 				        	String availableAmount = ((Element)node_holdStock).getAttribute("availableAmount");
-				        	String avePrimeCostPrice = ((Element)node_holdStock).getAttribute("avePrimeCostPrice");
+				        	String totalBuyCost = ((Element)node_holdStock).getAttribute("totalBuyCost");
 				        	String curPrice = ((Element)node_holdStock).getAttribute("curPrice");
-				        	String cost = ((Element)node_holdStock).getAttribute("cost");
+				        	String refPrimeCostPrice = ((Element)node_holdStock).getAttribute("refPrimeCostPrice");
 				        	
 				        	HoldStock cHoldStock = new HoldStock();
 				        	cHoldStock.createDate = createDate;
 				        	cHoldStock.stockID = stockID;
 				        	cHoldStock.totalAmount = Integer.parseInt(totalAmount);
 				        	cHoldStock.availableAmount = Integer.parseInt(availableAmount);
-				        	cHoldStock.avePrimeCostPrice = Float.parseFloat(avePrimeCostPrice);
+				        	cHoldStock.totalBuyCost = Float.parseFloat(totalBuyCost);
 				        	cHoldStock.curPrice = Float.parseFloat(curPrice);
-				        	cHoldStock.cost = Float.parseFloat(cost);
+				        	cHoldStock.refPrimeCostPrice = Float.parseFloat(refPrimeCostPrice);
 				        	holdStockList.add(cHoldStock);
 			        	}
 			        }

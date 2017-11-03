@@ -69,7 +69,6 @@ public class TestAccountDriver {
 		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
-		//cAccoutDriver.newDayEnd();
 		
 		cAccoutDriver.setDateTime("2017-11-11", "13:38:55");
 		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
@@ -91,18 +90,20 @@ public class TestAccountDriver {
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.avePrimeCostPrice, 1.867, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, (100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.cost, (100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
+							(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300 , 2);
 				}
 				if(cHoldStock.stockID.equals("300002"))
 				{
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-11-11");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 500);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 0);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.avePrimeCostPrice, 10.6, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, (500*10.60f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 10.6, 2);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.cost, (500*10.60f)*s_transactionCostsRatioBuy, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
+							(500*10.60f)*(1+s_transactionCostsRatioBuy)/500, 2);
 				}
 			}
 		}
@@ -137,7 +138,10 @@ public class TestAccountDriver {
 		{
 			CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f - 100*1.60f - 200*2.00f - 500*10.6f + 100*10.0f, 2);
+			float buyCost = 500*10.6f*s_transactionCostsRatioBuy;
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
+					10*10000f - 100*1.60f - 200*2.00f - 500*10.6f + 100*10.0f
+					-100*(buyCost/500)-100*10.0f*s_transactionCostsRatioSell, 2);
 			
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
@@ -151,18 +155,21 @@ public class TestAccountDriver {
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.avePrimeCostPrice, 1.867, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, (100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.cost, (100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
+							(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300, 2);
 				}
 				if(cHoldStock.stockID.equals("300002"))
 				{
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-11-11");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 400);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 400);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.avePrimeCostPrice, (500*10.6f-100*10.0f)/400, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, 
+							(400*10.60f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 10.0, 2);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.cost, (500*10.60f)*s_transactionCostsRatioBuy + (100*10.0f)*s_transactionCostsRatioSell, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
+							(500*10.6f-100*10.0f+500*10.6f*s_transactionCostsRatioBuy+100*10.0f*s_transactionCostsRatioSell)/400, 2);
 				}
 			}
 		}
@@ -191,33 +198,21 @@ public class TestAccountDriver {
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.avePrimeCostPrice, 1.867, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, 
+							(100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.cost, (100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
+					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
+							(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300, 2);
 				}
 			}
 		}
-	}
-	
-	
-	@CTest.test
-	public static void test_accountDriver()
-	{
-//		AccoutDriver cAccoutDriver = new AccoutDriver();
-//		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-//		//cAccoutDriver.reset(10*10000f);
-//		
-//		Account acc = cAccoutDriver.account();
-//		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.01f);
-//		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 2.50f);
-		
 	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		CSystem.start();
 		CTest.ADD_TEST(TestAccountDriver.class);
-		CTest.RUN_ALL_TESTS("TestAccountDriver.test_accountDriver_sell");
+		CTest.RUN_ALL_TESTS("TestAccountDriver.");
 		CSystem.stop();
 	}
 }
