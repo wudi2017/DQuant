@@ -2,8 +2,10 @@ package pers.di.quantplatform;
 import java.util.*;
 
 import pers.di.account.*;
+import pers.di.account.common.HoldStock;
 import pers.di.common.CListObserver;
 import pers.di.common.CLog;
+import pers.di.common.CTest;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.StockDataApi;
@@ -22,7 +24,8 @@ public class QuantSession {
 		m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
 		StockDataEngine.instance().config("TriggerMode", triggerCfgStr);
 
-		// init m_accountProxy
+		// init m_accountDriver m_accountProxy
+		m_accountDriver = accoutDriver;
 		m_accountProxy = new AccountProxy(accoutDriver);
 		
 		// init m_stratety
@@ -62,7 +65,18 @@ public class QuantSession {
 		m_context.set(ctx.date(), ctx.time(), ctx.pool());
 		m_stratety.onDayStart(m_context);
 		
+		// for stratety InterestMinuteDataID
 		m_listener.addCurrentDayInterestMinuteDataIDs(m_stratety.getCurrentDayInterestMinuteDataIDs());
+		
+		// for account holdstock InterestMinuteDataID
+		List<String> ctnHoldStockIDList = new ArrayList<String>();
+		m_accountDriver.getHoldStockList(ctnHoldStockIDList);
+		m_listener.addCurrentDayInterestMinuteDataIDs(ctnHoldStockIDList);
+		for(int i=0; i<ctnHoldStockIDList.size(); i++)
+		{
+			String sHoldStockID = ctnHoldStockIDList.get(i);
+			//ctx.pool().get(sHoldStockID).p
+		}
 	}
 	
 	public void onMinuteTimePrices(EEObject ev)
@@ -93,5 +107,6 @@ public class QuantSession {
 	private EngineListener m_listener;
 	private QuantContext m_context;
 	private AccountProxy m_accountProxy;
+	private AccoutDriver m_accountDriver;
 	private QuantStrategy m_stratety;
 }

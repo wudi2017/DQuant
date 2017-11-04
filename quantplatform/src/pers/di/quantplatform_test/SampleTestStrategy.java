@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
+import pers.di.account_test.TestAccountDriver.MockMarketOpe;
 import pers.di.common.*;
 import pers.di.dataapi.common.*;
 import pers.di.dataapi_test.TestCommonHelper;
@@ -11,6 +12,8 @@ import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
 
 public class SampleTestStrategy {
+	
+	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 	
 	public static class TestStrategy extends QuantStrategy
 	{
@@ -85,8 +88,12 @@ public class SampleTestStrategy {
 	@CTest.test
 	public static void Sample()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver();
-		//cAccoutDriver.load(...);
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
+		if(0 != cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true)
+				|| 0 != cAccoutDriver.reset(10*10000f))
+		{
+			CLog.error("TEST", "SampleTestStrategy AccoutDriver ERR!");
+		}
 		
 		QuantSession qSession = new QuantSession(
 				"HistoryTest 2017-01-01 2017-01-03", 

@@ -301,6 +301,48 @@ public class TestAccountDriver {
 		
 	}
 	
+	@CTest.test
+	public static void test_accountDriver_performance()
+	{
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
+		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
+		cAccoutDriver.reset(10*10000f);
+		
+		Account acc = cAccoutDriver.account();
+		
+		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+		cAccoutDriver.newDayBegin();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
+		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
+		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
+		
+		List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+		CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+		CTest.EXPECT_TRUE(ctnHoldList.size() == 2);
+		
+		int iTestTimes=100*10000;
+		int iTest = 0;
+		for(; iTest<10000*100; iTest++)
+		{
+			cAccoutDriver.setDateTime("2017-10-10", "14:00:30");
+			for(int i=0; i<ctnHoldList.size(); i++)
+			{
+				HoldStock cHoldStock = ctnHoldList.get(i);
+				if(cHoldStock.stockID.equals("600001"))
+				{
+					cAccoutDriver.flushCurrentPrice("600001", 3.14f);
+				}
+				if(cHoldStock.stockID.equals("300002"))
+				{
+					cAccoutDriver.flushCurrentPrice("300002", 6.28f);
+				}
+			}
+		}
+		CTest.EXPECT_LONG_EQ(iTest, iTestTimes);
+		
+		cAccoutDriver.newDayEnd();
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		CSystem.start();

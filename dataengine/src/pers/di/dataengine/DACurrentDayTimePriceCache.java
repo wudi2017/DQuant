@@ -25,7 +25,10 @@ public class DACurrentDayTimePriceCache {
 	
 	public void addCurrentDayInterestMinuteDataID(String dataID)
 	{
-		m_CurrentDayInterestMinuteDataIDs.add(dataID);
+		if(!m_CurrentDayInterestMinuteDataIDs.contains(dataID))
+		{
+			m_CurrentDayInterestMinuteDataIDs.add(dataID);
+		}
 	}
 	
 	public void buildAll(String date, String time)
