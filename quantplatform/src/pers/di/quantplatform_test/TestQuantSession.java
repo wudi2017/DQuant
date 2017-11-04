@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
+import pers.di.account.common.HoldStock;
 import pers.di.account.common.TRANACT;
 import pers.di.common.*;
 import pers.di.dataapi.common.KLine;
@@ -227,6 +228,22 @@ public class TestQuantSession {
 			float ExpectMoney = 
 					10*10000-500*12.330769f-800*12.611877f+1000*12.507691f-(buyCostAll/1300*1000+sellCost);
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(),ExpectMoney, 2);
+			
+			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+			CTest.EXPECT_TRUE(ctnHoldList.size() == 1);
+			if(ctnHoldList.size() == 1)
+			{
+				HoldStock cHoldStock = ctnHoldList.get(0);
+				CTest.EXPECT_STR_EQ(cHoldStock.stockID, "600000");
+				CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-01-16");
+				
+				float expectRefPrimeCostPrice = 0.0f;
+				expectRefPrimeCostPrice=(500*12.330769f+800*12.611877f+buyCostAll)/(500+800);
+				float sellProfit = 1000*(12.507691f - expectRefPrimeCostPrice);
+				expectRefPrimeCostPrice=(expectRefPrimeCostPrice*(1300-1000) + sellCost - sellProfit)/(1300-1000);
+				CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, expectRefPrimeCostPrice, 2);
+			}
 		}
 		
 	}
