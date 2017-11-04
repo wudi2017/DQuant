@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
-import pers.di.account_test.TestAccountDriver.MockMarketOpe;
+import pers.di.account.common.TRANACT;
 import pers.di.common.*;
 import pers.di.dataapi.common.*;
 import pers.di.dataapi_test.TestCommonHelper;
@@ -14,6 +14,25 @@ import pers.di.quantplatform.*;
 public class SampleTestStrategy {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
+	
+	public static float s_transactionCostsRatioBuy = 0.02f;
+	public static float s_transactionCostsRatioSell = 0.05f;
+	
+	public static class MockMarketOpe extends IMarketOpe
+	{
+		@Override
+		public int postTradeRequest(TRANACT tranact, String id, int amount, float price) {
+			if(tranact == TRANACT.BUY)
+			{
+				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioBuy);
+			}
+			else if(tranact == TRANACT.SELL)
+			{
+				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioSell);
+			}
+			return 0;
+		}
+	}
 	
 	public static class TestStrategy extends QuantStrategy
 	{
@@ -45,7 +64,7 @@ public class SampleTestStrategy {
 				}
 				
 				// 调用账户代理发送交易命令
-				ctx.ap().pushBuyOrder(StockID, 0, 100);
+				ctx.ap().pushBuyOrder(StockID, 100, 50.0f);
 			}
 		}
 

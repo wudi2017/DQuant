@@ -7,7 +7,7 @@ import pers.di.dataapi.common.*;
 
 public class StockDataApi {
 	
-	private static StockDataApi s_instance = new StockDataApi("data"); 
+	private static StockDataApi s_instance = new StockDataApi(CSystem.getRWRoot() + "\\data"); 
 	public static StockDataApi instance() {  
 		return s_instance;  
 	} 

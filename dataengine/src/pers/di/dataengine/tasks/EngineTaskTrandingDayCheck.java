@@ -30,6 +30,11 @@ public class EngineTaskTrandingDayCheck extends CDateTimeThruster.ScheduleTask
 		CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
 		int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
 				"999999", "2008-01-01", "2100-01-01", obsKLineListSZZS);
+		if(0 != errKLineListSZZS)
+		{
+			StockDataApi.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
+		}
+		
 		int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_taskSharedSession.beginDate, true);
 		int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_taskSharedSession.endDate, true);
 		

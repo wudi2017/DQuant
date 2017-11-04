@@ -63,20 +63,23 @@ public class QuantSession {
 		CLog.output("QEngine", "[%s %s] QuantSession.onTradingDayStart", ctx.date(), ctx.time());
 		
 		m_context.set(ctx.date(), ctx.time(), ctx.pool());
-		m_stratety.onDayStart(m_context);
-		
-		// for stratety InterestMinuteDataID
-		m_listener.addCurrentDayInterestMinuteDataIDs(m_stratety.getCurrentDayInterestMinuteDataIDs());
 		
 		// for account holdstock InterestMinuteDataID
+		m_accountDriver.setDateTime(ctx.date(), ctx.time());
+		m_accountDriver.newDayBegin();
 		List<String> ctnHoldStockIDList = new ArrayList<String>();
 		m_accountDriver.getHoldStockList(ctnHoldStockIDList);
 		m_listener.addCurrentDayInterestMinuteDataIDs(ctnHoldStockIDList);
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
-			//ctx.pool().get(sHoldStockID).p
+			float price = ctx.pool().get(sHoldStockID).price();
+			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 		}
+		
+		// for stratety InterestMinuteDataID
+		m_stratety.onDayStart(m_context);
+		m_listener.addCurrentDayInterestMinuteDataIDs(m_stratety.getCurrentDayInterestMinuteDataIDs());
 	}
 	
 	public void onMinuteTimePrices(EEObject ev)
@@ -89,6 +92,18 @@ public class QuantSession {
 		if(null != m_stratety)
 		{
 			m_context.set(ctx.date(), ctx.time(), ctx.pool());
+			
+			// for account holdstock
+			m_accountDriver.setDateTime(ctx.date(), ctx.time());
+			List<String> ctnHoldStockIDList = new ArrayList<String>();
+			m_accountDriver.getHoldStockList(ctnHoldStockIDList);
+			for(int i=0; i<ctnHoldStockIDList.size(); i++)
+			{
+				String sHoldStockID = ctnHoldStockIDList.get(i);
+				float price = ctx.pool().get(sHoldStockID).price();
+				m_accountDriver.flushCurrentPrice(sHoldStockID, price);
+			}
+			
 			m_stratety.onMinuteData(m_context);
 		}
 	}
@@ -101,6 +116,19 @@ public class QuantSession {
 		CLog.output("QEngine", "[%s %s] QuantSession.onTradingDayFinish ", ctx.date(), ctx.time());
 		
 		m_context.set(ctx.date(), ctx.time(), ctx.pool());
+		
+		// for account holdstock
+		m_accountDriver.setDateTime(ctx.date(), ctx.time());
+		List<String> ctnHoldStockIDList = new ArrayList<String>();
+		m_accountDriver.getHoldStockList(ctnHoldStockIDList);
+		for(int i=0; i<ctnHoldStockIDList.size(); i++)
+		{
+			String sHoldStockID = ctnHoldStockIDList.get(i);
+			float price = ctx.pool().get(sHoldStockID).price();
+			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
+		}
+		m_accountDriver.newDayEnd();
+				
 		m_stratety.onDayFinish(m_context);
 	}
 	

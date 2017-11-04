@@ -28,6 +28,22 @@ public class DAStock {
 		return obsStockInfo.get().name;
 	}
 	
+	public float price()
+	{
+		float curPrice = 0.0f;
+		DATimePrices cDATimePrices = timePrices();
+		if(cDATimePrices.size()!=0)
+		{
+			curPrice = cDATimePrices.get(cDATimePrices.size()-1).price;
+		}
+		else
+		{
+			DAKLines cDAKLines = dayKLines();
+			curPrice = cDAKLines.get(cDAKLines.size()).close;
+		}
+		return curPrice;
+	}
+	
 	public float PE()
 	{
 		return obsStockInfo.get().peRatio;
