@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
-import pers.di.account_test.TestAccountDriver.MockMarketOpe;
+import pers.di.account.common.TRANACT;
 import pers.di.common.*;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.TimePrice;
@@ -16,6 +16,25 @@ public class TestQuantSession {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 
+	public static float s_transactionCostsRatioBuy = 0.02f;
+	public static float s_transactionCostsRatioSell = 0.05f;
+	
+	public static class MockMarketOpe extends IMarketOpe
+	{
+		@Override
+		public int postTradeRequest(TRANACT tranact, String id, int amount, float price) {
+			if(tranact == TRANACT.BUY)
+			{
+				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioBuy);
+			}
+			else if(tranact == TRANACT.SELL)
+			{
+				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioSell);
+			}
+			return 0;
+		}
+	}
+	
 	@CTest.setup
 	public static void setup()
 	{
@@ -94,7 +113,7 @@ public class TestQuantSession {
 			{
 				onTimePricesCheckCount++;
 				TimePrice cTimePrice = cTimePrices.get(i);
-				//CLog.output("TEST", "%s %s %s %.3f", StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
+				// CLog.output("TEST", "%s %s %s %.3f", StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
 				if(ctx.date().equals("2017-01-16") 
 						&& cTimePrice.time.equals("09:30:00"))
 				{
@@ -141,6 +160,24 @@ public class TestQuantSession {
 			
 			DATimePrices cTimePrices2 = ctx.pool().get("600004").timePrices();
 			CTest.EXPECT_LONG_EQ(cTimePrices2.size(), 0);
+			
+			
+			// call account op
+			if(ctx.date().compareTo("2017-01-16") == 0 &&
+					ctx.time().compareTo("09:30:00") == 0)
+			{
+				ctx.ap().pushBuyOrder(StockID, 500, ctx.pool().get(StockID).price()); // 500 12.330769
+			}
+			if(ctx.date().compareTo("2017-01-16") == 0 &&
+					ctx.time().compareTo("14:40:00") == 0)
+			{
+				ctx.ap().pushBuyOrder(StockID, 800, ctx.pool().get(StockID).price()); // 800 12.611877
+			}
+			if(ctx.date().compareTo("2017-01-17") == 0 &&
+					ctx.time().compareTo("09:30:00") == 0)
+			{
+				ctx.ap().pushSellOrder(StockID, 1000, ctx.pool().get(StockID).price()); // 1000 12.507691
+			}
 		}
 
 		@Override
@@ -165,6 +202,7 @@ public class TestQuantSession {
 		{
 			CLog.error("TEST", "SampleTestStrategy AccoutDriver ERR!");
 		}
+		Account acc = cAccoutDriver.account();
 		
 		QuantSession qSession = new QuantSession(
 				"HistoryTest 2017-01-01 2017-02-03", 
@@ -172,11 +210,25 @@ public class TestQuantSession {
 				new TestStrategy());
 		qSession.run();
 		
+		// check data
 		CTest.EXPECT_LONG_EQ(onInitCalled, 1);
 		CTest.EXPECT_LONG_EQ(onDayBeginCalled, 19);
 		CTest.EXPECT_LONG_EQ(onDayEndCalled, 19);
 		CTest.EXPECT_LONG_EQ(onEveryMinuteCalled, 19*242);
 		CTest.EXPECT_LONG_EQ(onTimePricesCheckCount, 19* (1+242)*242/2 );
+		
+		// check acc
+		{
+			CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+			acc.getMoney(ctnMoney);
+
+			float buyCostAll = 500*12.330769f*s_transactionCostsRatioBuy + 800*12.611877f*s_transactionCostsRatioBuy;
+			float sellCost = 1000*12.507691f*s_transactionCostsRatioSell;
+			float ExpectMoney = 
+					10*10000-500*12.330769f-800*12.611877f+1000*12.507691f-(buyCostAll/1300*1000+sellCost);
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(),ExpectMoney, 2);
+		}
+		
 	}
 	
 	public static void main(String[] args) {

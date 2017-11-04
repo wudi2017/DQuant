@@ -39,7 +39,7 @@ public class DAStock {
 		else
 		{
 			DAKLines cDAKLines = dayKLines();
-			curPrice = cDAKLines.get(cDAKLines.size()).close;
+			curPrice = cDAKLines.get(cDAKLines.size()-1).close;
 		}
 		return curPrice;
 	}

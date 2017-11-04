@@ -245,15 +245,16 @@ public class AccountEntity extends Account {
 				float oriAveBuyCost = cHoldStock.totalBuyCost/cHoldStock.totalAmount;
 				float balanceBuyCost = oriAveBuyCost*amount; // 计算买入费用
 				float balanceSellCost = cost; //结算卖出费用
+				float sellRawProfit = (price - cHoldStock.refPrimeCostPrice)*amount; // 卖出裸利润
 				
 				// 重置对象 (交易费用在卖出价钱中扣除)
-				int oriTotalAmount = cHoldStock.totalAmount;
 				cHoldStock.totalAmount = cHoldStock.totalAmount - amount;
 				cHoldStock.availableAmount = cHoldStock.availableAmount - amount;
 				cHoldStock.totalBuyCost = cHoldStock.totalBuyCost - balanceBuyCost;
 				cHoldStock.curPrice = price;
+				
 				cHoldStock.refPrimeCostPrice = 
-						(cHoldStock.refPrimeCostPrice*oriTotalAmount - price*amount + balanceSellCost)/cHoldStock.totalAmount;
+						(cHoldStock.refPrimeCostPrice*cHoldStock.totalAmount + cost - sellRawProfit)/cHoldStock.totalAmount;
 				
 				m_accountStore.storeEntity().money = 
 						m_accountStore.storeEntity().money + price*amount - balanceBuyCost - balanceSellCost;

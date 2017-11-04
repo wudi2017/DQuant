@@ -134,7 +134,6 @@ public class TestAccountDriver {
 		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
 		cAccoutDriver.newDayEnd();
 		
-		
 		// sell
 		cAccoutDriver.setDateTime("2017-11-13", "14:44:44");
 		acc.postTradeOrder(TRANACT.SELL, "300002", 100, 10.0f);
