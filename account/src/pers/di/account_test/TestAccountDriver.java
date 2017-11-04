@@ -342,6 +342,35 @@ public class TestAccountDriver {
 		cAccoutDriver.newDayEnd();
 	}
 	
+	@CTest.test
+	public static void test_accountDriver_totalassets()
+	{
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
+		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
+		cAccoutDriver.reset(10*10000f);
+		
+		Account acc = cAccoutDriver.account();
+		
+		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+		cAccoutDriver.newDayBegin();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
+		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
+		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
+		cAccoutDriver.newDayEnd();
+		
+		List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+		CTest.EXPECT_STR_EQ(acc.date(), "2017-10-10");
+		CTest.EXPECT_STR_EQ(acc.time(), "14:00:01");
+		CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+		CTest.EXPECT_TRUE(ctnHoldList.size() == 2);
+		
+		CObjectContainer<Float> ctnTotalAssets = new CObjectContainer<Float>();
+		CTest.EXPECT_LONG_EQ(acc.getTotalAssets(ctnTotalAssets), 0);
+		CTest.EXPECT_DOUBLE_EQ(ctnTotalAssets.get(), 10*10000f+100*0.4, 2);
+		
+		
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		CSystem.start();

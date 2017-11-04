@@ -19,6 +19,22 @@ public class AccountEntity extends Account {
 		
 		return m_accountStore.accountID();
 	}
+	
+	@Override
+	public String date()
+	{
+		if(!m_initFlag) return null;
+		
+		return m_accountStore.storeEntity().date;
+	}
+	
+	@Override
+	public String time()
+	{
+		if(!m_initFlag) return null;
+		
+		return m_accountStore.storeEntity().time;
+	}
 
 	@Override
 	public int getMoney(CObjectContainer<Float> ctnMoney) {
