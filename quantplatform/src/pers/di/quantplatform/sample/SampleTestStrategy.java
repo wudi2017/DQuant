@@ -1,4 +1,4 @@
-package pers.di.quantplatform_test;
+package pers.di.quantplatform.sample;
 
 import java.util.ArrayList;
 import java.util.List;
