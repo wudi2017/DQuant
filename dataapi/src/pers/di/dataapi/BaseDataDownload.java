@@ -272,6 +272,7 @@ public class BaseDataDownload {
 					{
 						// 已经和网络最新有效日线一样
 						error = 0;
+						container.set(0);
 						return error;
 					}
 				}

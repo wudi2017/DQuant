@@ -29,7 +29,8 @@ import pers.di.dataapi.common.DividendPayout;
 import pers.di.dataapi.common.*;
 
 
-public class DataWebStockDividendPayout {
+public class DataWebStockDividendPayout  extends HttpHelper
+{
 	/*
 	 * 从网络中获得某只股票的分红派息因子
 	 * 
@@ -40,6 +41,8 @@ public class DataWebStockDividendPayout {
 	 */
 	public static int getDividendPayout(String id, List<DividendPayout> container)
 	{
+		limitAccessSpeed(1250);
+		
 		int error = 0;
 		
 		// e.g http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/300163.phtml
@@ -61,7 +64,7 @@ public class DataWebStockDividendPayout {
 	        conn.setReadTimeout(15*1000); //设置读取超时时间
 	        
 	        //防止屏蔽程序抓取而返回403错误  
-	        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");  
+	        conn.setRequestProperty("User-Agent", getRandomUserAgent());  
 			InputStream inputStream = conn.getInputStream(); 
 			byte[] getData = readInputStream(inputStream); 
 			String data = new String(getData, "gbk");  

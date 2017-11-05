@@ -74,7 +74,7 @@ public class DataWebStockDayK {
 		
 		try
 		{
-			String htmlstr = CHttp.getWebData(urlStr);
+			String htmlstr = m_http.getWebData(urlStr, 1000);
 			parseHtml2(htmlstr, container);
 		}
 		catch(Exception e)
@@ -173,4 +173,6 @@ public class DataWebStockDayK {
 		
 		return error;
 	}
+	
+	public static CHttp m_http = new CHttp();
 }

@@ -10,7 +10,8 @@ import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.StockInfo;
 import pers.di.dataapi.common.*;
 
-public class DataWebStockInfo {
+public class DataWebStockInfo extends HttpHelper
+{
 	/*
 	 * 从网络获取某只股票信息（基本信息，总市值，流通市值，市盈率等）
 	 * 
@@ -21,6 +22,8 @@ public class DataWebStockInfo {
 	 */
 	public static int getStockInfo(String id, StockInfo container)
 	{
+		// limitAccessSpeed(0); // not limit
+		
 		int error = 0;
 		
 		// get base info
@@ -69,7 +72,7 @@ public class DataWebStockInfo {
 	        conn.setReadTimeout(15*1000); //设置读取超时时间
 	        
 	        //防止屏蔽程序抓取而返回403错误  
-	        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");  
+	        conn.setRequestProperty("User-Agent", getRandomUserAgent());  
 			InputStream inputStream = conn.getInputStream(); 
 			byte[] getData = readInputStream(inputStream); 
 			String data = new String(getData, "gbk");  

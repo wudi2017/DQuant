@@ -22,7 +22,8 @@ import org.xml.sax.InputSource;
 import pers.di.dataapi.common.TradeDetail;
 import pers.di.dataapi.common.*;
 
-public class DataWebStockDayDetail {
+public class DataWebStockDayDetail  extends HttpHelper 
+{
 	/*
 	 * 从网络某只股票某日内的交易细节数据
 	 * 
@@ -33,6 +34,8 @@ public class DataWebStockDayDetail {
 	 */
 	public static int getDayDetail(String id, String date, List<TradeDetail> container)
 	{
+		limitAccessSpeed(800);
+		
 		int error = 0;
 		
 		// e.g "http://market.finance.sina.com.cn/downxls.php?date=2015-02-16&symbol=sz300163"
@@ -62,7 +65,7 @@ public class DataWebStockDayDetail {
 	        conn.setReadTimeout(15*1000); //设置读取超时时间
 	        
 	        //防止屏蔽程序抓取而返回403错误  
-	        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");  
+	        conn.setRequestProperty("User-Agent", getRandomUserAgent());  
 	        //得到输入流  
 	        InputStream inputStream = conn.getInputStream();   
 	        //获取自己数组  

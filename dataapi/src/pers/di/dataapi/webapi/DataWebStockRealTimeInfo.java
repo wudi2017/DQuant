@@ -16,7 +16,8 @@ import org.htmlparser.util.NodeList;
 import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.*;
 
-public class DataWebStockRealTimeInfo {
+public class DataWebStockRealTimeInfo extends HttpHelper
+{
 	/*
 	 * 从网络获取某只股票当前信息（基本：名字 日期 时间 价格）
 	 * 
@@ -27,6 +28,8 @@ public class DataWebStockRealTimeInfo {
 	 */
 	public static int getRealTimeInfo(String id, RealTimeInfo container)
 	{
+		// limitAccessSpeed(0); // not limit
+		
 		int error = 0;
 		// e.g http://hq.sinajs.cn/list=sz300163
 		String urlStr = "http://hq.sinajs.cn/list=";
@@ -59,7 +62,7 @@ public class DataWebStockRealTimeInfo {
 	        conn.setReadTimeout(15*1000); //设置读取超时时间 
 	        
 	        //防止屏蔽程序抓取而返回403错误  
-	        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");  
+	        conn.setRequestProperty("User-Agent", getRandomUserAgent());  
 			InputStream inputStream = conn.getInputStream(); 
 			byte[] getData = readInputStream(inputStream); 
 			String data = new String(getData, "gbk");  

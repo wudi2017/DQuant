@@ -23,9 +23,11 @@ import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
 import pers.di.dataapi.common.StockItem;
+import pers.di.common.*;
 import pers.di.dataapi.common.*;
 
-public class DataWebStockAllList {
+public class DataWebStockAllList extends HttpHelper 
+{
 	/*
 	 * 从网络中获得所有股票项目
 	 * 
@@ -36,6 +38,8 @@ public class DataWebStockAllList {
 	 */
 	public static int getAllStockList(List<StockItem> container)
 	{
+		limitAccessSpeed(2000);
+		
 		int error = 0;
 		
 		if(null == container) return 0;
@@ -60,7 +64,7 @@ public class DataWebStockAllList {
 	        conn.setReadTimeout(15*1000); //设置读取超时时间
 	        
 	        //防止屏蔽程序抓取而返回403错误  
-	        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");  
+	        conn.setRequestProperty("User-Agent", getRandomUserAgent());  
 	        
             Parser parser = new Parser(conn); 
             parser.setEncoding("gbk");
@@ -118,6 +122,7 @@ public class DataWebStockAllList {
         }catch (Exception e) {  
         	System.out.println("Exception[WebStockAllList]:" + e.getMessage()); 
             // TODO: handle exception  
+        	e.printStackTrace();
         	error = -1;
         }  
 		return error;
@@ -196,4 +201,5 @@ public class DataWebStockAllList {
 //    }
 
 	public static Random random = new Random();
+	
 }

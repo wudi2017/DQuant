@@ -1,86 +1,27 @@
-package pers.di.common;
+package pers.di.dataapi.webapi;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class CHttp {
-	public String getWebData(String urlStr, int mslimitAccessSpeed) {
-		
-		limitAccessSpeed(mslimitAccessSpeed);
-		
-		String retData = null;
+import pers.di.common.CLog;
+import pers.di.common.CRandom;
+import pers.di.common.CUtilsDateTime;
 
-		try {
-			
-			URL url;
-			url = new URL(urlStr);
-	        HttpURLConnection conn = (HttpURLConnection)url.openConnection();    
-
-	        conn.setConnectTimeout(5*1000);  //设置连接超时间 
-	        conn.setReadTimeout(15*1000); //设置读取超时时间
-	        
-	        //防止屏蔽程序抓取而返回403错误  
-	        conn.setRequestProperty("User-Agent", getRandomUserAgent());  
-	        //得到输入流  
-	        InputStream inputStream = conn.getInputStream();   
-	        //获取自己数组  
-	        byte[] getData = readInputStream(inputStream);    
-	        String data = new String(getData, "gbk");
-	        
-	        retData = data;
-	        
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			System.out.println("Exception[CHttp]:" + e.getMessage()); 
-			System.out.println("Exception[CHttp] url:" + urlStr); 
-		}    
-		
-        //System.out.println(data.toString()); 
-//        //文件保存位置  
-//        File file = new File("D:/test.txt");      
-//        FileOutputStream fos = new FileOutputStream(file);       
-//        fos.write(getData);   
-//        if(fos!=null){  
-//            fos.close();    
-//        }  
-//        if(inputStream!=null){  
-//            inputStream.close();  
-//        }  
-        
-        return retData;
-	}
+public class HttpHelper {
 	
-    private byte[] readInputStream(InputStream inputStream) throws IOException {    
-        byte[] buffer = new byte[1024];    
-        int len = 0;    
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();    
-        while((len = inputStream.read(buffer)) != -1) {    
-            bos.write(buffer, 0, len);    
-        }    
-        bos.close();    
-        return bos.toByteArray();    
-    }  
-    
-	private void limitAccessSpeed(int msec)
+	public static void limitAccessSpeed(int msec)
 	{
 		long curTC = CUtilsDateTime.GetCurrentTimeMillis();
-		if(curTC-m_lastAccessTC>msec)
+		if(curTC-s_lastAccessTC>msec)
 		{
-			m_lastAccessTC = curTC;
+			s_lastAccessTC = curTC;
 			return;
 		}
 		else
 		{
-			long waitms = msec - (curTC-m_lastAccessTC);
+			long waitms = msec - (curTC-s_lastAccessTC);
 			try {
 				Thread.sleep(waitms);
-				m_lastAccessTC = CUtilsDateTime.GetCurrentTimeMillis();
+				s_lastAccessTC = CUtilsDateTime.GetCurrentTimeMillis();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -88,19 +29,19 @@ public class CHttp {
 		}
 	}
 	
-	private String getRandomUserAgent()
+	public static String getRandomUserAgent()
 	{
-		int iSize = m_userAgentList.size();
+		int iSize = s_userAgentList.size();
 		int iCurRandom = CRandom.randomUnsignedInteger()%iSize;
-		String curUserAgent = m_userAgentList.get(iCurRandom);
+		String curUserAgent = s_userAgentList.get(iCurRandom);
 		return curUserAgent;
 	}
 	
-    /*
+	/*
 	 * **************************************************************************************
 	 */
-	private long m_lastAccessTC = 0;
-	private List<String> m_userAgentList = Arrays.asList(
+	public static long s_lastAccessTC = 0;
+	public static List<String> s_userAgentList = Arrays.asList(
 			"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1", 
 	        "Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11", 
 	        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6", 
