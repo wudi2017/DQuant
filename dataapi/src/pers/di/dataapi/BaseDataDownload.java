@@ -68,7 +68,8 @@ public class BaseDataDownload {
 		int errAllStockList = DataWebStockAllList.getAllStockList(stockAllList);
 		if(0 == errAllStockList)
 		{
-			for(int i = 0; i < stockAllList.size(); i++)  
+			int iAllStockListSize = stockAllList.size();
+			for(int i = 0; i < iAllStockListSize; i++)  
 	        {  
 				StockItem cStockItem = stockAllList.get(i);
 				
@@ -84,7 +85,8 @@ public class BaseDataDownload {
 		    		if(0 == errKLine && ctnKLine.size() > 0)
 		    		{
 		    			String stockNewestDate = ctnKLine.get(ctnKLine.size()-1).date;
-		    			s_fmt.format("update success: %s (%s) item:%d date:%s\n", cStockItem.id, cStockItem.name, ctnCount.get(), stockNewestDate);
+		    			s_fmt.format("update success %d/%d: %s (%s) item:%d date:%s\n", 
+		    					i, iAllStockListSize, cStockItem.id, cStockItem.name, ctnCount.get(), stockNewestDate);
 		    		}
 		            else
 		            {
