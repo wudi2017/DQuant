@@ -34,7 +34,7 @@ public class DataWebStockDayDetail  extends HttpHelper
 	 */
 	public static int getDayDetail(String id, String date, List<TradeDetail> container)
 	{
-		limitAccessSpeed(800);
+		limitAccessSpeed(1250);
 		
 		int error = 0;
 		

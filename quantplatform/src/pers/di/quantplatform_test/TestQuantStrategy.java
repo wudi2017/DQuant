@@ -98,8 +98,8 @@ public class TestQuantStrategy {
 				float fNowPrice = cDAStock.price();
 				float fRatio = (fNowPrice - fYesterdayClosePrice)/fYesterdayClosePrice;
 				
-				CLog.output("TEST", "TestStrategy.onMinuteData %s %s [%s %.3f]", 
-						ctx.date(), ctx.time(), stockID, fRatio);
+//				CLog.output("TEST", "TestStrategy.onMinuteData %s %s [%s %.3f]", 
+//						ctx.date(), ctx.time(), stockID, fRatio);
 				
 				if(fRatio < -0.02)
 				{
@@ -201,7 +201,7 @@ public class TestQuantStrategy {
 					int amount = (int)(buyMoney/curPrice);
 					amount = amount/100*100; // 买入整手化
 
-					CLog.output("TEST", "Stock(%s) price(%.2f) amount(%d)\n", createID,curPrice,amount);
+					CLog.output("TEST", "Stock(%s) price(%.2f) amount(%d)", createID,curPrice,amount);
 					ctx.ap().pushBuyOrder(createID, amount, curPrice); // 500 12.330769
 				}
 				else
@@ -274,7 +274,7 @@ public class TestQuantStrategy {
 				}
 			}
 			logStr += String.format("]");
-			CLog.output("TEST", "%s\n", logStr);
+			CLog.output("TEST", "%s", logStr);
 		}
 		
 		private List<String> m_seletctID;

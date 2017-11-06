@@ -104,6 +104,7 @@ public class QuantSession {
 				m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 			}
 			
+			m_stratety.clearCurrentDayInterestMinuteDataIDs();
 			m_stratety.onMinuteData(m_context);
 		}
 	}
