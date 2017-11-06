@@ -27,6 +27,8 @@ public class BaseDataDownload {
 	 */
 	public int downloadAllStockFullData(String dateStr)
 	{
+		long lTCBegin = CUtilsDateTime.GetCurrentTimeMillis();
+		
 		CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
 		int errAllStockFullDataTimestamps = m_baseDataStorage.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
 		if(0 == errAllStockFullDataTimestamps)
@@ -78,6 +80,8 @@ public class BaseDataDownload {
 				CObjectContainer<Integer> ctnCount = new CObjectContainer<Integer>();
 				int errDownloaddStockFullData = this.downloadStockFullData(stockID, ctnCount);
 	           
+				float fCostTime = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
+				
 				if(0 == errDownloaddStockFullData)
 				{
 					List<KLine> ctnKLine = new ArrayList<KLine>();
@@ -85,21 +89,24 @@ public class BaseDataDownload {
 		    		if(0 == errKLine && ctnKLine.size() > 0)
 		    		{
 		    			String stockNewestDate = ctnKLine.get(ctnKLine.size()-1).date;
-		    			s_fmt.format("update success %d/%d: %s (%s) item:%d date:%s\n", 
-		    					i, iAllStockListSize, cStockItem.id, cStockItem.name, ctnCount.get(), stockNewestDate);
+		    			s_fmt.format("update success %d/%d %.3fs: %s (%s) item:%d date:%s\n", 
+		    					i, iAllStockListSize, fCostTime, cStockItem.id, cStockItem.name, ctnCount.get(), stockNewestDate);
 		    		}
 		            else
 		            {
-		            	s_fmt.format("update ERROR: %s (%s) error(%d)\n", cStockItem.id, cStockItem.name, errDownloaddStockFullData);
+		            	s_fmt.format("update ERROR %d/%d %.3fs: %s (%s) error(%d)\n", 
+		            			i, iAllStockListSize, fCostTime, cStockItem.id, cStockItem.name, errDownloaddStockFullData);
 		            }
 				}
 				else
 				{
-					s_fmt.format("update ERROR: %s error(%d)\n", cStockItem.id, errDownloaddStockFullData);
+					s_fmt.format("update ERROR %d/%d %.3fs: %s error(%d)\n", 
+							i, iAllStockListSize, fCostTime, cStockItem.id, errDownloaddStockFullData);
 				}   
 				
 	        } 
-			System.out.println("update finish, count:" + stockAllList.size()); 
+			float fCostTimeAll = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
+			s_fmt.format("update finish %.3f, count: %d", fCostTimeAll, stockAllList.size()); 
 		}
 		else
 		{
