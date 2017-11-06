@@ -94,7 +94,8 @@ public class TestQuantStrategy {
 				DAStock cDAStock = ctx.pool().get(i);
 				
 				// stock set 
-				if(cDAStock.ID().compareTo("000001") >= 0 && cDAStock.ID().compareTo("000200") <= 0) {	
+				if(cDAStock.ID().compareTo("000001") >= 0 && cDAStock.ID().compareTo("000200") <= 0 &&
+						cDAStock.dayKLines().latestDate().equals(ctx.date())) {	
 					
 					DAKLines cDAKLines = cDAStock.dayKLines();
 					int iSize = cDAKLines.size();

@@ -20,6 +20,17 @@ public class DAKLines {
 	{
 		return m_obsKLineList.get(i);
 	}
+	public String latestDate()
+	{
+		if(m_obsKLineList.size() > 0)
+		{
+			return m_obsKLineList.get(m_obsKLineList.size()-1).date;
+		}
+		else
+		{
+			return "0000-00-00";
+		}
+	}
 	
 	private CListObserver<KLine> m_obsKLineList;
 }
