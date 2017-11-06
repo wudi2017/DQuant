@@ -76,7 +76,11 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 			container.curPrice = Float.parseFloat(cols[3]);
 			container.date = cols[30];
 			container.time = cols[31];
-			if(container.date.length() < 2 || container.name.length() < 2)
+			
+			String lastCode = cols[cols.length-1];
+			int iLastCode = Integer.parseInt(lastCode);
+			
+			if(container.date.length() < 2 || container.name.length() < 2 || iLastCode<0)
 			{
 				System.out.println("Exception[DataWebStockRealTimeInfo]: invalid data"); 
 				error = -2;

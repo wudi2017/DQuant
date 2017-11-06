@@ -5,6 +5,7 @@ import java.util.*;
 import pers.di.account.*;
 import pers.di.account.common.*;
 import pers.di.common.*;
+import pers.di.dataapi.StockDataApi;
 import pers.di.dataapi.common.*;
 import pers.di.dataapi_test.TestCommonHelper;
 import pers.di.dataengine.*;
@@ -82,24 +83,22 @@ public class TestQuantStrategy {
 				super.addCurrentDayInterestMinuteDataID(stockID);
 			}
 		}
-
-		@Override
-		public void onMinuteData(QuantContext ctx) {
-			//CLog.output("TEST", "TestStrategy.onMinuteData %s %s", ctx.date(), ctx.time());
-			
+		
+		public void onHandleBuy(QuantContext ctx)
+		{
 			// find want create IDs
 			List<String> cIntentCreateList = new ArrayList<String>();
 			for(int i=0; i<m_seletctID.size(); i++)
 			{
 				String stockID = m_seletctID.get(i);
 				DAStock cDAStock = ctx.pool().get(stockID);
-				
+
 				float fYesterdayClosePrice = cDAStock.dayKLines().lastPrice();
 				float fNowPrice = cDAStock.price();
 				float fRatio = (fNowPrice - fYesterdayClosePrice)/fYesterdayClosePrice;
 				
-//				CLog.output("TEST", "TestStrategy.onMinuteData %s %s [%s %.3f]", 
-//						ctx.date(), ctx.time(), stockID, fRatio);
+//							CLog.output("TEST", "TestStrategy.onMinuteData %s %s [%s %.3f]", 
+//									ctx.date(), ctx.time(), stockID, fRatio);
 				
 				if(fRatio < -0.02)
 				{
@@ -141,12 +140,9 @@ public class TestQuantStrategy {
 			    }
 			}
 			
-
 			// filter
 			int create_max_count = 3;
 			
-			
-		
 			int alreadyCount = 0;
 			int buyStockCount = 0;
 			if(0 == iRetHoldStockList 
@@ -163,6 +159,11 @@ public class TestQuantStrategy {
 				for(int i=0;i<cCommissionOrderList.size();i++)
 				{
 					CommissionOrder cCommissionOrder = cCommissionOrderList.get(i);
+					if(cCommissionOrder.tranAct == TRANACT.SELL) 
+					{
+						continue;
+					}
+					
 					boolean bExitInHold = false;
 					for(int j=0;j<cHoldStockList.size();j++)
 					{
@@ -190,18 +191,22 @@ public class TestQuantStrategy {
 				// 买入量
 				CObjectContainer<Float> totalAssets = new CObjectContainer<Float>();
 				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
-				if(0 == iRetTotalAssets)
+				CObjectContainer<Float> money = new CObjectContainer<Float>();
+				int iRetMoney = ctx.ap().getMoney(money);
+				if(0 == iRetTotalAssets && 0 == iRetMoney)
 				{
 					float fMaxPositionRatio = 0.3333f;
 					float fMaxPositionMoney = totalAssets.get()*fMaxPositionRatio; // 最大买入仓位钱
 					float fMaxMoney = 10000*100.0f; // 最大买入钱
 					float buyMoney = Math.min(fMaxMoney, fMaxPositionMoney);
+					buyMoney = Math.min(buyMoney, money.get());
 					
 					float curPrice = ctx.pool().get(createID).price();
 					int amount = (int)(buyMoney/curPrice);
 					amount = amount/100*100; // 买入整手化
 
-					CLog.output("TEST", "Stock(%s) price(%.2f) amount(%d)", createID,curPrice,amount);
+					CLog.output("TEST", "pushBuyOrder %s %s Stock(%s) amount(%d) price(%.2f)", 
+							ctx.date(), ctx.time(), createID,amount,curPrice);
 					ctx.ap().pushBuyOrder(createID, amount, curPrice); // 500 12.330769
 				}
 				else
@@ -209,6 +214,59 @@ public class TestQuantStrategy {
 					CLog.output("TEST", "getTotalAssets failed\n");
 				}
 			}
+		}
+		
+		public void onHandleSell(QuantContext ctx)
+		{
+			List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
+			int iRetHoldStockList = ctx.ap().getHoldStockList(cHoldStockList);
+			
+			for(int i=0; i<cHoldStockList.size(); i++)
+			{
+				HoldStock cHoldStock = cHoldStockList.get(i);
+				boolean bSell = false;
+				DAStock cDAStock = ctx.pool().get(cHoldStock.stockID);
+				float curPrice = cDAStock.price();
+				
+				// 调查天数控制
+				int investigationDays = 0;
+				while(true)
+				{
+					String sIndexDate = cDAStock.dayKLines().get(cDAStock.dayKLines().size()-1-investigationDays).date;
+					if(cHoldStock.createDate.compareTo(sIndexDate) <= 0)
+					{
+						investigationDays++;
+					}
+					else
+					{
+						break;
+					}
+				}
+				if(investigationDays >= 3) 
+				{
+					bSell = true;
+				}
+				
+				// 止盈止损卖
+				if(cHoldStock.refProfitRatio() > 0.05 || cHoldStock.refProfitRatio() < -0.05) 
+				{
+					bSell = true;
+				}
+				
+				if(bSell && cHoldStock.availableAmount > 0)
+				{
+					CLog.output("TEST", "pushSellOrder %s %s Stock(%s) amount(%d) price(%.2f)", 
+							ctx.date(), ctx.time(), cHoldStock.stockID,cHoldStock.availableAmount,curPrice);
+					ctx.ap().pushSellOrder(cHoldStock.stockID, cHoldStock.availableAmount, curPrice); 
+				}
+			}
+		}
+
+		@Override
+		public void onMinuteData(QuantContext ctx) {
+			//CLog.output("TEST", "TestStrategy.onMinuteData %s %s", ctx.date(), ctx.time());
+			onHandleSell(ctx);
+			onHandleBuy(ctx);
 		}
 
 		@Override
@@ -298,10 +356,24 @@ public class TestQuantStrategy {
 		qSession.run();
 	}
 	
+	@CTest.test
+	public void test_Detail()
+	{
+		String stockID = "000060";
+		CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
+		int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(stockID, "2016-03-10", 
+				"09:00:00", "15:00:00", obsTimePriceList);
+		for(int i=0; i<obsTimePriceList.size(); i++)
+		{
+			TimePrice cTimePrice = obsTimePriceList.get(i);
+			CLog.output("TEST", "%s %.3f", cTimePrice.time, cTimePrice.price);
+		}
+	}
+	
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestQuantStrategy.class);
-		CTest.RUN_ALL_TESTS();
+		CTest.RUN_ALL_TESTS("TestQuantStrategy.test_QuantStragety");
 		CSystem.stop();
 	}
 }
