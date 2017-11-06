@@ -77,31 +77,6 @@ public class TestQuantSession {
 			
 			String StockID = "600000";
 			
-			// 遍历某只股票日K线
-			DAKLines cKLines = ctx.pool().get(StockID).dayKLines();
-			CTest.EXPECT_TRUE(cKLines.size()!=0);
-			CTest.EXPECT_TRUE(cKLines.get(cKLines.size()-1).date.equals(ctx.date()));
-			boolean bCheckPrice = false;
-			for(int i=0; i<cKLines.size(); i++)
-			{
-				KLine cKLine = cKLines.get(i);
-				//CLog.output("TEST", "date %s close %.3f", cKLine.date, cKLine.close);
-				
-				if(cKLine.date.equals("2017-01-16"))
-				{
-					CTest.EXPECT_DOUBLE_EQ(cKLine.open, 12.33, 2);
-					CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.58, 2);
-					CTest.EXPECT_DOUBLE_EQ(cKLine.high, 12.62, 2);
-					CTest.EXPECT_DOUBLE_EQ(cKLine.low, 12.23, 2);
-					bCheckPrice = true;
-				}
-			}
-			if(ctx.date().compareTo("2017-01-16") >= 0)
-			{
-				CTest.EXPECT_TRUE(bCheckPrice);
-			}
-			
-			
 			// 遍历某只股票某日分时线
 			DATimePrices cTimePrices = ctx.pool().get(StockID).timePrices();
 			CTest.EXPECT_TRUE(cTimePrices.size()!=0);
@@ -185,6 +160,33 @@ public class TestQuantSession {
 		public void onDayFinish(QuantContext ctx) {
 			//CLog.output("TEST", "TestStrategy.onDayFinish %s %s", ctx.date(), ctx.time());
 			onDayEndCalled++;
+			
+			String StockID = "600000";
+			
+			// 遍历某只股票日K线
+			DAKLines cKLines = ctx.pool().get(StockID).dayKLines();
+			CTest.EXPECT_TRUE(cKLines.size()!=0);
+			CTest.EXPECT_TRUE(cKLines.get(cKLines.size()-1).date.equals(ctx.date())); // 此处只能拿到前一交易日k线
+			boolean bCheckPrice = false;
+			for(int i=0; i<cKLines.size(); i++)
+			{
+				KLine cKLine = cKLines.get(i);
+				//CLog.output("TEST", "date %s close %.3f", cKLine.date, cKLine.close);
+				
+				if(cKLine.date.equals("2017-01-16"))
+				{
+					CTest.EXPECT_DOUBLE_EQ(cKLine.open, 12.33, 2);
+					CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.58, 2);
+					CTest.EXPECT_DOUBLE_EQ(cKLine.high, 12.62, 2);
+					CTest.EXPECT_DOUBLE_EQ(cKLine.low, 12.23, 2);
+					bCheckPrice = true;
+				}
+			}
+			if(ctx.date().compareTo("2017-01-16") >= 0)
+			{
+				CTest.EXPECT_TRUE(bCheckPrice);
+			}
+			
 		}
 	}
 	

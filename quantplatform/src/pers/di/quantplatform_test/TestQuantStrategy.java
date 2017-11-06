@@ -75,10 +75,140 @@ public class TestQuantStrategy {
 	
 		@Override
 		public void onDayStart(QuantContext ctx) {
+			CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
+			for(int i=0; i<m_seletctID.size(); i++)
+			{
+				String stockID = m_seletctID.get(i);
+				super.addCurrentDayInterestMinuteDataID(stockID);
+			}
 		}
 
 		@Override
 		public void onMinuteData(QuantContext ctx) {
+			//CLog.output("TEST", "TestStrategy.onMinuteData %s %s", ctx.date(), ctx.time());
+			
+			// find want create IDs
+			List<String> cIntentCreateList = new ArrayList<String>();
+			for(int i=0; i<m_seletctID.size(); i++)
+			{
+				String stockID = m_seletctID.get(i);
+				DAStock cDAStock = ctx.pool().get(stockID);
+				
+				float fYesterdayClosePrice = cDAStock.dayKLines().lastPrice();
+				float fNowPrice = cDAStock.price();
+				float fRatio = (fNowPrice - fYesterdayClosePrice)/fYesterdayClosePrice;
+				
+				CLog.output("TEST", "TestStrategy.onMinuteData %s %s [%s %.3f]", 
+						ctx.date(), ctx.time(), stockID, fRatio);
+				
+				if(fRatio < -0.02)
+				{
+					cIntentCreateList.add(stockID);
+				}
+			}
+			
+			List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
+			int iRetHoldStockList = ctx.ap().getHoldStockList(cHoldStockList);
+			List<CommissionOrder> cCommissionOrderList = new ArrayList<CommissionOrder>();
+			int iRetBuyCommissionOrderList =  ctx.ap().getCommissionOrderList(cCommissionOrderList);
+			
+			// remove already hold
+			Iterator<String> it = cIntentCreateList.iterator();
+			while(it.hasNext()){
+			    String curIntentID = it.next();
+			    
+			    boolean bExitInHoldOrCommit = false;
+			    for(int i=0; i<cHoldStockList.size(); i++)
+				{
+					if(curIntentID.equals(cHoldStockList.get(i).stockID))
+					{
+						bExitInHoldOrCommit = true;
+					}
+				}
+			    if(!bExitInHoldOrCommit)
+			    {
+			    	 for(int i=0; i<cCommissionOrderList.size(); i++)
+					{
+						if(curIntentID.equals(cCommissionOrderList.get(i).stockID))
+						{
+							bExitInHoldOrCommit = true;
+						}
+					}
+			    }
+			    
+			    if(bExitInHoldOrCommit){
+			        it.remove();
+			    }
+			}
+			
+
+			// filter
+			int create_max_count = 3;
+			
+			
+		
+			int alreadyCount = 0;
+			int buyStockCount = 0;
+			if(0 == iRetHoldStockList 
+					&& 0 == iRetBuyCommissionOrderList)
+			{
+				for(int i=0;i<cHoldStockList.size();i++)
+				{
+					HoldStock cHoldStock = cHoldStockList.get(i);
+					if(cHoldStock.totalAmount > 0)
+					{
+						alreadyCount++;
+					}
+				}
+				for(int i=0;i<cCommissionOrderList.size();i++)
+				{
+					CommissionOrder cCommissionOrder = cCommissionOrderList.get(i);
+					boolean bExitInHold = false;
+					for(int j=0;j<cHoldStockList.size();j++)
+					{
+						HoldStock cHoldStock = cHoldStockList.get(j);
+						if(cHoldStock.stockID.equals(cCommissionOrder.stockID))
+						{
+							bExitInHold = true;
+							break;
+						}
+					}
+					if(!bExitInHold)
+					{
+						alreadyCount++;
+					}
+				}
+				buyStockCount = create_max_count - alreadyCount;
+				buyStockCount = Math.min(buyStockCount,cIntentCreateList.size());
+			}
+			
+			// calc buy mount 
+			for(int i = 0; i< buyStockCount; i++)
+			{
+				String createID = cIntentCreateList.get(i);
+
+				// 买入量
+				CObjectContainer<Float> totalAssets = new CObjectContainer<Float>();
+				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
+				if(0 == iRetTotalAssets)
+				{
+					float fMaxPositionRatio = 0.3333f;
+					float fMaxPositionMoney = totalAssets.get()*fMaxPositionRatio; // 最大买入仓位钱
+					float fMaxMoney = 10000*100.0f; // 最大买入钱
+					float buyMoney = Math.min(fMaxMoney, fMaxPositionMoney);
+					
+					float curPrice = ctx.pool().get(createID).price();
+					int amount = (int)(buyMoney/curPrice);
+					amount = amount/100*100; // 买入整手化
+
+					CLog.output("TEST", "Stock(%s) price(%.2f) amount(%d)\n", createID,curPrice,amount);
+					ctx.ap().pushBuyOrder(createID, amount, curPrice); // 500 12.330769
+				}
+				else
+				{
+					CLog.output("TEST", "getTotalAssets failed\n");
+				}
+			}
 		}
 
 		@Override
@@ -95,7 +225,7 @@ public class TestQuantStrategy {
 				
 				// stock set 
 				if(cDAStock.ID().compareTo("000001") >= 0 && cDAStock.ID().compareTo("000200") <= 0 &&
-						cDAStock.dayKLines().latestDate().equals(ctx.date())) {	
+						cDAStock.dayKLines().lastDate().equals(ctx.date())) {	
 					
 					DAKLines cDAKLines = cDAStock.dayKLines();
 					int iSize = cDAKLines.size();

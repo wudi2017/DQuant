@@ -1,6 +1,10 @@
 package pers.di.quantplatform;
 
+import java.util.List;
+
 import pers.di.account.*;
+import pers.di.account.common.CommissionOrder;
+import pers.di.account.common.HoldStock;
 import pers.di.account.common.TRANACT;
 import pers.di.common.*;
 
@@ -24,6 +28,21 @@ public class AccountProxy {
 	public int getMoney(CObjectContainer ctnAvailableMoney)
 	{
 		return m_cAccount.getMoney(ctnAvailableMoney);
+	}
+	
+	public int getHoldStockList(List<HoldStock> ctnList)
+	{
+		return m_cAccount.getHoldStockList(ctnList);
+	}
+	
+	public int getCommissionOrderList(List<CommissionOrder> ctnList)
+	{
+		return m_cAccount.getCommissionOrderList(ctnList);
+	}
+	
+	public int getTotalAssets(CObjectContainer<Float> ctnTotalAssets)
+	{
+		return m_cAccount.getTotalAssets(ctnTotalAssets);
 	}
 	
 	private Account m_cAccount;

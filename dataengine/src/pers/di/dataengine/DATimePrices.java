@@ -38,6 +38,6 @@ public class DATimePrices {
 	{
 		return  m_obsTimePriceList.get(i);
 	}
-	
+
 	private CListObserver<TimePrice> m_obsTimePriceList;
 }
