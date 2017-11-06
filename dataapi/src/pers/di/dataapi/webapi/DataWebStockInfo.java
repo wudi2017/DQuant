@@ -35,6 +35,12 @@ public class DataWebStockInfo extends HttpHelper
 			return error;
 		}
 		
+		if(ctnRealTimeInfo.curPrice <=0.0f)
+		{
+			error = -3;
+			return error;
+		}
+		
 		container.name = ctnRealTimeInfo.name;
 		container.date = ctnRealTimeInfo.date;
 		container.time = ctnRealTimeInfo.time;

@@ -92,25 +92,31 @@ public class TestQuantStrategy {
 			for(int i=0; i<ctx.pool().size(); i++)
 			{
 				DAStock cDAStock = ctx.pool().get(i);
-				DAKLines cDAKLines = cDAStock.dayKLines();
-				int iSize = cDAKLines.size();
-				if(iSize > 4)
-				{
-					KLine cStockDayCur = cDAKLines.get(iSize-1);
-					KLine cStockDayBefore1 = cDAKLines.get(iSize-2);
-					KLine cStockDayBefore2 = cDAKLines.get(iSize-3);
-
-					if(cStockDayCur.close < cStockDayCur.open 
-							&& cStockDayCur.close < cStockDayBefore1.close
-							&& cStockDayBefore1.close < cStockDayBefore1.open
-							&& cStockDayBefore1.close < cStockDayBefore2.close
-							)
+				
+				// stock set 
+				if(cDAStock.ID().compareTo("000001") >= 0 && cDAStock.ID().compareTo("000200") <= 0) {	
+					
+					DAKLines cDAKLines = cDAStock.dayKLines();
+					int iSize = cDAKLines.size();
+					if(iSize > 4)
 					{
-						SelectResult cSelectResult = new SelectResult();
-						cSelectResult.stockID = cDAStock.ID();
-						cSelectResult.fPriority = cStockDayBefore2.close - cStockDayCur.close;
-						cSelectResultList.add(cSelectResult);
+						KLine cStockDayCur = cDAKLines.get(iSize-1);
+						KLine cStockDayBefore1 = cDAKLines.get(iSize-2);
+						KLine cStockDayBefore2 = cDAKLines.get(iSize-3);
+
+						if(cStockDayCur.close < cStockDayCur.open 
+								&& cStockDayCur.close < cStockDayBefore1.close
+								&& cStockDayBefore1.close < cStockDayBefore1.open
+								&& cStockDayBefore1.close < cStockDayBefore2.close
+								)
+						{
+							SelectResult cSelectResult = new SelectResult();
+							cSelectResult.stockID = cDAStock.ID();
+							cSelectResult.fPriority = cStockDayBefore2.close - cStockDayCur.close;
+							cSelectResultList.add(cSelectResult);
+						}
 					}
+					
 				}
 			}
 			Collections.sort(cSelectResultList, new SelectResult.SelectResultCompare());
