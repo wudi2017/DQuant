@@ -112,12 +112,12 @@ public class BaseDataDownload {
 				
 	        } 
 			float fCostTimeAll = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
-			s_fmt.format("[%s] update finish %.3f, count: %d", 
+			s_fmt.format("[%s] update success all %.3fs, count: %d\n", 
 					CUtilsDateTime.GetCurDateTimeStr(), fCostTimeAll, stockAllList.size()); 
 		}
 		else
 		{
-			System.out.println("ERROR:" + errAllStockList);
+			System.out.println("ERROR:" + errAllStockList + "\n");
 		}
 		
 		if(newestDate.length() == "0000-00-00".length())
@@ -126,7 +126,7 @@ public class BaseDataDownload {
 		}
 		else
 		{
-			System.out.println("ERROR:" + "updateStocksFinish failed!");
+			System.out.println("ERROR:" + "updateStocksFinish failed!\n");
 		}
 		
 		return 0;
