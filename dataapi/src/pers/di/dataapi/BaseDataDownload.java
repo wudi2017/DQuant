@@ -35,7 +35,8 @@ public class BaseDataDownload {
 		{
 			if(ctnAllStockFullDataTimestamps.get().compareTo(dateStr) >= 0)
 			{
-				s_fmt.format("update success! (current is newest, local: %s)\n", ctnAllStockFullDataTimestamps.get());
+				s_fmt.format("[%s] update success! (current is newest, local: %s)\n", 
+						CUtilsDateTime.GetCurDateTimeStr(), ctnAllStockFullDataTimestamps.get());
 				return 0;
 			}
 		}
@@ -57,11 +58,13 @@ public class BaseDataDownload {
 				newestDate = ctnKLine.get(ctnKLine.size()-1).date;
 			}
 			
-			s_fmt.format("update success: %s (%s) item:%d date:%s\n", ShangZhiId, ShangZhiName, ctnCountSZ.get(), newestDate);
+			s_fmt.format("[%s] update success: %s (%s) item:%d date:%s\n", 
+					CUtilsDateTime.GetCurDateTimeStr(), ShangZhiId, ShangZhiName, ctnCountSZ.get(), newestDate);
 		}
 		else
 		{
-			s_fmt.format("update ERROR: %s error(%d)\n", ShangZhiId, errDownloadSZ);
+			s_fmt.format("[%s] update ERROR: %s error(%d)\n", 
+					CUtilsDateTime.GetCurDateTimeStr(), ShangZhiId, errDownloadSZ);
 		}
 		
 		
@@ -89,24 +92,28 @@ public class BaseDataDownload {
 		    		if(0 == errKLine && ctnKLine.size() > 0)
 		    		{
 		    			String stockNewestDate = ctnKLine.get(ctnKLine.size()-1).date;
-		    			s_fmt.format("update success %d/%d %.3fs: %s (%s) item:%d date:%s\n", 
-		    					i, iAllStockListSize, fCostTime, cStockItem.id, cStockItem.name, ctnCount.get(), stockNewestDate);
+		    			s_fmt.format("[%s] update success %d/%d %.3fs: %s (%s) item:%d date:%s\n", 
+		    					CUtilsDateTime.GetCurDateTimeStr(), i, iAllStockListSize, fCostTime, 
+		    					cStockItem.id, cStockItem.name, ctnCount.get(), stockNewestDate);
 		    		}
 		            else
 		            {
-		            	s_fmt.format("update ERROR %d/%d %.3fs: %s (%s) error(%d)\n", 
-		            			i, iAllStockListSize, fCostTime, cStockItem.id, cStockItem.name, errDownloaddStockFullData);
+		            	s_fmt.format("[%s] update ERROR %d/%d %.3fs: %s (%s) error(%d)\n", 
+		            			CUtilsDateTime.GetCurDateTimeStr(), i, iAllStockListSize, fCostTime, 
+		            			cStockItem.id, cStockItem.name, errDownloaddStockFullData);
 		            }
 				}
 				else
 				{
-					s_fmt.format("update ERROR %d/%d %.3fs: %s error(%d)\n", 
-							i, iAllStockListSize, fCostTime, cStockItem.id, errDownloaddStockFullData);
+					s_fmt.format("[%s] update ERROR %d/%d %.3fs: %s error(%d)\n", 
+							CUtilsDateTime.GetCurDateTimeStr(), i, iAllStockListSize, fCostTime, 
+							cStockItem.id, errDownloaddStockFullData);
 				}   
 				
 	        } 
 			float fCostTimeAll = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
-			s_fmt.format("update finish %.3f, count: %d", fCostTimeAll, stockAllList.size()); 
+			s_fmt.format("[%s] update finish %.3f, count: %d", 
+					CUtilsDateTime.GetCurDateTimeStr(), fCostTimeAll, stockAllList.size()); 
 		}
 		else
 		{
