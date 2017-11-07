@@ -9,6 +9,7 @@ import pers.di.account.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
 import pers.di.common.CObjectContainer;
 import pers.di.common.CUtilsDateTime;
+import pers.di.common.CUtilsMath;
 
 public class AccountEntity extends Account {
 	
@@ -171,7 +172,9 @@ public class AccountEntity extends Account {
 			HoldStock cHoldStock = m_accountStore.storeEntity().holdStockList.get(i);
 			if(stockID.equals(cHoldStock.stockID))
 			{
+				//cHoldStock.curPrice = CUtilsMath.saveNDecimal(price, 3);
 				cHoldStock.curPrice = price;
+				
 			}
 		}
 		

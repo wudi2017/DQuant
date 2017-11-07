@@ -45,5 +45,10 @@ public class AccountProxy {
 		return m_cAccount.getTotalAssets(ctnTotalAssets);
 	}
 	
+	public String dump()
+	{
+		return m_cAccount.dump();
+	}
+	
 	private Account m_cAccount;
 }

@@ -205,7 +205,7 @@ public class TestQuantStrategy {
 					int amount = (int)(buyMoney/curPrice);
 					amount = amount/100*100; // 买入整手化
 
-					CLog.output("TEST", "pushBuyOrder %s %s Stock(%s) amount(%d) price(%.2f)", 
+					CLog.output("TEST", "pushBuyOrder %s %s Stock(%s) amount(%d) price(%.3f)", 
 							ctx.date(), ctx.time(), createID,amount,curPrice);
 					ctx.ap().pushBuyOrder(createID, amount, curPrice); // 500 12.330769
 				}
@@ -255,7 +255,7 @@ public class TestQuantStrategy {
 				
 				if(bSell && cHoldStock.availableAmount > 0)
 				{
-					CLog.output("TEST", "pushSellOrder %s %s Stock(%s) amount(%d) price(%.2f)", 
+					CLog.output("TEST", "pushSellOrder %s %s Stock(%s) amount(%d) price(%.3f)", 
 							ctx.date(), ctx.time(), cHoldStock.stockID,cHoldStock.availableAmount,curPrice);
 					ctx.ap().pushSellOrder(cHoldStock.stockID, cHoldStock.availableAmount, curPrice); 
 				}
@@ -318,6 +318,9 @@ public class TestQuantStrategy {
 				m_seletctID.add(cSelectResultList.get(i).stockID);
 			}
 			
+			// output acc info
+			String accInfo = ctx.ap().dump();
+			CLog.output("TEST", "\n%s", accInfo);
 			// output Selected log
 			String logStr = "";
 			logStr += String.format("Selected (%d) [ ", iAddCount);
