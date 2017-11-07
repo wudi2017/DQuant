@@ -96,6 +96,16 @@ public class AccountEntity extends Account {
 		ctnList.addAll(m_accountStore.storeEntity().commissionOrderList);
 		return 0;
 	}
+	
+	@Override
+	public int getDealOrderList(List<DealOrder> ctnList)
+	{
+		if(!m_initFlag) return -1;
+		
+		ctnList.clear();
+		ctnList.addAll(m_accountStore.storeEntity().dealOrderList);
+		return 0;
+	}
 
 	@Override
 	public int getHoldStockList(List<HoldStock> ctnList) {
@@ -192,6 +202,9 @@ public class AccountEntity extends Account {
 		
 		// 清空委托表
 		m_accountStore.storeEntity().commissionOrderList.clear();
+		
+		// 清空成交表
+		m_accountStore.storeEntity().dealOrderList.clear();
 
 		// 股票全部可卖
 		for(int i=0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
@@ -206,6 +219,9 @@ public class AccountEntity extends Account {
 	
 	public void onDeal(TRANACT tranact, String stockID, int amount, float price, float cost) 
 	{
+		float dealCost = 0.0f; // 此费用是成交单费用，买入直接=buycost，卖出=sellcost+buycost
+		
+		// hold stock
 		if(tranact == TRANACT.BUY)
 		{
 			// 获取持有对象
@@ -241,10 +257,10 @@ public class AccountEntity extends Account {
 			cHoldStock.curPrice = price;
 			cHoldStock.refPrimeCostPrice = 
 					(cHoldStock.refPrimeCostPrice*oriTotalAmount + price*amount + cost)/cHoldStock.totalAmount;
+			dealCost = cost;
 			
 			// 更新 money
 			m_accountStore.storeEntity().money = m_accountStore.storeEntity().money - price*amount;
-			
 		}
 		else if(tranact == TRANACT.SELL)
 		{
@@ -277,6 +293,9 @@ public class AccountEntity extends Account {
 				
 				m_accountStore.storeEntity().money = 
 						m_accountStore.storeEntity().money + price*amount - balanceBuyCost - balanceSellCost;
+				
+				dealCost = balanceBuyCost + balanceSellCost;
+				
 				// 清仓
 				if(cHoldStock.totalAmount == 0)
 				{
@@ -289,6 +308,17 @@ public class AccountEntity extends Account {
 			}
 		}
 		
+		// deal order
+		DealOrder dealOrder = new DealOrder();
+		dealOrder.date = m_accountStore.storeEntity().date;
+		dealOrder.time = m_accountStore.storeEntity().time;
+		dealOrder.tranAct = tranact;
+		dealOrder.stockID = stockID;
+		dealOrder.amount = amount;
+		dealOrder.price = price;
+		dealOrder.cost = dealCost;
+		m_accountStore.storeEntity().dealOrderList.add(dealOrder);
+				
 		m_accountStore.sync2File();
 	}
 	

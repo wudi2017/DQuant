@@ -18,6 +18,8 @@ public abstract class Account {
 	
 	public abstract int getCommissionOrderList(List<CommissionOrder> ctnList);
 	
+	public abstract int getDealOrderList(List<DealOrder> ctnList);
+	
 	public abstract int getHoldStockList(List<HoldStock> ctnList);
 	
 	
@@ -76,6 +78,8 @@ public abstract class Account {
 		this.getHoldStockList(cHoldStockList);
 		List<CommissionOrder> cCommissionOrderList = new ArrayList<CommissionOrder>();
 		this.getCommissionOrderList(cCommissionOrderList);
+		List<DealOrder> cDealOrderList = new ArrayList<DealOrder>();
+		this.getDealOrderList(cDealOrderList);
 		
 		// 打印资产
 		DumpInfo+=String.format("    -TotalAssets: %.3f\n", totalAssets.get());
@@ -105,9 +109,30 @@ public abstract class Account {
 			String tranOpe = "BUY"; 
 			if(cCommissionOrder.tranAct == TRANACT.SELL ) tranOpe = "SELL";
 				
-			DumpInfo+=String.format("    -CommissionOrder: %s %s %s %d %.3f\n", 
-					cCommissionOrder.time, tranOpe, cCommissionOrder.stockID, 
+			DumpInfo+=String.format("    -CommissionOrder: %s %s %s %s %d %.3f\n", 
+					cCommissionOrder.date, cCommissionOrder.time, tranOpe, cCommissionOrder.stockID, 
 					cCommissionOrder.amount, cCommissionOrder.price);
+		}
+		
+		// 打印成交单
+		for(int i=0; i<cDealOrderList.size(); i++ )
+		{
+			DealOrder cDealOrder = cDealOrderList.get(i);
+			String tranOpe = ""; 
+			if(cDealOrder.tranAct == TRANACT.BUY ) 
+			{
+				tranOpe = "BUY";
+				DumpInfo+=String.format("    -DealOrder: %s %s %s %s %d %.3f (BC%.3f)\n", 
+						cDealOrder.date, cDealOrder.time, tranOpe, cDealOrder.stockID, 
+						cDealOrder.amount, cDealOrder.price, cDealOrder.cost);
+			}
+			else if(cDealOrder.tranAct == TRANACT.SELL)
+			{
+				tranOpe = "SELL";
+				DumpInfo+=String.format("    -DealOrder: %s %s %s %s %d %.3f (SC-%.3f)\n", 
+						cDealOrder.date, cDealOrder.time, tranOpe, cDealOrder.stockID, 
+						cDealOrder.amount, cDealOrder.price, cDealOrder.cost);
+			}
 		}
 		
 		return DumpInfo;

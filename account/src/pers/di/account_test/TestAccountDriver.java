@@ -301,6 +301,64 @@ public class TestAccountDriver {
 	}
 	
 	@CTest.test
+	public static void test_accountDriver_DealOrder()
+	{
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
+		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
+		cAccoutDriver.reset(10*10000f);
+		
+		Account acc = cAccoutDriver.account();
+		
+		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+		cAccoutDriver.newDayBegin();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
+		cAccoutDriver.newDayEnd();
+		
+		cAccoutDriver.setDateTime("2017-10-11", "14:30:01");
+		cAccoutDriver.newDayBegin();
+		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
+		cAccoutDriver.setDateTime("2017-10-11", "14:32:01");
+		acc.postTradeOrder(TRANACT.SELL, "600001", 100, 1.12f);
+		
+		List<DealOrder> ctnDealList = new ArrayList<DealOrder>();
+		CTest.EXPECT_TRUE(acc.getDealOrderList(ctnDealList) == 0);
+		CTest.EXPECT_LONG_EQ(ctnDealList.size(), 2);
+
+		if(ctnDealList.size() == 2)
+		{
+			DealOrder cDealOrder0 = ctnDealList.get(0);
+			CTest.EXPECT_STR_EQ(cDealOrder0.date, "2017-10-11");
+			CTest.EXPECT_STR_EQ(cDealOrder0.time, "14:30:01");
+			CTest.EXPECT_TRUE(0 == cDealOrder0.tranAct.compareTo(TRANACT.BUY));
+			CTest.EXPECT_STR_EQ(cDealOrder0.stockID, "600001");
+			CTest.EXPECT_LONG_EQ(cDealOrder0.amount, 200);
+			CTest.EXPECT_DOUBLE_EQ(cDealOrder0.price, 2.0f, 2);
+			CTest.EXPECT_DOUBLE_EQ(cDealOrder0.cost, cDealOrder0.amount*cDealOrder0.price*s_transactionCostsRatioBuy, 2);
+
+			
+			DealOrder cDealOrder1 = ctnDealList.get(1);
+			CTest.EXPECT_STR_EQ(cDealOrder1.date, "2017-10-11");
+			CTest.EXPECT_STR_EQ(cDealOrder1.time, "14:32:01");
+			CTest.EXPECT_TRUE(0 == cDealOrder1.tranAct.compareTo(TRANACT.SELL));
+			CTest.EXPECT_STR_EQ(cDealOrder1.stockID, "600001");
+			CTest.EXPECT_LONG_EQ(cDealOrder1.amount, 100);
+			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.price, 1.12f, 2);
+			float aveBuy = (100*1.6f+200*2.00f)*s_transactionCostsRatioBuy/300;
+			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.cost, 
+					100*aveBuy+100*1.12f*s_transactionCostsRatioSell, 2);
+		}
+		
+		String dumpInfoBeforeEnd = acc.dump();
+		CLog.output("TEST", "\n%s", dumpInfoBeforeEnd);
+		
+		cAccoutDriver.newDayEnd();
+		
+		String dumpInfoAfterEnd = acc.dump();
+		CLog.output("TEST", "\n%s", dumpInfoAfterEnd);
+		
+	}
+	
+	@CTest.test
 	public static void test_accountDriver_performance()
 	{
 		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);

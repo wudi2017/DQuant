@@ -42,6 +42,7 @@ public class AccountStore {
 		    time = CUtilsDateTime.GetCurTimeStr();
 		    money = 0.0f;
 		    commissionOrderList = new ArrayList<CommissionOrder>();
+		    dealOrderList = new ArrayList<DealOrder>();
 		    holdStockList = new ArrayList<HoldStock>();
 		}
 		public void reset(float fInitMoney)
@@ -50,12 +51,14 @@ public class AccountStore {
 		    time = CUtilsDateTime.GetCurTimeStr();
 		    money = fInitMoney;
 		    commissionOrderList.clear();
+		    dealOrderList.clear();
 		    holdStockList.clear();
 		}
 		public String date;
 		public String time;
 		public float money;
 		public List<CommissionOrder> commissionOrderList;
+		public List<DealOrder> dealOrderList;
 		public List<HoldStock> holdStockList;
 	}
 	
@@ -138,7 +141,7 @@ public class AccountStore {
         	// CommissionOrderList
         	if(null != m_storeEntity.commissionOrderList)
         	{
-        		Element Node_CommissionOrderList=doc.createElement("CommissionOrderList");
+        		Element Node_CommissionOrderList=doc.createElement("commissionOrderList");
             	root.appendChild(Node_CommissionOrderList);
             	for(int i=0;i<m_storeEntity.commissionOrderList.size();i++)
             	{
@@ -150,6 +153,7 @@ public class AccountStore {
             		String priceVal =String.format("%.3f", cCommissionOrder.price);
             				
             		Element Node_commissionOrder = doc.createElement("commissionOrder");
+            		Node_commissionOrder.setAttribute("date", cCommissionOrder.date);
             		Node_commissionOrder.setAttribute("time", cCommissionOrder.time);
             		Node_commissionOrder.setAttribute("tranAct", tranactVal);
             		Node_commissionOrder.setAttribute("stockID", cCommissionOrder.stockID);
@@ -157,6 +161,33 @@ public class AccountStore {
             		Node_commissionOrder.setAttribute("price", priceVal);
             		
             		Node_CommissionOrderList.appendChild(Node_commissionOrder);
+            	}
+        	}
+        	
+        	// dealOrderList
+        	if(null != m_storeEntity.dealOrderList)
+        	{
+        		Element Node_DealOrderList=doc.createElement("dealOrderList");
+            	root.appendChild(Node_DealOrderList);
+            	for(int i=0;i<m_storeEntity.dealOrderList.size();i++)
+            	{
+            		DealOrder cDealOrder = m_storeEntity.dealOrderList.get(i);
+            		String tranactVal = "";
+            		if(cDealOrder.tranAct == TRANACT.BUY) tranactVal= "BUY";
+            		if(cDealOrder.tranAct == TRANACT.SELL) tranactVal= "SELL";
+            		String amountVal = String.format("%d", cDealOrder.amount);
+            		String priceVal =String.format("%.3f", cDealOrder.price);
+            		String costVal =String.format("%.3f", cDealOrder.cost);
+            				
+            		Element Node_dealOrder = doc.createElement("dealOrder");
+            		Node_dealOrder.setAttribute("date", cDealOrder.date);
+            		Node_dealOrder.setAttribute("time", cDealOrder.time);
+            		Node_dealOrder.setAttribute("tranAct", tranactVal);
+            		Node_dealOrder.setAttribute("stockID", cDealOrder.stockID);
+            		Node_dealOrder.setAttribute("amount", amountVal);
+            		Node_dealOrder.setAttribute("price", priceVal);
+            		Node_dealOrder.setAttribute("cost", costVal);
+            		Node_DealOrderList.appendChild(Node_dealOrder);
             	}
         	}
         	
@@ -302,7 +333,7 @@ public class AccountStore {
 		    // 委托单加载
 		    List<CommissionOrder> commissionOrderList = new ArrayList<CommissionOrder>();
 		    {
-		    	NodeList nodelist_CommissionOrderList = rootElement.getElementsByTagName("CommissionOrderList");
+		    	NodeList nodelist_CommissionOrderList = rootElement.getElementsByTagName("commissionOrderList");
 		        if(nodelist_CommissionOrderList.getLength() == 1)
 	        	{
 		        	Node Node_CommissionOrderList = nodelist_CommissionOrderList.item(0);
@@ -311,6 +342,7 @@ public class AccountStore {
 			        	Node node_commissionOrder = nodelist_commissionOrder.item(i);
 			        	if(node_commissionOrder.getNodeType() == Node.ELEMENT_NODE)
 			        	{
+			        		String date = ((Element)node_commissionOrder).getAttribute("date");
 			        		String time = ((Element)node_commissionOrder).getAttribute("time");
 				        	String tranAct = ((Element)node_commissionOrder).getAttribute("tranAct");
 				        	String stockID = ((Element)node_commissionOrder).getAttribute("stockID");
@@ -318,6 +350,7 @@ public class AccountStore {
 				        	String price = ((Element)node_commissionOrder).getAttribute("price");
 				        	
 				        	CommissionOrder cCommissionOrder = new CommissionOrder();
+				        	cCommissionOrder.date = date;
 				        	cCommissionOrder.time = time;
 				        	if(tranAct.equals("BUY")) cCommissionOrder.tranAct = TRANACT.BUY;
 				        	if(tranAct.equals("SELL")) cCommissionOrder.tranAct = TRANACT.SELL;
@@ -330,7 +363,42 @@ public class AccountStore {
 	        	}
 		    }
 		    
-		    // 委托单加载
+		    // dealOrder
+		    List<DealOrder> dealOrderList = new ArrayList<DealOrder>();
+		    {
+		    	NodeList nodelist_dealOrderList = rootElement.getElementsByTagName("dealOrderList");
+		        if(nodelist_dealOrderList.getLength() == 1)
+	        	{
+		        	Node Node_DealOrderList = nodelist_dealOrderList.item(0);
+		        	NodeList nodelist_dealOrder = Node_DealOrderList.getChildNodes();
+			        for (int i = 0; i < nodelist_dealOrder.getLength(); i++) {
+			        	Node node_dealOrder = nodelist_dealOrder.item(i);
+			        	if(node_dealOrder.getNodeType() == Node.ELEMENT_NODE)
+			        	{
+			        		String date = ((Element)node_dealOrder).getAttribute("date");
+			        		String time = ((Element)node_dealOrder).getAttribute("time");
+				        	String tranAct = ((Element)node_dealOrder).getAttribute("tranAct");
+				        	String stockID = ((Element)node_dealOrder).getAttribute("stockID");
+				        	String amount = ((Element)node_dealOrder).getAttribute("amount");
+				        	String price = ((Element)node_dealOrder).getAttribute("price");
+				        	String cost = ((Element)node_dealOrder).getAttribute("cost");
+				        	
+				        	DealOrder cDealOrder = new DealOrder();
+				        	cDealOrder.date = date;
+				        	cDealOrder.time = time;
+				        	if(tranAct.equals("BUY")) cDealOrder.tranAct = TRANACT.BUY;
+				        	if(tranAct.equals("SELL")) cDealOrder.tranAct = TRANACT.SELL;
+				        	cDealOrder.stockID = stockID;
+				        	cDealOrder.amount = Integer.parseInt(amount);
+				        	cDealOrder.price = Float.parseFloat(price);
+				        	cDealOrder.cost = Float.parseFloat(cost);
+				        	dealOrderList.add(cDealOrder);
+			        	}
+			        }
+	        	}
+		    }
+		    
+		    // holdstock
 		    List<HoldStock> holdStockList = new ArrayList<HoldStock>();
 		    {
 		    	NodeList nodelist_holdStockList = rootElement.getElementsByTagName("holdStockList");
@@ -368,6 +436,7 @@ public class AccountStore {
 		    m_storeEntity.time = accTime;
 		    m_storeEntity.money = money;
 		    m_storeEntity.commissionOrderList = commissionOrderList;
+		    m_storeEntity.dealOrderList = dealOrderList;
 		    m_storeEntity.holdStockList = holdStockList;
 		    return true;
 		}
