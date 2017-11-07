@@ -358,8 +358,8 @@ public class TestQuantStrategy {
 		int iRetTotalAssets = acc.getTotalAssets(totalAssets);
 		CObjectContainer<Double> money = new CObjectContainer<Double>();
 		int iRetMoney = acc.getMoney(money);
-		CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 107578.002, 3);
-		CTest.EXPECT_DOUBLE_EQ(money.get(), 107578.002, 3);
+		CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 107575.483, 3);
+		CTest.EXPECT_DOUBLE_EQ(money.get(), 107575.483, 3);
 	}
 	
 	@CTest.test
