@@ -68,7 +68,7 @@ public abstract class Account {
 	
 	public String dump()
 	{
-		String DumpInfo = String.format("---ACCOUNT---INFO--- %s %s\n", date(), time());
+		String DumpInfo = String.format("---ACCOUNT---INFO--- %s %s", date(), time());
 		
 		CObjectContainer<Float> totalAssets = new CObjectContainer<Float>();
 		this.getTotalAssets(totalAssets);
@@ -82,21 +82,21 @@ public abstract class Account {
 		this.getDealOrderList(cDealOrderList);
 		
 		// 打印资产
-		DumpInfo+=String.format("    -TotalAssets: %.3f\n", totalAssets.get());
-		DumpInfo+=String.format("    -Money: %.3f\n", money.get());
+		DumpInfo+=String.format("\n    -TotalAssets: %.3f", totalAssets.get());
+		DumpInfo+=String.format("\n    -Money: %.3f", money.get());
 		float fStockMarketValue = 0.0f;
 		for(int i=0; i<cHoldStockList.size(); i++ )
 		{
 			HoldStock cHoldStock = cHoldStockList.get(i);
 			fStockMarketValue = fStockMarketValue + cHoldStock.totalAmount * cHoldStock.curPrice;
 		}
-		DumpInfo+=String.format("    -StockMarketValue: %.3f\n", fStockMarketValue);
+		DumpInfo+=String.format("\n    -StockMarketValue: %.3f", fStockMarketValue);
 
 		// 打印持股
 		for(int i=0; i<cHoldStockList.size(); i++ )
 		{
 			HoldStock cHoldStock = cHoldStockList.get(i);
-			DumpInfo+=String.format("    -HoldStock: %s %d %d %.3f %.3f %.3f\n", 
+			DumpInfo+=String.format("\n    -HoldStock: %s %d %d %.3f %.3f %.3f", 
 					cHoldStock.stockID,
 					cHoldStock.totalAmount, cHoldStock.availableAmount,
 					cHoldStock.refPrimeCostPrice, cHoldStock.curPrice, cHoldStock.totalAmount*cHoldStock.curPrice);
@@ -109,7 +109,7 @@ public abstract class Account {
 			String tranOpe = "BUY"; 
 			if(cCommissionOrder.tranAct == TRANACT.SELL ) tranOpe = "SELL";
 				
-			DumpInfo+=String.format("    -CommissionOrder: %s %s %s %s %d %.3f\n", 
+			DumpInfo+=String.format("\n    -CommissionOrder: %s %s %s %s %d %.3f", 
 					cCommissionOrder.date, cCommissionOrder.time, tranOpe, cCommissionOrder.stockID, 
 					cCommissionOrder.amount, cCommissionOrder.price);
 		}
@@ -122,14 +122,14 @@ public abstract class Account {
 			if(cDealOrder.tranAct == TRANACT.BUY ) 
 			{
 				tranOpe = "BUY";
-				DumpInfo+=String.format("    -DealOrder: %s %s %s %s %d %.3f (BC%.3f)\n", 
+				DumpInfo+=String.format("\n    -DealOrder: %s %s %s %s %d %.3f (BC%.3f)", 
 						cDealOrder.date, cDealOrder.time, tranOpe, cDealOrder.stockID, 
 						cDealOrder.amount, cDealOrder.price, cDealOrder.cost);
 			}
 			else if(cDealOrder.tranAct == TRANACT.SELL)
 			{
 				tranOpe = "SELL";
-				DumpInfo+=String.format("    -DealOrder: %s %s %s %s %d %.3f (SC-%.3f)\n", 
+				DumpInfo+=String.format("\n    -DealOrder: %s %s %s %s %d %.3f (SC-%.3f)", 
 						cDealOrder.date, cDealOrder.time, tranOpe, cDealOrder.stockID, 
 						cDealOrder.amount, cDealOrder.price, cDealOrder.cost);
 			}

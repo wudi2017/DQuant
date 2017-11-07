@@ -128,9 +128,10 @@ public class QuantSession {
 			float price = ctx.pool().get(sHoldStockID).price();
 			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 		}
-		m_accountDriver.newDayEnd();
-				
+	
 		m_stratety.onDayFinish(m_context);
+		
+		m_accountDriver.newDayEnd();
 	}
 	
 	private EngineListener m_listener;

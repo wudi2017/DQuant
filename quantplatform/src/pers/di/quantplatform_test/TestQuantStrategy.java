@@ -318,9 +318,6 @@ public class TestQuantStrategy {
 				m_seletctID.add(cSelectResultList.get(i).stockID);
 			}
 			
-			// output acc info
-			String accInfo = ctx.ap().dump();
-			CLog.output("TEST", "\n%s", accInfo);
 			// output Selected log
 			String logStr = "";
 			logStr += String.format("Selected (%d) [ ", iAddCount);
@@ -336,6 +333,10 @@ public class TestQuantStrategy {
 			}
 			logStr += String.format("]");
 			CLog.output("TEST", "%s", logStr);
+			// output acc info
+			String accInfo = ctx.ap().dump();
+			CLog.output("TEST", "dump account\n%s", accInfo);
+			
 		}
 		
 		private List<String> m_seletctID;
