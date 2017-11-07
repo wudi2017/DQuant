@@ -17,7 +17,7 @@ public class CUtilsMath {
 	{
 		float newVal = 0.0f;
 		int iScale = (int) Math.pow(10,n);
-		newVal= (float)(Math.round(val*100)/100.0f);
+		newVal= (float)(Math.round(val*iScale)/(float)iScale);
 		return newVal;
 	}
 	
