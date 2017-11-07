@@ -14,6 +14,15 @@ public class TestCUtilsMath {
 			iTest += Math.round(pi);
 		}
 		CLog.output("TEST", "iTest %d",iTest);
+		
+		float F1=3.1415926f;
+		CLog.output("TEST", "F1 %f",F1);
+		
+		float F2=3782.141f;
+		CLog.output("TEST", "F2 %f",F2);
+		
+		float F3=37825.141f;
+		CLog.output("TEST", "F3 %f",F3);
 	}
 	
 	@CTest.test

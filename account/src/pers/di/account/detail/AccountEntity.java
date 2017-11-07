@@ -38,7 +38,7 @@ public class AccountEntity extends Account {
 	}
 
 	@Override
-	public int getMoney(CObjectContainer<Float> ctnMoney) {
+	public int getMoney(CObjectContainer<Double> ctnMoney) {
 		
 		if(!m_initFlag) return -1;
 		
@@ -50,8 +50,11 @@ public class AccountEntity extends Account {
 	@Override
 	public int postTradeOrder(TRANACT tranact, String stockID, int amount, float price)
 	{
-		if(!m_initFlag) return -1;
+		// reset price 4-5ignore
+		price = CUtilsMath.saveNDecimal(price, 3);
 		
+		if(!m_initFlag) return -1;
+
 		if(tranact == TRANACT.BUY)
 		{
 			CommissionOrder cCommissionOrder = new CommissionOrder();
@@ -175,6 +178,9 @@ public class AccountEntity extends Account {
 	
 	public int flushCurrentPrice(String stockID, float price)
 	{
+		// reset price 4-5ignore
+		price = CUtilsMath.saveNDecimal(price, 3);
+				
 		if(!m_initFlag) return -1;
 		
 		for(int i=0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
@@ -219,6 +225,10 @@ public class AccountEntity extends Account {
 	
 	public void onDeal(TRANACT tranact, String stockID, int amount, float price, float cost) 
 	{
+		// reset price 4-5ignore
+		price = CUtilsMath.saveNDecimal(price, 3);
+		cost = CUtilsMath.saveNDecimal(cost, 3);
+				
 		float dealCost = 0.0f; // 此费用是成交单费用，买入直接=buycost，卖出=sellcost+buycost
 		
 		// hold stock
@@ -257,6 +267,7 @@ public class AccountEntity extends Account {
 			cHoldStock.curPrice = price;
 			cHoldStock.refPrimeCostPrice = 
 					(cHoldStock.refPrimeCostPrice*oriTotalAmount + price*amount + cost)/cHoldStock.totalAmount;
+			cHoldStock.refPrimeCostPrice = CUtilsMath.saveNDecimal(cHoldStock.refPrimeCostPrice, 3);
 			dealCost = cost;
 			
 			// 更新 money
@@ -277,7 +288,7 @@ public class AccountEntity extends Account {
 			
 			if(null != cHoldStock)
 			{
-				float oriAveBuyCost = cHoldStock.totalBuyCost/cHoldStock.totalAmount;
+				float oriAveBuyCost = CUtilsMath.saveNDecimal(cHoldStock.totalBuyCost/cHoldStock.totalAmount, 3);
 				float balanceBuyCost = oriAveBuyCost*amount; // 计算买入费用
 				float balanceSellCost = cost; //结算卖出费用
 				float sellRawProfit = (price - cHoldStock.refPrimeCostPrice)*amount; // 卖出裸利润
@@ -290,6 +301,7 @@ public class AccountEntity extends Account {
 				
 				cHoldStock.refPrimeCostPrice = 
 						(cHoldStock.refPrimeCostPrice*cHoldStock.totalAmount + cost - sellRawProfit)/cHoldStock.totalAmount;
+				cHoldStock.refPrimeCostPrice = CUtilsMath.saveNDecimal(cHoldStock.refPrimeCostPrice, 3);
 				
 				m_accountStore.storeEntity().money = 
 						m_accountStore.storeEntity().money + price*amount - balanceBuyCost - balanceSellCost;

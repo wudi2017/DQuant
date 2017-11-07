@@ -51,7 +51,7 @@ public class TestAccountDriver {
 		
 		// check
 		{
-			CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f, 2);
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
@@ -81,7 +81,7 @@ public class TestAccountDriver {
 		
 		// check
 		{
-			CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f - 100*1.60f - 200*2.00f - 500*10.6f, 2);
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
@@ -141,7 +141,7 @@ public class TestAccountDriver {
 		
 		// check
 		{
-			CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
 			float buyCost = 500*10.6f*s_transactionCostsRatioBuy;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
@@ -185,7 +185,7 @@ public class TestAccountDriver {
 		cAccoutDriver.newDayEnd();
 		// check
 		{
-			CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
 			float cost = 500*10.6f*s_transactionCostsRatioBuy + 100*10.0f*s_transactionCostsRatioSell + 400*5.25f*s_transactionCostsRatioSell;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
@@ -344,6 +344,7 @@ public class TestAccountDriver {
 			CTest.EXPECT_LONG_EQ(cDealOrder1.amount, 100);
 			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.price, 1.12f, 2);
 			float aveBuy = (100*1.6f+200*2.00f)*s_transactionCostsRatioBuy/300;
+			aveBuy = CUtilsMath.saveNDecimal(aveBuy, 3);
 			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.cost, 
 					100*aveBuy+100*1.12f*s_transactionCostsRatioSell, 2);
 		}
@@ -422,7 +423,7 @@ public class TestAccountDriver {
 		CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
 		CTest.EXPECT_TRUE(ctnHoldList.size() == 2);
 		
-		CObjectContainer<Float> ctnTotalAssets = new CObjectContainer<Float>();
+		CObjectContainer<Double> ctnTotalAssets = new CObjectContainer<Double>();
 		CTest.EXPECT_LONG_EQ(acc.getTotalAssets(ctnTotalAssets), 0);
 		CTest.EXPECT_DOUBLE_EQ(ctnTotalAssets.get(), 10*10000f+1000*3.2f, 2);
 		

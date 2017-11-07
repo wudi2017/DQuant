@@ -40,7 +40,7 @@ public class AccountProxy {
 		return m_cAccount.getCommissionOrderList(ctnList);
 	}
 	
-	public int getTotalAssets(CObjectContainer<Float> ctnTotalAssets)
+	public int getTotalAssets(CObjectContainer<Double> ctnTotalAssets)
 	{
 		return m_cAccount.getTotalAssets(ctnTotalAssets);
 	}

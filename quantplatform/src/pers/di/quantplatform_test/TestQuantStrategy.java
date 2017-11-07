@@ -189,16 +189,16 @@ public class TestQuantStrategy {
 				String createID = cIntentCreateList.get(i);
 
 				// 买入量
-				CObjectContainer<Float> totalAssets = new CObjectContainer<Float>();
+				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
 				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
-				CObjectContainer<Float> money = new CObjectContainer<Float>();
+				CObjectContainer<Double> money = new CObjectContainer<Double>();
 				int iRetMoney = ctx.ap().getMoney(money);
 				if(0 == iRetTotalAssets && 0 == iRetMoney)
 				{
 					float fMaxPositionRatio = 0.3333f;
-					float fMaxPositionMoney = totalAssets.get()*fMaxPositionRatio; // 最大买入仓位钱
-					float fMaxMoney = 10000*100.0f; // 最大买入钱
-					float buyMoney = Math.min(fMaxMoney, fMaxPositionMoney);
+					Double dMaxPositionMoney = totalAssets.get()*fMaxPositionRatio; // 最大买入仓位钱
+					Double dMaxMoney = 10000*100.0; // 最大买入钱
+					Double buyMoney = Math.min(dMaxMoney, dMaxPositionMoney);
 					buyMoney = Math.min(buyMoney, money.get());
 					
 					float curPrice = ctx.pool().get(createID).price();
@@ -358,6 +358,13 @@ public class TestQuantStrategy {
 				cAccoutDriver, 
 				new TestStrategy());
 		qSession.run();
+		
+		CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
+		int iRetTotalAssets = acc.getTotalAssets(totalAssets);
+		CObjectContainer<Double> money = new CObjectContainer<Double>();
+		int iRetMoney = acc.getMoney(money);
+		CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 107578.002, 3);
+		CTest.EXPECT_DOUBLE_EQ(money.get(), 107578.002, 3);
 	}
 	
 	@CTest.test

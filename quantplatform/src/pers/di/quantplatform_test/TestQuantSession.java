@@ -222,7 +222,7 @@ public class TestQuantSession {
 		
 		// check acc
 		{
-			CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			acc.getMoney(ctnMoney);
 
 			float buyCostAll = 500*12.330769f*s_transactionCostsRatioBuy + 800*12.611877f*s_transactionCostsRatioBuy;

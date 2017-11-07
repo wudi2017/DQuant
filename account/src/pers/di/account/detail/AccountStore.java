@@ -56,7 +56,7 @@ public class AccountStore {
 		}
 		public String date;
 		public String time;
-		public float money;
+		public double money;
 		public List<CommissionOrder> commissionOrderList;
 		public List<DealOrder> dealOrderList;
 		public List<HoldStock> holdStockList;
@@ -319,14 +319,14 @@ public class AccountStore {
 		    String accTime = rootElement.getAttribute("time");
 		    
 		    // money
-		    float money = 0.0f;
+		    Double money = 0.0;
 		    {
 		    	NodeList nodelist_Money = rootElement.getElementsByTagName("Money");
 		    	if(nodelist_Money.getLength() == 1)
 	        	{
 		        	Node Node_Money = nodelist_Money.item(0);
 		        	String value = ((Element)Node_Money).getAttribute("value");
-		        	money = Float.parseFloat(value);
+		        	money = Double.parseDouble(value);
 	        	}
 		    }
 

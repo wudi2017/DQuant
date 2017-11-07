@@ -12,7 +12,7 @@ public abstract class Account {
 	public abstract String date();
 	public abstract String time();
 	
-	public abstract int getMoney(CObjectContainer<Float> ctnMoney);
+	public abstract int getMoney(CObjectContainer<Double> ctnMoney);
 	
 	public abstract int postTradeOrder(TRANACT tranact, String stockID, int amount, float price);
 	
@@ -25,11 +25,11 @@ public abstract class Account {
 	
 	/*************************************************************************************/
 	
-	public int getTotalAssets(CObjectContainer<Float> ctnTotalAssets)
+	public int getTotalAssets(CObjectContainer<Double> ctnTotalAssets)
 	{
 		int iRet = -1;
 		
-		CObjectContainer<Float> ctnMoney = new CObjectContainer<Float>();
+		CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 		int iRetGetMoney = getMoney(ctnMoney);
 		
 		List<HoldStock> ctnHoldStockList = new ArrayList<HoldStock>();
@@ -37,12 +37,12 @@ public abstract class Account {
 		
 		if(0==iRetGetMoney && 0==iRetGetHoldList)
 		{
-			float fTotalAssets = ctnMoney.get();
+			Double dTotalAssets = ctnMoney.get();
 			for(int i=0; i<ctnHoldStockList.size(); i++)
 			{
-				fTotalAssets += ctnHoldStockList.get(i).totalAmount*ctnHoldStockList.get(i).curPrice;
+				dTotalAssets += ctnHoldStockList.get(i).totalAmount*ctnHoldStockList.get(i).curPrice;
 			}
-			ctnTotalAssets.set(fTotalAssets);
+			ctnTotalAssets.set(dTotalAssets);
 			iRet = 0;
 		}
 		
@@ -70,9 +70,9 @@ public abstract class Account {
 	{
 		String DumpInfo = String.format("---ACCOUNT---INFO--- %s %s", date(), time());
 		
-		CObjectContainer<Float> totalAssets = new CObjectContainer<Float>();
+		CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
 		this.getTotalAssets(totalAssets);
-		CObjectContainer<Float> money = new CObjectContainer<Float>();
+		CObjectContainer<Double> money = new CObjectContainer<Double>();
 		this.getMoney(money);
 		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
 		this.getHoldStockList(cHoldStockList);
