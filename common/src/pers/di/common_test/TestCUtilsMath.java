@@ -23,6 +23,9 @@ public class TestCUtilsMath {
 		
 		float F3=37825.141f;
 		CLog.output("TEST", "F3 %f",F3);
+		
+		double D1 = 37825.1416;
+		CLog.output("TEST", "D1 %.3f",D1);
 	}
 	
 	@CTest.test

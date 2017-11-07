@@ -54,6 +54,10 @@ public class AccountEntity extends Account {
 		price = CUtilsMath.saveNDecimal(price, 3);
 		
 		if(!m_initFlag) return -1;
+		
+		CLog.output("ACCOUNT", "@AccountEntity CommissionOrder [%s %s] [%s %s %d %.3f]",
+				m_accountStore.storeEntity().date, m_accountStore.storeEntity().time,
+				tranact.toString(), stockID, amount, price);
 
 		if(tranact == TRANACT.BUY)
 		{
@@ -150,19 +154,19 @@ public class AccountEntity extends Account {
 				}
 				else
 				{
-					CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!\n", accID);
+					CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!", accID);
 					return -1;
 				}
 			}
 			else
 			{
-				CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!\n", accID);
+				CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!", accID);
 				return -1;
 			}
 		}
 		
 		m_initFlag = true;
-		CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s OK~\n", accID);
+		CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s OK", accID);
 		return 0;
 	}
 	
@@ -331,6 +335,11 @@ public class AccountEntity extends Account {
 		dealOrder.cost = dealCost;
 		m_accountStore.storeEntity().dealOrderList.add(dealOrder);
 				
+		CLog.output("ACCOUNT", "@AccountEntity DealOrder [%s %s] [%s %s %d %.3f %.3f(%.3f) %.3f]",
+				m_accountStore.storeEntity().date, m_accountStore.storeEntity().time,
+				tranact.toString(), stockID, amount, price,
+				amount*price, dealCost, m_accountStore.storeEntity().money);
+		
 		m_accountStore.sync2File();
 	}
 	
