@@ -344,7 +344,7 @@ public class TestAccountDriver {
 			CTest.EXPECT_LONG_EQ(cDealOrder1.amount, 100);
 			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.price, 1.12f, 2);
 			float aveBuy = (100*1.6f+200*2.00f)*s_transactionCostsRatioBuy/300;
-			aveBuy = CUtilsMath.saveNDecimal(aveBuy, 3);
+			aveBuy = (float)CUtilsMath.saveNDecimal(aveBuy, 3);
 			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.cost, 
 					100*aveBuy+100*1.12f*s_transactionCostsRatioSell, 2);
 		}

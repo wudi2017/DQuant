@@ -1,5 +1,7 @@
 package pers.di.common_test;
 
+import java.math.BigDecimal;
+
 import pers.di.common.*;
 
 public class TestCUtilsMath {
@@ -26,6 +28,34 @@ public class TestCUtilsMath {
 		
 		double D1 = 37825.1416;
 		CLog.output("TEST", "D1 %.3f",D1);
+		
+		float f1 = 10.782f;
+		int i1 = 3200;
+		double dT = (double)f1*(double)i1;
+		double dT2 = CUtilsMath.toDouble(f1)*CUtilsMath.toDouble(i1);
+		for(int i=0; i<10000*100; i++)
+		{
+			double x = BigDecimal.valueOf(10.782*3200).doubleValue();
+		}
+		CLog.output("TEST", "ft %.3f",BigDecimal.valueOf(10.782f*3200).doubleValue());
+		
+		{
+			long lt= 34502400;
+			double dt = lt/1000.0;
+			CLog.output("TEST", "ft %.3f",BigDecimal.valueOf(10.782f*3200).doubleValue());
+		}
+		
+		//for(int i=0; i<10000*1000; i++)
+		{
+			//double res = CUtilsMath.multiply(f1, i1);
+			//CLog.output("TEST", "res %.3f", res);
+		}
+		
+		double f2 = 34502.400f;
+		CLog.output("TEST", "f2 %.3f",f2);
+		
+		double d2 = 34502.400;
+		CLog.output("TEST", "d2 %.3f",d2);
 	}
 	
 	@CTest.test
