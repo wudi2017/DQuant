@@ -10,7 +10,7 @@ import pers.di.common.*;
 
 public class MockAccountOpe extends IMarketOpe {
 	
-	public int postTradeRequest(TRANACT tranact, String id, int amount, float price)
+	public int postTradeRequest(TRANACT tranact, String id, int amount, double price)
 	{
 		super.dealReply(tranact, id, amount, price, 0.0f);
 		
@@ -30,7 +30,7 @@ public class MockAccountOpe extends IMarketOpe {
 //	}
 //	
 //	@Override
-//	public int pushBuyOrder(String stockID, int amount, float price) {
+//	public int pushBuyOrder(String stockID, int amount, double price) {
 //		
 //		if(!m_initFlag) return -1;
 //		
@@ -64,9 +64,9 @@ public class MockAccountOpe extends IMarketOpe {
 //		}
 //		
 //		// 重置对象 (交易费用直接体现在参考成本价里)
-//		float transactionCosts = m_transactionCostsRatio*price*realBuyAmount;
+//		double transactionCosts = m_transactionCostsRatio*price*realBuyAmount;
 //		int oriTotalAmount = cHoldStock.totalAmount;
-//		float oriHoldAvePrice = cHoldStock.refPrimeCostPrice;
+//		double oriHoldAvePrice = cHoldStock.refPrimeCostPrice;
 //		cHoldStock.totalAmount = cHoldStock.totalAmount + realBuyAmount;
 //		cHoldStock.refPrimeCostPrice = (oriHoldAvePrice*oriTotalAmount + price*realBuyAmount + transactionCosts)/cHoldStock.totalAmount;
 //		cHoldStock.curPrice = price;
@@ -80,7 +80,7 @@ public class MockAccountOpe extends IMarketOpe {
 //	}
 //
 //	@Override
-//	public int pushSellOrder(String stockID, int amount, float price) {
+//	public int pushSellOrder(String stockID, int amount, double price) {
 //		
 //		if(!m_initFlag) return -1;
 //		
@@ -103,9 +103,9 @@ public class MockAccountOpe extends IMarketOpe {
 //			realSellAmount = realSellAmount/100*100;
 //			
 //			// 重置对象 (交易费用在卖出价钱中扣除)
-//			float transactionCosts = m_transactionCostsRatio*price*realSellAmount;
+//			double transactionCosts = m_transactionCostsRatio*price*realSellAmount;
 //			int oriTotalAmount = cHoldStock.totalAmount;
-//			float oriHoldAvePrice = cHoldStock.refPrimeCostPrice;
+//			double oriHoldAvePrice = cHoldStock.refPrimeCostPrice;
 //			cHoldStock.totalAmount = cHoldStock.totalAmount - realSellAmount;
 //			cHoldStock.curPrice = price;
 //			m_mockAccountOpeStore.storeEntity().money = m_mockAccountOpeStore.storeEntity().money + price*realSellAmount - transactionCosts;
@@ -134,7 +134,7 @@ public class MockAccountOpe extends IMarketOpe {
 //	}
 //
 //	@Override
-//	public int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney) {
+//	public int getAvailableMoney(CObjectContainer<double> ctnAvailableMoney) {
 //		
 //		if(!m_initFlag) return -1;
 //		
@@ -180,7 +180,7 @@ public class MockAccountOpe extends IMarketOpe {
 //	 * 成员-----------------------------------------------------------------------
 //	 */
 //
-//	private float m_transactionCostsRatio;
+//	private double m_transactionCostsRatio;
 //	private String m_accountID;
 //	private String m_password;
 //

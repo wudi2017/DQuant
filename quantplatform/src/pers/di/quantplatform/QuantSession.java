@@ -73,7 +73,7 @@ public class QuantSession {
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
-			float price = ctx.pool().get(sHoldStockID).price();
+			double price = ctx.pool().get(sHoldStockID).price();
 			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 		}
 		
@@ -100,7 +100,7 @@ public class QuantSession {
 			for(int i=0; i<ctnHoldStockIDList.size(); i++)
 			{
 				String sHoldStockID = ctnHoldStockIDList.get(i);
-				float price = ctx.pool().get(sHoldStockID).price();
+				double price = ctx.pool().get(sHoldStockID).price();
 				m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 			}
 			
@@ -125,7 +125,7 @@ public class QuantSession {
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
-			float price = ctx.pool().get(sHoldStockID).price();
+			double price = ctx.pool().get(sHoldStockID).price();
 			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 		}
 	

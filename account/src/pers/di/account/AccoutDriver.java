@@ -15,7 +15,7 @@ public class AccoutDriver {
 			m_cAccoutDriver = cAccoutDriver;
 		}
 		@Override
-		public void onDeal(TRANACT tranact, String id, int amount, float price, float cost) {
+		public void onDeal(TRANACT tranact, String id, int amount, double price, double cost) {
 			m_cAccoutDriver.onDeal(tranact, id, amount, price, cost);
 		}	
 		private AccoutDriver m_cAccoutDriver;
@@ -55,13 +55,13 @@ public class AccoutDriver {
 	}
 	
 	// reset account entity
-	public int reset(float fInitMoney)
+	public int reset(double fInitMoney)
 	{
 		return m_accountEntity.reset(fInitMoney);
 	}
 	
 	// market deal callback
-	public void onDeal(TRANACT tranact, String id, int amount, float price, float cost) 
+	public void onDeal(TRANACT tranact, String id, int amount, double price, double cost) 
 	{
 		if(null != m_accountEntity)
 		{
@@ -110,7 +110,7 @@ public class AccoutDriver {
 	}
 	
 	// flush current price
-	public int flushCurrentPrice(String stockID, float price)
+	public int flushCurrentPrice(String stockID, double price)
 	{
 		if(null == m_accountEntity) return -1;
 		return m_accountEntity.flushCurrentPrice(stockID, price);

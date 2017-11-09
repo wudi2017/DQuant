@@ -14,7 +14,7 @@ public abstract class Account {
 	
 	public abstract int getMoney(CObjectContainer<Double> ctnMoney);
 	
-	public abstract int postTradeOrder(TRANACT tranact, String stockID, int amount, float price);
+	public abstract int postTradeOrder(TRANACT tranact, String stockID, int amount, double price);
 	
 	public abstract int getCommissionOrderList(List<CommissionOrder> ctnList);
 	
@@ -84,11 +84,11 @@ public abstract class Account {
 		// ´òÓ¡×Ê²ú
 		DumpInfo+=String.format("\n    -TotalAssets: %.3f", totalAssets.get());
 		DumpInfo+=String.format("\n    -Money: %.3f", money.get());
-		float fStockMarketValue = 0.0f;
+		double fStockMarketValue = 0.0;
 		for(int i=0; i<cHoldStockList.size(); i++ )
 		{
 			HoldStock cHoldStock = cHoldStockList.get(i);
-			fStockMarketValue = fStockMarketValue + cHoldStock.totalAmount * cHoldStock.curPrice;
+			fStockMarketValue = fStockMarketValue + cHoldStock.totalAmount*cHoldStock.curPrice;
 		}
 		DumpInfo+=String.format("\n    -StockMarketValue: %.3f", fStockMarketValue);
 

@@ -25,29 +25,29 @@ public class CImageCurve {
 			m_name = "";
 			m_marked = false;
 		}
-		public CurvePoint(float x, float y) 
+		public CurvePoint(double x, double y) 
 		{ 
 			m_x = x; 
 			m_y = y;
 			m_name = "";
 			m_marked = false;
 		}
-		public CurvePoint(float x, float y, String name) 
+		public CurvePoint(double x, double y, String name) 
 		{ 
 			m_x = x; 
 			m_y = y; 
 			m_name = name;
 			m_marked = false;
 		}
-		public CurvePoint(float x, float y, String name, boolean marked) 
+		public CurvePoint(double x, double y, String name, boolean marked) 
 		{ 
 			m_x = x; 
 			m_y = y; 
 			m_name = name;
 			m_marked = marked;
 		}
-		public float m_x;
-		public float m_y;
+		public double m_x;
+		public double m_y;
 		public String m_name;
 		public boolean m_marked;
 	}
@@ -77,12 +77,12 @@ public class CImageCurve {
 	{
 		if(LogicPoiList.size() == 0) return;
 		
-		float beginx = LogicPoiList.get(0).m_x;
-		float beginy = LogicPoiList.get(0).m_y;
-		float min_logic_x =  1000000.0f;
-		float min_logic_y =  1000000.0f;
-		float max_logic_x = -1000000.0f;
-		float max_logic_y = -1000000.0f;
+		double beginx = LogicPoiList.get(0).m_x;
+		double beginy = LogicPoiList.get(0).m_y;
+		double min_logic_x =  1000000.0f;
+		double min_logic_y =  1000000.0f;
+		double max_logic_x = -1000000.0f;
+		double max_logic_y = -1000000.0f;
 		for(int i = 0; i < LogicPoiList.size(); i++)  
         {  
 			CurvePoint cPoi = LogicPoiList.get(i); 
@@ -91,8 +91,8 @@ public class CImageCurve {
 			if(cPoi.m_x >= max_logic_x) max_logic_x = cPoi.m_x;
 			if(cPoi.m_y >= max_logic_y) max_logic_y = cPoi.m_y;
         }
-		float logic_unit_max_width = max_logic_x - min_logic_x;
-		float logic_unit_max_hight = (max_logic_y - min_logic_y);
+		double logic_unit_max_width = max_logic_x - min_logic_x;
+		double logic_unit_max_hight = (max_logic_y - min_logic_y);
 		
 		List<CurvePoint> poiCurList = new ArrayList<CurvePoint>();
 		int AutoWriteTextSpan = LogicPoiList.size()/5;
@@ -102,8 +102,8 @@ public class CImageCurve {
 		for(int i = 0; i < LogicPoiList.size(); i++)  
         {  
 			CurvePoint cPoi = LogicPoiList.get(i); 
-			float curX = (cPoi.m_x - beginx)/logic_unit_max_width;
-			float curY = (cPoi.m_y - beginy)/beginy;
+			double curX = (cPoi.m_x - beginx)/logic_unit_max_width;
+			double curY = (cPoi.m_y - beginy)/beginy;
 			boolean marked = cPoi.m_marked;
 			String textstr = "";
 			if(cPoi.m_name != "")
@@ -112,8 +112,8 @@ public class CImageCurve {
 			}
 			else
 			{
-				float val = cPoi.m_y;
-				float rate = (cPoi.m_y - beginy)/beginy*100;
+				double val = cPoi.m_y;
+				double rate = (cPoi.m_y - beginy)/beginy*100;
 				if(i == 0 || i == LogicPoiList.size() -1) // 头尾带文字
 				{
 					textstr = String.format("(%.2f, %.2f%%)", val, rate);
@@ -126,7 +126,7 @@ public class CImageCurve {
 						textstr = String.format("(%.2f, %.2f%%)", val, rate);
 						iPreSpan = i;
 					}
-					if(0 == Float.compare(max_logic_y, val) && !bHighTextOut) // 最高最低带文字
+					if(0 == Double.compare(max_logic_y, val) && !bHighTextOut) // 最高最低带文字
 					{
 						if( iPreSpan+AutoWriteTextSpan-i >=  AutoWriteTextSpan/4 
 								&& LogicPoiList.size()-1-i >= AutoWriteTextSpan/4) // 避免与下一个文字过分重合
@@ -135,7 +135,7 @@ public class CImageCurve {
 							bHighTextOut = true;
 						}
 					}
-					if(0 == Float.compare(min_logic_y, val) && !bLowTextOut) // 最高最低带文字
+					if(0 == Double.compare(min_logic_y, val) && !bLowTextOut) // 最高最低带文字
 					{
 						if( iPreSpan+AutoWriteTextSpan-i >=  AutoWriteTextSpan/4 
 								&& LogicPoiList.size()-1-i >= AutoWriteTextSpan/4) // 避免与下一个文字过分重合
@@ -154,7 +154,7 @@ public class CImageCurve {
 	public void writeMultiLogicCurveSameRatio()
 	{
 		//找到最大y
-		float fMaxY = 0.0f; 
+		double fMaxY = 0.0f; 
 		for (Map.Entry<Integer, List<CurvePoint>> entry : m_cMultiUnitCurveMap.entrySet()) {  
 			
 			List<CurvePoint> cCurPoiList = entry.getValue();
@@ -185,12 +185,12 @@ public class CImageCurve {
 	public void writeLogicCurve(List<CurvePoint> LogicPoiList, int index)
 	{
 		if(LogicPoiList.size() == 0) return;
-		float beginx = LogicPoiList.get(0).m_x;
-		float beginy = LogicPoiList.get(0).m_y;
-		float min_logic_x =  1000000.0f;
-		float min_logic_y =  1000000.0f;
-		float max_logic_x = -1000000.0f;
-		float max_logic_y = -1000000.0f;
+		double beginx = LogicPoiList.get(0).m_x;
+		double beginy = LogicPoiList.get(0).m_y;
+		double min_logic_x =  1000000.0f;
+		double min_logic_y =  1000000.0f;
+		double max_logic_x = -1000000.0f;
+		double max_logic_y = -1000000.0f;
 		for(int i = 0; i < LogicPoiList.size(); i++)  
         {  
 			CurvePoint cPoi = LogicPoiList.get(i); 
@@ -199,8 +199,8 @@ public class CImageCurve {
 			if(cPoi.m_x >= max_logic_x) max_logic_x = cPoi.m_x;
 			if(cPoi.m_y >= max_logic_y) max_logic_y = cPoi.m_y;
         }
-		float logic_unit_max_width = max_logic_x - min_logic_x;
-		float logic_unit_max_hight = (max_logic_y - min_logic_y);
+		double logic_unit_max_width = max_logic_x - min_logic_x;
+		double logic_unit_max_hight = (max_logic_y - min_logic_y);
 		
 		List<CurvePoint> poiUnitList = new ArrayList<CurvePoint>();
 		int AutoWriteTextSpan = LogicPoiList.size()/5;
@@ -208,8 +208,8 @@ public class CImageCurve {
 		for(int i = 0; i < LogicPoiList.size(); i++)  
         {  
 			CurvePoint cPoi = LogicPoiList.get(i); 
-			float unitX = (cPoi.m_x - beginx)/logic_unit_max_width;
-			float unitY = (cPoi.m_y - beginy)/logic_unit_max_hight;
+			double unitX = (cPoi.m_x - beginx)/logic_unit_max_width;
+			double unitY = (cPoi.m_y - beginy)/logic_unit_max_hight;
 			boolean marked = cPoi.m_marked;
 			String textstr = "";
 			if(cPoi.m_name != "")
@@ -218,8 +218,8 @@ public class CImageCurve {
 			}
 			else
 			{
-				float val = cPoi.m_y;
-				float rate = (cPoi.m_y - beginy)/beginy*100;
+				double val = cPoi.m_y;
+				double rate = (cPoi.m_y - beginy)/beginy*100;
 				if(i == 0 || i == LogicPoiList.size() -1) // 头尾带文字
 				{
 					textstr = String.format("(%.2f, %.2f%%)", val, rate);
@@ -230,7 +230,7 @@ public class CImageCurve {
 					textstr = String.format("(%.2f, %.2f%%)", val, rate);
 					iPreSpan = i;
 				}
-				if(0 == Float.compare(max_logic_y, val) || 0 == Float.compare(min_logic_y, val)) // 最高最低带文字
+				if(0 == Double.compare(max_logic_y, val) || 0 == Double.compare(min_logic_y, val)) // 最高最低带文字
 				{
 					if( iPreSpan+AutoWriteTextSpan-i >=  AutoWriteTextSpan/4 
 							&& LogicPoiList.size()-1-i >= AutoWriteTextSpan/4) // 避免与下一个文字过分重合

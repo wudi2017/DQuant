@@ -9,7 +9,7 @@ public class RealTimeInfo implements Comparable
 	public String name;
 	public String date;
 	public String time;
-	public float curPrice;
+	public double curPrice;
 	
 	@Override
 	public int compareTo(Object o) {

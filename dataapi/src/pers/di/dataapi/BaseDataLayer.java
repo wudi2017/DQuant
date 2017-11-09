@@ -91,8 +91,8 @@ public class BaseDataLayer {
 //			System.out.println(cDividendPayout.zhuanGu);
 //			System.out.println(cDividendPayout.paiXi);
 			
-			float unitMoreGuRatio = (cDividendPayout.songGu + cDividendPayout.zhuanGu + 10)/10;
-			float unitPaiXi = cDividendPayout.paiXi/10;
+			double unitMoreGuRatio = (cDividendPayout.songGu + cDividendPayout.zhuanGu + 10)/10;
+			double unitPaiXi = cDividendPayout.paiXi/10;
 			
 			for(int j = container.size() -1; j >= 0 ; j--)
 			{
@@ -101,18 +101,18 @@ public class BaseDataLayer {
 				if(cKLine.date.compareTo(cDividendPayout.date) < 0) // 鑲＄エ鏃ユ湡灏忎簬鍒嗙孩娲炬伅鏃ユ湡鏃讹紝杩涜閲嶆柊璁＄畻
 				{
 					cKLine.open = (cKLine.open - unitPaiXi)/unitMoreGuRatio;
-					//cKLine.open = (int)(cKLine.open*1000)/(float)1000.0;
+					//cKLine.open = (int)(cKLine.open*1000)/(double)1000.0;
 					
 //					System.out.println("date " + cKLine.date + " " + cKLine.open );
 					
 					cKLine.close = (cKLine.close - unitPaiXi)/unitMoreGuRatio;
-					//cKLine.close = (int)(cKLine.close*1000)/(float)1000.0;
+					//cKLine.close = (int)(cKLine.close*1000)/(double)1000.0;
 					
 					cKLine.low = (cKLine.low - unitPaiXi)/unitMoreGuRatio;
-					//cKLine.low = (int)(cKLine.low*1000)/(float)1000.0;
+					//cKLine.low = (int)(cKLine.low*1000)/(double)1000.0;
 					
 					cKLine.high = (cKLine.high - unitPaiXi)/unitMoreGuRatio;
-					//cKLine.high = (int)(cKLine.high*1000)/(float)1000.0;	
+					//cKLine.high = (int)(cKLine.high*1000)/(double)1000.0;	
 				}
 			}
 		}
@@ -145,8 +145,8 @@ public class BaseDataLayer {
 //			System.out.println(cDividendPayout.zhuanGu);
 //			System.out.println(cDividendPayout.paiXi);
 			
-			float unitMoreGuRatio = (cDividendPayout.songGu + cDividendPayout.zhuanGu + 10)/10;
-			float unitPaiXi = cDividendPayout.paiXi/10;
+			double unitMoreGuRatio = (cDividendPayout.songGu + cDividendPayout.zhuanGu + 10)/10;
+			double unitPaiXi = cDividendPayout.paiXi/10;
 			
 			for(int j = 0; j< container.size(); j++)
 			{
@@ -155,18 +155,18 @@ public class BaseDataLayer {
 				if(cKLine.date.compareTo(cDividendPayout.date) >= 0) // 鑲＄エ鏃ユ湡 澶т簬绛変簬鍒嗙孩娲炬伅鏃ユ湡鏃讹紝杩涜閲嶆柊璁＄畻
 				{
 					cKLine.open = cKLine.open * unitMoreGuRatio + unitPaiXi;
-					//cKLine.open = (int)(cKLine.open*1000)/(float)1000.0;
+					//cKLine.open = (int)(cKLine.open*1000)/(double)1000.0;
 					
 //					System.out.println("date " + cKLine.date + " " + cKLine.open );
 					
 					cKLine.close = cKLine.close * unitMoreGuRatio + unitPaiXi;
-					//cKLine.close = (int)(cKLine.close*1000)/(float)1000.0;
+					//cKLine.close = (int)(cKLine.close*1000)/(double)1000.0;
 					
 					cKLine.low = cKLine.low * unitMoreGuRatio + unitPaiXi;
-					//cKLine.low = (int)(cKLine.low*1000)/(float)1000.0;
+					//cKLine.low = (int)(cKLine.low*1000)/(double)1000.0;
 					
 					cKLine.high = cKLine.high * unitMoreGuRatio + unitPaiXi;
-					//cKLine.high = (int)(cKLine.high*1000)/(float)1000.0;	
+					//cKLine.high = (int)(cKLine.high*1000)/(double)1000.0;	
 				}
 			}
 		}
@@ -199,7 +199,7 @@ public class BaseDataLayer {
             int iSecBegin = 0;
             int iSecEnd = 0;
             int iStdSecEnd = 0;
-            float preClosePrice = ctnTradeDetail.get(0).price;
+            double preClosePrice = ctnTradeDetail.get(0).price;
             // add 涓婂崍
             for(int i = 0; i < 24; i++)
             {
@@ -240,11 +240,11 @@ public class BaseDataLayer {
     			//System.out.println("==================================================");
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
-    			float K5MinOpen = preClosePrice;
-    			float K5MinClose = preClosePrice;
-    			float K5MinLow = preClosePrice;
-    			float K5MinHigh = preClosePrice;
-    			float K5MinVolume = preClosePrice;
+    			double K5MinOpen = preClosePrice;
+    			double K5MinClose = preClosePrice;
+    			double K5MinLow = preClosePrice;
+    			double K5MinHigh = preClosePrice;
+    			double K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
     				TradeDetail cTradeDetail = tmpList.get(k);  
@@ -312,11 +312,11 @@ public class BaseDataLayer {
     			//System.out.println("==================================================");
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
-    			float K5MinOpen = preClosePrice;
-    			float K5MinClose = preClosePrice;
-    			float K5MinLow = preClosePrice;
-    			float K5MinHigh = preClosePrice;
-    			float K5MinVolume = preClosePrice;
+    			double K5MinOpen = preClosePrice;
+    			double K5MinClose = preClosePrice;
+    			double K5MinLow = preClosePrice;
+    			double K5MinHigh = preClosePrice;
+    			double K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
     				TradeDetail cTradeDetail = tmpList.get(k);  
@@ -380,7 +380,7 @@ public class BaseDataLayer {
             int iSecBegin = 0;
             int iSecEnd = 0;
             int iStdSecEnd = 0;
-            float preClosePrice = ctnTradeDetail.get(0).price;
+            double preClosePrice = ctnTradeDetail.get(0).price;
             // add 涓婂崍
             for(int i = 0; i < 120; i++)
             {
@@ -420,11 +420,11 @@ public class BaseDataLayer {
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
     			
-    			float K1MinOpen = preClosePrice;
-    			float K1MinClose = preClosePrice;
-    			float K1MinLow = preClosePrice;
-    			float K1MinHigh = preClosePrice;
-    			float K1MinVolume = 0.0f;
+    			double K1MinOpen = preClosePrice;
+    			double K1MinClose = preClosePrice;
+    			double K1MinLow = preClosePrice;
+    			double K1MinHigh = preClosePrice;
+    			double K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
     				TradeDetail cTradeDetail = tmpList.get(k);  
@@ -490,11 +490,11 @@ public class BaseDataLayer {
     			//System.out.println("==================================================");
     			String StdEndTimeStr = String.format("%02d:%02d:%02d", 
     					iStdSecEnd/3600, (iStdSecEnd%3600)/60, (iStdSecEnd%3600)%60);
-    			float K1MinOpen = preClosePrice;
-    			float K1MinClose = preClosePrice;
-    			float K1MinLow = preClosePrice;
-    			float K1MinHigh = preClosePrice;
-    			float K1MinVolume = 0.0f;
+    			double K1MinOpen = preClosePrice;
+    			double K1MinClose = preClosePrice;
+    			double K1MinLow = preClosePrice;
+    			double K1MinHigh = preClosePrice;
+    			double K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
     				TradeDetail cTradeDetail = tmpList.get(k);  
@@ -621,13 +621,13 @@ public class BaseDataLayer {
         {  
 			KLine cKLine = ctnKLine.get(i);  
 			KLine cKLineNext = ctnKLine.get(i+1);  
-            float close = cKLine.close;
-            float nextHigh = cKLineNext.high;
-            float nextLow = cKLineNext.low;
-            float nextClose = cKLineNext.close;
-            float fHighper = Math.abs((nextHigh-close)/close);
-            float fLowper = Math.abs((nextLow-close)/close);
-            float fCloseper = Math.abs((nextClose-close)/close);
+            double close = cKLine.close;
+            double nextHigh = cKLineNext.high;
+            double nextLow = cKLineNext.low;
+            double nextClose = cKLineNext.close;
+            double fHighper = Math.abs((nextHigh-close)/close);
+            double fLowper = Math.abs((nextLow-close)/close);
+            double fCloseper = Math.abs((nextClose-close)/close);
             if(fCloseper > 0.12) // 鏀剁洏娑ㄨ穼骞呭害寮傚父
         	{
             	// 鏁版嵁鏈変腑闂翠涪澶卞ぉ鐨勬儏鍐碉紝鎺掗櫎杩欑閿欒

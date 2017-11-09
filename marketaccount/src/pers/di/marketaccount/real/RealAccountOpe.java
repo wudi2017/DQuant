@@ -16,10 +16,10 @@ public class RealAccountOpe extends IMarketOpe {
 	}
 	
 	@Override
-	public int postTradeRequest(TRANACT tranact, String id, int amount, float price) {
+	public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
 		if(tranact.equals(TRANACT.BUY))
 		{
-			int iBuyRet = THSApi.buyStock(id, amount, price);
+			int iBuyRet = THSApi.buyStock(id, amount, (float)price);
 			CLog.output("ACCOUNT", " @RealAccountOpe pushBuyOrder err(%d) [%s %d %.3f %.3f] \n", 
 					iBuyRet,
 					id, amount, price, amount*price);
@@ -30,7 +30,7 @@ public class RealAccountOpe extends IMarketOpe {
 		}
 		if(tranact.equals(TRANACT.SELL))
 		{
-			int iSellRet = THSApi.sellStock(id, amount, price);
+			int iSellRet = THSApi.sellStock(id, amount, (float)price);
 			CLog.output("ACCOUNT", " @RealAccountOpe pushSellOrder err(%d) [%s %d %.3f %.3f] \n", 
 					iSellRet,
 					id, amount, price, amount*price);
@@ -43,7 +43,7 @@ public class RealAccountOpe extends IMarketOpe {
 	}
 
 //	@Override
-//	public int pushSellOrder(String id, int amount, float price) {
+//	public int pushSellOrder(String id, int amount, double price) {
 //		int iSellRet = THSApi.sellStock(id, amount, price);
 //		CLog.output("ACCOUNT", " @RealAccountOpe pushSellOrder err(%d) [%s %d %.3f %.3f] \n", 
 //				iSellRet,
@@ -52,9 +52,9 @@ public class RealAccountOpe extends IMarketOpe {
 //	}
 //
 //	@Override
-//	public int getAvailableMoney(CObjectContainer<Float> ctnAvailableMoney) {
+//	public int getAvailableMoney(CObjectContainer<double> ctnAvailableMoney) {
 //		
-//		ObjectContainer<Float> container = new ObjectContainer<Float>();
+//		ObjectContainer<double> container = new ObjectContainer<double>();
 //        int ret = THSApi.getAvailableMoney(container);
 //		CLog.output("ACCOUNT", " @RealAccountOpe getAvailableMoney err(%d) availableMoney(%.3f) \n", 
 //				ret, container.get());

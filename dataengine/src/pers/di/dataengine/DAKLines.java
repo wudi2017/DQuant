@@ -34,7 +34,7 @@ public class DAKLines {
 	{
 		return m_obsKLineList.get(m_obsKLineList.size()-1).date;
 	}
-	public float lastPrice()
+	public double lastPrice()
 	{
 		return m_obsKLineList.get(m_obsKLineList.size()-1).close;
 	}

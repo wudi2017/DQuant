@@ -7,9 +7,9 @@ package pers.di.dataapi.common;
 public class DividendPayout implements Comparable
 {
 	public String date;
-	public float songGu;
-	public float zhuanGu;
-	public float paiXi;
+	public double songGu;
+	public double zhuanGu;
+	public double paiXi;
 	@Override
 	public int compareTo(Object o) {
 		// TODO Auto-generated method stub

@@ -12,13 +12,13 @@ public class TestAccountDriver {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 	
-	public static float s_transactionCostsRatioBuy = 0.02f;
-	public static float s_transactionCostsRatioSell = 0.05f;
+	public static double s_transactionCostsRatioBuy = 0.02f;
+	public static double s_transactionCostsRatioSell = 0.05f;
 	
 	public static class MockMarketOpe extends IMarketOpe
 	{
 		@Override
-		public int postTradeRequest(TRANACT tranact, String id, int amount, float price) {
+		public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
 			if(tranact == TRANACT.BUY)
 			{
 				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioBuy);
@@ -143,7 +143,7 @@ public class TestAccountDriver {
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			float buyCost = 500*10.6f*s_transactionCostsRatioBuy;
+			double buyCost = 500*10.6f*s_transactionCostsRatioBuy;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
 					10*10000f - 100*1.60f - 200*2.00f - 500*10.6f + 100*10.0f
 					-100*(buyCost/500)-100*10.0f*s_transactionCostsRatioSell, 2);
@@ -187,7 +187,7 @@ public class TestAccountDriver {
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			float cost = 500*10.6f*s_transactionCostsRatioBuy + 100*10.0f*s_transactionCostsRatioSell + 400*5.25f*s_transactionCostsRatioSell;
+			double cost = 500*10.6f*s_transactionCostsRatioBuy + 100*10.0f*s_transactionCostsRatioSell + 400*5.25f*s_transactionCostsRatioSell;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
 					10*10000f - 100*1.60f - 200*2.00f - 500*10.6f + 100*10.0f + 400*5.25f - cost, 2);
 			
@@ -343,8 +343,7 @@ public class TestAccountDriver {
 			CTest.EXPECT_STR_EQ(cDealOrder1.stockID, "600001");
 			CTest.EXPECT_LONG_EQ(cDealOrder1.amount, 100);
 			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.price, 1.12f, 2);
-			float aveBuy = (100*1.6f+200*2.00f)*s_transactionCostsRatioBuy/300;
-			aveBuy = (float)CUtilsMath.saveNDecimal(aveBuy, 3);
+			double aveBuy = (100*1.6+200*2.00)*s_transactionCostsRatioBuy/300;
 			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.cost, 
 					100*aveBuy+100*1.12f*s_transactionCostsRatioSell, 2);
 		}

@@ -17,13 +17,13 @@ public class TestQuantSession {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 
-	public static float s_transactionCostsRatioBuy = 0.02f;
-	public static float s_transactionCostsRatioSell = 0.05f;
+	public static double s_transactionCostsRatioBuy = 0.02f;
+	public static double s_transactionCostsRatioSell = 0.05f;
 	
 	public static class MockMarketOpe extends IMarketOpe
 	{
 		@Override
-		public int postTradeRequest(TRANACT tranact, String id, int amount, float price) {
+		public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
 			if(tranact == TRANACT.BUY)
 			{
 				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioBuy);
@@ -225,9 +225,9 @@ public class TestQuantSession {
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			acc.getMoney(ctnMoney);
 
-			float buyCostAll = 500*12.330769f*s_transactionCostsRatioBuy + 800*12.611877f*s_transactionCostsRatioBuy;
-			float sellCost = 1000*12.507691f*s_transactionCostsRatioSell;
-			float ExpectMoney = 
+			double buyCostAll = 500*12.330769f*s_transactionCostsRatioBuy + 800*12.611877f*s_transactionCostsRatioBuy;
+			double sellCost = 1000*12.507691f*s_transactionCostsRatioSell;
+			double ExpectMoney = 
 					10*10000-500*12.330769f-800*12.611877f+1000*12.507691f-(buyCostAll/1300*1000+sellCost);
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(),ExpectMoney, 2);
 			
@@ -240,9 +240,9 @@ public class TestQuantSession {
 				CTest.EXPECT_STR_EQ(cHoldStock.stockID, "600000");
 				CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-01-16");
 				
-				float expectRefPrimeCostPrice = 0.0f;
+				double expectRefPrimeCostPrice = 0.0f;
 				expectRefPrimeCostPrice=(500*12.330769f+800*12.611877f+buyCostAll)/(500+800);
-				float sellProfit = 1000*(12.507691f - expectRefPrimeCostPrice);
+				double sellProfit = 1000*(12.507691f - expectRefPrimeCostPrice);
 				expectRefPrimeCostPrice=(expectRefPrimeCostPrice*(1300-1000) + sellCost - sellProfit)/(1300-1000);
 				CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, expectRefPrimeCostPrice, 2);
 			}

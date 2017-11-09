@@ -15,13 +15,13 @@ public class SampleTestStrategy {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 	
-	public static float s_transactionCostsRatioBuy = 0.02f;
-	public static float s_transactionCostsRatioSell = 0.05f;
+	public static double s_transactionCostsRatioBuy = 0.02f;
+	public static double s_transactionCostsRatioSell = 0.05f;
 	
 	public static class MockMarketOpe extends IMarketOpe
 	{
 		@Override
-		public int postTradeRequest(TRANACT tranact, String id, int amount, float price) {
+		public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
 			if(tranact == TRANACT.BUY)
 			{
 				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioBuy);

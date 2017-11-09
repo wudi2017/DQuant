@@ -83,7 +83,7 @@ public class BaseDataDownload {
 				CObjectContainer<Integer> ctnCount = new CObjectContainer<Integer>();
 				int errDownloaddStockFullData = this.downloadStockFullData(stockID, ctnCount);
 	           
-				float fCostTime = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
+				double fCostTime = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
 				
 				if(0 == errDownloaddStockFullData)
 				{
@@ -111,7 +111,7 @@ public class BaseDataDownload {
 				}   
 				
 	        } 
-			float fCostTimeAll = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
+			double fCostTimeAll = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
 			s_fmt.format("[%s] update success all %.3fs, count: %d\n", 
 					CUtilsDateTime.GetCurDateTimeStr(), fCostTimeAll, stockAllList.size()); 
 		}

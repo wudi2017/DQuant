@@ -73,7 +73,7 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 			//System.out.println(validdata);     
 			String[] cols = validdata.split(",");
 			container.name = cols[0];
-			container.curPrice = Float.parseFloat(cols[3]);
+			container.curPrice = Double.parseDouble(cols[3]);
 			container.date = cols[30];
 			container.time = cols[31];
 			

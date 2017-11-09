@@ -45,7 +45,7 @@ public class AccountStore {
 		    dealOrderList = new ArrayList<DealOrder>();
 		    holdStockList = new ArrayList<HoldStock>();
 		}
-		public void reset(float fInitMoney)
+		public void reset(double fInitMoney)
 		{
 			date = CUtilsDateTime.GetCurDateStr();
 		    time = CUtilsDateTime.GetCurTimeStr();
@@ -356,7 +356,7 @@ public class AccountStore {
 				        	if(tranAct.equals("SELL")) cCommissionOrder.tranAct = TRANACT.SELL;
 				        	cCommissionOrder.stockID = stockID;
 				        	cCommissionOrder.amount = Integer.parseInt(amount);
-				        	cCommissionOrder.price = Float.parseFloat(price);
+				        	cCommissionOrder.price = Double.parseDouble(price);
 				        	commissionOrderList.add(cCommissionOrder);
 			        	}
 			        }
@@ -390,8 +390,8 @@ public class AccountStore {
 				        	if(tranAct.equals("SELL")) cDealOrder.tranAct = TRANACT.SELL;
 				        	cDealOrder.stockID = stockID;
 				        	cDealOrder.amount = Integer.parseInt(amount);
-				        	cDealOrder.price = Float.parseFloat(price);
-				        	cDealOrder.cost = Float.parseFloat(cost);
+				        	cDealOrder.price = Double.parseDouble(price);
+				        	cDealOrder.cost = Double.parseDouble(cost);
 				        	dealOrderList.add(cDealOrder);
 			        	}
 			        }
@@ -423,9 +423,9 @@ public class AccountStore {
 				        	cHoldStock.stockID = stockID;
 				        	cHoldStock.totalAmount = Integer.parseInt(totalAmount);
 				        	cHoldStock.availableAmount = Integer.parseInt(availableAmount);
-				        	cHoldStock.totalBuyCost = Float.parseFloat(totalBuyCost);
-				        	cHoldStock.curPrice = Float.parseFloat(curPrice);
-				        	cHoldStock.refPrimeCostPrice = Float.parseFloat(refPrimeCostPrice);
+				        	cHoldStock.totalBuyCost = Double.parseDouble(totalBuyCost);
+				        	cHoldStock.curPrice = Double.parseDouble(curPrice);
+				        	cHoldStock.refPrimeCostPrice = Double.parseDouble(refPrimeCostPrice);
 				        	holdStockList.add(cHoldStock);
 			        	}
 			        }

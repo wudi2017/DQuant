@@ -18,5 +18,5 @@ public class TimePrice {
 	
 	public String time;
 	
-	public Float price;
+	public double price;
 }

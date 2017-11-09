@@ -57,11 +57,11 @@ public class BaseDataStorage {
             	String[] cols = tempString.split(",");
             	
             	cKLine.date = cols[0];
-	        	cKLine.open = Float.parseFloat(cols[1]);
-	        	cKLine.close = Float.parseFloat(cols[2]);
-	        	cKLine.low = Float.parseFloat(cols[3]);
-	        	cKLine.high = Float.parseFloat(cols[4]);
-	        	cKLine.volume = Float.parseFloat(cols[5]);
+	        	cKLine.open = Double.parseDouble(cols[1]);
+	        	cKLine.close = Double.parseDouble(cols[2]);
+	        	cKLine.low = Double.parseDouble(cols[3]);
+	        	cKLine.high = Double.parseDouble(cols[4]);
+	        	cKLine.volume = Double.parseDouble(cols[5]);
 	        	container.add(cKLine);
 	        	
                 line++;
@@ -131,9 +131,9 @@ public class BaseDataStorage {
             	
             	DividendPayout cDividendPayout = new DividendPayout();
             	cDividendPayout.date = cols[0];
-                cDividendPayout.songGu = Float.parseFloat(cols[1]);
-                cDividendPayout.zhuanGu = Float.parseFloat(cols[2]);
-                cDividendPayout.paiXi = Float.parseFloat(cols[3]);
+                cDividendPayout.songGu = Double.parseDouble(cols[1]);
+                cDividendPayout.zhuanGu = Double.parseDouble(cols[2]);
+                cDividendPayout.paiXi = Double.parseDouble(cols[3]);
                 container.add(cDividendPayout);
                 
                 line++;
@@ -202,8 +202,8 @@ public class BaseDataStorage {
 
             	TradeDetail cTradeDetail = new TradeDetail();
 	        	cTradeDetail.time = cols[0];
-	        	cTradeDetail.price = Float.parseFloat(cols[1]);
-	        	cTradeDetail.volume = Float.parseFloat(cols[2]);
+	        	cTradeDetail.price = Double.parseDouble(cols[1]);
+	        	cTradeDetail.volume = Double.parseDouble(cols[2]);
 	        	
 	        	container.add(cTradeDetail);
 	        	
@@ -271,9 +271,9 @@ public class BaseDataStorage {
             	container.name = cols[0];
             	container.date = cols[1];
             	container.time = cols[2];
-            	container.allMarketValue = Float.parseFloat(cols[3]);
-            	container.circulatedMarketValue = Float.parseFloat(cols[4]);
-            	container.peRatio = Float.parseFloat(cols[5]);
+            	container.allMarketValue = Double.parseDouble(cols[3]);
+            	container.circulatedMarketValue = Double.parseDouble(cols[4]);
+            	container.peRatio = Double.parseDouble(cols[5]);
 
                 break;
             }

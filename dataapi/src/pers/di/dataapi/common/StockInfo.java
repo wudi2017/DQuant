@@ -9,9 +9,9 @@ public class StockInfo
 	public String name;
 	public String date;
 	public String time;
-	public float allMarketValue; // 亿
-	public float circulatedMarketValue; // 亿
-	public float peRatio;
+	public double allMarketValue; // 亿
+	public double circulatedMarketValue; // 亿
+	public double peRatio;
 	public StockInfo()
 	{
 		name = "";

@@ -7,9 +7,9 @@ public class DealOrder {
 	public String stockID;
 	public TRANACT tranAct;
 	public int amount; // 成交数量
-	public float price; // 成交价格
+	public double price; // 成交价格
 	
-	public float cost; // 成交费用(买入时为买入费用，卖出时为平均买入和卖出费用之和)
+	public double cost; // 成交费用(买入时为买入费用，卖出时为平均买入和卖出费用之和)
 	
 	public void CopyFrom(DealOrder c)
 	{

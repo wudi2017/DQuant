@@ -10,9 +10,9 @@ public class HoldStock {
 	public String stockID; // 股票ID
 	public int totalAmount; // 持有总量（股）
 	public int availableAmount; // 可卖数量
-	public float totalBuyCost; // 买入费用总计
-	public float curPrice; // 当前价
-	public float refPrimeCostPrice; // 参考成本价（只做本次仓位建仓后的参考成本价格，未有实际用途）
+	public double totalBuyCost; // 买入费用总计
+	public double curPrice; // 当前价
+	public double refPrimeCostPrice; // 参考成本价（只做本次仓位建仓后的参考成本价格，未有实际用途）
 	
 	public HoldStock()
 	{
@@ -41,12 +41,12 @@ public class HoldStock {
 		refPrimeCostPrice = c.refPrimeCostPrice;
 	}
 	
-	public float refProfit() // 参考利润值（只做本次仓位建仓后的参考盈亏金额，不计算交易费用）
+	public double refProfit() // 参考利润值（只做本次仓位建仓后的参考盈亏金额，不计算交易费用）
 	{
 		return (curPrice - refPrimeCostPrice)*totalAmount;
 	}
 	
-	public float refProfitRatio() // 参考利润比（只做本次仓位建仓后的参考盈亏比例）
+	public double refProfitRatio() // 参考利润比（只做本次仓位建仓后的参考盈亏比例）
 	{
 		return (curPrice - refPrimeCostPrice)/refPrimeCostPrice;
 	}

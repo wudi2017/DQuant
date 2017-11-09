@@ -113,13 +113,13 @@ public class DataWebStockDayK {
         	
         	KLine cKLine = new KLine();
         	cKLine.date = date;
-        	cKLine.open = Float.parseFloat(open);
-        	cKLine.close = Float.parseFloat(close);
-        	cKLine.low = Float.parseFloat(low);
-        	cKLine.high = Float.parseFloat(high);
-        	cKLine.volume = Float.parseFloat(volume);
+        	cKLine.open = Double.parseDouble(open);
+        	cKLine.close = Double.parseDouble(close);
+        	cKLine.low = Double.parseDouble(low);
+        	cKLine.high = Double.parseDouble(high);
+        	cKLine.volume = Double.parseDouble(volume);
         	
-        	if(0 == Float.compare(0.0f, cKLine.close))
+        	if(0 == Double.compare(0.0f, cKLine.close))
         	{
         		continue;
         	}
@@ -158,11 +158,11 @@ public class DataWebStockDayK {
 	        	String low = ((Element)cnode).getAttribute("l");
 	        	String volume = ((Element)cnode).getAttribute("v");
 	        	cKLine.date = date;
-	        	cKLine.open = Float.parseFloat(open);
-	        	cKLine.close = Float.parseFloat(close);
-	        	cKLine.low = Float.parseFloat(low);
-	        	cKLine.high = Float.parseFloat(high);
-	        	cKLine.volume = Float.parseFloat(volume);
+	        	cKLine.open = Double.parseDouble(open);
+	        	cKLine.close = Double.parseDouble(close);
+	        	cKLine.low = Double.parseDouble(low);
+	        	cKLine.high = Double.parseDouble(high);
+	        	cKLine.volume = Double.parseDouble(volume);
 	        	
 	        	resultList.add(cKLine);
 	        }

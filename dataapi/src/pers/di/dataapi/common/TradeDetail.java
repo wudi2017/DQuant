@@ -7,8 +7,8 @@ package pers.di.dataapi.common;
 public class TradeDetail implements Comparable
 {
 	public String time;
-	public float price;
-	public float volume; 
+	public double price;
+	public double volume; 
 	@Override
 	public int compareTo(Object o) {
 		// TODO Auto-generated method stub

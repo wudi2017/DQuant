@@ -28,9 +28,9 @@ public class DAStock {
 		return obsStockInfo.get().name;
 	}
 	
-	public float price()
+	public double price()
 	{
-		float curPrice = 0.0f;
+		double curPrice = 0.0f;
 		DATimePrices cDATimePrices = timePrices();
 		if(cDATimePrices.size()!=0)
 		{
@@ -44,7 +44,7 @@ public class DAStock {
 		return curPrice;
 	}
 	
-	public float PE()
+	public double PE()
 	{
 		return obsStockInfo.get().peRatio;
 	}

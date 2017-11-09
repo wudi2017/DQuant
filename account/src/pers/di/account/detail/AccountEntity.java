@@ -49,10 +49,10 @@ public class AccountEntity extends Account {
 	}
 	
 	@Override
-	public int postTradeOrder(TRANACT tranact, String stockID, int amount, float price)
+	public int postTradeOrder(TRANACT tranact, String stockID, int amount, double price)
 	{
 		// reset price 4-5ignore
-		price = (float)CUtilsMath.saveNDecimal(price, 3);
+		price = (double)CUtilsMath.saveNDecimal(price, 3);
 		
 		if(!m_initFlag) return -1;
 		
@@ -181,10 +181,10 @@ public class AccountEntity extends Account {
 		return 0;
 	}
 	
-	public int flushCurrentPrice(String stockID, float price)
+	public int flushCurrentPrice(String stockID, double price)
 	{
 		// reset price 4-5ignore
-		price = (float)CUtilsMath.saveNDecimal(price, 3);
+		price = (double)CUtilsMath.saveNDecimal(price, 3);
 				
 		if(!m_initFlag) return -1;
 		
@@ -228,11 +228,11 @@ public class AccountEntity extends Account {
 		return 0; 
 	}
 	
-	public void onDeal(TRANACT tranact, String stockID, int amount, float price, float cost) 
+	public void onDeal(TRANACT tranact, String stockID, int amount, double price, double cost) 
 	{
 		// reset price 4-5ignore
-		price = (float)CUtilsMath.saveNDecimal(price, 3);
-		cost = (float)CUtilsMath.saveNDecimal(cost, 3);
+		price = (double)CUtilsMath.saveNDecimal(price, 3);
+		cost = (double)CUtilsMath.saveNDecimal(cost, 3);
 				
 		double dealCost = 0.0; // 此费用是成交单费用，买入直接=buycost，卖出=sellcost+buycost
 		
@@ -268,17 +268,15 @@ public class AccountEntity extends Account {
 			int oriTotalAmount = cHoldStock.totalAmount;
 			cHoldStock.totalAmount = cHoldStock.totalAmount + amount;
 			cHoldStock.availableAmount = cHoldStock.availableAmount;
-			cHoldStock.totalBuyCost = (float)(CUtilsMath.toDouble(cHoldStock.totalBuyCost) + CUtilsMath.toDouble(cost));
+			cHoldStock.totalBuyCost = cHoldStock.totalBuyCost + cost;
 			cHoldStock.curPrice = price;
 			cHoldStock.refPrimeCostPrice = 
-					(float)((CUtilsMath.toDouble(cHoldStock.refPrimeCostPrice)*oriTotalAmount + 
-							CUtilsMath.toDouble(price)*amount + 
-							CUtilsMath.toDouble(cost)) / cHoldStock.totalAmount);
+					(cHoldStock.refPrimeCostPrice*oriTotalAmount + price*amount + cost) / cHoldStock.totalAmount;
 			cHoldStock.refPrimeCostPrice = CUtilsMath.saveNDecimal(cHoldStock.refPrimeCostPrice, 3);
 			dealCost = cost;
 			
 			// 更新 money
-			m_accountStore.storeEntity().money = m_accountStore.storeEntity().money - CUtilsMath.toDouble(price)*amount;
+			m_accountStore.storeEntity().money = m_accountStore.storeEntity().money - price*amount;
 			m_accountStore.storeEntity().money = CUtilsMath.saveNDecimal(m_accountStore.storeEntity().money, 3);
 		}
 		else if(tranact == TRANACT.SELL)
@@ -296,27 +294,23 @@ public class AccountEntity extends Account {
 			
 			if(null != cHoldStock)
 			{
-				double oriAveBuyCost = CUtilsMath.toDouble(cHoldStock.totalBuyCost)/cHoldStock.totalAmount;
+				double oriAveBuyCost = cHoldStock.totalBuyCost/cHoldStock.totalAmount;
 				double balanceBuyCost = oriAveBuyCost*amount; // 计算买入费用
-				double balanceSellCost = CUtilsMath.toDouble(cost); //结算卖出费用
-				double sellRawProfit = (CUtilsMath.toDouble(price) - CUtilsMath.toDouble(cHoldStock.refPrimeCostPrice))*amount; // 卖出裸利润
+				double balanceSellCost = cost; //结算卖出费用
+				double sellRawProfit = (price - cHoldStock.refPrimeCostPrice)*amount; // 卖出裸利润
 				
 				// 重置对象 (交易费用在卖出价钱中扣除)
 				cHoldStock.totalAmount = cHoldStock.totalAmount - amount;
 				cHoldStock.availableAmount = cHoldStock.availableAmount - amount;
-				cHoldStock.totalBuyCost = (float)(CUtilsMath.toDouble(cHoldStock.totalBuyCost) - balanceBuyCost);
+				cHoldStock.totalBuyCost = cHoldStock.totalBuyCost - balanceBuyCost;
 				cHoldStock.curPrice = price;
 				
 				cHoldStock.refPrimeCostPrice = 
-						(float)((CUtilsMath.toDouble(cHoldStock.refPrimeCostPrice)*cHoldStock.totalAmount + 
-								CUtilsMath.toDouble(cost) - 
-								sellRawProfit) / cHoldStock.totalAmount);
-				cHoldStock.refPrimeCostPrice = (float)CUtilsMath.saveNDecimal(cHoldStock.refPrimeCostPrice, 3);
+						(cHoldStock.refPrimeCostPrice*cHoldStock.totalAmount + cost - sellRawProfit) / cHoldStock.totalAmount;
+				cHoldStock.refPrimeCostPrice = CUtilsMath.saveNDecimal(cHoldStock.refPrimeCostPrice, 3);
 				
 				m_accountStore.storeEntity().money = 
-						m_accountStore.storeEntity().money + 
-						CUtilsMath.toDouble(price)*CUtilsMath.toDouble(amount) - 
-						balanceBuyCost - balanceSellCost;
+						m_accountStore.storeEntity().money + price*amount - balanceBuyCost - balanceSellCost;
 				m_accountStore.storeEntity().money = CUtilsMath.saveNDecimal(m_accountStore.storeEntity().money, 3);
 				
 				dealCost = balanceBuyCost + balanceSellCost;
@@ -341,18 +335,18 @@ public class AccountEntity extends Account {
 		dealOrder.stockID = stockID;
 		dealOrder.amount = amount;
 		dealOrder.price = price;
-		dealOrder.cost = (float)dealCost;
+		dealOrder.cost = (double)dealCost;
 		m_accountStore.storeEntity().dealOrderList.add(dealOrder);
 				
 		CLog.output("ACCOUNT", "@AccountEntity DealOrder [%s %s] [%s %s %d %.3f %.3f(%.3f) %.3f]",
 				m_accountStore.storeEntity().date, m_accountStore.storeEntity().time,
 				tranact.toString(), stockID, amount, price,
-				CUtilsMath.toDouble(amount)*CUtilsMath.toDouble(price), dealCost, m_accountStore.storeEntity().money);
+				amount*price, dealCost, m_accountStore.storeEntity().money);
 		
 		m_accountStore.sync2File();
 	}
 	
-	public int reset(float fInitMoney)
+	public int reset(double fInitMoney)
 	{
 		m_accountStore.storeEntity().reset(fInitMoney);
 		m_accountStore.sync2File();

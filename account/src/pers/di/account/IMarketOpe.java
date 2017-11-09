@@ -21,12 +21,12 @@ abstract public class IMarketOpe {
 	 * 此方法需要市场方实现
 	 * 成交后调用 dealReply方法，回调给用户成交信息
 	 */
-	abstract public int postTradeRequest(TRANACT tranact, String id, int amount, float price); 
+	abstract public int postTradeRequest(TRANACT tranact, String id, int amount, double price); 
 	
 	/*
 	 * call this, if market deal!
 	 */
-	public int dealReply(TRANACT tranact, String id, int amount, float price, float cost)
+	public int dealReply(TRANACT tranact, String id, int amount, double price, double cost)
 	{
 		if(null != m_cIMarketDealReplier)
 		{

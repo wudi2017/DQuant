@@ -134,11 +134,11 @@ public class DataWebStockDividendPayout  extends HttpHelper
                     	if(5 == j)
                     		cDividendPayout.date = tmpStr;
                     	if(1 == j)
-                    		cDividendPayout.songGu = Float.parseFloat(tmpStr);
+                    		cDividendPayout.songGu = Double.parseDouble(tmpStr);
                     	if(2 == j)
-                    		cDividendPayout.zhuanGu = Float.parseFloat(tmpStr);
+                    		cDividendPayout.zhuanGu = Double.parseDouble(tmpStr);
                     	if(3 == j)
-                    		cDividendPayout.paiXi = Float.parseFloat(tmpStr);
+                    		cDividendPayout.paiXi = Double.parseDouble(tmpStr);
                     }
                     if(tablelist3.size() < 5) // 数据没有
                     {

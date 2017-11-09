@@ -285,10 +285,10 @@ public class StockDataApi {
 					if(0 == errKLine && ctnKLine.size() != 0)
 					{
 						// 由于可能是复权价位，需要重新计算相对价格
-						float baseOpenPrice = cKLine.open;
+						double baseOpenPrice = cKLine.open;
 			            //System.out.println("baseOpenPrice:" + baseOpenPrice);  
 			            
-						float actruaFirstPrice = ctnKLine.get(0).open;
+						double actruaFirstPrice = ctnKLine.get(0).open;
 						//System.out.println("actruaFirstPrice:" + actruaFirstPrice); 
 						
 						for(int i = 0; i < ctnKLine.size(); i++)  
@@ -299,17 +299,17 @@ public class StockDataApi {
 //				            		+ cExKData.low + "," + cExKData.high + "," 
 //				            		+ cExKData.volume);  
 							
-							float actrualprice = cMinKLine.close;
-							float changeper = (actrualprice - actruaFirstPrice)/actruaFirstPrice;
-							float changedprice = baseOpenPrice + baseOpenPrice * changeper;
+							double actrualprice = cMinKLine.close;
+							double changeper = (actrualprice - actruaFirstPrice)/actruaFirstPrice;
+							double changedprice = baseOpenPrice + baseOpenPrice * changeper;
 							
 							// 添加上下午开盘点
 							if(cMinKLine.time.compareTo("09:31:00") == 0
 									|| cMinKLine.time.compareTo("13:01:00") == 0)
 							{
-								float actrualprice_open = cMinKLine.open;
-								float changeper_open = (actrualprice_open - actruaFirstPrice)/actruaFirstPrice;
-								float changedprice_open = baseOpenPrice + baseOpenPrice * changeper_open;
+								double actrualprice_open = cMinKLine.open;
+								double changeper_open = (actrualprice_open - actruaFirstPrice)/actruaFirstPrice;
+								double changedprice_open = baseOpenPrice + baseOpenPrice * changeper_open;
 								
 								TimePrice cStockDayDetail = new TimePrice();
 								cStockDayDetail.price = changedprice_open;
@@ -379,7 +379,7 @@ public class StockDataApi {
 		
 		if(0 == errRealTimeInfo)
 		{
-			if(0 == Float.compare(container.curPrice, 0.00f))
+			if(0 == Double.compare(container.curPrice, 0.00f))
 			{
 				error = -2;
 				CLog.error("STOCKDATA", "getStockTime %s price 0.00f!\n", id); // 修正取得实时价格为0则认为错误

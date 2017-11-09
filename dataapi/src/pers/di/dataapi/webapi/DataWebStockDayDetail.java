@@ -81,8 +81,8 @@ public class DataWebStockDayDetail  extends HttpHelper
 	        	
 	        	TradeDetail cTradeDetail = new TradeDetail();
 	        	cTradeDetail.time = cols[0];
-	        	cTradeDetail.price = Float.parseFloat(cols[1]);
-	        	cTradeDetail.volume = Float.parseFloat(cols[3]);
+	        	cTradeDetail.price = Double.parseDouble(cols[1]);
+	        	cTradeDetail.volume = Double.parseDouble(cols[3]);
 	        	
 	        	container.add(cTradeDetail);
 	        }

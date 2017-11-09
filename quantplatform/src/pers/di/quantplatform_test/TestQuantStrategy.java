@@ -14,13 +14,13 @@ import pers.di.quantplatform.*;
 public class TestQuantStrategy {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
-	public static float s_transactionCostsRatioBuy = 0.0016f;
-	public static float s_transactionCostsRatioSell = 0.0f;
+	public static double s_transactionCostsRatioBuy = 0.0016f;
+	public static double s_transactionCostsRatioSell = 0.0f;
 	
 	public static class MockMarketOpe extends IMarketOpe
 	{
 		@Override
-		public int postTradeRequest(TRANACT tranact, String id, int amount, float price) {
+		public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
 			if(tranact == TRANACT.BUY)
 			{
 				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioBuy);
@@ -44,7 +44,7 @@ public class TestQuantStrategy {
 			public int compare(Object object1, Object object2) {
 				SelectResult c1 = (SelectResult)object1;
 				SelectResult c2 = (SelectResult)object2;
-				int iCmp = Float.compare(c1.fPriority, c2.fPriority);
+				int iCmp = Double.compare(c1.fPriority, c2.fPriority);
 				if(iCmp > 0) 
 					return -1;
 				else if(iCmp < 0) 
@@ -59,7 +59,7 @@ public class TestQuantStrategy {
 			fPriority = 0.0f;
 		}
 		public String stockID;
-		public float fPriority;
+		public double fPriority;
 	}
 	
 	public static class TestStrategy extends QuantStrategy
@@ -93,9 +93,9 @@ public class TestQuantStrategy {
 				String stockID = m_seletctID.get(i);
 				DAStock cDAStock = ctx.pool().get(stockID);
 
-				float fYesterdayClosePrice = cDAStock.dayKLines().lastPrice();
-				float fNowPrice = cDAStock.price();
-				float fRatio = (fNowPrice - fYesterdayClosePrice)/fYesterdayClosePrice;
+				double fYesterdayClosePrice = cDAStock.dayKLines().lastPrice();
+				double fNowPrice = cDAStock.price();
+				double fRatio = (fNowPrice - fYesterdayClosePrice)/fYesterdayClosePrice;
 				
 //							CLog.output("TEST", "TestStrategy.onMinuteData %s %s [%s %.3f]", 
 //									ctx.date(), ctx.time(), stockID, fRatio);
@@ -195,13 +195,13 @@ public class TestQuantStrategy {
 				int iRetMoney = ctx.ap().getMoney(money);
 				if(0 == iRetTotalAssets && 0 == iRetMoney)
 				{
-					float fMaxPositionRatio = 0.3333f;
+					double fMaxPositionRatio = 0.3333f;
 					Double dMaxPositionMoney = totalAssets.get()*fMaxPositionRatio; // 最大买入仓位钱
 					Double dMaxMoney = 10000*100.0; // 最大买入钱
 					Double buyMoney = Math.min(dMaxMoney, dMaxPositionMoney);
 					buyMoney = Math.min(buyMoney, money.get());
 					
-					float curPrice = ctx.pool().get(createID).price();
+					double curPrice = ctx.pool().get(createID).price();
 					int amount = (int)(buyMoney/curPrice);
 					amount = amount/100*100; // 买入整手化
 					ctx.ap().pushBuyOrder(createID, amount, curPrice); // 500 12.330769
@@ -223,7 +223,7 @@ public class TestQuantStrategy {
 				HoldStock cHoldStock = cHoldStockList.get(i);
 				boolean bSell = false;
 				DAStock cDAStock = ctx.pool().get(cHoldStock.stockID);
-				float curPrice = cDAStock.price();
+				double curPrice = cDAStock.price();
 				
 				// 调查天数控制
 				int investigationDays = 0;

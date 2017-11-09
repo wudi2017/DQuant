@@ -7,7 +7,7 @@ public class CommissionOrder {
 	public String stockID;
 	public TRANACT tranAct;
 	public int amount; // 委托数量
-	public float price; // 委托价格
+	public double price; // 委托价格
 	
 	public void CopyFrom(CommissionOrder c)
 	{

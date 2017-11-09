@@ -82,10 +82,10 @@ public class DataWebStockInfo extends HttpHelper
 //			{
 //				System.out.println(cells[i]);
 //			}
-			container.allMarketValue = Float.parseFloat(cells[45]); //总市值
-			container.circulatedMarketValue = Float.parseFloat(cells[44]); // 流通市值
+			container.allMarketValue = Double.parseDouble(cells[45]); //总市值
+			container.circulatedMarketValue = Double.parseDouble(cells[44]); // 流通市值
 			if(cells[39].length() != 0)
-				container.peRatio = Float.parseFloat(cells[39]); //市盈率
+				container.peRatio = Double.parseDouble(cells[39]); //市盈率
 			else
 				container.peRatio = 0.0f;
 			

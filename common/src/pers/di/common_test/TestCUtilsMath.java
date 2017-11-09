@@ -29,15 +29,15 @@ public class TestCUtilsMath {
 		double D1 = 37825.1416;
 		CLog.output("TEST", "D1 %.3f",D1);
 		
-		float f1 = 10.782f;
-		int i1 = 3200;
-		double dT = (double)f1*(double)i1;
-		double dT2 = CUtilsMath.toDouble(f1)*CUtilsMath.toDouble(i1);
-		for(int i=0; i<10000*100; i++)
-		{
-			double x = BigDecimal.valueOf(10.782*3200).doubleValue();
-		}
-		CLog.output("TEST", "ft %.3f",BigDecimal.valueOf(10.782f*3200).doubleValue());
+//		float f1 = 10.782f;
+//		int i1 = 3200;
+//		double dT = (double)f1*(double)i1;
+//		double dT2 = CUtilsMath.toDouble(f1)*CUtilsMath.toDouble(i1);
+//		for(int i=0; i<10000*100; i++)
+//		{
+//			double x = BigDecimal.valueOf(10.782*3200).doubleValue();
+//		}
+//		CLog.output("TEST", "ft %.3f",BigDecimal.valueOf(10.782f*3200).doubleValue());
 		
 		{
 			long lt= 34502400;
@@ -56,6 +56,31 @@ public class TestCUtilsMath {
 		
 		double d2 = 34502.400;
 		CLog.output("TEST", "d2 %.3f",d2);
+	}
+	
+	@CTest.test
+	public static void test_math_cal()
+	{
+		{
+			float f1=1.234567f;
+			float S = 1.0f;
+			for(int i=0; i<10000*10000; i++)
+			{
+				S = f1*S;
+				if(S>99999) S=1.0f;
+			}
+			CLog.output("TEST", "test_math_cal S %f", S);
+		}
+//		{
+//			double d1=1.234567890123;
+//			double S = 1.000000;
+//			for(int i=0; i<10000*10000; i++)
+//			{
+//				S = d1*S;
+//				if(S>99999) S=1.00000;
+//			}
+//			CLog.output("TEST", "test_math_cal S %f", S);
+//		}
 	}
 	
 	@CTest.test

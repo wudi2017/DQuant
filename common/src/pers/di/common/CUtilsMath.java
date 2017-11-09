@@ -4,28 +4,21 @@ import java.math.BigDecimal;
 import java.util.Random;
 
 public class CUtilsMath {
-	// 保留2位小数，非四舍五入
-	public static float saveNDecimalIgnore(float val, int n)
+	// 保留N位小数，非四舍五入
+	public static double saveNDecimalIgnore(double val, int n)
 	{
-		float newVal = 0.0f;
+		double newVal = 0.0;
 		int iScale = (int) Math.pow(10,n);
-		newVal = (int)(val*iScale)/(float)iScale;
+		newVal = (int)(val*iScale)/(double)iScale;
 		return newVal;
 	}
 	
 	// 保留N位小数，四舍五入
 	public static double saveNDecimal(double val, int n)
 	{
-		double newVal = 0.0f;
+		double newVal = 0.0;
 		int iScale = (int) Math.pow(10,n);
 		newVal= Math.round(val*iScale)/(double)iScale;
-		return newVal;
-	}
-	public static float saveNDecimal(float val, int n)
-	{
-		float newVal = 0.0f;
-		int iScale = (int) Math.pow(10,n);
-		newVal= Math.round(val*iScale)/(float)iScale;
 		return newVal;
 	}
 	
@@ -45,12 +38,12 @@ public class CUtilsMath {
 //		return bd_f1.add(bd_f2).doubleValue();
 //	}
 	
-	// float to double
-	public static double toDouble(float f1)
-	{
-		BigDecimal bd_f1 = new BigDecimal(Float.toString(f1));
-		return bd_f1.doubleValue();
-	}
+//	// float to double
+//	public static double toDouble(float f1)
+//	{
+//		BigDecimal bd_f1 = new BigDecimal(Float.toString(f1));
+//		return bd_f1.doubleValue();
+//	}
 	
 	// 获取0.0-1.0之间的float随机
 	public static float randomFloat()

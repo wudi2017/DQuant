@@ -12,13 +12,13 @@ public class KLine implements Comparable
 	// 13:25:20 or null
 	public String time;
 	
-	public float open;
-	public float close;
-	public float low;
-	public float high;
-	public float volume;
+	public double open;
+	public double close;
+	public double low;
+	public double high;
+	public double volume;
 	
-	public float midle()
+	public double midle()
 	{
 		return (open + close) / 2;
 	}

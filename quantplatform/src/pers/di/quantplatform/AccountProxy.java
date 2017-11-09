@@ -15,12 +15,12 @@ public class AccountProxy {
 		m_cAccount = accoutDriver.account();
 	}
 	
-	public int pushBuyOrder(String id, int amount, float price)
+	public int pushBuyOrder(String id, int amount, double price)
 	{
 		return m_cAccount.postTradeOrder(TRANACT.BUY, id, amount, price);
 	}
 	
-	public int pushSellOrder(String id, int amount, float price)
+	public int pushSellOrder(String id, int amount, double price)
 	{
 		return m_cAccount.postTradeOrder(TRANACT.SELL, id, amount, price);
 	}

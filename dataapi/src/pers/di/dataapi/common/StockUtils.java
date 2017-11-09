@@ -18,15 +18,15 @@ import pers.di.common.*;
 public class StockUtils {
 	
 	// 计算index的临近日平均价（count=1时，表示昨天，今天，明天的均价）
-	static public float GetAveNear(List<KLine> dayklist, int count, int index)
+	static public double GetAveNear(List<KLine> dayklist, int count, int index)
 	{
 		if(dayklist.size() == 0) return 0.0f;
-		float value = 0.0f;
+		double value = 0.0f;
 		int iB = index-count;
 		int iE = index+count;
 		if(iB<0) iB=0;
 		if(iE>dayklist.size()-1) iB=dayklist.size()-1;
-		float sum = 0.0f;
+		double sum = 0.0f;
 		int sumcnt = 0;
 		for(int i = iB; i <= iE; i++)  
         {  
@@ -39,14 +39,14 @@ public class StockUtils {
 	}
 	
 	// 均线计算，计算date日期前count天均线价格
-	static public float GetMA(List<KLine> dayklist, int count, int index)
+	static public double GetMA(List<KLine> dayklist, int count, int index)
 	{
 		if(dayklist.size() == 0) return 0.0f;
-		float value = 0.0f;
+		double value = 0.0f;
 		int iE = index;
 		int iB = iE-count+1;
 		if(iB<0) iB=0;
-		float sum = 0.0f;
+		double sum = 0.0f;
 		int sumcnt = 0;
 		for(int i = iB; i <= iE; i++)  
         {  
@@ -60,9 +60,9 @@ public class StockUtils {
 	
 	
 	// 计算某日收盘涨跌幅（参考开盘）
-	static public float GetInreaseRatioRefOpen(List<KLine> dayklist, int index)
+	static public double GetInreaseRatioRefOpen(List<KLine> dayklist, int index)
 	{
-		float ratio = 0.0f;
+		double ratio = 0.0f;
 		if(index >= 0 && index < dayklist.size())
 		{
 			KLine cKLineCur = dayklist.get(index);
@@ -73,16 +73,16 @@ public class StockUtils {
 		}
 		return ratio;
 	}
-	static public float GetInreaseRatioRefOpen(List<KLine> dayklist, String date)
+	static public double GetInreaseRatioRefOpen(List<KLine> dayklist, String date)
 	{
 		int index = StockUtils.indexDayK(dayklist, date);
 		return GetInreaseRatioRefOpen(dayklist, index);
 	}
 	
 	// 计算某日收盘涨跌幅（参考昨日收盘）
-	static public float GetInreaseRatio(List<KLine> dayklist, int index)
+	static public double GetInreaseRatio(List<KLine> dayklist, int index)
 	{
-		float ratio = 0.0f;
+		double ratio = 0.0f;
 		if(index > 0 && index < dayklist.size())
 		{
 			KLine cKLineCur = dayklist.get(index);
@@ -94,7 +94,7 @@ public class StockUtils {
 		}
 		return ratio;
 	}
-	static public float GetInreaseRatio(List<KLine> dayklist, String date)
+	static public double GetInreaseRatio(List<KLine> dayklist, String date)
 	{
 		int index = StockUtils.indexDayK(dayklist, date);
 		return GetInreaseRatio(dayklist, index);
@@ -171,7 +171,7 @@ public class StockUtils {
 	static public int indexHigh(List<KLine> dayklist, int i, int j)
 	{
 		int index = i;
-		float high = -100000.0f;
+		double high = -100000.0f;
 		for(int k = i; k<=j; k++ )
 		{
 			KLine cDayKDataTmp = dayklist.get(k);
@@ -188,7 +188,7 @@ public class StockUtils {
 	static public int indexLow(List<KLine> dayklist, int i, int j)
 	{
 		int index = i;
-		float low = 100000.0f;
+		double low = 100000.0f;
 		for(int k = i; k<=j; k++ )
 		{
 			KLine cDayKDataTmp = dayklist.get(k);
@@ -239,7 +239,7 @@ public class StockUtils {
 	static public int indexTimePriceHigh(List<TimePrice> list, int i, int j)
 	{
 		int index = i;
-		float high = -100000.0f;
+		double high = -100000.0;
 		for(int k = i; k<=j; k++ )
 		{
 			TimePrice cTimePrice = list.get(k);
@@ -256,7 +256,7 @@ public class StockUtils {
 	static public int indexTimePriceLow(List<TimePrice> list, int i, int j)
 	{
 		int index = i;
-		float low = 100000.0f;
+		double low = 100000.0;
 		for(int k = i; k<=j; k++ )
 		{
 			TimePrice cTimePrice = list.get(k);
