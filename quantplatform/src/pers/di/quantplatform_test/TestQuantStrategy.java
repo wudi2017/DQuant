@@ -332,6 +332,26 @@ public class TestQuantStrategy {
 			String accInfo = ctx.ap().dump();
 			CLog.output("TEST", "dump account\n%s", accInfo);
 			
+			// test check
+			if(ctx.date().equals("2016-03-11"))
+			{
+				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
+				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
+				CObjectContainer<Double> money = new CObjectContainer<Double>();
+				int iRetMoney = ctx.ap().getMoney(money);
+				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 100240.600, 3);
+				CTest.EXPECT_DOUBLE_EQ(money.get(), 3238.600, 3);
+			}
+			if(ctx.date().equals("2016-03-28"))
+			{
+				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
+				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
+				CObjectContainer<Double> money = new CObjectContainer<Double>();
+				int iRetMoney = ctx.ap().getMoney(money);
+				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 104631.022, 3);
+				CTest.EXPECT_DOUBLE_EQ(money.get(), 37934.622, 3);
+			}
+			
 		}
 		
 		private List<String> m_seletctID;
@@ -358,8 +378,8 @@ public class TestQuantStrategy {
 		int iRetTotalAssets = acc.getTotalAssets(totalAssets);
 		CObjectContainer<Double> money = new CObjectContainer<Double>();
 		int iRetMoney = acc.getMoney(money);
-		CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 107575.483, 3);
-		CTest.EXPECT_DOUBLE_EQ(money.get(), 107575.483, 3);
+		CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 107575.481, 3);
+		CTest.EXPECT_DOUBLE_EQ(money.get(), 107575.481, 3);
 	}
 	
 	@CTest.test
@@ -378,6 +398,8 @@ public class TestQuantStrategy {
 	
 	public static void main(String[] args) {
 		CSystem.start();
+//		CLog.config_setTag("TEST", false);
+//		CLog.config_setTag("ACCOUNT", false);
 		CTest.ADD_TEST(TestQuantStrategy.class);
 		CTest.RUN_ALL_TESTS("TestQuantStrategy.test_QuantStragety");
 		CSystem.stop();
