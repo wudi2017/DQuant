@@ -11,7 +11,6 @@ import pers.di.dataapi.StockDataApi;
 
 public class TestCommonHelper {
 	
-	private static String s_workDir = "data";
 	private static StockDataApi s_StockDataApi = StockDataApi.instance();
 	private static String s_updateFinish = "updateFinish.txt";
 	private static String s_newestDate = "2017-08-10";
@@ -24,7 +23,8 @@ public class TestCommonHelper {
 		
 	public static void InitLocalData(String newestDate, List<String> stockIDs)
 	{
-		String fileName = s_workDir + "\\" + s_updateFinish;
+		String dataRoot = s_StockDataApi.dataRoot();
+		String fileName = dataRoot + "\\" + s_updateFinish;
 		
 		boolean bAlreadyInitOK = true;
 		if(CFileSystem.isFileExist(fileName))
@@ -34,10 +34,10 @@ public class TestCommonHelper {
 				for(int i=0; i<stockIDs.size();i++)
 				{
 					String stockID = stockIDs.get(i);
-					String stockDir = s_workDir + "\\" + stockID;
+					String stockDir = dataRoot + "\\" + stockID;
 					if(CFileSystem.isDirExist(stockDir))
 					{
-						String stotckKLinesFile = s_workDir + "\\" + stockID + "\\" + "dayk.txt";
+						String stotckKLinesFile = dataRoot + "\\" + stockID + "\\" + "dayk.txt";
 						if(CFileSystem.isFileExist(stotckKLinesFile))
 						{
 							
@@ -69,10 +69,10 @@ public class TestCommonHelper {
 		}
 		else
 		{
-			CFileSystem.removeDir(s_workDir);
-			CTest.EXPECT_TRUE(!CFileSystem.isDirExist(s_workDir));
-			CFileSystem.createDir(s_workDir);
-			CTest.EXPECT_TRUE(CFileSystem.isDirExist(s_workDir));
+			//CFileSystem.removeDir(s_workDir);
+			//CTest.EXPECT_TRUE(!CFileSystem.isDirExist(s_workDir));
+			CFileSystem.createDir(dataRoot);
+			CTest.EXPECT_TRUE(CFileSystem.isDirExist(dataRoot));
 			
 			
 			String tmpDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(newestDate, -5);

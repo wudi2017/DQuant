@@ -17,6 +17,11 @@ public class StockDataApi {
 		m_cCache = new StockDataApiCache();
 	}
 	
+	public String dataRoot()
+	{
+		return m_cBaseDataLayer.dataRoot();
+	}
+	
 	/*
 	 * 更新所有股票数据
 	 * 

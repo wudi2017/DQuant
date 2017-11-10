@@ -26,6 +26,11 @@ public class BaseDataStorage {
 		s_workDir = dataDir;
 		CFileSystem.createDir(s_workDir);
 	}
+	
+	public String dataRoot()
+	{
+		return s_workDir;
+	}
 
 	public int getKLine(String id, List<KLine> container)
 	{

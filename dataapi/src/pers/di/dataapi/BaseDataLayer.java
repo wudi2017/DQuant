@@ -18,6 +18,11 @@ public class BaseDataLayer {
 		m_cBaseDataDownload = new BaseDataDownload(m_cBaseDataStorage);
 	}
 	
+	public String dataRoot()
+	{
+		return m_cBaseDataStorage.dataRoot();
+	}
+	
 	/*
 	 * 鏇存柊鎵�鏈夎偂绁ㄦ暟鎹埌鎸囧畾鏃ユ湡
 	 * 鍙傛暟
