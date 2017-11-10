@@ -236,7 +236,23 @@ public class CDateTimeThruster {
 
 			m_curDate = getNextDate();
 		}
+		
+		// clear
+		clearall();
+		
 		return true;
+	}
+	
+	private void clearall()
+	{
+		m_bHistoryTest = false;
+		m_beginDate = "0000-00-00";
+		m_endDate = "0000-00-00";
+		
+		m_curDate = "0000-00-00";
+		m_curTime = "00:00:00";
+		
+		m_mainTimeTaskList.clear();
 	}
 	
 	private CUtilsDateTime.WAITRESULT waitForDateTime(String date, String time, CWaitObject watiObj)
