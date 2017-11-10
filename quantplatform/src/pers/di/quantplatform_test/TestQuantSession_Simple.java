@@ -13,7 +13,7 @@ import pers.di.dataapi_test.TestCommonHelper;
 import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
 
-public class TestQuantSession {
+public class TestQuantSession_Simple {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 
@@ -142,17 +142,17 @@ public class TestQuantSession {
 			if(ctx.date().compareTo("2017-01-16") == 0 &&
 					ctx.time().compareTo("09:30:00") == 0)
 			{
-				ctx.ap().pushBuyOrder(StockID, 500, ctx.pool().get(StockID).price()); // 500 12.330769
+				ctx.ap().pushBuyOrder(StockID, 500, ctx.pool().get(StockID).price()); // 500 12.330769~12.331
 			}
 			if(ctx.date().compareTo("2017-01-16") == 0 &&
 					ctx.time().compareTo("14:40:00") == 0)
 			{
-				ctx.ap().pushBuyOrder(StockID, 800, ctx.pool().get(StockID).price()); // 800 12.611877
+				ctx.ap().pushBuyOrder(StockID, 800, ctx.pool().get(StockID).price()); // 800 12.611877~12.612
 			}
 			if(ctx.date().compareTo("2017-01-17") == 0 &&
 					ctx.time().compareTo("09:30:00") == 0)
 			{
-				ctx.ap().pushSellOrder(StockID, 1000, ctx.pool().get(StockID).price()); // 1000 12.507691
+				ctx.ap().pushSellOrder(StockID, 1000, ctx.pool().get(StockID).price()); // 1000 12.507691~12.508
 			}
 		}
 
@@ -225,10 +225,10 @@ public class TestQuantSession {
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			acc.getMoney(ctnMoney);
 
-			double buyCostAll = 500*12.330769f*s_transactionCostsRatioBuy + 800*12.611877f*s_transactionCostsRatioBuy;
-			double sellCost = 1000*12.507691f*s_transactionCostsRatioSell;
+			double buyCostAll = 500*12.331*s_transactionCostsRatioBuy + 800*12.612*s_transactionCostsRatioBuy;
+			double sellCost = 1000*12.508*s_transactionCostsRatioSell;
 			double ExpectMoney = 
-					10*10000-500*12.330769f-800*12.611877f+1000*12.507691f-(buyCostAll/1300*1000+sellCost);
+					10*10000-500*12.331-800*12.612+1000*12.508-(buyCostAll/1300*1000+sellCost);
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(),ExpectMoney, 2);
 			
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
@@ -241,7 +241,7 @@ public class TestQuantSession {
 				CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-01-16");
 				
 				double expectRefPrimeCostPrice = 0.0f;
-				expectRefPrimeCostPrice=(500*12.330769f+800*12.611877f+buyCostAll)/(500+800);
+				expectRefPrimeCostPrice=(500*12.331+800*12.612+buyCostAll)/(500+800);
 				double sellProfit = 1000*(12.507691f - expectRefPrimeCostPrice);
 				expectRefPrimeCostPrice=(expectRefPrimeCostPrice*(1300-1000) + sellCost - sellProfit)/(1300-1000);
 				CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, expectRefPrimeCostPrice, 2);
@@ -253,7 +253,7 @@ public class TestQuantSession {
 	public static void main(String[] args) {
 		CSystem.start();
 		//CLog.config_setTag("TEST", false);
-		CTest.ADD_TEST(TestQuantSession.class);
+		CTest.ADD_TEST(TestQuantSession_Simple.class);
 		CTest.RUN_ALL_TESTS();
 		CSystem.stop();
 	}

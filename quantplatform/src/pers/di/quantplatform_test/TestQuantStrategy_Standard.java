@@ -11,7 +11,7 @@ import pers.di.dataapi_test.TestCommonHelper;
 import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
 
-public class TestQuantStrategy {
+public class TestQuantStrategy_Standard {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 	public static double s_transactionCostsRatioBuy = 0.0016f;
@@ -400,8 +400,8 @@ public class TestQuantStrategy {
 		CSystem.start();
 //		CLog.config_setTag("TEST", false);
 //		CLog.config_setTag("ACCOUNT", false);
-		CTest.ADD_TEST(TestQuantStrategy.class);
-		CTest.RUN_ALL_TESTS("TestQuantStrategy.test_QuantStragety");
+		CTest.ADD_TEST(TestQuantStrategy_Standard.class);
+		CTest.RUN_ALL_TESTS("TestQuantStrategy_Standard.test_QuantStragety");
 		CSystem.stop();
 	}
 }
