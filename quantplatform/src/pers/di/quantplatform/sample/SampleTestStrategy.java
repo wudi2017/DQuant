@@ -119,7 +119,7 @@ public class SampleTestStrategy {
 				cAccoutDriver, 
 				new TestStrategy());
 		
-		QuantSession.run();
+		qSession.run();
 	}
 	
 	public static void main(String[] args) {

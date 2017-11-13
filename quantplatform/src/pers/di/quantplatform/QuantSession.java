@@ -38,10 +38,11 @@ public class QuantSession {
 		}
 	}
 	
-	public static boolean run()
+	public boolean run()
 	{
 		CLog.output("QuantSession", "The QuantSession is running now...");
 		StockDataEngine.instance().run();
+		StockDataEngine.instance().clearListener(m_listener);
 		return true;
 	}
 	

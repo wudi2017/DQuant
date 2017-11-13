@@ -198,6 +198,46 @@ public class StockDataEngine {
 		}
 	}
 	
+	public void clearListener(EngineListener listener)
+	{
+		{
+			Iterator<ListenerCallback> it = m_SharedSession.initializeCbs.iterator();
+			while(it.hasNext()){
+				ListenerCallback lcb = it.next();
+			    if(lcb.listener.equals(listener)){
+			        it.remove();
+			    }
+			}
+		}
+		{
+			Iterator<ListenerCallback> it = m_SharedSession.tranDayStartCbs.iterator();
+			while(it.hasNext()){
+				ListenerCallback lcb = it.next();
+			    if(lcb.listener.equals(listener)){
+			        it.remove();
+			    }
+			}
+		}
+		{
+			Iterator<ListenerCallback> it = m_SharedSession.minuteTimePricesCbs.iterator();
+			while(it.hasNext()){
+				ListenerCallback lcb = it.next();
+			    if(lcb.listener.equals(listener)){
+			        it.remove();
+			    }
+			}
+		}
+		{
+			Iterator<ListenerCallback> it = m_SharedSession.tranDayFinishCbs.iterator();
+			while(it.hasNext()){
+				ListenerCallback lcb = it.next();
+			    if(lcb.listener.equals(listener)){
+			        it.remove();
+			    }
+			}
+		}
+	}
+	
 	private SharedSession m_SharedSession;
 	private CDateTimeThruster m_CDateTimeThruster;
 }
