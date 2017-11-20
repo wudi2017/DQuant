@@ -43,7 +43,18 @@ public class AccountEntity extends Account {
 		
 		if(!m_initFlag) return -1;
 		
-		ctnMoney.set(m_accountStore.storeEntity().money);
+		double availableMoney = 0.0;
+		availableMoney = m_accountStore.storeEntity().money;
+		for(int i=0; i<m_accountStore.storeEntity().commissionOrderList.size(); i++)
+		{
+			CommissionOrder cCommissionOrder = m_accountStore.storeEntity().commissionOrderList.get(i);
+			if(TRANACT.BUY == cCommissionOrder.tranAct)
+			{
+				double lockedMoney = cCommissionOrder.price * (cCommissionOrder.amount-cCommissionOrder.dealAmount);
+				availableMoney = availableMoney-lockedMoney;
+			}
+		}
+		ctnMoney.set(availableMoney);
 		
 		return 0;
 	}
@@ -236,7 +247,33 @@ public class AccountEntity extends Account {
 				
 		double dealCost = 0.0; // 此费用是成交单费用，买入直接=buycost，卖出=sellcost+buycost
 		
-		// hold stock
+		// commission order update
+		Collections.sort(m_accountStore.storeEntity().commissionOrderList);
+		int leftDistribution = amount;
+		for(int i=0; i<m_accountStore.storeEntity().commissionOrderList.size(); i++)
+		{
+			CommissionOrder cCommissionOrder = m_accountStore.storeEntity().commissionOrderList.get(i);
+			if(cCommissionOrder.tranAct==tranact && cCommissionOrder.stockID.equals(stockID))
+			{
+				int currentNeedDistribution = cCommissionOrder.amount-cCommissionOrder.dealAmount;
+				if(currentNeedDistribution > 0)
+				{
+					if(leftDistribution <= currentNeedDistribution)
+					{
+						cCommissionOrder.dealAmount = cCommissionOrder.dealAmount+leftDistribution;
+						leftDistribution = 0;
+						break;
+					}
+					else
+					{
+						cCommissionOrder.dealAmount = cCommissionOrder.amount;
+						leftDistribution = leftDistribution-currentNeedDistribution;
+					}
+				}
+			}
+		}
+		
+		// hold stock update
 		if(tranact == TRANACT.BUY)
 		{
 			// 获取持有对象

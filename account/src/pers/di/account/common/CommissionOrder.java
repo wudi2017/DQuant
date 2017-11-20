@@ -1,8 +1,6 @@
 package pers.di.account.common;
 
-import java.util.Comparator;
-
-public class CommissionOrder implements Comparator {
+public class CommissionOrder implements Comparable {
 	
 	public String date;
 	public String time;
@@ -24,12 +22,28 @@ public class CommissionOrder implements Comparator {
 	}
 
 	@Override
-	public int compare(Object arg0, Object arg1) {
+	public int compareTo(Object o) {
+		CommissionOrder c0 = (CommissionOrder)this;
+		CommissionOrder c1 = (CommissionOrder)o;
 		
-		CommissionOrder c0 = (CommissionOrder)arg0;
-		CommissionOrder c1 = (CommissionOrder)arg1;
+		// 先按id排序
+		if(!c0.stockID.equals(c1.stockID))
+		{
+			return c0.stockID.compareTo(c1.stockID);
+		}
 		
-		if(TRANACT.BUY == tranAct)
+		// 再按买卖排序
+		if(TRANACT.BUY == c0.tranAct && TRANACT.SELL == c1.tranAct)
+		{
+			return 1;
+		}
+		else if(TRANACT.SELL == c0.tranAct && TRANACT.BUY == c1.tranAct)
+		{
+			return -1;
+		}
+		
+		// 根据买卖不同 按价格排序
+		if(TRANACT.BUY == c0.tranAct)
 		{
 			if(c0.price < c1.price)
 			{
@@ -41,10 +55,11 @@ public class CommissionOrder implements Comparator {
 			}
 			else
 			{
+				// 最后按时间排序
 				return c0.time.compareTo(c1.time);
 			}
 		}
-		else if(TRANACT.SELL == tranAct)
+		else if(TRANACT.SELL == c0.tranAct)
 		{
 			if(c0.price < c1.price)
 			{
@@ -56,6 +71,7 @@ public class CommissionOrder implements Comparator {
 			}
 			else
 			{
+				// 最后按时间排序
 				return c0.time.compareTo(c1.time);
 			}
 		}
@@ -63,5 +79,6 @@ public class CommissionOrder implements Comparator {
 		{
 			return 0;
 		}
+		
 	}
 }

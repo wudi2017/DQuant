@@ -1,10 +1,16 @@
 package pers.di.account_test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pers.di.account.Account;
 import pers.di.account.AccoutDriver;
 import pers.di.account.IMarketOpe;
+import pers.di.account.common.CommissionOrder;
+import pers.di.account.common.HoldStock;
 import pers.di.account.common.TRANACT;
 import pers.di.common.CLog;
+import pers.di.common.CObjectContainer;
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
 
@@ -72,6 +78,16 @@ public class TestCommisionDealOrlder {
 		acc.postTradeOrder(TRANACT.BUY, "600002", 300, 21.18f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 11.89f);
 		cAccoutDriver.newDayEnd();
+		//check
+		{
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
+			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f - 300*21.18f, 2);
+			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+			CTest.EXPECT_TRUE(ctnHoldList.size() == 1);
+		}
+		
 		
 		cAccoutDriver.setDateTime("2017-10-11", "13:00:01");
 		cAccoutDriver.newDayBegin();
@@ -79,16 +95,88 @@ public class TestCommisionDealOrlder {
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 12.5f); // chengjiao 200
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 9.18f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 400, 10.96f);// chengjiao 100
+		//check
+		{
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
+			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f-300*21.18f-100*11.5f-200*12.5f-300*9.18f-400*10.96f, 2);
+			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+			CTest.EXPECT_TRUE(ctnHoldList.size() == 1);
+		}
 		acc.postTradeOrder(TRANACT.BUY, "600002", 100, 24.88f);
 		acc.postTradeOrder(TRANACT.BUY, "600002", 200, 23.05f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 500, 9.89f); // chufa chengjiao
+		//check
+		{
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
+			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
+			double availableMoney = 10*10000f-300*21.18f-300*10.96f-500*9.89f-300*9.18-100*24.88-200*23.05-400*10.55;
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), availableMoney, 2);
+			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+			CTest.EXPECT_TRUE(ctnHoldList.size() == 2);
+			List<CommissionOrder> ctnCommissionOrderList = new ArrayList<CommissionOrder>();
+			CTest.EXPECT_TRUE(acc.getCommissionOrderList(ctnCommissionOrderList) == 0);
+			for(int i=0; i<ctnCommissionOrderList.size(); i++)
+			{
+				CommissionOrder cCommissionOrder = ctnCommissionOrderList.get(i);
+				if(0 == Double.compare(cCommissionOrder.price, 12.5))
+				{
+					CTest.EXPECT_LONG_EQ(cCommissionOrder.dealAmount, cCommissionOrder.amount);
+				}
+				if(0 == Double.compare(cCommissionOrder.price, 11.5))
+				{
+					CTest.EXPECT_LONG_EQ(cCommissionOrder.dealAmount, cCommissionOrder.amount);
+				}
+				if(0 == Double.compare(cCommissionOrder.price, 10.96))
+				{
+					CTest.EXPECT_LONG_EQ(cCommissionOrder.dealAmount, 100);
+				}
+				if(0 == Double.compare(cCommissionOrder.price, 9.18))
+				{
+					CTest.EXPECT_LONG_EQ(cCommissionOrder.dealAmount, 0);
+				}
+			}
+		}
 		cAccoutDriver.newDayEnd();
+		//check
+		{
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
+			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
+			double availableMoney = 10*10000f-300*21.18f-100*24.88-200*23.05-400*10.55;
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), availableMoney, 2);
+			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+			CTest.EXPECT_TRUE(ctnHoldList.size() == 2);
+		}
+				
 		
 		cAccoutDriver.setDateTime("2017-10-12", "14:30:01");
 		cAccoutDriver.newDayBegin();
 		acc.postTradeOrder(TRANACT.SELL, "600001", 200, 8.68f); // chengjiao 100
 		acc.postTradeOrder(TRANACT.SELL, "600001", 100, 10.85f);
 		acc.postTradeOrder(TRANACT.SELL, "600001", 100, 8.18f); // chufa maichu, chengjiao 100
+		//check
+		{
+			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
+			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
+			double availableMoney = 10*10000f-300*21.18f-100*24.88-200*23.05-400*10.55 + 200*9.85-150-250/2;
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), availableMoney, 2);
+			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
+			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
+			CTest.EXPECT_TRUE(ctnHoldList.size() == 2);
+			List<CommissionOrder> ctnCommissionOrderList = new ArrayList<CommissionOrder>();
+			CTest.EXPECT_TRUE(acc.getCommissionOrderList(ctnCommissionOrderList) == 0);
+			for(int i=0; i<ctnCommissionOrderList.size(); i++)
+			{
+				CommissionOrder cCommissionOrder = ctnCommissionOrderList.get(i);
+				if(0 == Double.compare(cCommissionOrder.price, 8.68))
+				{
+					CTest.EXPECT_LONG_EQ(cCommissionOrder.dealAmount, 100);
+				}
+			}
+		}
 		cAccoutDriver.newDayEnd();
 	}
 	
