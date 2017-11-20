@@ -151,6 +151,7 @@ public class AccountStore {
             		if(cCommissionOrder.tranAct == TRANACT.SELL) tranactVal= "SELL";
             		String amountVal = String.format("%d", cCommissionOrder.amount);
             		String priceVal =String.format("%.3f", cCommissionOrder.price);
+            		String dealAmountVal =String.format("%d", cCommissionOrder.dealAmount);
             				
             		Element Node_commissionOrder = doc.createElement("commissionOrder");
             		Node_commissionOrder.setAttribute("date", cCommissionOrder.date);
@@ -159,6 +160,7 @@ public class AccountStore {
             		Node_commissionOrder.setAttribute("stockID", cCommissionOrder.stockID);
             		Node_commissionOrder.setAttribute("amount", amountVal);
             		Node_commissionOrder.setAttribute("price", priceVal);
+            		Node_commissionOrder.setAttribute("dealAmountVal", dealAmountVal);
             		
             		Node_CommissionOrderList.appendChild(Node_commissionOrder);
             	}
@@ -348,6 +350,7 @@ public class AccountStore {
 				        	String stockID = ((Element)node_commissionOrder).getAttribute("stockID");
 				        	String amount = ((Element)node_commissionOrder).getAttribute("amount");
 				        	String price = ((Element)node_commissionOrder).getAttribute("price");
+				        	String dealAmount = ((Element)node_commissionOrder).getAttribute("dealAmount");
 				        	
 				        	CommissionOrder cCommissionOrder = new CommissionOrder();
 				        	cCommissionOrder.date = date;
@@ -357,6 +360,7 @@ public class AccountStore {
 				        	cCommissionOrder.stockID = stockID;
 				        	cCommissionOrder.amount = Integer.parseInt(amount);
 				        	cCommissionOrder.price = Double.parseDouble(price);
+				        	cCommissionOrder.dealAmount = Integer.parseInt(dealAmount);
 				        	commissionOrderList.add(cCommissionOrder);
 			        	}
 			        }
