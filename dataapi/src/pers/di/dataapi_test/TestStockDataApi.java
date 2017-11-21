@@ -188,7 +188,7 @@ public class TestStockDataApi {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);
-		CTest.RUN_ALL_TESTS();
+		CTest.RUN_ALL_TESTS("TestStockDataApi.test_updateLocalStocks");
 		CSystem.stop();
 	}
 }

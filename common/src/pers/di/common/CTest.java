@@ -89,6 +89,22 @@ public abstract class CTest {
 		}
 	}
 	
+	public static void EXPECT_STR_NE(String sActual, String sExpect)
+	{
+		if(sExpect.equals(sActual)) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        outputProcess("[CTEST] NG(%d) !expect(%s) actual(%s) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		sExpect, sActual, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	
 	public static void EXPECT_LONG_EQ(long lActual, long lExpect)
 	{
 		if(lExpect != lActual) 
@@ -99,6 +115,22 @@ public abstract class CTest {
 	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
 	        StackTraceElement tmp = trace[1];
 	        outputProcess("[CTEST] NG(%d) expect(%d) actual(%d) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		lExpect, lActual, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	
+	public static void EXPECT_LONG_NE(long lActual, long lExpect)
+	{
+		if(lExpect == lActual) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        outputProcess("[CTEST] NG(%d) !expect(%d) actual(%d) (%s:%d)",
 	        		s_curTestInnnerErrorCount, 
 	        		lExpect, lActual, 
 	        		tmp.getFileName(), tmp.getLineNumber());
