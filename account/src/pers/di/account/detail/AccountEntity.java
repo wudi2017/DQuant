@@ -73,6 +73,24 @@ public class AccountEntity extends Account {
 
 		if(tranact == TRANACT.BUY)
 		{
+			// check input param
+			if(0 != amount%100)
+			{
+				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder amount error!");
+				return -1;
+			}
+			if(0 != amount%100)
+			{
+				CObjectContainer<Double> money = new CObjectContainer<Double>();
+				this.getMoney(money);
+				if(Double.compare(money.get(), amount*price) < 0)
+				{
+					CLog.error("ACCOUNT", "@AccountEntity CommissionOrder money error!");
+					return -1;
+				}
+			}
+			
+			// create commission order
 			CommissionOrder cCommissionOrder = new CommissionOrder();
 			cCommissionOrder.date = m_accountStore.storeEntity().date;
 			cCommissionOrder.time = m_accountStore.storeEntity().time;
@@ -89,6 +107,24 @@ public class AccountEntity extends Account {
 		
 		if(tranact == TRANACT.SELL)
 		{
+			// check input param
+			boolean bCheck = false;
+			for(int i=0; i<m_accountStore.storeEntity().holdStockList.size(); i++)
+			{
+				HoldStock cHoldStock = m_accountStore.storeEntity().holdStockList.get(i);
+				if(cHoldStock.stockID.equals(stockID) && cHoldStock.availableAmount>=amount)
+				{
+					bCheck = true;
+					break;
+				}
+			}
+			if(!bCheck)
+			{
+				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder availableAmount error!");
+				return -1;
+			}
+						
+			// create commission order
 			CommissionOrder cCommissionOrder = new CommissionOrder();
 			cCommissionOrder.date = m_accountStore.storeEntity().date;
 			cCommissionOrder.time = m_accountStore.storeEntity().time;

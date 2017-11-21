@@ -279,22 +279,19 @@ public class TestAccountDriver {
 		CTest.EXPECT_TRUE(acc.getCommissionOrderList(ctnCommissionList) == 0);
 		CTest.EXPECT_LONG_EQ(ctnCommissionList.size(), 2);
 
-		if(ctnCommissionList.size() == 2)
-		{
-			CommissionOrder cCommissionOrder0 = ctnCommissionList.get(0);
-			CTest.EXPECT_STR_EQ(cCommissionOrder0.date, "2017-10-11");
-			CTest.EXPECT_STR_EQ(cCommissionOrder0.time, "14:30:01");
-			CTest.EXPECT_LONG_EQ(cCommissionOrder0.amount, 200);
-			CTest.EXPECT_DOUBLE_EQ(cCommissionOrder0.price, 2.0f, 2);
-			CTest.EXPECT_TRUE(0 == cCommissionOrder0.tranAct.compareTo(TRANACT.BUY));
-			
-			CommissionOrder cCommissionOrder1 = ctnCommissionList.get(1);
-			CTest.EXPECT_STR_EQ(cCommissionOrder1.date, "2017-10-11");
-			CTest.EXPECT_STR_EQ(cCommissionOrder1.time, "14:32:01");
-			CTest.EXPECT_LONG_EQ(cCommissionOrder1.amount, 100);
-			CTest.EXPECT_DOUBLE_EQ(cCommissionOrder1.price, 1.12f, 2);
-			CTest.EXPECT_TRUE(0 == cCommissionOrder1.tranAct.compareTo(TRANACT.SELL));
-		}
+		CommissionOrder cCommissionOrder0 = ctnCommissionList.get(0);
+		CTest.EXPECT_STR_EQ(cCommissionOrder0.date, "2017-10-11");
+		CTest.EXPECT_STR_EQ(cCommissionOrder0.time, "14:30:01");
+		CTest.EXPECT_LONG_EQ(cCommissionOrder0.amount, 200);
+		CTest.EXPECT_DOUBLE_EQ(cCommissionOrder0.price, 2.0f, 2);
+		CTest.EXPECT_TRUE(0 == cCommissionOrder0.tranAct.compareTo(TRANACT.BUY));
+		
+		CommissionOrder cCommissionOrder1 = ctnCommissionList.get(1);
+		CTest.EXPECT_STR_EQ(cCommissionOrder1.date, "2017-10-11");
+		CTest.EXPECT_STR_EQ(cCommissionOrder1.time, "14:32:01");
+		CTest.EXPECT_LONG_EQ(cCommissionOrder1.amount, 100);
+		CTest.EXPECT_DOUBLE_EQ(cCommissionOrder1.price, 1.12f, 2);
+		CTest.EXPECT_TRUE(0 == cCommissionOrder1.tranAct.compareTo(TRANACT.SELL));
 		
 		cAccoutDriver.newDayEnd();
 		

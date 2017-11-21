@@ -35,11 +35,11 @@ public class CommissionOrder implements Comparable {
 		// 再按买卖排序
 		if(TRANACT.BUY == c0.tranAct && TRANACT.SELL == c1.tranAct)
 		{
-			return 1;
+			return -1;
 		}
 		else if(TRANACT.SELL == c0.tranAct && TRANACT.BUY == c1.tranAct)
 		{
-			return -1;
+			return 1;
 		}
 		
 		// 根据买卖不同 按价格排序
