@@ -8,20 +8,25 @@ import pers.di.common.CUtilsDateTime;
 
 public class HttpHelper {
 	
-	public static void limitAccessSpeed(int msec)
+	public HttpHelper()
+	{
+		m_lastAccessTC = 0;
+	}
+	
+	public void limitAccessSpeed(int msec)
 	{
 		long curTC = CUtilsDateTime.GetCurrentTimeMillis();
-		if(curTC-s_lastAccessTC>msec)
+		if(curTC-m_lastAccessTC>msec)
 		{
-			s_lastAccessTC = curTC;
+			m_lastAccessTC = curTC;
 			return;
 		}
 		else
 		{
-			long waitms = msec - (curTC-s_lastAccessTC);
+			long waitms = msec - (curTC-m_lastAccessTC);
 			try {
 				Thread.sleep(waitms);
-				s_lastAccessTC = CUtilsDateTime.GetCurrentTimeMillis();
+				m_lastAccessTC = CUtilsDateTime.GetCurrentTimeMillis();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -29,7 +34,7 @@ public class HttpHelper {
 		}
 	}
 	
-	public static String getRandomUserAgent()
+	public String getRandomUserAgent()
 	{
 		int iSize = s_userAgentList.size();
 		int iCurRandom = CRandom.randomUnsignedInteger()%iSize;
@@ -40,7 +45,8 @@ public class HttpHelper {
 	/*
 	 * **************************************************************************************
 	 */
-	public static long s_lastAccessTC = 0;
+	public long m_lastAccessTC = 0;
+	
 	public static List<String> s_userAgentList = Arrays.asList(
 			"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1", 
 	        "Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11", 

@@ -7,12 +7,14 @@ import pers.di.dataapi.common.*;
 public class TestDataWebStockInfo {
 		public static void main(String[] args){
 		{
+			DataWebStockInfo cDataWebStockInfo = new DataWebStockInfo();
+			
 			{
 				String stockID = "300550";
 				
 				System.out.println("getRealTimeInfoMore -----------------------------------");
 				StockInfo ctnStockInfo = new StockInfo();
-				int error = DataWebStockInfo.getStockInfo(stockID, ctnStockInfo);
+				int error = cDataWebStockInfo.getStockInfo(stockID, ctnStockInfo);
 				if(0 == error)
 				{ 
 					System.out.println(ctnStockInfo.name);

@@ -9,11 +9,13 @@ import pers.di.dataapi.common.*;
 
 public class TestDataWebStockAllList {
 	public static void main(String[] args) {
+		
+		DataWebStockAllList cDataWebStockAllList = new DataWebStockAllList();
 
 		for(int iTime=0; iTime<100; iTime++)
 		{
 			List<StockItem> ctnStockItem = new ArrayList<StockItem>();
-			int error = DataWebStockAllList.getAllStockList(ctnStockItem);
+			int error = cDataWebStockAllList.getAllStockList(ctnStockItem);
 			if(0 == error)
 			{
 				for(int i = 0; i < ctnStockItem.size(); i++)  

@@ -12,6 +12,11 @@ import pers.di.dataapi.common.*;
 
 public class DataWebStockInfo extends HttpHelper
 {
+	public DataWebStockInfo()
+	{
+		m_cDataWebStockRealTimeInfo = new DataWebStockRealTimeInfo();
+	}
+	
 	/*
 	 * 从网络获取某只股票信息（基本信息，总市值，流通市值，市盈率等）
 	 * 
@@ -20,7 +25,7 @@ public class DataWebStockInfo extends HttpHelper
 	 * 参数：
 	 *     container 接收容器
 	 */
-	public static int getStockInfo(String id, StockInfo container)
+	public int getStockInfo(String id, StockInfo container)
 	{
 		// limitAccessSpeed(0); // not limit
 		
@@ -28,7 +33,7 @@ public class DataWebStockInfo extends HttpHelper
 		
 		// get base info
 		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-		int errGetRealTimeInfo = DataWebStockRealTimeInfo.getRealTimeInfo(id, ctnRealTimeInfo);
+		int errGetRealTimeInfo = m_cDataWebStockRealTimeInfo.getRealTimeInfo(id, ctnRealTimeInfo);
 		if(0 != errGetRealTimeInfo) 
 		{
 			error = -2;
@@ -98,7 +103,7 @@ public class DataWebStockInfo extends HttpHelper
 		return error;
 	}
 	
-    public static  byte[] readInputStream(InputStream inputStream) throws IOException {    
+    private byte[] readInputStream(InputStream inputStream) throws IOException {    
         byte[] buffer = new byte[1024];    
         int len = 0;    
         ByteArrayOutputStream bos = new ByteArrayOutputStream();    
@@ -108,4 +113,6 @@ public class DataWebStockInfo extends HttpHelper
         bos.close();    
         return bos.toByteArray();    
     }  
+    
+    private DataWebStockRealTimeInfo m_cDataWebStockRealTimeInfo;
 }

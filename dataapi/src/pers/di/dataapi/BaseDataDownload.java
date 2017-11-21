@@ -15,6 +15,11 @@ public class BaseDataDownload {
 	public BaseDataDownload (BaseDataStorage cBaseDataStorage) 
 	{
 		m_baseDataStorage = cBaseDataStorage;
+		m_DataWebStockAllList = new DataWebStockAllList();
+		m_DataWebStockDayK = new DataWebStockDayK();
+		m_DataWebStockDayDetail = new DataWebStockDayDetail();
+		m_DataWebStockDividendPayout = new DataWebStockDividendPayout();
+		m_DataWebStockInfo = new DataWebStockInfo();
 	}
 	
 	/*
@@ -70,7 +75,7 @@ public class BaseDataDownload {
 		
 		// 更新所有k
 		List<StockItem> stockAllList = new ArrayList<StockItem>();
-		int errAllStockList = DataWebStockAllList.getAllStockList(stockAllList);
+		int errAllStockList = m_DataWebStockAllList.getAllStockList(stockAllList);
 		if(0 == errAllStockList)
 		{
 			int iAllStockListSize = stockAllList.size();
@@ -184,7 +189,7 @@ public class BaseDataDownload {
 			{
 				// 获取当前BaseInfo信息
 				StockInfo ctnStockInfo = new StockInfo();
-				int errStockInfo = DataWebStockInfo.getStockInfo(id, ctnStockInfo);
+				int errStockInfo = m_DataWebStockInfo.getStockInfo(id, ctnStockInfo);
 				if(0 == errStockInfo)
 				{
 					// 保存股票基本信息
@@ -239,7 +244,7 @@ public class BaseDataDownload {
 						
 						// 获取网络日K数据
 						List<KLine> ctnKLineWeb = new ArrayList<KLine>();
-						int errKLineWeb = DataWebStockDayK.getKLine(id, fromDateStr, toDateStr, ctnKLineWeb);
+						int errKLineWeb = m_DataWebStockDayK.getKLine(id, fromDateStr, toDateStr, ctnKLineWeb);
 						if(0 == errKLineWeb)
 						// 新增日K数据获取成功
 						{
@@ -310,7 +315,7 @@ public class BaseDataDownload {
 		// 本地没有数据，需要试图重新下载
 		{	
 			StockInfo ctnStockInfo = new StockInfo();
-			int errStockInfo = DataWebStockInfo.getStockInfo(id, ctnStockInfo);
+			int errStockInfo = m_DataWebStockInfo.getStockInfo(id, ctnStockInfo);
 			if(0 == errStockInfo)
 			{
 				// 下载日K，分红派息，基本信息
@@ -361,7 +366,7 @@ public class BaseDataDownload {
 		String curDate = CUtilsDateTime.GetCurDateStr();
 		String paramToDate = curDate.replace("-", "");
 		List<KLine> ctnKLine = new ArrayList<KLine>();
-		int error = DataWebStockDayK.getKLine(id, "20080101", paramToDate, ctnKLine);
+		int error = m_DataWebStockDayK.getKLine(id, "20080101", paramToDate, ctnKLine);
 		if(0 == error)
 		{
 			try
@@ -390,7 +395,7 @@ public class BaseDataDownload {
 		try
 		{
 			StockInfo ctnStockInfo = new StockInfo();
-			int errStockInfo = DataWebStockInfo.getStockInfo(id, ctnStockInfo);
+			int errStockInfo = m_DataWebStockInfo.getStockInfo(id, ctnStockInfo);
 			if(0 == errStockInfo)
 			{
 				m_baseDataStorage.saveStockInfo(id, ctnStockInfo);
@@ -415,7 +420,7 @@ public class BaseDataDownload {
 	public int downloadStockDividendPayout(String id)
 	{
 		List<DividendPayout> ctnDividendPayout = new ArrayList<DividendPayout>();
-		int errDividendPayout = DataWebStockDividendPayout.getDividendPayout(id, ctnDividendPayout);
+		int errDividendPayout = m_DataWebStockDividendPayout.getDividendPayout(id, ctnDividendPayout);
 		if(0 == errDividendPayout)
 		{
 			try
@@ -445,7 +450,7 @@ public class BaseDataDownload {
 		s_fmt.format("@downloadStocKLineDetail stockID(%s) date(%s)\n",id,date);
 		
 		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
-		int error = DataWebStockDayDetail.getDayDetail(id, date, ctnTradeDetail);
+		int error = m_DataWebStockDayDetail.getDayDetail(id, date, ctnTradeDetail);
 		if(0 == error)
 		{
 			try
@@ -468,6 +473,12 @@ public class BaseDataDownload {
 	}
 	
 	private BaseDataStorage m_baseDataStorage;
+	
+	private DataWebStockAllList m_DataWebStockAllList;
+	private DataWebStockDayK m_DataWebStockDayK;
+	private DataWebStockDayDetail m_DataWebStockDayDetail;
+	private DataWebStockDividendPayout m_DataWebStockDividendPayout;
+	private DataWebStockInfo m_DataWebStockInfo;
 	
 	private Formatter s_fmt = new Formatter(System.out);
 }

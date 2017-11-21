@@ -26,7 +26,7 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 	 * 参数：
 	 *     container 接收容器
 	 */
-	public static int getRealTimeInfo(String id, RealTimeInfo container)
+	public int getRealTimeInfo(String id, RealTimeInfo container)
 	{
 		// limitAccessSpeed(0); // not limit
 		
@@ -96,7 +96,7 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 		return error;
 	}
 	
-    public static  byte[] readInputStream(InputStream inputStream) throws IOException {    
+    private byte[] readInputStream(InputStream inputStream) throws IOException {    
         byte[] buffer = new byte[1024];    
         int len = 0;    
         ByteArrayOutputStream bos = new ByteArrayOutputStream();    

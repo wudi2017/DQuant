@@ -36,7 +36,7 @@ public class DataWebStockAllList extends HttpHelper
 	 * 参数：
 	 *     container 接收容器
 	 */
-	public static int getAllStockList(List<StockItem> container)
+	public int getAllStockList(List<StockItem> container)
 	{
 		limitAccessSpeed(2000);
 		
@@ -137,14 +137,14 @@ public class DataWebStockAllList extends HttpHelper
 		public int error;
 		public List<StockItem> resultList;
 	}
-	public static ResultRandomStock getRandomStock(int count)
+	public ResultRandomStock getRandomStock(int count)
 	{
 		ResultRandomStock cResultRandomStock = new ResultRandomStock();
 		
 		if(0 != count)
 		{
 			List<StockItem> cStockItems = new ArrayList<StockItem>();
-			int error = DataWebStockAllList.getAllStockList(cStockItems);
+			int error = this.getAllStockList(cStockItems);
 			if(0 == error)
 			{
 				for(int i = 0; i < count; i++)  

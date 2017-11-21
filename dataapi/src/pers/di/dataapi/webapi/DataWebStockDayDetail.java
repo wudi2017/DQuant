@@ -22,7 +22,7 @@ import org.xml.sax.InputSource;
 import pers.di.dataapi.common.TradeDetail;
 import pers.di.dataapi.common.*;
 
-public class DataWebStockDayDetail  extends HttpHelper 
+public class DataWebStockDayDetail extends HttpHelper 
 {
 	/*
 	 * 从网络某只股票某日内的交易细节数据
@@ -32,7 +32,7 @@ public class DataWebStockDayDetail  extends HttpHelper
 	 * 参数：
 	 *     container 接收容器
 	 */
-	public static int getDayDetail(String id, String date, List<TradeDetail> container)
+	public int getDayDetail(String id, String date, List<TradeDetail> container)
 	{
 		limitAccessSpeed(1250);
 		
@@ -105,7 +105,7 @@ public class DataWebStockDayDetail  extends HttpHelper
 		return error;
 	}
 	
-    public static  byte[] readInputStream(InputStream inputStream) throws IOException {    
+    private byte[] readInputStream(InputStream inputStream) throws IOException {    
         byte[] buffer = new byte[1024];    
         int len = 0;    
         ByteArrayOutputStream bos = new ByteArrayOutputStream();    
@@ -115,5 +115,4 @@ public class DataWebStockDayDetail  extends HttpHelper
         bos.close();    
         return bos.toByteArray();    
     }  
-
 }

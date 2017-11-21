@@ -13,14 +13,15 @@ public class TestDataWebStockDividendPayout {
 	
 	public static void test_getDividendPayout()
 	{
-		
+		DataWebStockDividendPayout cDataWebStockDividendPayout = new DataWebStockDividendPayout();
+			
 		int iR = CRandom.randomUnsignedInteger()%1000;
 		int StockIDInt = 600000+iR;
 		
 		String StockID = String.format("%d", StockIDInt);
 		
 		List<DividendPayout> container = new ArrayList<DividendPayout>();
-		int error = DataWebStockDividendPayout.getDividendPayout(StockID, container);
+		int error = cDataWebStockDividendPayout.getDividendPayout(StockID, container);
 		if(0 == error)
 		{
 			CLog.output("TEST", "DataWebStockDividendPayout.getDividendPayout %s OK!", StockID);

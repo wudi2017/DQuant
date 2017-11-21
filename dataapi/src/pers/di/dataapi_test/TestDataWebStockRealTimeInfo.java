@@ -8,11 +8,13 @@ public class TestDataWebStockRealTimeInfo {
 
 	public static void main(String[] args){
 		
+		DataWebStockRealTimeInfo cDataWebStockRealTimeInfo = new DataWebStockRealTimeInfo();
+		
 		String stockID = "300550";
 		{
 			System.out.println("getRealTimeInfo -----------------------------------");
 			RealTimeInfo container = new RealTimeInfo();
-			int error = DataWebStockRealTimeInfo.getRealTimeInfo(stockID, container);
+			int error = cDataWebStockRealTimeInfo.getRealTimeInfo(stockID, container);
 			if(0 == error)
 			{ 
 				System.out.println(container.name);

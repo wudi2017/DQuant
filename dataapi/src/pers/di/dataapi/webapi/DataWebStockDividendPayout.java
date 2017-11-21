@@ -39,7 +39,7 @@ public class DataWebStockDividendPayout  extends HttpHelper
 	 * 参数：
 	 *     container 接收容器
 	 */
-	public static int getDividendPayout(String id, List<DividendPayout> container)
+	public int getDividendPayout(String id, List<DividendPayout> container)
 	{
 		limitAccessSpeed(1250);
 		
@@ -190,7 +190,7 @@ public class DataWebStockDividendPayout  extends HttpHelper
 		return error;
 	}
 	
-    public static  byte[] readInputStream(InputStream inputStream) throws IOException {    
+    private  byte[] readInputStream(InputStream inputStream) throws IOException {    
         byte[] buffer = new byte[1024];    
         int len = 0;    
         ByteArrayOutputStream bos = new ByteArrayOutputStream();    

@@ -29,6 +29,12 @@ import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.*;
 
 public class DataWebStockDayK {
+	
+	public DataWebStockDayK()
+	{
+		m_http = new CHttp();
+	}
+	
 	/*
 	 * 从网络获取某只股票的日K数据
 	 * 
@@ -46,7 +52,7 @@ public class DataWebStockDayK {
 	 *     v2.0: url: e.g "http://quotes.money.163.com/service/chddata.html?code=0601857&start=20171105&end=20170809&fields=TCLOSE;HIGH;LOW;TOPEN;VOTURNOVER;"
 	 
 	 */
-	public static int getKLine(String id, String begin_date, String end_date, List<KLine> container)
+	public int getKLine(String id, String begin_date, String end_date, List<KLine> container)
 	{
 		int error = 0;
 		
@@ -174,5 +180,5 @@ public class DataWebStockDayK {
 		return error;
 	}
 	
-	public static CHttp m_http = new CHttp();
+	private CHttp m_http;
 }

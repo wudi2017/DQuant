@@ -16,6 +16,7 @@ public class BaseDataLayer {
 	{
 		m_cBaseDataStorage = new BaseDataStorage(workDir);
 		m_cBaseDataDownload = new BaseDataDownload(m_cBaseDataStorage);
+		m_cDataWebStockRealTimeInfo = new DataWebStockRealTimeInfo();
 	}
 	
 	public String dataRoot()
@@ -539,7 +540,7 @@ public class BaseDataLayer {
 	
 	public int getRealTimeInfo(String stockID, RealTimeInfo container)
 	{
-		return DataWebStockRealTimeInfo.getRealTimeInfo(stockID, container);
+		return m_cDataWebStockRealTimeInfo.getRealTimeInfo(stockID, container);
 	}
 	
 	
@@ -681,6 +682,7 @@ public class BaseDataLayer {
 	
 	private BaseDataDownload m_cBaseDataDownload;
 	private BaseDataStorage m_cBaseDataStorage;
+	private DataWebStockRealTimeInfo m_cDataWebStockRealTimeInfo;
 	
 	public static Random random = new Random();
 	public static Formatter fmt = new Formatter(System.out);
