@@ -18,6 +18,7 @@ public class CFile {
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			System.out.println("Exception:" + e.getMessage()); 
 		}
 	}
@@ -36,6 +37,7 @@ public class CFile {
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			System.out.println("Exception:" + e.getMessage()); 
 		}
 		return null;

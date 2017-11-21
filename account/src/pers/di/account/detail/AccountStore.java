@@ -160,7 +160,7 @@ public class AccountStore {
             		Node_commissionOrder.setAttribute("stockID", cCommissionOrder.stockID);
             		Node_commissionOrder.setAttribute("amount", amountVal);
             		Node_commissionOrder.setAttribute("price", priceVal);
-            		Node_commissionOrder.setAttribute("dealAmountVal", dealAmountVal);
+            		Node_commissionOrder.setAttribute("dealAmount", dealAmountVal);
             		
             		Node_CommissionOrderList.appendChild(Node_commissionOrder);
             	}
@@ -446,6 +446,7 @@ public class AccountStore {
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			System.out.println(e.getMessage()); 
 			return false;
 		}

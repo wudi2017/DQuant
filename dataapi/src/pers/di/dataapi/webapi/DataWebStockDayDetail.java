@@ -95,6 +95,7 @@ public class DataWebStockDayDetail  extends HttpHelper
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			System.out.println("Exception[WebStockDayDetail]:" + e.getMessage()); 
 			error = -1;
         	return error;

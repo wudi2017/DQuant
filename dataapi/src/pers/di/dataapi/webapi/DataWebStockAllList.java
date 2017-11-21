@@ -120,9 +120,8 @@ public class DataWebStockAllList extends HttpHelper
         	 }
 
         }catch (Exception e) {  
-        	System.out.println("Exception[WebStockAllList]:" + e.getMessage()); 
-            // TODO: handle exception  
         	e.printStackTrace();
+        	System.out.println("Exception[WebStockAllList]:" + e.getMessage()); 
         	error = -1;
         }  
 		return error;

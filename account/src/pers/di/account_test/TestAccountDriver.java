@@ -485,6 +485,8 @@ public class TestAccountDriver {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		CSystem.start();
+		CLog.config_setTag("TEST", false);
+		CLog.config_setTag("ACCOUNT", false);
 		CTest.ADD_TEST(TestAccountDriver.class);
 		CTest.RUN_ALL_TESTS("TestAccountDriver.");
 		CLog.output("TEST", "END");

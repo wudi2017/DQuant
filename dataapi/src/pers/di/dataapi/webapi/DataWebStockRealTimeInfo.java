@@ -88,8 +88,8 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 			}
 			
         }catch (Exception e) {  
+        	e.printStackTrace();
         	System.out.println("Exception[DataWebStockRealTimeInfo]:" + e.getMessage()); 
-            // TODO: handle exception  
         	error = -1;
 			return error;
         }  

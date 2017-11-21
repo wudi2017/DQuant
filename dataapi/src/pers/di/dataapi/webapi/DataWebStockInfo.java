@@ -90,8 +90,8 @@ public class DataWebStockInfo extends HttpHelper
 				container.peRatio = 0.0f;
 			
         }catch (Exception e) {  
+        	e.printStackTrace();
         	System.out.println("Exception[getRealTimeInfoMore]:" + e.getMessage()); 
-            // TODO: handle exception  
         	error = -1;
         	return error;
         }  

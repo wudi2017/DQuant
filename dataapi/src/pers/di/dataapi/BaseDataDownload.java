@@ -370,6 +370,7 @@ public class BaseDataDownload {
 			}
 			catch(Exception e)
 			{
+				e.printStackTrace();
 				System.out.println(e.getMessage()); 
 				return -1;
 			}
@@ -401,6 +402,7 @@ public class BaseDataDownload {
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			System.out.println(e.getMessage()); 
 			return -1;
 		}
@@ -422,6 +424,7 @@ public class BaseDataDownload {
 			}
 			catch(Exception e)
 			{
+				e.printStackTrace();
 				System.out.println(e.getMessage()); 
 				return -1;
 			}
@@ -451,6 +454,7 @@ public class BaseDataDownload {
 			}
 			catch(Exception e)
 			{
+				e.printStackTrace();
 				System.out.println(e.getMessage()); 
 				return -1;
 			}

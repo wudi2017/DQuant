@@ -772,11 +772,9 @@ public class CUtilsDateTime {
 
 	            //System.out.println("DateTimeProvider: getWebsiteDatetime...");
 	            return date;
-	        } catch (MalformedURLException e) {
+	        } catch (Exception e) {
 	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+	        } 
 	        return null;
 	    }
 		

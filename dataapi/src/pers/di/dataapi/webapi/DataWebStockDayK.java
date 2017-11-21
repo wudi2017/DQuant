@@ -79,6 +79,7 @@ public class DataWebStockDayK {
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			System.out.println("Exception[WebStockDayK]:" + e.getMessage()); 
 			error = -1;
         	return error;
@@ -167,7 +168,6 @@ public class DataWebStockDayK {
 	        	resultList.add(cKLine);
 	        }
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
