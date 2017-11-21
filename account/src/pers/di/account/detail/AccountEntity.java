@@ -79,15 +79,12 @@ public class AccountEntity extends Account {
 				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder amount error!");
 				return -1;
 			}
-			if(0 != amount%100)
+			CObjectContainer<Double> money = new CObjectContainer<Double>();
+			this.getMoney(money);
+			if(Double.compare(money.get(), amount*price) < 0)
 			{
-				CObjectContainer<Double> money = new CObjectContainer<Double>();
-				this.getMoney(money);
-				if(Double.compare(money.get(), amount*price) < 0)
-				{
-					CLog.error("ACCOUNT", "@AccountEntity CommissionOrder money error!");
-					return -1;
-				}
+				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder money error!");
+				return -1;
 			}
 			
 			// create commission order
@@ -101,8 +98,8 @@ public class AccountEntity extends Account {
 			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
 			m_accountStore.sync2File();
 			
-			int ret = m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
-			return ret;
+			m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
+			return 0;
 		}
 		
 		if(tranact == TRANACT.SELL)
@@ -135,8 +132,8 @@ public class AccountEntity extends Account {
 			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
 			m_accountStore.sync2File();
 			
-			int ret = m_cIMarketOpe.postTradeRequest(TRANACT.SELL, stockID, amount, price);
-			return ret;
+			m_cIMarketOpe.postTradeRequest(TRANACT.SELL, stockID, amount, price);
+			return 0;
 		}
 		
 		return -1;

@@ -356,6 +356,55 @@ public class TestAccountDriver {
 	}
 	
 	@CTest.test
+	public static void test_accountDriver_buy_sell_inputcheck()
+	{
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
+		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
+		cAccoutDriver.reset(10*10000f);
+		
+		Account acc = cAccoutDriver.account();
+		
+		{
+			cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+			cAccoutDriver.newDayBegin();
+			int ret = acc.postTradeOrder(TRANACT.BUY, "600001", 20000, 1.5f);
+			CTest.EXPECT_LONG_EQ(ret, 0);
+			ret = acc.postTradeOrder(TRANACT.BUY, "600002", 20000, 1.5f);
+			CTest.EXPECT_LONG_EQ(ret, 0);
+			ret = acc.postTradeOrder(TRANACT.BUY, "300003", 20000, 1.5f);
+			CTest.EXPECT_LONG_EQ(ret, 0);
+			
+			ret = acc.postTradeOrder(TRANACT.BUY, "300004", 20000, 1.5f);
+			CTest.EXPECT_LONG_EQ(ret, -1);
+			
+			List<CommissionOrder> ctnCommissionList = new ArrayList<CommissionOrder>();
+			CTest.EXPECT_TRUE(acc.getCommissionOrderList(ctnCommissionList) == 0);
+			CTest.EXPECT_LONG_EQ(ctnCommissionList.size(), 3);
+			cAccoutDriver.newDayEnd();
+		}
+		
+		{
+			cAccoutDriver.setDateTime("2017-10-11", "14:00:01");
+			cAccoutDriver.newDayBegin();
+			int ret = acc.postTradeOrder(TRANACT.SELL, "600001", 20000, 1.5f);
+			CTest.EXPECT_LONG_EQ(ret, 0);
+			ret = acc.postTradeOrder(TRANACT.SELL, "600002", 20000, 1.5f);
+			CTest.EXPECT_LONG_EQ(ret, 0);
+			ret = acc.postTradeOrder(TRANACT.SELL, "300003", 20000, 1.5f);
+			CTest.EXPECT_LONG_EQ(ret, 0);
+			
+			ret = acc.postTradeOrder(TRANACT.SELL, "300004", 20000, 1.5f);
+			CTest.EXPECT_LONG_EQ(ret, -1);
+			
+			List<CommissionOrder> ctnCommissionList = new ArrayList<CommissionOrder>();
+			CTest.EXPECT_TRUE(acc.getCommissionOrderList(ctnCommissionList) == 0);
+			CTest.EXPECT_LONG_EQ(ctnCommissionList.size(), 3);
+			cAccoutDriver.newDayEnd();
+		}
+		
+	}
+	
+	@CTest.test
 	public static void test_accountDriver_performance()
 	{
 		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
