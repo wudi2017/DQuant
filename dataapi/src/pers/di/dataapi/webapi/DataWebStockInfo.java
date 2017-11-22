@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.*;
 
 import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.StockInfo;
@@ -32,13 +33,16 @@ public class DataWebStockInfo extends HttpHelper
 		int error = 0;
 		
 		// get base info
-		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-		int errGetRealTimeInfo = m_cDataWebStockRealTimeInfo.getRealTimeInfo(id, ctnRealTimeInfo);
+		List<RealTimeInfo> ctnRealTimeInfos = new ArrayList<RealTimeInfo>();
+		m_cDataWebStockRealTimeInfo.setInterestStockID(id);
+		int errGetRealTimeInfo = m_cDataWebStockRealTimeInfo.getRealTimeInfo(ctnRealTimeInfos);
 		if(0 != errGetRealTimeInfo) 
 		{
 			error = -2;
 			return error;
 		}
+		
+		RealTimeInfo ctnRealTimeInfo = ctnRealTimeInfos.get(0);
 		
 		container.name = ctnRealTimeInfo.name;
 		container.date = ctnRealTimeInfo.date;

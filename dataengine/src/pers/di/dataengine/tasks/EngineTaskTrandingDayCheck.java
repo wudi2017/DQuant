@@ -96,11 +96,13 @@ public class EngineTaskTrandingDayCheck extends CDateTimeThruster.ScheduleTask
 			{
 				for(int i = 0; i < 5; i++) // 试图5次来确认
 				{
-					RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-					int errRealTimeInfo = StockDataApi.instance().loadRealTimeInfo("999999", ctnRealTimeInfo);
+					List<RealTimeInfo> ctnRealTimeInfos = new ArrayList<RealTimeInfo>();
+					List<String> stockIDs = new ArrayList<String>();
+					stockIDs.add("999999");
+					int errRealTimeInfo = StockDataApi.instance().loadRealTimeInfo(stockIDs, ctnRealTimeInfos);
 					if(0 == errRealTimeInfo)
 					{
-						if(ctnRealTimeInfo.date.compareTo(date) == 0)
+						if(ctnRealTimeInfos.get(0).date.compareTo(date) == 0)
 						{
 							bIsTranDate = true;
 							break;

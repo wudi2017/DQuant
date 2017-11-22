@@ -46,87 +46,104 @@ public class DACurrentDayTimePriceCache {
 		m_date = date;
 		m_time = time;
 		
-		for(int i=0; i<m_CurrentDayInterestMinuteDataIDs.size(); i++)
-		{
-			String stockID = m_CurrentDayInterestMinuteDataIDs.get(i);
-			build(stockID);
-		}
+		build(m_CurrentDayInterestMinuteDataIDs);
 	}
 	
-	private void build(String stockID)
+	private void build(List<String> stockIDs)
 	{
 		if(m_bIsHistoryData)
 		{
-			CListObserver<TimePrice> cObsTimePrice = m_historyCacheStockTimeMap.get(stockID);
-			if(null == cObsTimePrice)
+			for(int i=0; i<m_CurrentDayInterestMinuteDataIDs.size(); i++)
 			{
-				cObsTimePrice = new CListObserver<TimePrice>();
-				m_historyCacheStockTimeMap.put(stockID, cObsTimePrice);
-			}
-			
-			if(cObsTimePrice.size() > 0)
-			{
-				// 缓存中有数据，加载后面的部分
-				String beginTime = cObsTimePrice.get(0).time;
-				int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
-						stockID, m_date, 
-						beginTime, m_time, cObsTimePrice);
-			}
-			else
-			{
-				// 缓存中没数据, 只从历史数据中加载当时时间的
-				int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
-						stockID, m_date, 
-						m_time, m_time, cObsTimePrice);
+				String stockID = m_CurrentDayInterestMinuteDataIDs.get(i);
+				
+				CListObserver<TimePrice> cObsTimePrice = m_historyCacheStockTimeMap.get(stockID);
+				if(null == cObsTimePrice)
+				{
+					cObsTimePrice = new CListObserver<TimePrice>();
+					m_historyCacheStockTimeMap.put(stockID, cObsTimePrice);
+				}
+				
+				if(cObsTimePrice.size() > 0)
+				{
+					// 缓存中有数据，加载后面的部分
+					String beginTime = cObsTimePrice.get(0).time;
+					int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
+							stockID, m_date, 
+							beginTime, m_time, cObsTimePrice);
+				}
+				else
+				{
+					// 缓存中没数据, 只从历史数据中加载当时时间的
+					int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
+							stockID, m_date, 
+							m_time, m_time, cObsTimePrice);
+				}
 			}
 		}
 		else
 		{
-			List<TimePrice> cTimePriceList = m_realtimeCacheStockTimeMap.get(stockID);
-			if(null == cTimePriceList)
+			List<String> stockIDsNeedUpdate = new ArrayList<String>();
+			for(int i=0; i<m_CurrentDayInterestMinuteDataIDs.size(); i++)
 			{
-				cTimePriceList = new ArrayList<TimePrice>();
-				m_realtimeCacheStockTimeMap.put(stockID, cTimePriceList);
-			}
-			
-			// 判断是否要添加新实时数据
-			boolean bAddNewVal = false;
-			TimePrice latastTimePrice = null;
-			if(cTimePriceList.size() > 0)
-			{
-				latastTimePrice = cTimePriceList.get(cTimePriceList.size()-1);
-			}
-			if(null != latastTimePrice)
-			{
-				String curRealTimeHM = CUtilsDateTime.GetCurTimeStr().substring(0, 5);
-				String latestTime = latastTimePrice.time;
-				if(latestTime.startsWith(curRealTimeHM))
+				String stockID = m_CurrentDayInterestMinuteDataIDs.get(i);
+				
+				List<TimePrice> cTimePriceList = m_realtimeCacheStockTimeMap.get(stockID);
+				if(null == cTimePriceList)
 				{
-					// 当前时间，与最后时间没有分钟变化
-					bAddNewVal = false;
+					cTimePriceList = new ArrayList<TimePrice>();
+					m_realtimeCacheStockTimeMap.put(stockID, cTimePriceList);
+				}
+				
+				// 判断是否要添加新实时数据
+				boolean bAddNewVal = false;
+				TimePrice latastTimePrice = null;
+				if(cTimePriceList.size() > 0)
+				{
+					latastTimePrice = cTimePriceList.get(cTimePriceList.size()-1);
+				}
+				if(null != latastTimePrice)
+				{
+					String curRealTimeHM = CUtilsDateTime.GetCurTimeStr().substring(0, 5);
+					String latestTime = latastTimePrice.time;
+					if(latestTime.startsWith(curRealTimeHM))
+					{
+						// 当前时间，与最后时间没有分钟变化
+						bAddNewVal = false;
+					}
+					else
+					{
+						// 当前时间，与最后时间有分钟变化
+						bAddNewVal = true;
+					}
 				}
 				else
 				{
-					// 当前时间，与最后时间有分钟变化
+					// 缓存中没数据
 					bAddNewVal = true;
 				}
-			}
-			else
-			{
-				// 缓存中没数据
-				bAddNewVal = true;
+				
+				if(bAddNewVal)
+				{
+					stockIDsNeedUpdate.add(stockID);
+				}
 			}
 			
-			if(bAddNewVal)
+			// 获取新数据并添加cache
+			// 添加实时数据
+			List<RealTimeInfo> ctnRealTimeInfos = new ArrayList<RealTimeInfo>();
+			int error = StockDataApi.instance().loadRealTimeInfo(stockIDsNeedUpdate, ctnRealTimeInfos);
+			if(0 == error)
 			{
-				// 添加实时数据
-				RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-				int error = StockDataApi.instance().loadRealTimeInfo(stockID, ctnRealTimeInfo);
-				if(0 == error)
+				for(int i=0; i<ctnRealTimeInfos.size(); i++)
 				{
+					RealTimeInfo ctnRealTimeInfo = ctnRealTimeInfos.get(i);
+					
 					TimePrice cTimePrice = new TimePrice();
 					cTimePrice.time = ctnRealTimeInfo.time;
 					cTimePrice.price = ctnRealTimeInfo.curPrice;
+					
+					List<TimePrice> cTimePriceList = m_realtimeCacheStockTimeMap.get(ctnRealTimeInfo.stockID);
 					cTimePriceList.add(cTimePrice);
 				}
 			}

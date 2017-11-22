@@ -376,26 +376,9 @@ public class StockDataApi {
 	 * 参数：
 	 *     container 
 	 */
-	public int loadRealTimeInfo(String id, RealTimeInfo container)
+	public int loadRealTimeInfo(List<String> stockIDs, List<RealTimeInfo> container)
 	{
-		int error = 0;
-		
-		int errRealTimeInfo = m_cBaseDataLayer.getRealTimeInfo(id, container);
-		
-		if(0 == errRealTimeInfo)
-		{
-			if(0 == Double.compare(container.curPrice, 0.00f))
-			{
-				error = -2;
-				CLog.error("STOCKDATA", "getStockTime %s price 0.00f!\n", id); // 修正取得实时价格为0则认为错误
-			}
-		}
-		else
-		{
-			error = -1;
-		}
-		
-		return error;
+		return m_cBaseDataLayer.getRealTimeInfo(stockIDs, container);
 	}
 	
 	private BaseDataLayer m_cBaseDataLayer;

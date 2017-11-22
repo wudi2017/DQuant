@@ -176,11 +176,13 @@ public class TestStockDataApi {
 	@CTest.test
 	public static void test_getRealTimePrice()
 	{
-		RealTimeInfo ctnRealTimeInfo = new RealTimeInfo();
-		int error = s_StockDataApi.loadRealTimeInfo("600000", ctnRealTimeInfo);
+		List<RealTimeInfo> ctnRealTimeInfos = new ArrayList<RealTimeInfo>();
+		List<String> stocks = new ArrayList<String>();
+		stocks.add("600000");
+		int error = s_StockDataApi.loadRealTimeInfo(stocks, ctnRealTimeInfos);
 		CTest.EXPECT_LONG_EQ(error, 0);
-		CTest.EXPECT_TRUE(ctnRealTimeInfo.curPrice>0);
-		CTest.EXPECT_TRUE(ctnRealTimeInfo.time.length()==8);
+		CTest.EXPECT_TRUE(ctnRealTimeInfos.get(0).curPrice>0);
+		CTest.EXPECT_TRUE(ctnRealTimeInfos.get(0).time.length()==8);
 	}
 	
 	
@@ -188,7 +190,7 @@ public class TestStockDataApi {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);
-		CTest.RUN_ALL_TESTS("TestStockDataApi.test_updateLocalStocks");
+		CTest.RUN_ALL_TESTS("TestStockDataApi.test_getRealTimePrice");
 		CSystem.stop();
 	}
 }
