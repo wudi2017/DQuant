@@ -176,7 +176,7 @@ public class TestStockDataEngine {
 			CLog.output("TEST", "EngineListenerTesterZ.onInitialize");
 			
 			m_listener.addCurrentDayInterestMinuteDataID("600000");
-			m_listener.addCurrentDayInterestMinuteDataID("300163");
+			m_listener.addCurrentDayInterestMinuteDataID("000002");
 		}
 		public void onTradingDayStart(EEObject ev)
 		{
@@ -193,7 +193,7 @@ public class TestStockDataEngine {
 			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
 			
 			m_listener.addCurrentDayInterestMinuteDataID("600000");
-			m_listener.addCurrentDayInterestMinuteDataID("300163");
+			m_listener.addCurrentDayInterestMinuteDataID("000002");
 		}
 		
 		public void onMinuteTimePrices(EEObject ev)
@@ -205,10 +205,9 @@ public class TestStockDataEngine {
 		
 			CLog.output("TEST", "    600000 cDATimePrices size %d", 
 					ctx.pool().get("600000").timePrices().size());
-			CLog.output("TEST", "    300163 cDATimePrices size %d", 
-					ctx.pool().get("300163").timePrices().size());
-			CLog.output("TEST", "    002468 cDATimePrices size %d", 
-					ctx.pool().get("002468").timePrices().size());
+			
+			CLog.output("TEST", "    000002 cDATimePrices size %d", 
+					ctx.pool().get("000002").timePrices().size());
 		}
 		
 		public void onTradingDayFinish(EEObject ev)

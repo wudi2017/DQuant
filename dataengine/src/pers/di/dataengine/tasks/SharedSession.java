@@ -8,7 +8,7 @@ public class SharedSession {
 	
 	public SharedSession()
 	{
-		bIsTranDate = false;
+		tranDayChecker = new TranDayChecker(this);
 		initializeCbs = new ArrayList<ListenerCallback>();
 		tranDayStartCbs = new ArrayList<ListenerCallback>();
 		minuteTimePricesCbs = new ArrayList<ListenerCallback>();
@@ -23,10 +23,11 @@ public class SharedSession {
 	public boolean bConfigFailed;
 	
 	// running variable
-	public boolean bIsTranDate;
+	public TranDayChecker tranDayChecker;
 	public List<ListenerCallback> initializeCbs;
 	public List<ListenerCallback> tranDayStartCbs;
 	public List<ListenerCallback> minuteTimePricesCbs;
 	public List<ListenerCallback> tranDayFinishCbs;
 	public Map<EngineListener, DAContext> listenerDataContext;
+	
 }

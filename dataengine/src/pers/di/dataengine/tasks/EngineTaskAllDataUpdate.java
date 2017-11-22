@@ -12,7 +12,7 @@ public class EngineTaskAllDataUpdate extends CDateTimeThruster.ScheduleTask
 	}
 	@Override
 	public void doTask(String date, String time) {
-		if(!m_taskSharedSession.bIsTranDate)
+		if(!m_taskSharedSession.tranDayChecker.check(date))
 		{
 			return;
 		}
