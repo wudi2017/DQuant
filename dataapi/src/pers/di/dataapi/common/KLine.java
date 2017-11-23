@@ -18,9 +18,21 @@ public class KLine implements Comparable
 	public double high;
 	public double volume;
 	
-	public double midle()
+	public double entityMidle() // 实体中点
 	{
-		return (open + close) / 2;
+		return (open+close)/2;
+	}
+	public double entityHigh() // 实体高点
+	{
+		return open>close?open:close;
+	}
+	public double entityLow() // 实体低点
+	{
+		return open>close?close:open;
+	}
+	public double maxWave() // 最大波动
+	{
+		return (high-low)/low;
 	}
 	
 	public void CopyFrom(KLine c)

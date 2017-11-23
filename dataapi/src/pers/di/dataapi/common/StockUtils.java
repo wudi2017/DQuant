@@ -31,7 +31,7 @@ public class StockUtils {
 		for(int i = iB; i <= iE; i++)  
         {  
 			KLine cDayKData = dayklist.get(i);  
-			sum = sum + cDayKData.midle();
+			sum = sum + cDayKData.entityMidle();
 			sumcnt++;
         }
 		value = sum/sumcnt;
