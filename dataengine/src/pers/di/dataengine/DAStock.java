@@ -49,6 +49,16 @@ public class DAStock {
 		return obsStockInfo.get().peRatio;
 	}
 	
+	public double circulatedMarketValue()
+	{
+		return obsStockInfo.get().circulatedMarketValue;
+	}
+	
+	public double allMarketValue()
+	{
+		return obsStockInfo.get().allMarketValue;
+	}
+	
 	/*
 	 * 获取日K线
 	 * 注意：

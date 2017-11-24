@@ -23,6 +23,11 @@ public abstract class QuantStrategy {
 		m_currentDayInterestMinuteDataIDs.add(ID);
 		return true;
 	}
+	public final boolean addCurrentDayInterestMinuteDataIDs(List<String> IDs)
+	{
+		m_currentDayInterestMinuteDataIDs.addAll(IDs);
+		return true;
+	}
 	public final boolean clearCurrentDayInterestMinuteDataIDs()
 	{
 		m_currentDayInterestMinuteDataIDs.clear();
