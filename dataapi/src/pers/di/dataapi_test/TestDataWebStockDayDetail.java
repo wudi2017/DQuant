@@ -10,12 +10,12 @@ import pers.di.dataapi.common.*;
 
 public class TestDataWebStockDayDetail {
 	
+	public static DataWebStockDayDetail s_cDataWebStockDayDetail = new DataWebStockDayDetail();
+	
 	public static void test_getDayDetail()
 	{
-		DataWebStockDayDetail cDataWebStockDayDetail = new DataWebStockDayDetail();
-		
 		List<TradeDetail> ctnTradeDetails = new ArrayList<TradeDetail>();
-		int error = cDataWebStockDayDetail.getDayDetail("300163", "2015-02-16", ctnTradeDetails);
+		int error = s_cDataWebStockDayDetail.getDayDetail("300163", "2015-02-16", ctnTradeDetails);
 		if(0 == error)
 		{
 			for(int i = 0; i < ctnTradeDetails.size(); i++)  
