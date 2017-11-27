@@ -74,7 +74,7 @@ public class AccountEntity extends Account {
 		if(tranact == TRANACT.BUY)
 		{
 			// check input param
-			if(0 != amount%100)
+			if(0 != amount%100 || amount<=0)
 			{
 				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder amount error!");
 				return -1;
@@ -105,6 +105,11 @@ public class AccountEntity extends Account {
 		if(tranact == TRANACT.SELL)
 		{
 			// check input param
+			if(amount<=0)
+			{
+				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder amount error!");
+				return -1;
+			}
 			boolean bCheck = false;
 			for(int i=0; i<m_accountStore.storeEntity().holdStockList.size(); i++)
 			{
