@@ -40,7 +40,7 @@ public class QuantSession {
 	
 	public boolean run()
 	{
-		CLog.output("QuantSession", "The QuantSession is running now...");
+		CLog.output("QENGINE", "The QuantSession is running now...");
 		StockDataEngine.instance().run();
 		StockDataEngine.instance().clearListener(m_listener);
 		return true;
@@ -48,7 +48,7 @@ public class QuantSession {
 	
 	public void onInitialize(EEObject ev)
 	{
-		CLog.output("QEngine", "QuantSession.onInitialize");
+		CLog.output("QENGINE", "QuantSession.onInitialize");
 		
 		if(null != m_stratety)
 		{
@@ -61,7 +61,7 @@ public class QuantSession {
 		EETradingDayStart e = (EETradingDayStart)ev;
 		DAContext ctx = e.ctx;
 		
-		CLog.output("QEngine", "[%s %s] QuantSession.onTradingDayStart", ctx.date(), ctx.time());
+		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayStart", ctx.date(), ctx.time());
 		
 		m_context.set(ctx.date(), ctx.time(), ctx.pool());
 		
@@ -88,7 +88,7 @@ public class QuantSession {
 		EETimePricesData e = (EETimePricesData)ev;
 		DAContext ctx = e.ctx;
 		
-		CLog.output("QEngine", "[%s %s] QuantSession.onMinuteTimePrices ", ctx.date(), ctx.time());
+		CLog.output("QENGINE", "[%s %s] QuantSession.onMinuteTimePrices ", ctx.date(), ctx.time());
 		
 		if(null != m_stratety)
 		{
@@ -115,7 +115,7 @@ public class QuantSession {
 		EETradingDayFinish e = (EETradingDayFinish)ev;
 		DAContext ctx = e.ctx;
 		
-		CLog.output("QEngine", "[%s %s] QuantSession.onTradingDayFinish ", ctx.date(), ctx.time());
+		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayFinish ", ctx.date(), ctx.time());
 		
 		m_context.set(ctx.date(), ctx.time(), ctx.pool());
 		

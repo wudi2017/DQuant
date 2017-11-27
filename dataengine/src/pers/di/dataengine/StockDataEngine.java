@@ -40,7 +40,7 @@ public class StockDataEngine {
 				if( !CUtilsDateTime.CheckValidDate(beginDate) 
 						|| !CUtilsDateTime.CheckValidDate(endDate))
 				{
-					CLog.error("DataEngine", "input parameter error!");
+					CLog.error("DENGINE", "input parameter error!");
 					m_SharedSession.bConfigFailed = true;
 				}
 				else
@@ -58,13 +58,13 @@ public class StockDataEngine {
 			}
 			else
 			{
-				CLog.error("DataEngine", "input parameter error!");
+				CLog.error("DENGINE", "input parameter error!");
 				m_SharedSession.bConfigFailed = true;
 			}
 		}
 		else
 		{
-			CLog.error("DataEngine", "input parameter error!");
+			CLog.error("DENGINE", "input parameter error!");
 			m_SharedSession.bConfigFailed = true;
 		}
 		return 0;

@@ -30,7 +30,7 @@ public class EngineTaskTrandingDayCheck extends CDateTimeThruster.ScheduleTask
 		boolean bIsTranDate = false;
 		bIsTranDate = m_taskSharedSession.tranDayChecker.check(date);
 		
-		CLog.output("DATAENGINE", "(%s %s) EngineTaskTrandingDayCheck bIsTranDate=%b", date, time, bIsTranDate);
+		CLog.output("DENGINE", "[%s %s] EngineTaskTrandingDayCheck bIsTranDate=%b", date, time, bIsTranDate);
 		
 		if(bIsTranDate)
 		{
