@@ -240,10 +240,8 @@ public class TestStockDataEngine {
 	
 	public static void main(String[] args) {
 		CSystem.start();
-		//CLog.config_setTag("DataEngine", true);
-		//CLog.config_setTag("TEST", false);
 		CTest.ADD_TEST(TestStockDataEngine.class);
-		CTest.RUN_ALL_TESTS("TestStockDataEngine.test_StockDataEngine_RealTime");
+		CTest.RUN_ALL_TESTS("TestStockDataEngine.test_StockDataEngine_History");
 		CSystem.stop();
 	}
 }

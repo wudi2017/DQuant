@@ -17,7 +17,7 @@ public class EngineTaskDayFinish extends CDateTimeThruster.ScheduleTask
 		{
 			return;
 		}
-		CLog.output("DataEngine", "(%s %s) EngineTaskDayFinish", date, time);
+		CLog.output("DATAENGINE", "(%s %s) EngineTaskDayFinish", date, time);
 		
 		//call listener
 		List<ListenerCallback> lcbs = m_taskSharedSession.tranDayFinishCbs;

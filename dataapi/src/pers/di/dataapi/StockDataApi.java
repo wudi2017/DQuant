@@ -31,7 +31,7 @@ public class StockDataApi {
 	{
 		if(null == m_cCache.localLatestDate)
 		{
-			CLog.output("STOCK","DataEngine.getUpdatedStocksDate\n");
+			CLog.output("DATAAPI","StockDataApi.getUpdatedStocksDate\n");
 			CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
 			int errAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
 			if(0 == errAllStockFullDataTimestamps)
@@ -41,18 +41,18 @@ public class StockDataApi {
 			else
 			{
 				m_cCache.localLatestDate = "0000-00-00";
-				CLog.output("STOCK", "DataEngine.getUpdatedStocksDate failed, reset to %s \n", m_cCache.localLatestDate);
+				CLog.output("DATAAPI", "StockDataApi.getUpdatedStocksDate failed, reset to %s \n", m_cCache.localLatestDate);
 			}
 		}
 		
 		if(m_cCache.localLatestDate.compareTo(dateStr) >= 0)
 		{
-			CLog.output("STOCK", "update success! (current is newest, local: %s)\n", m_cCache.localLatestDate);
+			CLog.output("DATAAPI", "update success! (current is newest, local: %s)\n", m_cCache.localLatestDate);
 		}
 		else
 		{
 			int iUpdateCnt = m_cBaseDataLayer.updateLocalAllStocKLine(dateStr);
-			CLog.output("STOCK", "update success to date: %s (count: %d)\n", m_cCache.localLatestDate, iUpdateCnt);
+			CLog.output("DATAAPI", "update success to date: %s (count: %d)\n", m_cCache.localLatestDate, iUpdateCnt);
 			m_cCache.clearAllCache();
 		}
 		
@@ -66,7 +66,7 @@ public class StockDataApi {
 	{
 		if(null == m_cCache.localLatestDate)
 		{
-			CLog.output("STOCK","DataEngine.getUpdatedStocksDate\n");
+			CLog.output("DATAAPI","StockDataApi.getUpdatedStocksDate\n");
 			CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
 			int errAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
 			if(0 == errAllStockFullDataTimestamps)
@@ -75,13 +75,13 @@ public class StockDataApi {
 			}
 			else
 			{
-				CLog.output("STOCK", "DataEngine.getUpdatedStocksDate failed! \n", m_cCache.localLatestDate);
+				CLog.output("DATAAPI", "StockDataApi.getUpdatedStocksDate failed! \n", m_cCache.localLatestDate);
 			}
 		}
 		
 		if(m_cCache.localLatestDate.compareTo(dateStr) >= 0)
 		{
-			CLog.output("STOCK", "update %s success! (current is newest, local: %s)\n",stockID, m_cCache.localLatestDate);
+			CLog.output("DATAAPI", "update %s success! (current is newest, local: %s)\n",stockID, m_cCache.localLatestDate);
 		}
 		else
 		{
@@ -91,7 +91,7 @@ public class StockDataApi {
 			
 			if(0 == errCount)
 			{
-				CLog.output("STOCK", "update %s success to date: %s (count: %d)\n", stockID, ctnCount.get());
+				CLog.output("DATAAPI", "update %s success to date: %s (count: %d)\n", stockID, ctnCount.get());
 			}
 			else
 			{

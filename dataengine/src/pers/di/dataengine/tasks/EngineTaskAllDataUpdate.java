@@ -16,9 +16,9 @@ public class EngineTaskAllDataUpdate extends CDateTimeThruster.ScheduleTask
 		{
 			return;
 		}
-		CLog.output("DataEngine", "(%s %s) AllDataUpdate...", date, time);
+		CLog.output("DATAENGINE", "(%s %s) AllDataUpdate...", date, time);
 		StockDataApi.instance().updateAllLocalStocks(date);
-		CLog.output("DataEngine", "(%s %s) AllDataUpdate Success", date, time);
+		CLog.output("DATAENGINE", "(%s %s) AllDataUpdate Success", date, time);
 	}
 	private SharedSession m_taskSharedSession;
 }

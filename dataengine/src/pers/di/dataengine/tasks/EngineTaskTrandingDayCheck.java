@@ -26,12 +26,11 @@ public class EngineTaskTrandingDayCheck extends CDateTimeThruster.ScheduleTask
 
 	@Override
 	public void doTask(String date, String time) {
-		CLog.output("DataEngine", "(%s %s) TrandingDayCheck...", date, time);
 		
 		boolean bIsTranDate = false;
 		bIsTranDate = m_taskSharedSession.tranDayChecker.check(date);
 		
-		CLog.output("DataEngine", "(%s %s) EngineTaskTrandingDayCheck bIsTranDate=%b", date, time, bIsTranDate);
+		CLog.output("DATAENGINE", "(%s %s) EngineTaskTrandingDayCheck bIsTranDate=%b", date, time, bIsTranDate);
 		
 		if(bIsTranDate)
 		{

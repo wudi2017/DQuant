@@ -133,7 +133,7 @@ public class CDateTimeThruster {
 			tasks.add(cScheduleTask);
 		}
 		
-		CLog.output("DataEngine", "ScheduleTaskController.schedule Task(%s %s %d)"
+		CLog.output("COMMON", "ScheduleTaskController.schedule Task(%s %s %d)"
 				, cScheduleTask.getName(), cScheduleTask.getTime(), cScheduleTask.getPriority());
 		
 		// notify
@@ -190,7 +190,7 @@ public class CDateTimeThruster {
 		while(null != m_curDate) 
 		{
 			m_curTime = "00:00:00";
-			CLog.output("DataEngine", "(%s %s) <<<<<< ------ new day begin ------ >>>>>>", m_curDate, m_curTime);
+			CLog.output("COMMON", "(%s %s) <<<<<< ------ new day begin ------ >>>>>>", m_curDate, m_curTime);
 			
 			TimeTasksPair timeTasksPair = getFirstTimeTasksPair();
 			String waitToTime = ((null!=timeTasksPair)?timeTasksPair.time:"23:59:50");
@@ -209,7 +209,7 @@ public class CDateTimeThruster {
 				if(CUtilsDateTime.WAITRESULT.TIME_IS_UP == wr)
 				{
 					m_curTime = waitToTime;
-					//CLog.output("DataEngine", "(%s %s) doAllTask", m_curDate, m_curTime);
+					//CLog.output("COMMON", "(%s %s) doAllTask", m_curDate, m_curTime);
 					
 					// do all task begin
 					if(null != timeTasksPair && null != timeTasksPair.tasks)
@@ -263,9 +263,9 @@ public class CDateTimeThruster {
 		}
 		else
 		{
-			CLog.output("DataEngine", "realtime waitting DateTime (%s %s)... ", date, time);
+			CLog.output("COMMON", "realtime waitting DateTime (%s %s)... ", date, time);
 			CUtilsDateTime.WAITRESULT eWait = CUtilsDateTime.waitFor(date, time, watiObj);
-			CLog.output("DataEngine", "realtime waitting DateTime (%s %s) complete! result(%s)", date, time, eWait.toString());
+			CLog.output("COMMON", "realtime waitting DateTime (%s %s) complete! result(%s)", date, time, eWait.toString());
 			return eWait;
 		}
 	}

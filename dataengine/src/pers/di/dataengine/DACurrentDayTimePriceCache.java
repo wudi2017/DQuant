@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import pers.di.common.CListObserver;
+import pers.di.common.CLog;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataapi.common.RealTimeInfo;
@@ -79,6 +80,15 @@ public class DACurrentDayTimePriceCache {
 							stockID, m_date, 
 							m_time, m_time, cObsTimePrice);
 				}
+				
+				if(cObsTimePrice.size() > 0)
+				{
+					TimePrice lastTimePrice =  cObsTimePrice.get(cObsTimePrice.size()-1);
+					CLog.output("DATAENGINE", "MinuteData %s %s (%d)...%.3f", 
+							stockID, lastTimePrice.time,
+							cObsTimePrice.size(),lastTimePrice.price);
+				}
+				
 			}
 		}
 		else
@@ -145,6 +155,14 @@ public class DACurrentDayTimePriceCache {
 					
 					List<TimePrice> cTimePriceList = m_realtimeCacheStockTimeMap.get(ctnRealTimeInfo.stockID);
 					cTimePriceList.add(cTimePrice);
+					
+					if(cTimePriceList.size() > 0)
+					{
+						TimePrice lastTimePrice =  cTimePriceList.get(cTimePriceList.size()-1);
+						CLog.output("DATAENGINE", "MinuteData %s %s (%d)...%.3f", 
+								ctnRealTimeInfo.stockID, lastTimePrice.time,
+								cTimePriceList.size(), lastTimePrice.price);
+					}
 				}
 			}
 		}

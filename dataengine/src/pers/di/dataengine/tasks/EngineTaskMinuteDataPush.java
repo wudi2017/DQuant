@@ -17,7 +17,7 @@ public class EngineTaskMinuteDataPush extends CDateTimeThruster.ScheduleTask
 		{
 			return;
 		}
-		CLog.output("DataEngine", "(%s %s) EngineTaskMinuteDataPush", date, time);
+		CLog.output("DATAENGINE", "(%s %s) EngineTaskMinuteDataPush", date, time);
 		
 		//call listener
 		List<ListenerCallback> lcbs = m_taskSharedSession.minuteTimePricesCbs;

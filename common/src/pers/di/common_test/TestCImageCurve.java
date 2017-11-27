@@ -139,7 +139,7 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(900.0f,288.1f + 10*i));
 			PoiList.add(new CurvePoint(1000.0f,328.1f + 10*i));
 			PoiList.add(new CurvePoint(1100.0f,520.2f + 10*i));
-			cCImageCurve.writeImagePixelCurve(PoiList, 1);
+			cCImageCurve.writeImagePixelCurve(PoiList, 0);
 			cCImageCurve.GenerateImage();
 			
 		}
@@ -149,7 +149,7 @@ public class TestCImageCurve {
 		//test_writeImagePixelCurve();
 		//test_writeUnitCurve();
 		//test_writeLogicCurve();
-		//test_addLogicCurveSameRatio();
-		test_Clear();
+		test_addLogicCurveSameRatio();
+		//test_Clear();
 	}
 }
