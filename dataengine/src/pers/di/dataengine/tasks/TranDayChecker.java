@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.common.CListObserver;
+import pers.di.common.CLog;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.RealTimeInfo;
 import pers.di.dataapi.common.StockUtils;
+import pers.di.dataengine.DAContext;
+import pers.di.dataengine.EETradingDayStart;
 
 public class TranDayChecker {
 	
@@ -22,7 +25,7 @@ public class TranDayChecker {
 		m_lastValidCheckDate = "0000-00-00";
 	}
 
-	public boolean check(String date)
+	public boolean check(String date, String time)
 	{
 		if(date.equals(m_lastValidCheckDate))
 		{
@@ -96,6 +99,29 @@ public class TranDayChecker {
 		m_bIsTranDate = bIsTranDate;
 		m_lastValidCheckDate = date;
 		
+		// first call onStart
+		CLog.output("DENGINE", "[%s %s] TranDayChecker.check = %b", date, time, bIsTranDate);
+		if(m_bIsTranDate)
+		{
+			//call listener: TRADINGDAYSTART
+			List<ListenerCallback> lcbs = m_taskSharedSession.tranDayStartCbs;
+			for(int i=0; i<lcbs.size(); i++)
+			{
+				ListenerCallback lcb = lcbs.get(i);
+				
+				// create event
+				EETradingDayStart ev = new EETradingDayStart();
+				DAContext cDAContext = m_taskSharedSession.listenerDataContext.get(lcb.listener);
+				cDAContext.setDateTime(date, time);
+				ev.ctx = cDAContext;
+				
+				try {
+					lcb.md.invoke(lcb.obj, ev);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		return bIsTranDate;
 	}
 	

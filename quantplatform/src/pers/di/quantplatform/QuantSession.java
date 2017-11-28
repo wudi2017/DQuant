@@ -66,6 +66,7 @@ public class QuantSession {
 		m_context.set(ctx.date(), ctx.time(), ctx.pool());
 		
 		// for account holdstock InterestMinuteDataID
+		String sHoldIDs = "";
 		m_accountDriver.setDateTime(ctx.date(), ctx.time());
 		m_accountDriver.newDayBegin();
 		List<String> ctnHoldStockIDList = new ArrayList<String>();
@@ -76,11 +77,22 @@ public class QuantSession {
 			String sHoldStockID = ctnHoldStockIDList.get(i);
 			double price = ctx.pool().get(sHoldStockID).price();
 			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
+			
+			sHoldIDs += sHoldStockID  + " ";
 		}
 		
 		// for stratety InterestMinuteDataID
 		m_stratety.onDayStart(m_context);
 		m_listener.addCurrentDayInterestMinuteDataIDs(m_stratety.getCurrentDayInterestMinuteDataIDs());
+		String StrategyInterestIDs = "";
+		for(int i=0; i<m_stratety.getCurrentDayInterestMinuteDataIDs().size(); i++)
+		{
+			String StockID = m_stratety.getCurrentDayInterestMinuteDataIDs().get(i);
+			StrategyInterestIDs += StockID  + " ";
+		}
+		
+		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayStart MinuteDataIDs HoldStock[%s] StrategyInterest[%s]", 
+				ctx.date(), ctx.time(), sHoldIDs, StrategyInterestIDs);
 	}
 	
 	public void onMinuteTimePrices(EEObject ev)

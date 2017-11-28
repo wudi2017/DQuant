@@ -13,7 +13,7 @@ public class EngineTaskMinuteDataPush extends CDateTimeThruster.ScheduleTask
 	}
 	@Override
 	public void doTask(String date, String time) {
-		if(!m_taskSharedSession.tranDayChecker.check(date))
+		if(!m_taskSharedSession.tranDayChecker.check(date, time))
 		{
 			return;
 		}

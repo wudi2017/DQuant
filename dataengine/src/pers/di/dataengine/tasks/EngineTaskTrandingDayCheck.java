@@ -27,32 +27,9 @@ public class EngineTaskTrandingDayCheck extends CDateTimeThruster.ScheduleTask
 	@Override
 	public void doTask(String date, String time) {
 		
-		boolean bIsTranDate = false;
-		bIsTranDate = m_taskSharedSession.tranDayChecker.check(date);
+		CLog.output("DENGINE", "[%s %s] EngineTaskTrandingDayCheck", date, time);
 		
-		CLog.output("DENGINE", "[%s %s] EngineTaskTrandingDayCheck bIsTranDate=%b", date, time, bIsTranDate);
-		
-		if(bIsTranDate)
-		{
-			//call listener: TRADINGDAYSTART
-			List<ListenerCallback> lcbs = m_taskSharedSession.tranDayStartCbs;
-			for(int i=0; i<lcbs.size(); i++)
-			{
-				ListenerCallback lcb = lcbs.get(i);
-				
-				// create event
-				EETradingDayStart ev = new EETradingDayStart();
-				DAContext cDAContext = m_taskSharedSession.listenerDataContext.get(lcb.listener);
-				cDAContext.setDateTime(date, time);
-				ev.ctx = cDAContext;
-				
-				try {
-					lcb.md.invoke(lcb.obj, ev);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		m_taskSharedSession.tranDayChecker.check(date, time);
 	}
 	
 	private StockDataEngine m_stockDataEngine;

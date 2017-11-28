@@ -42,6 +42,11 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 		container.clear();
 		int error = 0;
 		
+		if(m_InterestStockIDs.size() <= 0)
+		{
+			return error;
+		}
+		
 		// e.g http://hq.sinajs.cn/list=sz300163,sz300164,sh600004,
 		String urlStr = "http://hq.sinajs.cn/list=";
 		for(int i=0; i<m_InterestStockIDs.size(); i++)
@@ -129,7 +134,7 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 							|| iLastCode<0
 							|| 0 == Double.compare(cRealTimeInfo.curPrice, 0.00f))
 					{
-						System.out.println("Exception[DataWebStockRealTimeInfo]: invalid data"); 
+						System.out.println("Exception[DataWebStockRealTimeInfo]: invalid data stockID:" + stockID); 
 						error = -2;
 						return error;
 					}
