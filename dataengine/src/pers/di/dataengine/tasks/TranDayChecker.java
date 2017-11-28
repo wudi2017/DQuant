@@ -38,7 +38,7 @@ public class TranDayChecker {
 		{
 			if(null == m_hisTranDate)
 			{
-				initializeHistoryTranDate();
+				initializeHistoryTranDate(date);
 			}
 			
 			// 数据错误排除,经过测试 次日期内无法从网络获取数据
@@ -125,7 +125,7 @@ public class TranDayChecker {
 		return bIsTranDate;
 	}
 	
-	private void initializeHistoryTranDate()
+	private void initializeHistoryTranDate(String date)
 	{
 		m_hisTranDate = new ArrayList<String>();
 		CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
@@ -134,6 +134,14 @@ public class TranDayChecker {
 		if(0 != errKLineListSZZS)
 		{
 			StockDataApi.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
+		}
+		else
+		{
+			if(obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date.compareTo(date) < 0
+					&& obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date.compareTo(CUtilsDateTime.GetCurDateStr()) < 0)
+			{
+				StockDataApi.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
+			}
 		}
 		
 		int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_taskSharedSession.beginDate, true);
