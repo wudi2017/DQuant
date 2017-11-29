@@ -39,7 +39,7 @@ public class CSystem {
 	{
 		String rwRoot = CSystem.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		rwRoot = CFileSystem.getParentDir(rwRoot);
-		rwRoot = CFileSystem.getParentDir(rwRoot);
+//		rwRoot = CFileSystem.getParentDir(rwRoot);
 		rwRoot = rwRoot + "\\rw";
 		if(!CFileSystem.isDirExist(rwRoot))
 		{
