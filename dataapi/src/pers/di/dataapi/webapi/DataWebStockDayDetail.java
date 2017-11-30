@@ -20,6 +20,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import pers.di.dataapi.common.TradeDetail;
+import pers.di.common.CLog;
+import pers.di.common.CThread;
 import pers.di.dataapi.common.*;
 
 public class DataWebStockDayDetail extends HttpHelper 
@@ -97,6 +99,12 @@ public class DataWebStockDayDetail extends HttpHelper
 		{
 			e.printStackTrace();
 			System.out.println("Exception[WebStockDayDetail]:" + e.getMessage()); 
+			if(e.getMessage().contains("Server returned HTTP response code: 456 for URL:"))
+			{
+				CLog.error("DATAAPI", "Exception[WebStockDayDetail]:%s, need to wait!", e.getMessage());
+				// 高频访问检查, 停止6分钟
+				CThread.msleep(1000*60*6);
+			}
 			error = -1;
         	return error;
 		}
