@@ -91,6 +91,7 @@ public class DataWebStockDayDetail extends HttpHelper
 	        
 	        if(container.size() <= 0) 
         	{
+	        	CLog.error("DATAAPI", "[DataWebStockDayDetail] cannot get data! (%s %s)", id, date);
 	        	error = -30;
 	        	return error;
         	}

@@ -14,6 +14,17 @@ import pers.di.dataapi.common.TimePrice;
 
 public class DACurrentDayTimePriceCache {
 
+	private static class HistoryCacheStockTimeObj
+	{
+		public HistoryCacheStockTimeObj()
+		{
+			bGetSucFlag = true;
+			timepriceList = new CListObserver<TimePrice>();
+		}
+		public boolean bGetSucFlag;
+		public CListObserver<TimePrice> timepriceList;
+	}
+	
 	public DACurrentDayTimePriceCache()
 	{
 		m_CurrentDayInterestMinuteDataIDs = new ArrayList<String>();
@@ -21,7 +32,7 @@ public class DACurrentDayTimePriceCache {
 		m_date = "0000-00-00";
 		m_time = "00:00:00";
 		m_realtimeCacheStockTimeMap = new HashMap<String, List<TimePrice>>();
-		m_historyCacheStockTimeMap = new HashMap<String, CListObserver<TimePrice>>();
+		m_historyCacheStockTimeMap = new HashMap<String, HistoryCacheStockTimeObj>();
 	}
 	
 	public void addCurrentDayInterestMinuteDataID(String dataID)
@@ -58,37 +69,52 @@ public class DACurrentDayTimePriceCache {
 			{
 				String stockID = m_CurrentDayInterestMinuteDataIDs.get(i);
 				
-				CListObserver<TimePrice> cObsTimePrice = m_historyCacheStockTimeMap.get(stockID);
-				if(null == cObsTimePrice)
+				HistoryCacheStockTimeObj cHistoryCacheStockTimeObj =  m_historyCacheStockTimeMap.get(stockID);
+				if(null == cHistoryCacheStockTimeObj)
 				{
-					cObsTimePrice = new CListObserver<TimePrice>();
-					m_historyCacheStockTimeMap.put(stockID, cObsTimePrice);
+					cHistoryCacheStockTimeObj = new HistoryCacheStockTimeObj();
+					m_historyCacheStockTimeMap.put(stockID, cHistoryCacheStockTimeObj);
 				}
 				
-				if(cObsTimePrice.size() > 0)
+				// if current day detail get failed， not try get data next minute
+				if(cHistoryCacheStockTimeObj.bGetSucFlag)
 				{
-					// 缓存中有数据，加载后面的部分
-					String beginTime = cObsTimePrice.get(0).time;
-					int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
-							stockID, m_date, 
-							beginTime, m_time, cObsTimePrice);
+					CListObserver<TimePrice> cObsTimePrice = cHistoryCacheStockTimeObj.timepriceList;
+					
+					if(cObsTimePrice.size() > 0)
+					{
+						// 缓存中有数据，加载后面的部分
+						String beginTime = cObsTimePrice.get(0).time;
+						int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
+								stockID, m_date, 
+								beginTime, m_time, cObsTimePrice);
+						if(errObsTimePriceList < 0)
+						{
+							cHistoryCacheStockTimeObj.bGetSucFlag = false;
+							CLog.error("DENGINE", "DACurrentDayTimePriceCache error1! (%s %s)", stockID, m_date);
+						}
+					}
+					else
+					{
+						// 缓存中没数据, 只从历史数据中加载当时时间的
+						int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
+								stockID, m_date, 
+								m_time, m_time, cObsTimePrice);
+						if(errObsTimePriceList < 0)
+						{
+							cHistoryCacheStockTimeObj.bGetSucFlag = false;
+							CLog.error("DENGINE", "DACurrentDayTimePriceCache error2! (%s %s)", stockID, m_date);
+						}
+					}
+					
+					if(cObsTimePrice.size() > 0)
+					{
+						TimePrice lastTimePrice =  cObsTimePrice.get(cObsTimePrice.size()-1);
+						CLog.output("DENGINE", "MinuteData %s %s (%d)...%.3f", 
+								stockID, lastTimePrice.time,
+								cObsTimePrice.size(),lastTimePrice.price);
+					}
 				}
-				else
-				{
-					// 缓存中没数据, 只从历史数据中加载当时时间的
-					int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
-							stockID, m_date, 
-							m_time, m_time, cObsTimePrice);
-				}
-				
-				if(cObsTimePrice.size() > 0)
-				{
-					TimePrice lastTimePrice =  cObsTimePrice.get(cObsTimePrice.size()-1);
-					CLog.output("DENGINE", "MinuteData %s %s (%d)...%.3f", 
-							stockID, lastTimePrice.time,
-							cObsTimePrice.size(),lastTimePrice.price);
-				}
-				
 			}
 		}
 		else
@@ -188,7 +214,8 @@ public class DACurrentDayTimePriceCache {
 			{
 				return -1;
 			}
-			CListObserver<TimePrice> cObsTimePrice = m_historyCacheStockTimeMap.get(stockID);
+			HistoryCacheStockTimeObj cHistoryCacheStockTimeObj =  m_historyCacheStockTimeMap.get(stockID);
+			CListObserver<TimePrice> cObsTimePrice = cHistoryCacheStockTimeObj.timepriceList;
 			// build观察器
 			observer.build(cObsTimePrice);
 		}
@@ -213,5 +240,5 @@ public class DACurrentDayTimePriceCache {
 	
 	private String m_date;
 	private String m_time;
-	private Map<String, CListObserver<TimePrice>> m_historyCacheStockTimeMap;
+	private Map<String, HistoryCacheStockTimeObj> m_historyCacheStockTimeMap;
 }
