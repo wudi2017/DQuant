@@ -32,6 +32,12 @@ public class DAPool {
 	
 	public void build(String date, String time)
 	{
+		// 构建当日缓存数据
+		if(!m_date.equals(date))
+		{
+			m_currentDayTimePriceCache.clear(); // 构建天数不一致，清空实时缓存
+		}
+		
 		// 更新pool日期
 		m_date = date;
 		m_time = time;
@@ -40,11 +46,6 @@ public class DAPool {
 		m_obsStockIDList = new CListObserver<String>();
 		StockDataApi.instance().buildAllStockIDObserver(m_obsStockIDList);	
 		
-		// 构建当日缓存数据
-		if(!m_date.equals(date))
-		{
-			m_currentDayTimePriceCache.clear(); // 构建天数不一致，清空实时缓存
-		}
 		m_currentDayTimePriceCache.buildAll(date, time);
 	}
 	
