@@ -112,14 +112,12 @@ public class StockDataApi {
 	public int buildAllStockIDObserver(CListObserver<String> observer)
 	{
 		int error = 0;
-		if(null != m_cCache.AllStockID)
+		if(m_cCache.AllStockID().size() != 0)
 		{
-			observer.build(m_cCache.AllStockID);
+			observer.build(m_cCache.AllStockID());
 		}
 		else
 		{
-			m_cCache.AllStockID = new ArrayList<String>();
-			
 			ArrayList<StockItem> container = new ArrayList<StockItem>();
 			int errStockItem = m_cBaseDataLayer.getLocalAllStock(container);
 			if(0 == errStockItem)
@@ -127,10 +125,10 @@ public class StockDataApi {
 				for(int i=0; i<container.size();i++)
 				{
 					String stockId = container.get(i).id;
-					m_cCache.AllStockID.add(stockId);
+					m_cCache.AllStockID().add(stockId);
 				}
 				error = 0;
-				observer.build(m_cCache.AllStockID);
+				observer.build(m_cCache.AllStockID());
 			}
 			else
 			{
@@ -153,19 +151,14 @@ public class StockDataApi {
 		int error = 0;
 		
 		// 首次进行缓存
-		if(null == m_cCache.latestStockInfo || !m_cCache.latestStockInfo.containsKey(id))
+		if(!m_cCache.contains_latestStockInfo(id))
 		{
-			if(null == m_cCache.latestStockInfo)
-			{
-				m_cCache.latestStockInfo = new HashMap<String,StockInfo>();
-			}
-			
 			StockInfo ctnStockInfo = new StockInfo();
 			int errStockInfo = m_cBaseDataLayer.getStockInfo(id, ctnStockInfo);
 			
 			if(0 == errStockInfo)
 			{
-				m_cCache.latestStockInfo.put(id, ctnStockInfo);
+				m_cCache.set_latestStockInfo(id, ctnStockInfo);
 			}
 			else
 			{
@@ -174,9 +167,9 @@ public class StockDataApi {
 		}
 			
 		// 从缓存中取数据
-		if(null != m_cCache.latestStockInfo && m_cCache.latestStockInfo.containsKey(id))
+		if(m_cCache.contains_latestStockInfo(id))
 		{
-			observer.build(m_cCache.latestStockInfo.get(id));
+			observer.build(m_cCache.get_latestStockInfo(id));
 		}
 		else
 		{
@@ -199,19 +192,14 @@ public class StockDataApi {
 		int error = 0;
 		
 		// 首次进行历史数据缓存
-		if(null == m_cCache.dayKLineList || !m_cCache.dayKLineList.containsKey(stockID))
+		if(!m_cCache.contains_dayKLine(stockID))
 		{
-			if(null == m_cCache.dayKLineList)
-			{
-				m_cCache.dayKLineList = new HashMap<String,List<KLine>>();
-			}
-			
 			List<KLine> cntKLine = new ArrayList<KLine>();
 			int errKLine = m_cBaseDataLayer.getDayKLinesForwardAdjusted(stockID, cntKLine);
 			
 			if(0 == errKLine && cntKLine.size() != 0)
 			{
-				m_cCache.dayKLineList.put(stockID, cntKLine);
+				m_cCache.set_dayKLine(stockID, cntKLine);
 			}
 			else
 			{
@@ -221,11 +209,11 @@ public class StockDataApi {
 		}
 		
 		// 从缓存中取数据
-		if(null != m_cCache.dayKLineList && m_cCache.dayKLineList.containsKey(stockID))
+		if(m_cCache.contains_dayKLine(stockID))
 		{
 			int iBase = -1;
 			int iSize = 0;
-			List<KLine> cur_dayKLineList = m_cCache.dayKLineList.get(stockID);
+			List<KLine> cur_dayKLineList = m_cCache.get_dayKLine(stockID);
 			if(fromDate.compareTo(toDate) <= 0)
 			{
 				for(int i = 0; i <cur_dayKLineList.size(); i++)  
@@ -266,13 +254,8 @@ public class StockDataApi {
 		
 		// 首次进行历史数据缓存
 		String findKey = id + "_" + date;
-		if(null == m_cCache.stockTimeData || !m_cCache.stockTimeData.containsKey(findKey))
+		if(!m_cCache.contains_stockTimeData(findKey))
 		{
-			if(null == m_cCache.stockTimeData)
-			{
-				m_cCache.stockTimeData = new HashMap<String,List<TimePrice>>();
-			}
-			
 			List<TimePrice> detailDataList = new ArrayList<TimePrice>();
 			
 			CListObserver<KLine> obsDayKLineList = new CListObserver<KLine>();
@@ -330,18 +313,18 @@ public class StockDataApi {
 							detailDataList.add(cStockDayDetail);
 				        } 
 						
-						m_cCache.stockTimeData.put(findKey, detailDataList);
+						m_cCache.set_stockTimeData(findKey, detailDataList);
 					}
 				}
 			}
 		}
 		
 		// 从缓存中取数据
-		if(null != m_cCache.stockTimeData && m_cCache.stockTimeData.containsKey(findKey))
+		if( m_cCache.contains_stockTimeData(findKey))
 		{
 			int iBase = -1;
 			int iSize = 0;
-			List<TimePrice> cur_stockTimeData = m_cCache.stockTimeData.get(findKey);
+			List<TimePrice> cur_stockTimeData = m_cCache.get_stockTimeData(findKey);
 			if(beginTime.compareTo(endTime) <= 0)
 			{
 				for(int i = 0; i <cur_stockTimeData.size(); i++)  
