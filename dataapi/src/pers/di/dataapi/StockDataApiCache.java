@@ -2,6 +2,7 @@ package pers.di.dataapi;
 
 import java.util.*;
 
+import pers.di.common.CLRUMapCache;
 import pers.di.dataapi.common.*;
 
 public class StockDataApiCache {
@@ -12,7 +13,7 @@ public class StockDataApiCache {
 		m_AllStockID = new ArrayList<String>();
 		m_latestStockInfo = new HashMap<String,StockInfo>();
 		m_dayKLineList = new HashMap<String,List<KLine>>();
-		m_stockTimeData = new HashMap<String,List<TimePrice>>();
+		m_stockTimeData = new CLRUMapCache<String, List<TimePrice>>(100);
 	}
 	
 	public void clearAllCache()
@@ -98,5 +99,5 @@ public class StockDataApiCache {
 	
 	// 日内分时缓存  
 	// key:600001_2016-01-01
-	private Map<String,List<TimePrice>> m_stockTimeData;
+	CLRUMapCache<String, List<TimePrice>> m_stockTimeData;
 }
