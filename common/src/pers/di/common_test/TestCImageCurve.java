@@ -40,6 +40,7 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(110.0f,111.9f));
 			cCImageCurve.addLogicCurveSameRatio(PoiList, 2);
 		}
+		cCImageCurve.writeAxis();
 		cCImageCurve.GenerateImage();
 	}
 	
@@ -60,6 +61,7 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(100.9f,400.2f));
 			PoiList.add(new CurvePoint(110.0f,110.9f));
 			cCImageCurve.writeLogicCurve(PoiList, 1);
+			cCImageCurve.writeAxis();
 		}
 		{
 			List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
@@ -75,6 +77,7 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(100.9f,172.2f));
 			PoiList.add(new CurvePoint(110.0f,111.9f));
 			cCImageCurve.writeLogicCurve(PoiList, 2);
+			cCImageCurve.writeAxis();
 		}
 		cCImageCurve.GenerateImage();
 	}
@@ -95,6 +98,7 @@ public class TestCImageCurve {
 		PoiList.add(new CurvePoint(0.9f,0.2f));
 		PoiList.add(new CurvePoint(1.0f,0.9f));
 		cCImageCurve.writeUnitCurve(PoiList, 1);
+		cCImageCurve.writeAxis();
 		cCImageCurve.GenerateImage();
 	}
 	
@@ -115,6 +119,7 @@ public class TestCImageCurve {
 		PoiList.add(new CurvePoint(1000.0f,328.1f));
 		PoiList.add(new CurvePoint(1100.0f,520.2f));
 		cCImageCurve.writeImagePixelCurve(PoiList, 1);
+		cCImageCurve.writeAxis();
 		cCImageCurve.GenerateImage();
 	}
 	

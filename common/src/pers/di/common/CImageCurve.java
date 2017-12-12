@@ -331,6 +331,13 @@ public class CImageCurve {
         }
 	}
 	
+	public void writeAxis()
+	{
+		m_g2.setPaint(Color.BLACK);
+		m_g2.drawLine(m_padding_x/2, m_padding_y +  m_unitHight, m_padding_x + m_unitWidth, m_padding_y +  m_unitHight);
+		m_g2.drawLine(m_padding_x, m_padding_y, m_padding_x, m_padding_y +  2*m_unitHight);
+	}
+	
 	public CImageCurve(int width, int high, String fileName)
 	{
 		m_cMultiUnitCurveMap = new HashMap<Integer, List<CurvePoint>>();
@@ -352,15 +359,15 @@ public class CImageCurve {
     	m_unitWidth = (int)(m_widthPix - 2.5*m_padding_x);
     	m_unitHight = (int)((m_hightPix - 2*m_padding_y)/2.0f);
     	
-    	// 描画坐标系
-    	List<CurvePoint> PoiList_linex = new ArrayList<CurvePoint>();
-    	PoiList_linex.add(new CurvePoint(0.0f,0.0f));
-    	PoiList_linex.add(new CurvePoint(1.0f,0.0f));
-    	writeUnitCurve(PoiList_linex, 0);
-    	List<CurvePoint> PoiList_liney = new ArrayList<CurvePoint>();
-    	PoiList_liney.add(new CurvePoint(0.0f,1.0f));
-    	PoiList_liney.add(new CurvePoint(0.0f,-1.0f));
-    	writeUnitCurve(PoiList_liney, 0);
+//    	// 描画坐标系
+//    	List<CurvePoint> PoiList_linex = new ArrayList<CurvePoint>();
+//    	PoiList_linex.add(new CurvePoint(0.0f,0.0f));
+//    	PoiList_linex.add(new CurvePoint(1.0f,0.0f));
+//    	writeUnitCurve(PoiList_linex, 0);
+//    	List<CurvePoint> PoiList_liney = new ArrayList<CurvePoint>();
+//    	PoiList_liney.add(new CurvePoint(0.0f,1.0f));
+//    	PoiList_liney.add(new CurvePoint(0.0f,-1.0f));
+//    	writeUnitCurve(PoiList_liney, 0);
 
 //        String s = "test";
 //        FontRenderContext context = m_g2.getFontRenderContext();
