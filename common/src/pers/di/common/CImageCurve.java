@@ -39,6 +39,13 @@ public class CImageCurve {
 			m_name = name;
 			m_marked = false;
 		}
+		public CurvePoint(double x, double y, boolean marked) 
+		{ 
+			m_x = x; 
+			m_y = y; 
+			m_name = "";
+			m_marked = marked;
+		}
 		public CurvePoint(double x, double y, String name, boolean marked) 
 		{ 
 			m_x = x; 
@@ -72,8 +79,13 @@ public class CImageCurve {
 		}   
 	}
 	
+	private static class SameRatioLogicCurveItem
+	{
+		public Color color;
+		public List<CurvePoint> curvePoint;
+	}
 	// 描画任意数值曲线， 此曲线将映射到图片上，多曲线Y同比例调整
-	public void addLogicCurveSameRatio(List<CurvePoint> LogicPoiList, int index)
+	public void writeLogicCurveSameRatio(List<CurvePoint> LogicPoiList)
 	{
 		if(LogicPoiList.size() == 0) return;
 		
@@ -149,15 +161,19 @@ public class CImageCurve {
 			poiCurList.add(new CurvePoint(curX, curY, textstr, marked));
         }
 		
-		m_cMultiUnitCurveMap.put(index, poiCurList);
+		SameRatioLogicCurveItem cSameRatioLogicCurveItem = new SameRatioLogicCurveItem();
+		cSameRatioLogicCurveItem.color = this.color();
+		cSameRatioLogicCurveItem.curvePoint = poiCurList;
+		m_cSameRatioLogicCurveList.add(cSameRatioLogicCurveItem);
 	}
 	public void writeMultiLogicCurveSameRatio()
 	{
 		//找到最大y
 		double fMaxY = 0.0f; 
-		for (Map.Entry<Integer, List<CurvePoint>> entry : m_cMultiUnitCurveMap.entrySet()) {  
+		for (int iCurve=0; iCurve<m_cSameRatioLogicCurveList.size(); iCurve++) {  
 			
-			List<CurvePoint> cCurPoiList = entry.getValue();
+			List<CurvePoint> cCurPoiList = m_cSameRatioLogicCurveList.get(iCurve).curvePoint;
+			
 			for(int i = 0; i < cCurPoiList.size(); i++) 
 			{
 				CurvePoint cPoi = cCurPoiList.get(i);
@@ -168,21 +184,24 @@ public class CImageCurve {
 		fMaxY = fMaxY*1.10f;
 		
 		// 高度同比化
-		for (Map.Entry<Integer, List<CurvePoint>> entry : m_cMultiUnitCurveMap.entrySet()) {  
-			Integer key = entry.getKey();
-			List<CurvePoint> cCurPoiList = entry.getValue();
+		for (int iCurve=0; iCurve<m_cSameRatioLogicCurveList.size(); iCurve++) {  
+			
+			Color color = m_cSameRatioLogicCurveList.get(iCurve).color;
+			List<CurvePoint> cCurPoiList = m_cSameRatioLogicCurveList.get(iCurve).curvePoint;
+
 			for(int i = 0; i < cCurPoiList.size(); i++) 
 			{
 				CurvePoint cPoi = cCurPoiList.get(i);
 				cPoi.m_y = cPoi.m_y / fMaxY;
 			} 
 			// 绘制单位曲线到图像
-			writeUnitCurve(cCurPoiList, key);
+			this.setColor(color);
+			writeUnitCurve(cCurPoiList);
 		} 
 	}
 	
 	// 描画任意数值曲线， 此曲线将映射到图片上，Y自比例调整，与其他曲线无关
-	public void writeLogicCurve(List<CurvePoint> LogicPoiList, int index)
+	public void writeLogicCurve(List<CurvePoint> LogicPoiList)
 	{
 		if(LogicPoiList.size() == 0) return;
 		double beginx = LogicPoiList.get(0).m_x;
@@ -242,11 +261,11 @@ public class CImageCurve {
 			poiUnitList.add(new CurvePoint(unitX, unitY, textstr, marked));
         }
 		
-		writeUnitCurve(poiUnitList, index);
+		writeUnitCurve(poiUnitList);
 	}
 	
     // 按单位1描画，图片左侧中点为(0,0)，右上角为 (0,1)，逻辑数值无单位
-	public void writeUnitCurve(List<CurvePoint> poiList, int index)
+	public void writeUnitCurve(List<CurvePoint> poiList)
 	{
 		List<CurvePoint> poiPixList = new ArrayList<CurvePoint>();
 		for(int i = 0; i < poiList.size(); i++)  
@@ -259,21 +278,13 @@ public class CImageCurve {
 			// ANLLog.outputConsole("New %d,%d \n", newX, newY);
 			poiPixList.add(new CurvePoint(newX, newY, cPoi.m_name, marked));
         }
-		writeImagePixelCurve(poiPixList, index);
+		writeImagePixelCurve(poiPixList);
 	}
 	
 	// 按实际图片像素描画曲线，图片左上为（0.0），右下角为图片最大长宽，单位是像素
-	public void writeImagePixelCurve(List<CurvePoint> poiList, int index)
+	public void writeImagePixelCurve(List<CurvePoint> poiList)
 	{
 		// 绘制线段与文字
-		if(index == 0) m_g2.setPaint(Color.BLACK);
-		if(index == 1) m_g2.setPaint(Color.BLUE);
-		if(index == 2) m_g2.setPaint(Color.GREEN);
-		if(index == 3) m_g2.setPaint(Color.YELLOW);
-		if(index == 4) m_g2.setPaint(Color.CYAN);
-		if(index == 5) m_g2.setPaint(Color.PINK);
-		if(index == 6) m_g2.setPaint(Color.ORANGE);
-		if(index == 7) m_g2.setPaint(Color.GRAY);
 		for(int i = 0; i < poiList.size(); i++)  
         {  
 			// 绘制线段
@@ -299,7 +310,8 @@ public class CImageCurve {
         }
 		
 		// 绘制标记
-		m_g2.setPaint(Color.RED);
+		storeColor();
+		m_g2.setColor(Color.RED);
 		for(int i = 0; i < poiList.size(); i++)  
         {  
 			CurvePoint cPoi = poiList.get(i); 
@@ -329,18 +341,28 @@ public class CImageCurve {
 				m_g2.drawLine(BeginX, BeginY, EndX, EndY);
 			}
         }
+		restoreColor();
 	}
 	
 	public void writeAxis()
 	{
-		m_g2.setPaint(Color.BLACK);
-		m_g2.drawLine(m_padding_x/2, m_padding_y +  m_unitHight, m_padding_x + m_unitWidth, m_padding_y +  m_unitHight);
-		m_g2.drawLine(m_padding_x, m_padding_y, m_padding_x, m_padding_y +  2*m_unitHight);
+		writeImagePixelLine(m_padding_x/2, m_padding_y +  m_unitHight, m_padding_x + m_unitWidth, m_padding_y +  m_unitHight);
+		writeImagePixelLine(m_padding_x, m_padding_y, m_padding_x, m_padding_y +  2*m_unitHight);
+	}
+	
+	public void writeImagePixelLine(int x0, int y0, int x1, int y1)
+	{
+		m_g2.drawLine(x0, y0, x1, y1);
+	}
+
+	public void setColor(Color color)
+	{
+		m_g2.setColor(color);
 	}
 	
 	public CImageCurve(int width, int high, String fileName)
 	{
-		m_cMultiUnitCurveMap = new HashMap<Integer, List<CurvePoint>>();
+		m_cSameRatioLogicCurveList = new ArrayList<SameRatioLogicCurveItem>();
 		
 		m_widthPix = width;
 		m_hightPix = high;
@@ -379,8 +401,27 @@ public class CImageCurve {
 //        m_g2.drawString(s, (int)x, (int)baseY);   
 	}
 	
+	
+	private Color color()
+	{
+		return m_g2.getColor();
+	}
+	
+	private void storeColor()
+	{
+		m_currentColor = m_g2.getColor();
+	}
+	
+	private void restoreColor()
+	{
+		m_g2.setColor(m_currentColor);
+	}
+	
+	private Color m_currentColor;
+	
 	// 同比例多曲线表，点记录的是Unit数据，最大Y为单位1
-	private Map<Integer, List<CurvePoint>> m_cMultiUnitCurveMap; // <index, curvePointList>
+	private List<SameRatioLogicCurveItem> m_cSameRatioLogicCurveList;
+	
 
     //坐标系参数
 	private int m_padding_x;

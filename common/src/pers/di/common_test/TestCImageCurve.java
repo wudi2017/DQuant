@@ -1,5 +1,6 @@
 package pers.di.common_test;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,9 +8,9 @@ import pers.di.common.*;
 import pers.di.common.CImageCurve.*;
 
 public class TestCImageCurve {
-	public static void test_addLogicCurveSameRatio()
+	public static void test_writeLogicCurveSameRatio()
 	{
-		CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_addLogicCurveSameRatio.jpg");
+		CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_writeLogicCurveSameRatio.jpg");
 		{
 			List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 			PoiList.add(new CurvePoint(10.0f,110.1f));
@@ -23,7 +24,8 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(90.8f,110.1f));
 			PoiList.add(new CurvePoint(100.9f,400.2f));
 			PoiList.add(new CurvePoint(110.0f,110.9f));
-			cCImageCurve.addLogicCurveSameRatio(PoiList, 1);
+			cCImageCurve.setColor(Color.ORANGE);
+			cCImageCurve.writeLogicCurveSameRatio(PoiList);
 		}
 		{
 			List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
@@ -38,8 +40,10 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(90.8f,198.1f));
 			PoiList.add(new CurvePoint(100.9f,172.2f,"mark",true));
 			PoiList.add(new CurvePoint(110.0f,111.9f));
-			cCImageCurve.addLogicCurveSameRatio(PoiList, 2);
+			cCImageCurve.setColor(Color.GREEN);
+			cCImageCurve.writeLogicCurveSameRatio(PoiList);
 		}
+		cCImageCurve.setColor(Color.BLACK);
 		cCImageCurve.writeAxis();
 		cCImageCurve.GenerateImage();
 	}
@@ -60,8 +64,8 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(90.8f,110.1f));
 			PoiList.add(new CurvePoint(100.9f,400.2f));
 			PoiList.add(new CurvePoint(110.0f,110.9f));
-			cCImageCurve.writeLogicCurve(PoiList, 1);
-			cCImageCurve.writeAxis();
+			cCImageCurve.setColor(Color.ORANGE);
+			cCImageCurve.writeLogicCurve(PoiList);
 		}
 		{
 			List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
@@ -76,9 +80,11 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(90.8f,198.1f));
 			PoiList.add(new CurvePoint(100.9f,172.2f));
 			PoiList.add(new CurvePoint(110.0f,111.9f));
-			cCImageCurve.writeLogicCurve(PoiList, 2);
-			cCImageCurve.writeAxis();
+			cCImageCurve.setColor(Color.GREEN);
+			cCImageCurve.writeLogicCurve(PoiList);
 		}
+		cCImageCurve.setColor(Color.BLACK);
+		cCImageCurve.writeAxis();
 		cCImageCurve.GenerateImage();
 	}
 	
@@ -97,7 +103,10 @@ public class TestCImageCurve {
 		PoiList.add(new CurvePoint(0.8f,0.1f));
 		PoiList.add(new CurvePoint(0.9f,0.2f));
 		PoiList.add(new CurvePoint(1.0f,0.9f));
-		cCImageCurve.writeUnitCurve(PoiList, 1);
+		
+		cCImageCurve.setColor(Color.ORANGE);
+		cCImageCurve.writeUnitCurve(PoiList);
+		cCImageCurve.setColor(Color.BLACK);
 		cCImageCurve.writeAxis();
 		cCImageCurve.GenerateImage();
 	}
@@ -115,10 +124,24 @@ public class TestCImageCurve {
 		PoiList.add(new CurvePoint(600.0f,147.1f));
 		PoiList.add(new CurvePoint(700.0f,158.1f));
 		PoiList.add(new CurvePoint(800.0f,190.1f));
-		PoiList.add(new CurvePoint(900.0f,288.1f));
-		PoiList.add(new CurvePoint(1000.0f,328.1f));
-		PoiList.add(new CurvePoint(1100.0f,520.2f));
-		cCImageCurve.writeImagePixelCurve(PoiList, 1);
+		PoiList.add(new CurvePoint(900.0f,288.1f,true));
+		PoiList.add(new CurvePoint(1000.0f,328.1f,"12345",true));
+		PoiList.add(new CurvePoint(1100.0f,520.2f, "yusss"));
+		cCImageCurve.setColor(Color.ORANGE);
+		cCImageCurve.writeImagePixelCurve(PoiList);
+		cCImageCurve.writeImagePixelLine(100, 0, 0, 100);
+		cCImageCurve.writeAxis();
+		cCImageCurve.GenerateImage();
+	}
+	
+	public static void test_writeImagePixelLine()
+	{
+		CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_writeImagePixelLine.jpg");
+		cCImageCurve.setColor(Color.BLACK);
+		cCImageCurve.writeImagePixelLine(0, 0, 100, 100);
+		cCImageCurve.setColor(Color.RED);
+		cCImageCurve.writeImagePixelLine(100, 0, 0, 100);
+		cCImageCurve.setColor(Color.ORANGE);
 		cCImageCurve.writeAxis();
 		cCImageCurve.GenerateImage();
 	}
@@ -144,17 +167,18 @@ public class TestCImageCurve {
 			PoiList.add(new CurvePoint(900.0f,288.1f + 10*i));
 			PoiList.add(new CurvePoint(1000.0f,328.1f + 10*i));
 			PoiList.add(new CurvePoint(1100.0f,520.2f + 10*i));
-			cCImageCurve.writeImagePixelCurve(PoiList, 0);
+			//cCImageCurve.writeImagePixelCurve(PoiList, 0);
 			cCImageCurve.GenerateImage();
 			
 		}
 	}
 	
 	public static void main(String[] args) {
-		//test_writeImagePixelCurve();
-		//test_writeUnitCurve();
-		//test_writeLogicCurve();
-		test_addLogicCurveSameRatio();
+		test_writeImagePixelLine();
+		test_writeImagePixelCurve();
+		test_writeUnitCurve();
+		test_writeLogicCurve();
+		test_writeLogicCurveSameRatio();
 		//test_Clear();
 	}
 }
