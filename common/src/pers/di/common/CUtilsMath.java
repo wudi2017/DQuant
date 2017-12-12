@@ -51,5 +51,10 @@ public class CUtilsMath {
 		return s_random.nextFloat();
 	}
 	
+	// d¿ªi´Î·½¸ú
+	public static double sqrt(double d, double i) {  
+       i=1/i;  
+       return Math.pow(d, i);  
+	}  
 	private static Random s_random = new Random(CUtilsDateTime.GetCurrentTimeMillis());
 }

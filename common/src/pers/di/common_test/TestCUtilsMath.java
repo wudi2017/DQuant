@@ -104,6 +104,17 @@ public class TestCUtilsMath {
 		CLog.output("TEST", "saveNDecimal45 %.3f = 30.18?\n", CUtilsMath.saveNDecimal(30.16f*1.1f, 2));
 		
 	}
+	
+	@CTest.test
+	public static void test_sqrt()
+	{
+		double res1 = CUtilsMath.sqrt(4,3);
+		CTest.EXPECT_DOUBLE_EQ(res1, 1.5874010519681994, 3);
+		
+		double res2 = CUtilsMath.sqrt(3.18,7);
+		CTest.EXPECT_DOUBLE_EQ(res2, 1.18, 2);
+	}
+	
 	public static void main(String[] args) {
 		CTest.ADD_TEST(TestCUtilsMath.class);
 		CTest.RUN_ALL_TESTS();
