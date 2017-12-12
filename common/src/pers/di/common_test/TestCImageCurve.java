@@ -50,42 +50,56 @@ public class TestCImageCurve {
 	
 	public static void test_writeLogicCurve()
 	{
-		CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_writeLogicCurve.jpg");
 		{
-			List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
-			PoiList.add(new CurvePoint(10.0f,110.1f));
-			PoiList.add(new CurvePoint(20.1f,180.2f));
-			PoiList.add(new CurvePoint(30.2f,290.3f));
-			PoiList.add(new CurvePoint(40.3f,560.4f));
-			PoiList.add(new CurvePoint(50.4f,300.2f));
-			PoiList.add(new CurvePoint(60.5f,-22.1f));
-			PoiList.add(new CurvePoint(70.6f,-110.3f));
-			PoiList.add(new CurvePoint(80.7f,0.0f));
-			PoiList.add(new CurvePoint(90.8f,110.1f));
-			PoiList.add(new CurvePoint(100.9f,400.2f));
-			PoiList.add(new CurvePoint(110.0f,110.9f));
-			cCImageCurve.setColor(Color.ORANGE);
-			cCImageCurve.writeLogicCurve(PoiList);
+			CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_writeLogicCurve.jpg");
+			{
+				List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
+				PoiList.add(new CurvePoint(10.0f,110.1f));
+				PoiList.add(new CurvePoint(20.1f,180.2f));
+				PoiList.add(new CurvePoint(30.2f,290.3f));
+				PoiList.add(new CurvePoint(40.3f,560.4f));
+				PoiList.add(new CurvePoint(50.4f,300.2f));
+				PoiList.add(new CurvePoint(60.5f,-22.1f));
+				PoiList.add(new CurvePoint(70.6f,-110.3f));
+				PoiList.add(new CurvePoint(80.7f,0.0f));
+				PoiList.add(new CurvePoint(90.8f,110.1f));
+				PoiList.add(new CurvePoint(100.9f,400.2f));
+				PoiList.add(new CurvePoint(110.0f,110.9f));
+				cCImageCurve.setColor(Color.ORANGE);
+				cCImageCurve.writeLogicCurve(PoiList);
+			}
+			{
+				List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
+				PoiList.add(new CurvePoint(10.0f,11.1f));
+				PoiList.add(new CurvePoint(20.1f,18.2f));
+				PoiList.add(new CurvePoint(30.2f,29.3f));
+				PoiList.add(new CurvePoint(40.3f,60.4f));
+				PoiList.add(new CurvePoint(50.4f,110.2f));
+				PoiList.add(new CurvePoint(60.5f,122.1f));
+				PoiList.add(new CurvePoint(70.6f,188.3f));
+				PoiList.add(new CurvePoint(80.7f,266.0f));
+				PoiList.add(new CurvePoint(90.8f,198.1f));
+				PoiList.add(new CurvePoint(100.9f,172.2f));
+				PoiList.add(new CurvePoint(110.0f,111.9f));
+				cCImageCurve.setColor(Color.GREEN);
+				cCImageCurve.writeLogicCurve(PoiList);
+			}
+			cCImageCurve.setColor(Color.BLACK);
+			cCImageCurve.writeAxis();
+			cCImageCurve.GenerateImage();
 		}
+		
 		{
+			CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_writeLogicCurve2.jpg");
+
 			List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 			PoiList.add(new CurvePoint(10.0f,11.1f));
-			PoiList.add(new CurvePoint(20.1f,18.2f));
-			PoiList.add(new CurvePoint(30.2f,29.3f));
-			PoiList.add(new CurvePoint(40.3f,60.4f));
-			PoiList.add(new CurvePoint(50.4f,110.2f));
-			PoiList.add(new CurvePoint(60.5f,122.1f));
-			PoiList.add(new CurvePoint(70.6f,188.3f));
-			PoiList.add(new CurvePoint(80.7f,266.0f));
-			PoiList.add(new CurvePoint(90.8f,198.1f));
-			PoiList.add(new CurvePoint(100.9f,172.2f));
-			PoiList.add(new CurvePoint(110.0f,111.9f));
 			cCImageCurve.setColor(Color.GREEN);
 			cCImageCurve.writeLogicCurve(PoiList);
+			cCImageCurve.setColor(Color.BLACK);
+			cCImageCurve.writeAxis();
+			cCImageCurve.GenerateImage();
 		}
-		cCImageCurve.setColor(Color.BLACK);
-		cCImageCurve.writeAxis();
-		cCImageCurve.GenerateImage();
 	}
 	
 	public static void test_writeUnitCurve()
@@ -134,6 +148,18 @@ public class TestCImageCurve {
 		cCImageCurve.GenerateImage();
 	}
 	
+	public static void test_writeUnitLine()
+	{
+		CImageCurve cCImageCurve = new CImageCurve(1600,900,"writeUnitLine.jpg");
+		cCImageCurve.setColor(Color.BLACK);
+		cCImageCurve.writeUnitLine(0, 0, 1, 1);
+		cCImageCurve.setColor(Color.RED);
+		cCImageCurve.writeUnitLine(0, 1, 1, 0);
+		cCImageCurve.setColor(Color.ORANGE);
+		cCImageCurve.writeAxis();
+		cCImageCurve.GenerateImage();
+	}
+	
 	public static void test_writeImagePixelLine()
 	{
 		CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_writeImagePixelLine.jpg");
@@ -175,6 +201,7 @@ public class TestCImageCurve {
 	
 	public static void main(String[] args) {
 		test_writeImagePixelLine();
+		test_writeUnitLine();
 		test_writeImagePixelCurve();
 		test_writeUnitCurve();
 		test_writeLogicCurve();

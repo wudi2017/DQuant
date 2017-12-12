@@ -243,7 +243,7 @@ public class CImageCurve {
 				{
 					textstr = String.format("(%.2f, %.2f%%)", val, rate);
 				}
-				if((i%AutoWriteTextSpan == 0 && 
+				if(AutoWriteTextSpan!=0 && (i%AutoWriteTextSpan == 0 && 
 						i > 0 && i < LogicPoiList.size() - AutoWriteTextSpan/2) ) // 中间部分固定跨度带文字
 				{
 					textstr = String.format("(%.2f, %.2f%%)", val, rate);
@@ -279,6 +279,15 @@ public class CImageCurve {
 			poiPixList.add(new CurvePoint(newX, newY, cPoi.m_name, marked));
         }
 		writeImagePixelCurve(poiPixList);
+	}
+	
+	public void writeUnitLine(double x0, double y0, double x1, double y1)
+	{
+		int newX0 = (int)(m_padding_x + x0*m_unitWidth);
+		int newY0 = (int)(m_padding_y +  m_unitHight - y0*m_unitHight);
+		int newX1 = (int)(m_padding_x + x1*m_unitWidth);
+		int newY1 = (int)(m_padding_y +  m_unitHight - y1*m_unitHight);
+		writeImagePixelLine(newX0, newY0, newX1, newY1);
 	}
 	
 	// 按实际图片像素描画曲线，图片左上为（0.0），右下角为图片最大长宽，单位是像素
