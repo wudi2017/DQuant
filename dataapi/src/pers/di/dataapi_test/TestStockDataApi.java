@@ -1,5 +1,6 @@
 package pers.di.dataapi_test;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -168,7 +169,8 @@ public class TestStockDataApi {
 			PoiList.add(new CurvePoint(i,cTimePrice.price));
 		}
 		
-		cCImageCurve.writeLogicCurve(PoiList, 1);
+		cCImageCurve.setColor(Color.BLACK);
+		cCImageCurve.writeLogicCurve(PoiList);
 		cCImageCurve.GenerateImage();
 		CTest.EXPECT_LONG_EQ(iCheckCnt, 5);
 	}
