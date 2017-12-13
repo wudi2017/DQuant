@@ -13,24 +13,39 @@ public class HttpHelper {
 		m_lastAccessTC = 0;
 	}
 	
-	public void limitAccessSpeed(int msec)
+	public void limitAccessSpeed(long msec)
 	{
 		long curTC = CUtilsDateTime.GetCurrentTimeMillis();
-		if(curTC-m_lastAccessTC>msec)
+		if(curTC-m_lastAccessTC > msec)
 		{
 			m_lastAccessTC = curTC;
 			return;
 		}
 		else
 		{
-			long waitms = msec - (curTC-m_lastAccessTC);
+			long alreadyCostTC = curTC-m_lastAccessTC;
+			if(alreadyCostTC < 0)
+			{
+				alreadyCostTC = 0;
+			}
+				
+			long waitms = msec - alreadyCostTC;
+			if(waitms > msec)
+			{
+				waitms = msec;
+			}
+			if(waitms < 0)
+			{
+				waitms = 0;
+			}
+				
 			try {
 				Thread.sleep(waitms);
-				m_lastAccessTC = CUtilsDateTime.GetCurrentTimeMillis();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			m_lastAccessTC = CUtilsDateTime.GetCurrentTimeMillis();
 		}
 	}
 	

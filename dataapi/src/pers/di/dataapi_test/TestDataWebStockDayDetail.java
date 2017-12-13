@@ -15,7 +15,7 @@ public class TestDataWebStockDayDetail {
 	public static void test_getDayDetail()
 	{
 		List<TradeDetail> ctnTradeDetails = new ArrayList<TradeDetail>();
-		int error = s_cDataWebStockDayDetail.getDayDetail("300351", "2016-09-01", ctnTradeDetails);
+		int error = s_cDataWebStockDayDetail.getDayDetail("300351", "2016-09-02", ctnTradeDetails);
 		if(0 == error)
 		{
 			for(int i = 0; i < ctnTradeDetails.size(); i++)  

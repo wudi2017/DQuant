@@ -122,57 +122,73 @@ public class TestStockDataApi {
 	@CTest.test
 	public static void test_buildMinTimePriceListObserver()
 	{
-		String stockID = "600000";
-		
-		CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_buildMinTimePriceListObserver.jpg");
-		List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
-		
-		CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
-		int errObsTimePriceList = s_StockDataApi.buildMinTimePriceListObserver(stockID, "2016-04-20", 
-				"09:00:00", "14:55:00", obsTimePriceList);
-		CTest.EXPECT_LONG_EQ(obsTimePriceList.size(), 237);
-		int iCheckCnt = 0;
-		for(int i=0; i<obsTimePriceList.size(); i++)
+		// test single
 		{
-			TimePrice cTimePrice = obsTimePriceList.get(i);
-			CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
-			if(cTimePrice.time.equals("09:30:00")) 
+			String stockID = "600000";
+			
+			CImageCurve cCImageCurve = new CImageCurve(1600,900,"test_buildMinTimePriceListObserver.jpg");
+			List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
+			
+			CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
+			int errObsTimePriceList = s_StockDataApi.buildMinTimePriceListObserver(stockID, "2016-04-20", 
+					"09:00:00", "14:55:00", obsTimePriceList);
+			CTest.EXPECT_LONG_EQ(obsTimePriceList.size(), 237);
+			int iCheckCnt = 0;
+			for(int i=0; i<obsTimePriceList.size(); i++)
 			{
-				CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.00, 2);
-				iCheckCnt++;
+				TimePrice cTimePrice = obsTimePriceList.get(i);
+				CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
+				if(cTimePrice.time.equals("09:30:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.00, 2);
+					iCheckCnt++;
+				}
+				if(cTimePrice.time.equals("13:10:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 11.63, 2);
+					iCheckCnt++;
+				}
+				if(cTimePrice.time.equals("14:33:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 11.83, 2);
+					iCheckCnt++;
+				}
+				if(cTimePrice.time.equals("14:47:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 11.94, 2);
+					iCheckCnt++;
+				}
+				if(cTimePrice.time.equals("14:55:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12, 2);
+					iCheckCnt++;
+				}
+				if(cTimePrice.time.equals("14:56:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12, 2);
+					iCheckCnt++;
+				}
+				PoiList.add(new CurvePoint(i,cTimePrice.price));
 			}
-			if(cTimePrice.time.equals("13:10:00")) 
-			{
-				CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 11.63, 2);
-				iCheckCnt++;
-			}
-			if(cTimePrice.time.equals("14:33:00")) 
-			{
-				CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 11.83, 2);
-				iCheckCnt++;
-			}
-			if(cTimePrice.time.equals("14:47:00")) 
-			{
-				CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 11.94, 2);
-				iCheckCnt++;
-			}
-			if(cTimePrice.time.equals("14:55:00")) 
-			{
-				CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12, 2);
-				iCheckCnt++;
-			}
-			if(cTimePrice.time.equals("14:56:00")) 
-			{
-				CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12, 2);
-				iCheckCnt++;
-			}
-			PoiList.add(new CurvePoint(i,cTimePrice.price));
+			
+			cCImageCurve.setColor(Color.BLACK);
+			cCImageCurve.writeLogicCurve(PoiList);
+			cCImageCurve.GenerateImage();
+			CTest.EXPECT_LONG_EQ(iCheckCnt, 5);
 		}
 		
-		cCImageCurve.setColor(Color.BLACK);
-		cCImageCurve.writeLogicCurve(PoiList);
-		cCImageCurve.GenerateImage();
-		CTest.EXPECT_LONG_EQ(iCheckCnt, 5);
+		for(int i=0; i<100; i++)
+		{
+			int iStockID = 600000;
+			iStockID = iStockID + i;
+			String stockID = String.format("%d", iStockID);
+			CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
+			int errObsTimePriceList = s_StockDataApi.buildMinTimePriceListObserver(stockID, "2016-04-20", 
+					"09:00:00", "14:55:00", obsTimePriceList);
+			
+			CLog.output("TEST", "%s errObsTimePriceList: %d", stockID, errObsTimePriceList);
+		}
+		
 	}
 	
 	@CTest.test
@@ -192,7 +208,7 @@ public class TestStockDataApi {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);
-		CTest.RUN_ALL_TESTS("TestStockDataApi.test_getRealTimePrice");
+		CTest.RUN_ALL_TESTS("TestStockDataApi.test_buildMinTimePriceListObserver");
 		CSystem.stop();
 	}
 }
