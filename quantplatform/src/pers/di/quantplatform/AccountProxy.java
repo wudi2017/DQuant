@@ -15,6 +15,11 @@ public class AccountProxy {
 		m_cAccount = accoutDriver.account();
 	}
 	
+	public String ID()
+	{
+		return m_cAccount.ID();
+	}
+	
 	public int pushBuyOrder(String id, int amount, double price)
 	{
 		return m_cAccount.postTradeOrder(TRANACT.BUY, id, amount, price);
