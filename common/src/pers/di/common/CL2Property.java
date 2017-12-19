@@ -32,6 +32,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+/**
+ * Level 2 property
+ * Map<String, Map<String, String>>
+ * 
+ * @author wudi
+ *
+ */
 public class CL2Property {
 	
 	public CL2Property(String storeFileName)
@@ -61,7 +68,7 @@ public class CL2Property {
 		if(m_L2PropMap.containsKey(property))
 		{
 			Map<String,String> subPropMap = m_L2PropMap.get(property);
-			if(subPropMap.containsKey(subProperty))
+			if(null != subPropMap && subPropMap.containsKey(subProperty))
 			{
 				return subPropMap.get(subProperty);
 			}
@@ -69,19 +76,52 @@ public class CL2Property {
 		return null;
 	}
 	
-	public void dump()
+	public int clear()
 	{
-        for (Map.Entry<String, Map<String, String>> entryTop : m_L2PropMap.entrySet()) {  
-          
-            System.out.println("Key = " + entryTop.getKey());  
-          
-            Map<String, String> subMap = entryTop.getValue();
-            for (Map.Entry<String, String> entrySub : subMap.entrySet()) {  
-            	System.out.println("    Key = " + entrySub.getKey());  
-            }
-        }  
+		m_L2PropMap.clear();
+		return 0;
 	}
 	
+	public int clear(String mainProperty)
+	{
+		if(m_L2PropMap.containsKey(mainProperty))
+		{
+			m_L2PropMap.remove(mainProperty);
+		}
+		return 0;
+	}
+	
+	public int clear(String mainProperty, String subProperty)
+	{
+		if(m_L2PropMap.containsKey(mainProperty))
+		{
+			Map<String, String> subMap = m_L2PropMap.get(mainProperty);
+			if(null != subMap && subMap.containsKey(subProperty))
+			{
+				subMap.remove(subProperty);
+			}
+		}
+		return 0;
+	}
+	
+	public int size()
+	{
+		return m_L2PropMap.size();
+	}
+	
+	public int size(String mainProperty)
+	{
+		if(m_L2PropMap.containsKey(mainProperty))
+		{
+			Map<String, String> subMap = m_L2PropMap.get(mainProperty);
+			if(null != subMap)
+			{
+				return subMap.size();
+			}
+		}
+		return 0;
+	}
+
 	public int sync2file()
 	{
 		//System.out.println("sync2file");  
@@ -265,6 +305,19 @@ public class CL2Property {
 		return 0;
 	}
 	
+	private void dump()
+	{
+        for (Map.Entry<String, Map<String, String>> entryTop : m_L2PropMap.entrySet()) {  
+          
+            System.out.println("Key = " + entryTop.getKey());  
+          
+            Map<String, String> subMap = entryTop.getValue();
+            for (Map.Entry<String, String> entrySub : subMap.entrySet()) {  
+            	System.out.println("    Key = " + entrySub.getKey());  
+            }
+        }  
+	}
+	
 	private String m_fileName;
-	Map<String, Map<String, String>> m_L2PropMap;
+	private Map<String, Map<String, String>> m_L2PropMap;
 }

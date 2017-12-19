@@ -11,7 +11,7 @@ public class TestCL2Property {
 	@CTest.test
 	public static void test_CL2Property_w_r()
 	{
-		CL2Property cCL2Property = new CL2Property("1.xml");
+		CL2Property cCL2Property = new CL2Property(CSystem.getRunSessionRoot() + "/1.xml");
 		
 		cCL2Property.setProperty("000001", "checkprice", "3.12");
 		cCL2Property.setProperty("000002", "checkprice", "22");
@@ -28,7 +28,7 @@ public class TestCL2Property {
 	@CTest.test
 	public static void test_CL2Property_sync2file_sync2mem()
 	{
-		CL2Property cCL2Property = new CL2Property("1.xml");
+		CL2Property cCL2Property = new CL2Property(CSystem.getRunSessionRoot() + "/1.xml");
 		
 		cCL2Property.setProperty("000001", "checkprice", "3.12");
 		cCL2Property.setProperty("000002", "checkprice", "22");
@@ -46,12 +46,52 @@ public class TestCL2Property {
 		cCL2Property.sync2file();
 		
 		
-		CL2Property cCL2PropertyRead = new CL2Property("1.xml");
+		CL2Property cCL2PropertyRead = new CL2Property(CSystem.getRunSessionRoot() + "/1.xml");
 		cCL2PropertyRead.sync2mem();
 		CTest.EXPECT_STR_EQ(cCL2PropertyRead.getProperty("000001", "checkprice"), "3.13");
 		CTest.EXPECT_STR_EQ(cCL2PropertyRead.getProperty("000002", "checkvolume"), "998");
 		CTest.EXPECT_STR_EQ(cCL2PropertyRead.getProperty("000003", "pl2i"), "value3");
 	}
+	
+	@CTest.test
+	public static void test_CL2Property_size()
+	{
+		CL2Property cCL2Property = new CL2Property(CSystem.getRunSessionRoot() + "/1.xml");
+		cCL2Property.setProperty("000001", "checkprice", "3.12");
+		cCL2Property.setProperty("000002", "checkprice", "22");
+		cCL2Property.setProperty("000002", "checkvolume", "998");
+		cCL2Property.setProperty("000003", "pl2i", "value3");
+		
+		CTest.EXPECT_LONG_EQ(cCL2Property.size(), 3);
+		CTest.EXPECT_LONG_EQ(cCL2Property.size("000002"), 2);
+		CTest.EXPECT_LONG_EQ(cCL2Property.size("000001"), 1);
+
+		cCL2Property.sync2file();
+	}
+	
+	@CTest.test
+	public static void test_CL2Property_clear()
+	{
+		CL2Property cCL2Property = new CL2Property(CSystem.getRunSessionRoot() + "/1.xml");
+		cCL2Property.setProperty("000001", "checkprice", "3.12");
+		cCL2Property.setProperty("000002", "checkprice", "22");
+		cCL2Property.setProperty("000002", "checkvolume", "998");
+		cCL2Property.setProperty("000003", "pl2i", "value3");
+		
+		CTest.EXPECT_LONG_EQ(cCL2Property.size(), 3);
+		CTest.EXPECT_LONG_EQ(cCL2Property.size("000002"), 2);
+		CTest.EXPECT_LONG_EQ(cCL2Property.size("000001"), 1);
+		
+		cCL2Property.clear("000002");
+		CTest.EXPECT_LONG_EQ(cCL2Property.size(), 2);
+		CTest.EXPECT_LONG_EQ(cCL2Property.size("000002"), 0);
+		
+		cCL2Property.clear();
+		CTest.EXPECT_LONG_EQ(cCL2Property.size(), 0);
+
+		cCL2Property.sync2file();
+	}
+	
 	
 	public static void main(String[] args) {
 		CSystem.start();
