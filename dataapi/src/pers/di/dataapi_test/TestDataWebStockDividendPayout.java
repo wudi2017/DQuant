@@ -11,6 +11,27 @@ import pers.di.dataapi.common.*;
 
 public class TestDataWebStockDividendPayout {
 	
+	public static void test_getDividendPayout_1()
+	{
+		String StockID = "000555";
+		DataWebStockDividendPayout cDataWebStockDividendPayout = new DataWebStockDividendPayout();
+		List<DividendPayout> container = new ArrayList<DividendPayout>();
+		int error = cDataWebStockDividendPayout.getDividendPayout(StockID, container);
+		if(0 == error)
+		{
+			CLog.output("TEST", "DataWebStockDividendPayout.getDividendPayout %s OK!", StockID);
+			for(int i = 0; i < container.size(); i++)  
+	        {  
+				DividendPayout cDividendPayout = container.get(i);  
+				CLog.output("TEST", "%s %.1f %.1f %.1f",
+						cDividendPayout.date,
+						cDividendPayout.songGu,
+						cDividendPayout.zhuanGu,
+						cDividendPayout.paiXi);
+	        } 
+		}
+	}
+	
 	public static void test_getDividendPayout()
 	{
 		DataWebStockDividendPayout cDataWebStockDividendPayout = new DataWebStockDividendPayout();
@@ -43,11 +64,13 @@ public class TestDataWebStockDividendPayout {
 
 	public static void main(String[] args){
 		
-		for(int i=0; i<200; i++)
-		{
-			CLog.output("TEST","call test_getDividendPayout times: %d" , i);
-			test_getDividendPayout();
-		}
+		test_getDividendPayout_1();
+		
+//		for(int i=0; i<200; i++)
+//		{
+//			CLog.output("TEST","call test_getDividendPayout times: %d" , i);
+//			test_getDividendPayout();
+//		}
 		
 	}
 }

@@ -192,14 +192,6 @@ public class BaseDataDownload {
 				int errStockInfo = m_DataWebStockInfo.getStockInfo(id, ctnStockInfo);
 				if(0 == errStockInfo)
 				{
-					// 保存股票基本信息
-					StockInfo cStockBaseData = new StockInfo();
-					cStockBaseData.name = ctnStockInfo.name;
-					cStockBaseData.allMarketValue = ctnStockInfo.allMarketValue;
-					cStockBaseData.circulatedMarketValue = ctnStockInfo.circulatedMarketValue;
-					cStockBaseData.peRatio = ctnStockInfo.peRatio;
-					m_baseDataStorage.saveStockInfo(id, cStockBaseData);
-					
 					// 当前时间在收盘之前，网络数据有效日期为前一天（非周六周日）
 					String webValidLastDate = ctnStockInfo.date;
 					if(ctnStockInfo.time.compareTo("15:00:00") < 0)
@@ -243,36 +235,35 @@ public class BaseDataDownload {
 						//System.out.println("toDateStr:" + toDateStr);
 						
 						// 获取网络日K数据
-						List<KLine> ctnKLineWeb = new ArrayList<KLine>();
-						int errKLineWeb = m_DataWebStockDayK.getKLine(id, fromDateStr, toDateStr, ctnKLineWeb);
-						if(0 == errKLineWeb)
+						List<KLine> ctnKLineWebNew = new ArrayList<KLine>();
+						int errKLineWebNew = m_DataWebStockDayK.getKLine(id, fromDateStr, toDateStr, ctnKLineWebNew);
+						// 获取网络分红派息数据
+						List<DividendPayout> ctnDividendPayoutNew = new ArrayList<DividendPayout>();
+						int errDividendPayoutNew = m_DataWebStockDividendPayout.getDividendPayout(id, ctnDividendPayoutNew);
+						
+						if(0 == errKLineWebNew && 0 == errDividendPayoutNew)
 						// 新增日K数据获取成功
 						{
 							// 向本地数据列表中追加新的更新数据
-							for(int i = 0; i < ctnKLineWeb.size(); i++)  
+							for(int i = 0; i < ctnKLineWebNew.size(); i++)  
 					        {  
-								KLine cKLine = ctnKLineWeb.get(i);  
+								KLine cKLine = ctnKLineWebNew.get(i);  
 								ctnKLineLocal.add(cKLine);
 					        } 
-							// 追加后的本地列表日K数据保存至本地
+							
+							// 追加后的本地列表日K数据保存至本地,并且将分红派息，基本信息一并保存
 							int retsetKLine = m_baseDataStorage.saveKLine(id, ctnKLineLocal);
-							if(0 == retsetKLine)
+							int retsetDividendPayout = m_baseDataStorage.saveDividendPayout(id, ctnDividendPayoutNew);
+							int retsetBaseInfo = m_baseDataStorage.saveStockInfo(id, ctnStockInfo);
+
+							if(0 == retsetKLine
+									&& 0 == retsetDividendPayout
+									&& 0 == retsetBaseInfo)
 							// 保存成功
 							{
-								// 更新复权因子数据
-								if(0 == this.downloadStockDividendPayout(id))
-								{
-									// 追加成功
-									error = 0;
-									container.set(ctnKLineWeb.size());
-									return error;
-								}
-								else
-								{
-									// 更新复权因子失败
-									error = -80;
-									return error;
-								}
+								error = 0;
+								container.set(ctnKLineWebNew.size());
+								return error;
 							}
 							else
 							{
@@ -283,7 +274,7 @@ public class BaseDataDownload {
 						}
 						else
 						{
-							// 网络获取追加数据失败
+							// 网络获取日K，分红派息数据失败
 							error = -40;
 							return error;
 						}
@@ -314,19 +305,38 @@ public class BaseDataDownload {
 		else
 		// 本地没有数据，需要试图重新下载
 		{	
-			StockInfo ctnStockInfo = new StockInfo();
-			int errStockInfo = m_DataWebStockInfo.getStockInfo(id, ctnStockInfo);
-			if(0 == errStockInfo)
+			StockInfo ctnStockInfoNew = new StockInfo();
+			int errStockInfoNew = m_DataWebStockInfo.getStockInfo(id, ctnStockInfoNew); // 获取网络基本信息数据
+			if(0 == errStockInfoNew)
 			{
-				// 下载日K，分红派息，基本信息
-				int retdownloadStockDayk =  this.downloadStockDayk(id);
-				int retdownloadStockDividendPayout =  this.downloadStockDividendPayout(id);
-				int retdownloadBaseInfo =  this.downloadStockInfo(id);
-				if(0 == retdownloadStockDayk 
-						&& 0 == retdownloadStockDividendPayout 
-						&& 0 == retdownloadBaseInfo)
-				// 下载日K，分红派息，基本信息 成功
+				String curDate = CUtilsDateTime.GetCurDateStr();
+				String paramToDate = curDate.replace("-", "");
+				List<KLine> ctnKLineNew = new ArrayList<KLine>();
+				int errGetWebKLineNew = m_DataWebStockDayK.getKLine(id, "20080101", paramToDate, ctnKLineNew);// 获取网络日K数据
+				
+				List<DividendPayout> ctnDividendPayoutNew = new ArrayList<DividendPayout>();
+				int errDividendPayoutNew = m_DataWebStockDividendPayout.getDividendPayout(id, ctnDividendPayoutNew);//获取网络分红派息数据
+				
+				if(0 == errGetWebKLineNew 
+						&& 0 == errDividendPayoutNew 
+						&& 0 == errStockInfoNew)
+				// 网络获取日K，分红派息，基本信息 成功
 				{
+					try
+					{
+						// 保存到本地
+						m_baseDataStorage.saveKLine(id, ctnKLineNew);
+						m_baseDataStorage.saveDividendPayout(id, ctnDividendPayoutNew);
+						m_baseDataStorage.saveStockInfo(id, ctnStockInfoNew);
+					}
+					catch(Exception e)
+					{
+						e.printStackTrace();
+						System.out.println(e.getMessage()); 
+						error = -21;
+						return error;
+					}
+					
 					List<KLine> ctnKLineLocalNew = new ArrayList<KLine>();
 					int errKLineLocalNew = m_baseDataStorage.getKLine(id, ctnKLineLocalNew);
 					if(errKLineLocalNew == 0)

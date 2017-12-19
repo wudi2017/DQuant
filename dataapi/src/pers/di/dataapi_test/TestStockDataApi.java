@@ -34,6 +34,7 @@ public class TestStockDataApi {
 		TestCommonHelper.InitLocalData(s_newestDate, s_stockIDs);
 	}
 	
+	@CTest.test
 	public static void test_updateAllLocalStocks()
 	{
 		s_StockDataApi.updateAllLocalStocks("2017-08-15");
@@ -208,7 +209,7 @@ public class TestStockDataApi {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);
-		CTest.RUN_ALL_TESTS("TestStockDataApi.test_buildMinTimePriceListObserver");
+		CTest.RUN_ALL_TESTS("TestStockDataApi.test_updateAllLocalStocks");
 		CSystem.stop();
 	}
 }
