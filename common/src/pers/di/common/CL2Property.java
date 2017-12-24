@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -104,6 +105,23 @@ public class CL2Property {
 		return 0;
 	}
 	
+	public boolean contain(String mainProperty)
+	{
+		return m_L2PropMap.containsKey(mainProperty);
+	}
+	public boolean contain(String mainProperty, String subProperty)
+	{
+		if(m_L2PropMap.containsKey(mainProperty))
+		{
+			Map<String, String> subMap = m_L2PropMap.get(mainProperty);
+			if(null != subMap)
+			{
+				return subMap.containsKey(subProperty);
+			}
+		}
+		return false;
+	}
+	
 	public int size()
 	{
 		return m_L2PropMap.size();
@@ -120,6 +138,29 @@ public class CL2Property {
 			}
 		}
 		return 0;
+	}
+	
+	public List<String> list()
+	{
+		List<String> listProperty = new ArrayList<String>();
+		for (Map.Entry<String, Map<String, String>> entryTop : m_L2PropMap.entrySet()) {  
+			listProperty.add(entryTop.getKey());
+        }  
+		return listProperty;
+	}
+	public List<String> list(String mainProperty)
+	{
+		List<String> listProperty = new ArrayList<String>();
+		for (Map.Entry<String, Map<String, String>> entryTop : m_L2PropMap.entrySet()) {  
+			if(entryTop.getKey().equals(mainProperty))
+			{
+				Map<String, String> subMap = entryTop.getValue();
+				for (Map.Entry<String, String> entrySub : subMap.entrySet()) {  
+					listProperty.add(entrySub.getKey());
+				}
+			}
+		} 
+		return listProperty;
 	}
 
 	public int sync2file()

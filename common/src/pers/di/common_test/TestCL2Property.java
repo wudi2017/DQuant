@@ -1,5 +1,7 @@
 package pers.di.common_test;
 
+import java.util.List;
+
 import pers.di.common.CL2Property;
 import pers.di.common.CLog;
 import pers.di.common.CRandom;
@@ -92,6 +94,36 @@ public class TestCL2Property {
 		cCL2Property.sync2file();
 	}
 	
+	@CTest.test
+	public static void test_CL2Property_contains()
+	{
+		CL2Property cCL2Property = new CL2Property(CSystem.getRunSessionRoot() + "/1.xml");
+		cCL2Property.setProperty("000001", "checkprice", "3.12");
+		cCL2Property.setProperty("000002", "checkprice", "22");
+		cCL2Property.setProperty("000002", "checkvolume", "998");
+		cCL2Property.setProperty("000003", "pl2i", "value3");
+		
+		CTest.EXPECT_TRUE(cCL2Property.contain("000002"));
+		CTest.EXPECT_TRUE(cCL2Property.contain("000002", "checkprice"));
+		CTest.EXPECT_FALSE(cCL2Property.contain("000002", "checkprice1"));
+		CTest.EXPECT_FALSE(cCL2Property.contain("000004"));
+	}
+	
+	@CTest.test
+	public static void test_CL2Property_list()
+	{
+		CL2Property cCL2Property = new CL2Property(CSystem.getRunSessionRoot() + "/1.xml");
+		cCL2Property.setProperty("000001", "checkprice", "3.12");
+		cCL2Property.setProperty("000002", "checkprice", "22");
+		cCL2Property.setProperty("000002", "checkvolume", "998");
+		cCL2Property.setProperty("000003", "pl2i", "value3");
+		
+		List<String> listmain = cCL2Property.list();
+		CTest.EXPECT_LONG_EQ(listmain.size(), 3);
+		
+		List<String> listsub = cCL2Property.list("000002");
+		CTest.EXPECT_LONG_EQ(listsub.size(), 2);
+	}
 	
 	public static void main(String[] args) {
 		CSystem.start();
