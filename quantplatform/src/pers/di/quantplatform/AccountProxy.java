@@ -1,5 +1,6 @@
 package pers.di.quantplatform;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
@@ -53,6 +54,48 @@ public class AccountProxy {
 	public String dump()
 	{
 		return m_cAccount.dump();
+	}
+	
+
+	/*
+	 * ********************************************************************************************
+	 * EXTEND
+	 */
+	
+	public CommissionOrder getCommissionOrder(String stockID)
+	{
+		CommissionOrder cCommissionOrder = null;
+		
+		List<CommissionOrder> ctnCommissionOrderList = new ArrayList<CommissionOrder>();
+		this.getCommissionOrderList(ctnCommissionOrderList);
+		for(int i=0; i<ctnCommissionOrderList.size(); i++)
+		{
+			if(ctnCommissionOrderList.get(i).stockID.equals(stockID))
+			{
+				cCommissionOrder = ctnCommissionOrderList.get(i);
+				break;
+			}
+		}
+		
+		return cCommissionOrder;
+	}
+	
+	public HoldStock getHoldStock(String stockID)
+	{
+		HoldStock cHoldStock = null;
+		
+		List<HoldStock> ctnHoldStockList = new ArrayList<HoldStock>();
+		this.getHoldStockList(ctnHoldStockList);
+		for(int i=0; i<ctnHoldStockList.size(); i++)
+		{
+			if(ctnHoldStockList.get(i).stockID.equals(stockID))
+			{
+				cHoldStock = ctnHoldStockList.get(i);
+				break;
+			}
+		}
+		
+		return cHoldStock;
 	}
 	
 	private Account m_cAccount;
