@@ -103,10 +103,10 @@ public class TestCL2Property {
 		cCL2Property.setProperty("000002", "checkvolume", "998");
 		cCL2Property.setProperty("000003", "pl2i", "value3");
 		
-		CTest.EXPECT_TRUE(cCL2Property.contain("000002"));
-		CTest.EXPECT_TRUE(cCL2Property.contain("000002", "checkprice"));
-		CTest.EXPECT_FALSE(cCL2Property.contain("000002", "checkprice1"));
-		CTest.EXPECT_FALSE(cCL2Property.contain("000004"));
+		CTest.EXPECT_TRUE(cCL2Property.contains("000002"));
+		CTest.EXPECT_TRUE(cCL2Property.contains("000002", "checkprice"));
+		CTest.EXPECT_FALSE(cCL2Property.contains("000002", "checkprice1"));
+		CTest.EXPECT_FALSE(cCL2Property.contains("000004"));
 	}
 	
 	@CTest.test

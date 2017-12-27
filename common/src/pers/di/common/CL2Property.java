@@ -105,11 +105,11 @@ public class CL2Property {
 		return 0;
 	}
 	
-	public boolean contain(String mainProperty)
+	public boolean contains(String mainProperty)
 	{
 		return m_L2PropMap.containsKey(mainProperty);
 	}
-	public boolean contain(String mainProperty, String subProperty)
+	public boolean contains(String mainProperty, String subProperty)
 	{
 		if(m_L2PropMap.containsKey(mainProperty))
 		{
