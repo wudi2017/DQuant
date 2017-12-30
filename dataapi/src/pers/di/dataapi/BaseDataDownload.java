@@ -194,6 +194,7 @@ public class BaseDataDownload {
 				{
 					// 当前时间在收盘之前，网络数据有效日期为前一天（非周六周日）
 					String webValidLastDate = ctnStockInfo.date;
+					Double webCurPrice = ctnStockInfo.curPrice;
 					if(ctnStockInfo.time.compareTo("15:00:00") < 0)
 					{
 						int year = Integer.parseInt(ctnStockInfo.date.split("-")[0]);
@@ -216,69 +217,79 @@ public class BaseDataDownload {
 						Date vdate = cal0.getTime();
 						webValidLastDate = df.format(vdate);
 					}
-					// System.out.println("webValidLastDate:" + webValidLastDate);
+//					System.out.println(
+//							String.format("webValidLastDate:%s CurPrice:%.3f", webValidLastDate, webCurPrice)
+//							);
 					
 					// 网络数据有效日期比本地数据新，需要追加更新
 					if(webValidLastDate.compareTo(cKLineLast.date) > 0)
 					{
-						// 计算从网络需要获取哪一段时间数据
-						int year = Integer.parseInt(localDataLastDate.split("-")[0]);
-						int month = Integer.parseInt(localDataLastDate.split("-")[1]);
-						int day = Integer.parseInt(localDataLastDate.split("-")[2]);
-						Calendar cal1 = Calendar.getInstance();
-						cal1.set(year, month-1, day);
-						cal1.add(Calendar.DATE, 1);
-						Date fromDate = cal1.getTime();
-						String fromDateStr = df.format(fromDate).replace("-", "");
-						String toDateStr = webValidLastDate.replace("-", "");
-						//System.out.println("fromDateStr:" + fromDateStr);
-						//System.out.println("toDateStr:" + toDateStr);
-						
-						// 获取网络日K数据
-						List<KLine> ctnKLineWebNew = new ArrayList<KLine>();
-						int errKLineWebNew = m_DataWebStockDayK.getKLine(id, fromDateStr, toDateStr, ctnKLineWebNew);
-						// 获取网络分红派息数据
-						List<DividendPayout> ctnDividendPayoutNew = new ArrayList<DividendPayout>();
-						int errDividendPayoutNew = m_DataWebStockDividendPayout.getDividendPayout(id, ctnDividendPayoutNew);
-						
-						if(0 == errKLineWebNew && 0 == errDividendPayoutNew)
-						// 新增日K数据获取成功
+						if(webCurPrice >= 0.0f)
 						{
-							// 向本地数据列表中追加新的更新数据
-							for(int i = 0; i < ctnKLineWebNew.size(); i++)  
-					        {  
-								KLine cKLine = ctnKLineWebNew.get(i);  
-								ctnKLineLocal.add(cKLine);
-					        } 
+							// 计算从网络需要获取哪一段时间数据
+							int year = Integer.parseInt(localDataLastDate.split("-")[0]);
+							int month = Integer.parseInt(localDataLastDate.split("-")[1]);
+							int day = Integer.parseInt(localDataLastDate.split("-")[2]);
+							Calendar cal1 = Calendar.getInstance();
+							cal1.set(year, month-1, day);
+							cal1.add(Calendar.DATE, 1);
+							Date fromDate = cal1.getTime();
+							String fromDateStr = df.format(fromDate).replace("-", "");
+							String toDateStr = webValidLastDate.replace("-", "");
+							//System.out.println("fromDateStr:" + fromDateStr);
+							//System.out.println("toDateStr:" + toDateStr);
 							
-							// 追加后的本地列表日K数据保存至本地,并且将分红派息，基本信息一并保存
-							int retsetKLine = m_baseDataStorage.saveKLine(id, ctnKLineLocal);
-							int retsetDividendPayout = m_baseDataStorage.saveDividendPayout(id, ctnDividendPayoutNew);
-							int retsetBaseInfo = m_baseDataStorage.saveStockInfo(id, ctnStockInfo);
-
-							if(0 == retsetKLine
-									&& 0 == retsetDividendPayout
-									&& 0 == retsetBaseInfo)
-							// 保存成功
+							// 获取网络日K数据
+							List<KLine> ctnKLineWebNew = new ArrayList<KLine>();
+							int errKLineWebNew = m_DataWebStockDayK.getKLine(id, fromDateStr, toDateStr, ctnKLineWebNew);
+							// 获取网络分红派息数据
+							List<DividendPayout> ctnDividendPayoutNew = new ArrayList<DividendPayout>();
+							int errDividendPayoutNew = m_DataWebStockDividendPayout.getDividendPayout(id, ctnDividendPayoutNew);
+							
+							if(0 == errKLineWebNew && 0 == errDividendPayoutNew)
+							// 新增日K数据获取成功
 							{
-								error = 0;
-								container.set(ctnKLineWebNew.size());
-								return error;
+								// 向本地数据列表中追加新的更新数据
+								for(int i = 0; i < ctnKLineWebNew.size(); i++)  
+						        {  
+									KLine cKLine = ctnKLineWebNew.get(i);  
+									ctnKLineLocal.add(cKLine);
+						        } 
+								
+								// 追加后的本地列表日K数据保存至本地,并且将分红派息，基本信息一并保存
+								int retsetKLine = m_baseDataStorage.saveKLine(id, ctnKLineLocal);
+								int retsetDividendPayout = m_baseDataStorage.saveDividendPayout(id, ctnDividendPayoutNew);
+								int retsetBaseInfo = m_baseDataStorage.saveStockInfo(id, ctnStockInfo);
+
+								if(0 == retsetKLine
+										&& 0 == retsetDividendPayout
+										&& 0 == retsetBaseInfo)
+								// 保存成功
+								{
+									error = 0;
+									container.set(ctnKLineWebNew.size());
+									return error;
+								}
+								else
+								{
+									//保存本地数据失败
+									error = -50;
+									return error;
+								}
 							}
 							else
 							{
-								//保存本地数据失败
-								error = -50;
+								// 网络获取日K，分红派息数据失败
+								error = -40;
 								return error;
 							}
 						}
 						else
 						{
-							// 网络获取日K，分红派息数据失败
-							error = -40;
+							// 网络最新价格无效
+							error = -41;
 							return error;
 						}
-						
 					}
 					else
 					{
@@ -299,6 +310,7 @@ public class BaseDataDownload {
 			{
 				// 本地数据已经是最新
 				error = 0;
+				container.set(0);
 				return error;
 			}
 		}

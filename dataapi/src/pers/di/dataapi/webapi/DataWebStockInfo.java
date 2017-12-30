@@ -7,7 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 
-import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.RealTimeInfoLite;
 import pers.di.dataapi.common.StockInfo;
 import pers.di.dataapi.common.*;
 
@@ -33,7 +33,7 @@ public class DataWebStockInfo extends HttpHelper
 		int error = 0;
 		
 		// get base info
-		List<RealTimeInfo> ctnRealTimeInfos = new ArrayList<RealTimeInfo>();
+		List<RealTimeInfoLite> ctnRealTimeInfos = new ArrayList<RealTimeInfoLite>();
 		m_cDataWebStockRealTimeInfo.setInterestStockID(id);
 		int errGetRealTimeInfo = m_cDataWebStockRealTimeInfo.getRealTimeInfo(ctnRealTimeInfos);
 		if(0 != errGetRealTimeInfo) 
@@ -42,11 +42,12 @@ public class DataWebStockInfo extends HttpHelper
 			return error;
 		}
 		
-		RealTimeInfo ctnRealTimeInfo = ctnRealTimeInfos.get(0);
+		RealTimeInfoLite ctnRealTimeInfo = ctnRealTimeInfos.get(0);
 		
 		container.name = ctnRealTimeInfo.name;
 		container.date = ctnRealTimeInfo.date;
 		container.time = ctnRealTimeInfo.time;
+		container.curPrice = ctnRealTimeInfo.curPrice;
 		
 		// e.g http://qt.gtimg.cn/q=sz000858
 		String urlStr = "http://qt.gtimg.cn/q=";

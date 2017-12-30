@@ -359,7 +359,7 @@ public class StockDataApi {
 	 * ²ÎÊý£º
 	 *     container 
 	 */
-	public int loadRealTimeInfo(List<String> stockIDs, List<RealTimeInfo> container)
+	public int loadRealTimeInfo(List<String> stockIDs, List<RealTimeInfoLite> container)
 	{
 		return m_cBaseDataLayer.getRealTimeInfo(stockIDs, container);
 	}

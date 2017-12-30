@@ -10,7 +10,7 @@ import pers.di.common.CDateTimeThruster;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.common.KLine;
-import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.RealTimeInfoLite;
 import pers.di.dataapi.common.StockUtils;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataengine.*;

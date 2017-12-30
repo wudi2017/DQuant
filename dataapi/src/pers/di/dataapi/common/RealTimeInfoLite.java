@@ -4,7 +4,7 @@ package pers.di.dataapi.common;
  * 股票实时信息
  * 名字-日期-时间-当前价
  */
-public class RealTimeInfo
+public class RealTimeInfoLite
 {
 	public String stockID;
 	public String name;

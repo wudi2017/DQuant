@@ -1,6 +1,6 @@
 package pers.di.dataapi_test;
 
-import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.RealTimeInfoLite;
 import pers.di.dataapi.webapi.DataWebStockRealTimeInfo;
 
 import java.util.*;
@@ -59,7 +59,7 @@ public class TestDataWebStockRealTimeInfo {
 			List<String> ids = new ArrayList<String>();
 			ids.add("300163");ids.add("300164");ids.add("600004");
 			cDataWebStockRealTimeInfo.setInterestStockIDs(ids);
-			List<RealTimeInfo> ctnRTInfos = new ArrayList<RealTimeInfo>();
+			List<RealTimeInfoLite> ctnRTInfos = new ArrayList<RealTimeInfoLite>();
 			int error = cDataWebStockRealTimeInfo.getRealTimeInfo(ctnRTInfos);
 			CTest.EXPECT_LONG_EQ(error, 0);
 			CTest.EXPECT_LONG_EQ(ctnRTInfos.size(), 3);
@@ -79,7 +79,7 @@ public class TestDataWebStockRealTimeInfo {
 			List<String> ids = new ArrayList<String>();
 			ids.add("300163");ids.add("300164");ids.add("000003");
 			cDataWebStockRealTimeInfo.setInterestStockIDs(ids);
-			List<RealTimeInfo> ctnRTInfos = new ArrayList<RealTimeInfo>();
+			List<RealTimeInfoLite> ctnRTInfos = new ArrayList<RealTimeInfoLite>();
 			int error = cDataWebStockRealTimeInfo.getRealTimeInfo(ctnRTInfos);
 			CTest.EXPECT_LONG_NE(error, 0);
 			CTest.EXPECT_LONG_EQ(ctnRTInfos.size(), 2);

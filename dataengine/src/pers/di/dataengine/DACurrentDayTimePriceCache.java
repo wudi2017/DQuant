@@ -9,7 +9,7 @@ import pers.di.common.CListObserver;
 import pers.di.common.CLog;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.StockDataApi;
-import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.RealTimeInfoLite;
 import pers.di.dataapi.common.TimePrice;
 
 public class DACurrentDayTimePriceCache {
@@ -167,13 +167,13 @@ public class DACurrentDayTimePriceCache {
 			
 			// 获取新数据并添加cache
 			// 添加实时数据
-			List<RealTimeInfo> ctnRealTimeInfos = new ArrayList<RealTimeInfo>();
+			List<RealTimeInfoLite> ctnRealTimeInfos = new ArrayList<RealTimeInfoLite>();
 			int error = StockDataApi.instance().loadRealTimeInfo(stockIDsNeedUpdate, ctnRealTimeInfos);
 			if(0 == error)
 			{
 				for(int i=0; i<ctnRealTimeInfos.size(); i++)
 				{
-					RealTimeInfo ctnRealTimeInfo = ctnRealTimeInfos.get(i);
+					RealTimeInfoLite ctnRealTimeInfo = ctnRealTimeInfos.get(i);
 					
 					TimePrice cTimePrice = new TimePrice();
 					cTimePrice.time = ctnRealTimeInfo.time;

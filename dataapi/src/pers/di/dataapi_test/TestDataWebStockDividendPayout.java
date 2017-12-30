@@ -14,9 +14,8 @@ public class TestDataWebStockDividendPayout {
 	public static void test_getDividendPayout_1()
 	{
 		String StockID = "000555";
-		DataWebStockDividendPayout cDataWebStockDividendPayout = new DataWebStockDividendPayout();
 		List<DividendPayout> container = new ArrayList<DividendPayout>();
-		int error = cDataWebStockDividendPayout.getDividendPayout(StockID, container);
+		int error = s_cDataWebStockDividendPayout.getDividendPayout(StockID, container);
 		if(0 == error)
 		{
 			CLog.output("TEST", "DataWebStockDividendPayout.getDividendPayout %s OK!", StockID);
@@ -34,15 +33,13 @@ public class TestDataWebStockDividendPayout {
 	
 	public static void test_getDividendPayout()
 	{
-		DataWebStockDividendPayout cDataWebStockDividendPayout = new DataWebStockDividendPayout();
-			
 		int iR = CRandom.randomUnsignedInteger()%1000;
 		int StockIDInt = 600000+iR;
 		
 		String StockID = String.format("%d", StockIDInt);
 		
 		List<DividendPayout> container = new ArrayList<DividendPayout>();
-		int error = cDataWebStockDividendPayout.getDividendPayout(StockID, container);
+		int error = s_cDataWebStockDividendPayout.getDividendPayout(StockID, container);
 		if(0 == error)
 		{
 			CLog.output("TEST", "DataWebStockDividendPayout.getDividendPayout %s OK!", StockID);
@@ -62,15 +59,17 @@ public class TestDataWebStockDividendPayout {
 		}
 	}
 
+	public static DataWebStockDividendPayout s_cDataWebStockDividendPayout = new DataWebStockDividendPayout();
+	
 	public static void main(String[] args){
 		
 		test_getDividendPayout_1();
 		
-//		for(int i=0; i<200; i++)
-//		{
-//			CLog.output("TEST","call test_getDividendPayout times: %d" , i);
-//			test_getDividendPayout();
-//		}
+		for(int i=0; i<1000; i++)
+		{
+			CLog.output("TEST","call test_getDividendPayout times: %d" , i);
+			test_getDividendPayout();
+		}
 		
 	}
 }

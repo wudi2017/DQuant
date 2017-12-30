@@ -9,6 +9,7 @@ public class StockInfo
 	public String name;
 	public String date;
 	public String time;
+	public double curPrice;
 	public double allMarketValue; // вк
 	public double circulatedMarketValue; // вк
 	public double peRatio;
@@ -17,6 +18,7 @@ public class StockInfo
 		name = "";
 		date = "0000-00-00";
 		time = "00:00:00";
+		curPrice =0.0f;
 		allMarketValue = 0.0f;
 		circulatedMarketValue = 0.0f;
 		peRatio = 0.0f;
@@ -26,6 +28,7 @@ public class StockInfo
 		name = cCopyFromObj.name;
 		date = cCopyFromObj.date;
 		time = cCopyFromObj.time;
+		curPrice = cCopyFromObj.curPrice;
 		allMarketValue = cCopyFromObj.allMarketValue;
 		circulatedMarketValue = cCopyFromObj.circulatedMarketValue;
 		peRatio = cCopyFromObj.peRatio;

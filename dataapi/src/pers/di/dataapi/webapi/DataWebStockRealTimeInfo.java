@@ -13,7 +13,7 @@ import org.htmlparser.Parser;
 import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.util.NodeList;
 
-import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.RealTimeInfoLite;
 import pers.di.common.CLog;
 import pers.di.dataapi.common.*;
 
@@ -37,7 +37,7 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 		return 0;
 	}
 	
-	public int getRealTimeInfo(List<RealTimeInfo> container)
+	public int getRealTimeInfo(List<RealTimeInfoLite> container)
 	{
 		container.clear();
 		int error = 0;
@@ -118,7 +118,7 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 					//System.out.println(detaildata);     
 					String[] cols = detaildata.split(",");
 					
-					RealTimeInfo cRealTimeInfo = new RealTimeInfo();
+					RealTimeInfoLite cRealTimeInfo = new RealTimeInfoLite();
 					
 					cRealTimeInfo.stockID = stockID;
 					cRealTimeInfo.name = cols[0];

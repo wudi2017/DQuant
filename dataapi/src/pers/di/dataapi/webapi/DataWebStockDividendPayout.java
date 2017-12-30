@@ -26,6 +26,8 @@ import org.htmlparser.util.NodeList;
 import org.htmlparser.visitors.HtmlPage;
 
 import pers.di.dataapi.common.DividendPayout;
+import pers.di.common.CLog;
+import pers.di.common.CThread;
 import pers.di.dataapi.common.*;
 
 
@@ -41,7 +43,7 @@ public class DataWebStockDividendPayout  extends HttpHelper
 	 */
 	public int getDividendPayout(String id, List<DividendPayout> container)
 	{
-		limitAccessSpeed(1250);
+		limitAccessSpeed(1500);
 		
 		int error = 0;
 		
@@ -181,8 +183,14 @@ public class DataWebStockDividendPayout  extends HttpHelper
 
         }catch (Exception e) {  
         	e.printStackTrace();
-        	System.out.println("Exception[WebStockDividendPayout]:" + e.getMessage()); 
-        	error = -1;
+			System.out.println("Exception[WebStockDividendPayout]:" + e.getMessage()); 
+			if(e.getMessage().contains("Server returned HTTP response code: 456 for URL:"))
+			{
+				CLog.error("DATAAPI", "Exception[WebStockDayDetail]:%s, need to wait!", e.getMessage());
+				// 高频访问检查, 停止2分钟
+				CThread.msleep(1000*60*6);
+			}
+			error = -1;
         	return error;
         }  
 		

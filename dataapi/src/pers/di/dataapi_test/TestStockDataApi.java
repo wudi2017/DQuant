@@ -9,7 +9,7 @@ import java.util.List;
 import pers.di.common.*;
 import pers.di.common.CImageCurve.CurvePoint;
 import pers.di.dataapi.common.KLine;
-import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.RealTimeInfoLite;
 import pers.di.dataapi.common.StockInfo;
 import pers.di.dataapi.common.TimePrice;
 import pers.di.dataapi.*;
@@ -195,7 +195,7 @@ public class TestStockDataApi {
 	@CTest.test
 	public static void test_getRealTimePrice()
 	{
-		List<RealTimeInfo> ctnRealTimeInfos = new ArrayList<RealTimeInfo>();
+		List<RealTimeInfoLite> ctnRealTimeInfos = new ArrayList<RealTimeInfoLite>();
 		List<String> stocks = new ArrayList<String>();
 		stocks.add("600000");
 		int error = s_StockDataApi.loadRealTimeInfo(stocks, ctnRealTimeInfos);

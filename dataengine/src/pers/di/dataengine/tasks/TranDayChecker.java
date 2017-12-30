@@ -9,7 +9,7 @@ import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataapi.common.KLine;
-import pers.di.dataapi.common.RealTimeInfo;
+import pers.di.dataapi.common.RealTimeInfoLite;
 import pers.di.dataapi.common.StockUtils;
 import pers.di.dataengine.DAContext;
 import pers.di.dataengine.EETradingDayStart;
@@ -79,7 +79,7 @@ public class TranDayChecker {
 			{
 				for(int i = 0; i < 5; i++) // 试图5次来确认
 				{
-					List<RealTimeInfo> ctnRealTimeInfos = new ArrayList<RealTimeInfo>();
+					List<RealTimeInfoLite> ctnRealTimeInfos = new ArrayList<RealTimeInfoLite>();
 					List<String> stockIDs = new ArrayList<String>();
 					stockIDs.add("999999");
 					int errRealTimeInfo = StockDataApi.instance().loadRealTimeInfo(stockIDs, ctnRealTimeInfos);
