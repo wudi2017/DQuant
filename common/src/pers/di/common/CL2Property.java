@@ -41,6 +41,56 @@ import org.xml.sax.InputSource;
  *
  */
 public class CL2Property {
+
+	public void setPropertyExBoolean(String property, String subProperty, boolean value)
+	{
+		this.setProperty(property, subProperty, String.format("%b", value));
+	}
+	public Boolean getPropertyExBoolean(String property, String subProperty)
+	{
+		Boolean value = null;
+		String sVal = this.getProperty(property, subProperty);
+		if(null != sVal)
+		{
+			value = Boolean.parseBoolean(sVal);
+		}
+		return value;
+	}
+	
+	public void setPropertyExLong(String property, String subProperty, long value)
+	{
+		this.setProperty(property, subProperty, String.format("%d", value));
+	}
+	public Long getPropertyExLong(String property, String subProperty)
+	{
+		Long value = null;
+		String sVal = this.getProperty(property, subProperty);
+		if(null != sVal)
+		{
+			value = Long.parseLong(sVal);
+		}
+		return value;
+	}
+	
+	public void setPropertyExDouble(String property, String subProperty, double value)
+	{
+		this.setProperty(property, subProperty, String.format("%.3f", value));
+	}
+	public Double getPropertyExDouble(String property, String subProperty)
+	{
+		Double value = null;
+		String sVal = this.getProperty(property, subProperty);
+		if(null != sVal)
+		{
+			value = Double.parseDouble(sVal);
+		}
+		return value;
+	}
+	
+
+	/*
+	 * ****************************************************************************************************
+	 */
 	
 	public CL2Property(String storeFileName)
 	{

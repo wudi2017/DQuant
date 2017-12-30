@@ -24,6 +24,15 @@ public class TestCL2Property {
 		cCL2Property.setProperty("000001", "checkprice", "3.13");
 		CTest.EXPECT_STR_EQ(cCL2Property.getProperty("000001", "checkprice"), "3.13");
 		
+		cCL2Property.setPropertyExBoolean("000001", "BB1", true);
+		CTest.EXPECT_TRUE(cCL2Property.getPropertyExBoolean("000001", "BB1"));
+		
+		cCL2Property.setPropertyExLong("000001", "LL1", 12345);
+		CTest.EXPECT_LONG_EQ(cCL2Property.getPropertyExLong("000001", "LL1"), 12345);
+		
+		cCL2Property.setPropertyExDouble("000001", "DD1", 8.982);
+		CTest.EXPECT_DOUBLE_EQ(cCL2Property.getPropertyExDouble("000001", "DD1"), 8.982);
+		
 		cCL2Property.sync2file();
 	}
 	
