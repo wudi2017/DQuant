@@ -27,6 +27,13 @@ public class BaseDataStorage {
 		CFileSystem.createDir(s_workDir);
 	}
 	
+	public boolean resetDataRoot(String dateRoot)
+	{
+		s_workDir = dateRoot;
+		CFileSystem.createDir(dateRoot);
+		return true;
+	}
+	
 	public String dataRoot()
 	{
 		return s_workDir;

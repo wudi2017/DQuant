@@ -18,7 +18,15 @@ public class StockDataEngine {
 	public static StockDataEngine instance() {  
 		return s_instance;  
 	} 
-
+	
+	/*
+	 * 重置数据路径
+	 * 如果不调用，就是默认路径
+	 */
+	public boolean resetDataRoot(String dateRoot)
+	{
+		return StockDataApi.instance().resetDataRoot(dateRoot);
+	}
 	/*
 	 * 配置量化引擎
 	 * 

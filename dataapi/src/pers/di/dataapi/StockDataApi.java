@@ -17,6 +17,11 @@ public class StockDataApi {
 		m_cCache = new StockDataApiCache();
 	}
 	
+	public boolean resetDataRoot(String dateRoot)
+	{
+		m_cCache.clearAllCache();
+		return m_cBaseDataLayer.resetDataRoot(dateRoot);
+	}
 	public String dataRoot()
 	{
 		return m_cBaseDataLayer.dataRoot();

@@ -34,11 +34,11 @@ public class TestStockDataApi {
 		TestCommonHelper.InitLocalData(s_newestDate, s_stockIDs);
 	}
 	
-	@CTest.test
-	public static void test_updateAllLocalStocks()
-	{
-		s_StockDataApi.updateAllLocalStocks("2017-08-15");
-	}
+//	@CTest.test
+//	public static void test_updateAllLocalStocks()
+//	{
+//		s_StockDataApi.updateAllLocalStocks("2017-08-15");
+//	}
 	
 	@CTest.test
 	public static void test_updateLocalStocks()
@@ -85,7 +85,7 @@ public class TestStockDataApi {
 
 		CListObserver<KLine> obsKLineList = new CListObserver<KLine>();
 		int error = s_StockDataApi.buildDayKLineListObserver(stockID, "2011-05-23", "2017-05-25", obsKLineList);
-		CLog.output("TEST", "KLine count: %d", obsKLineList.size());
+		// CLog.output("TEST", "KLine count: %d", obsKLineList.size());
 		CTest.EXPECT_LONG_EQ(obsKLineList.size(), 1428);
 		int iCheckCnt = 0;
 		for(int i=0; i<obsKLineList.size(); i++)
@@ -138,7 +138,7 @@ public class TestStockDataApi {
 			for(int i=0; i<obsTimePriceList.size(); i++)
 			{
 				TimePrice cTimePrice = obsTimePriceList.get(i);
-				CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
+				//CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
 				if(cTimePrice.time.equals("09:30:00")) 
 				{
 					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.00, 2);
@@ -177,19 +177,6 @@ public class TestStockDataApi {
 			cCImageCurve.GenerateImage();
 			CTest.EXPECT_LONG_EQ(iCheckCnt, 5);
 		}
-		
-		for(int i=0; i<100; i++)
-		{
-			int iStockID = 600000;
-			iStockID = iStockID + i;
-			String stockID = String.format("%d", iStockID);
-			CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
-			int errObsTimePriceList = s_StockDataApi.buildMinTimePriceListObserver(stockID, "2016-04-20", 
-					"09:00:00", "14:55:00", obsTimePriceList);
-			
-			CLog.output("TEST", "%s errObsTimePriceList: %d", stockID, errObsTimePriceList);
-		}
-		
 	}
 	
 	@CTest.test
@@ -204,12 +191,41 @@ public class TestStockDataApi {
 		CTest.EXPECT_TRUE(ctnRealTimeInfos.get(0).time.length()==8);
 	}
 	
+	@CTest.test
+	public static void test_resetDataRoot()
+	{
+		String newRootDir = "C:\\temp\\NewRoot1";
+		CFileSystem.removeDir(newRootDir);
+		CTest.EXPECT_FALSE(CFileSystem.isDirExist(newRootDir));
+		s_StockDataApi.resetDataRoot(newRootDir);
+		CTest.EXPECT_STR_EQ(s_StockDataApi.dataRoot(), newRootDir);
+		CTest.EXPECT_TRUE(CFileSystem.isDirExist(newRootDir));
+		
+		// init test data
+		TestCommonHelper.InitLocalData(s_newestDate, s_stockIDs);
+		
+		String workDir = newRootDir;
+		String stockID = s_stockIDs.get(0);
+		String dateStr = s_newestDate;
+		int ret = s_StockDataApi.updateLocalStocks(stockID, dateStr);
+		CTest.EXPECT_LONG_EQ(0, ret);
+			
+		String checkFileName = "";
+		checkFileName= workDir + "\\" + stockID + "\\" + s_daykFile;
+		CTest.EXPECT_TRUE(CFileSystem.isFileExist(checkFileName));
+		checkFileName = workDir + "\\" + stockID + "\\" + s_DividendPayoutFile;
+		CTest.EXPECT_TRUE(CFileSystem.isFileExist(checkFileName));
+		checkFileName = workDir + "\\" + stockID + "\\" + s_BaseInfoFile;
+		CTest.EXPECT_TRUE(CFileSystem.isFileExist(checkFileName));
+		
+	}
+	
 	
 	public static StockDataApi s_StockDataApi = StockDataApi.instance();
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);
-		CTest.RUN_ALL_TESTS("TestStockDataApi.test_updateAllLocalStocks");
+		CTest.RUN_ALL_TESTS("TestStockDataApi.");
 		CSystem.stop();
 	}
 }

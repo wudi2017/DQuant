@@ -29,7 +29,7 @@ public class TestCommonHelper {
 		boolean bAlreadyInitOK = true;
 		if(CFileSystem.isFileExist(fileName))
 		{
-			if(CFile.fileRead(fileName).equals(newestDate))
+			if(CFile.fileRead(fileName).compareTo(newestDate) >= 0)
 			{
 				for(int i=0; i<stockIDs.size();i++)
 				{
@@ -69,8 +69,6 @@ public class TestCommonHelper {
 		}
 		else
 		{
-			//CFileSystem.removeDir(s_workDir);
-			//CTest.EXPECT_TRUE(!CFileSystem.isDirExist(s_workDir));
 			CFileSystem.createDir(dataRoot);
 			CTest.EXPECT_TRUE(CFileSystem.isDirExist(dataRoot));
 			

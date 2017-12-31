@@ -19,6 +19,11 @@ public class BaseDataLayer {
 		m_cDataWebStockRealTimeInfo = new DataWebStockRealTimeInfo();
 	}
 	
+	public boolean resetDataRoot(String dateRoot)
+	{
+		return m_cBaseDataStorage.resetDataRoot(dateRoot);
+	}
+	
 	public String dataRoot()
 	{
 		return m_cBaseDataStorage.dataRoot();

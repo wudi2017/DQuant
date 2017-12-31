@@ -38,6 +38,14 @@ public class QuantSession {
 		}
 	}
 	
+	/*
+	 * 重置数据路径
+	 */
+	public boolean resetDataRoot(String dateRoot)
+	{
+		return StockDataEngine.instance().resetDataRoot(dateRoot);
+	}
+	
 	public boolean run()
 	{
 		CLog.output("QENGINE", "The QuantSession is running now...");
