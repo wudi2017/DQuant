@@ -24,12 +24,13 @@ public class TestCConsole {
 		CLog.output("TEST", "Test TestCConsole begin\n");
 		
 		TestConsole cTestConsole = new TestConsole();
-		cTestConsole.startThread();
+		cTestConsole.Start();
 		
-		CThread.msleep(1);
-		CLog.output("TEST", "XXX\n");
+		CThread.msleep(1000*10);
 		
-		cTestConsole.stopThread();
+		CLog.output("TEST", "Stop Console\n");
+		
+		cTestConsole.Stop();
 		
 		CLog.output("TEST", "Test TestCConsole end\n");
 	}
