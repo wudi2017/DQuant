@@ -73,6 +73,11 @@ public class TestQuantStrategy_Standard {
 		public void onInit(QuantContext ctx) {
 			
 		}
+		
+		@Override
+		public void onUnInit(QuantContext ctx) {
+			
+		}
 	
 		@Override
 		public void onDayStart(QuantContext ctx) {

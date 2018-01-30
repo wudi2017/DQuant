@@ -10,6 +10,7 @@ public class SharedSession {
 	{
 		tranDayChecker = new TranDayChecker(this);
 		initializeCbs = new ArrayList<ListenerCallback>();
+		unInitializeCbs = new ArrayList<ListenerCallback>();
 		tranDayStartCbs = new ArrayList<ListenerCallback>();
 		minuteTimePricesCbs = new ArrayList<ListenerCallback>();
 		tranDayFinishCbs = new ArrayList<ListenerCallback>();
@@ -25,6 +26,7 @@ public class SharedSession {
 	// running variable
 	public TranDayChecker tranDayChecker;
 	public List<ListenerCallback> initializeCbs;
+	public List<ListenerCallback> unInitializeCbs;
 	public List<ListenerCallback> tranDayStartCbs;
 	public List<ListenerCallback> minuteTimePricesCbs;
 	public List<ListenerCallback> tranDayFinishCbs;

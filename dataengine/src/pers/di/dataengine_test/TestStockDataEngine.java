@@ -32,6 +32,7 @@ public class TestStockDataEngine {
 		{
 			m_listener = StockDataEngine.instance().createListener();
 			m_listener.subscribe(EEID.INITIALIZE, this, "onInitialize");
+			m_listener.subscribe(EEID.UNINITIALIZE, this, "onUnInitialize");
 			m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
 			m_listener.subscribe(EEID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
 			m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
@@ -42,6 +43,12 @@ public class TestStockDataEngine {
 			EEInitialize e = (EEInitialize)ev;
 			CLog.output("TEST", "EngineListenerTesterX.onInitialize");
 		}
+		public void onUnInitialize(EEObject ev)
+		{
+			EEUnInitialize e = (EEUnInitialize)ev;
+			CLog.output("TEST", "EngineListenerTesterX.onUnInitialize");
+		}
+		
 		public void onTradingDayStart(EEObject ev)
 		{
 			EETradingDayStart e = (EETradingDayStart)ev;

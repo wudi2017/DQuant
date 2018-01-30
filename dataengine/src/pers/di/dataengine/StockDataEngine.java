@@ -107,10 +107,10 @@ public class StockDataEngine {
 		
 		
 		// call initialize
-		List<ListenerCallback> lcbs = m_SharedSession.initializeCbs;
-		for(int i=0; i<lcbs.size(); i++)
+		List<ListenerCallback> lcbs_init = m_SharedSession.initializeCbs;
+		for(int i=0; i<lcbs_init.size(); i++)
 		{
-			ListenerCallback lcb = lcbs.get(i);
+			ListenerCallback lcb = lcbs_init.get(i);
 			EEInitialize ev = new EEInitialize();
 			try {
 				lcb.md.invoke(lcb.obj, ev);
@@ -121,6 +121,19 @@ public class StockDataEngine {
 		
 		// run CDateTimeThruster
 		m_CDateTimeThruster.run();
+		
+		// call unInitialize
+		List<ListenerCallback> lcbs_unInit = m_SharedSession.unInitializeCbs;
+		for(int i=0; i<lcbs_unInit.size(); i++)
+		{
+			ListenerCallback lcb = lcbs_unInit.get(i);
+			EEUnInitialize ev = new EEUnInitialize();
+			try {
+				lcb.md.invoke(lcb.obj, ev);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		
 		return 0;
 	}
@@ -139,6 +152,23 @@ public class StockDataEngine {
 					lcb.obj = obj;
 					lcb.md = md;
 					m_SharedSession.initializeCbs.add(lcb);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if(eID == EEID.UNINITIALIZE)
+		{
+			try {
+				if(null != obj && null!= methodname)
+				{
+					Class<?> clz = Class.forName(obj.getClass().getName());
+					Method md = clz.getMethod(methodname, EEObject.class);
+					ListenerCallback lcb = new ListenerCallback();
+					lcb.listener = listener;
+					lcb.obj = obj;
+					lcb.md = md;
+					m_SharedSession.unInitializeCbs.add(lcb);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -55,6 +55,12 @@ public class TestQuantSession_Simple {
 		}
 	
 		@Override
+		public void onUnInit(QuantContext ctx) {
+			//CLog.output("TEST", "TestStrategy.onInit %s %s", ctx.date(), ctx.time());
+			onUnInitCalled++;
+		}
+		
+		@Override
 		public void onDayStart(QuantContext ctx) {
 			//CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
 			super.addCurrentDayInterestMinuteDataID("600000");
@@ -191,6 +197,7 @@ public class TestQuantSession_Simple {
 	}
 	
 	public static int onInitCalled = 0;
+	public static int onUnInitCalled = 0;
 	public static int onDayBeginCalled = 0;
 	public static int onDayEndCalled = 0;
 	public static int onEveryMinuteCalled = 0;
@@ -215,6 +222,7 @@ public class TestQuantSession_Simple {
 		
 		// check data
 		CTest.EXPECT_LONG_EQ(onInitCalled, 1);
+		CTest.EXPECT_LONG_EQ(onUnInitCalled, 1);
 		CTest.EXPECT_LONG_EQ(onDayBeginCalled, 19);
 		CTest.EXPECT_LONG_EQ(onDayEndCalled, 19);
 		CTest.EXPECT_LONG_EQ(onEveryMinuteCalled, 19*242);

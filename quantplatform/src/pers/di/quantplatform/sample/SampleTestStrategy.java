@@ -40,6 +40,11 @@ public class SampleTestStrategy {
 		public void onInit(QuantContext ctx) {
 			CLog.output("TEST", "TestStrategy.onInit %s %s", ctx.date(), ctx.time());
 		}
+		
+		@Override
+		public void onUnInit(QuantContext ctx) {
+			CLog.output("TEST", "TestStrategy.onUnInit %s %s", ctx.date(), ctx.time());
+		}
 	
 		@Override
 		public void onDayStart(QuantContext ctx) {

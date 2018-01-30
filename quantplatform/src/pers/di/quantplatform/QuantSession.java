@@ -19,6 +19,7 @@ public class QuantSession {
 		// init m_listener and StockDataEngine
 		m_listener = StockDataEngine.instance().createListener();
 		m_listener.subscribe(EEID.INITIALIZE, this, "onInitialize");
+		m_listener.subscribe(EEID.UNINITIALIZE, this, "onUnInitialize");
 		m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
 		m_listener.subscribe(EEID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
 		m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
@@ -61,6 +62,16 @@ public class QuantSession {
 		if(null != m_stratety)
 		{
 			m_stratety.onInit(m_context);
+		}
+	}
+	
+	public void onUnInitialize(EEObject ev)
+	{
+		CLog.output("QENGINE", "QuantSession.onUnInitialize");
+		
+		if(null != m_stratety)
+		{
+			m_stratety.onUnInit(m_context);
 		}
 	}
 	
