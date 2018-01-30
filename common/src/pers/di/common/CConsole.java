@@ -7,15 +7,17 @@ import java.util.Scanner;
 
 public class CConsole extends CThread {
 	
+	public interface IHandler
+	{
+		public void command(String cmd);
+	}
+	
 	public CConsole()
 	{
 //		m_Scanner = new Scanner(System.in);
 		m_IStreamReader = new InputStreamReader(System.in);
 		m_BufferReader = new BufferedReader(m_IStreamReader);  
 	}
-	
-	// implement by user
-	public void command(String cmd) {}
 		
 	@Override
 	public void run() {
@@ -28,7 +30,7 @@ public class CConsole extends CThread {
 				if(m_BufferReader.ready())
 				{
 					String cmd = m_BufferReader.readLine();  
-					command(cmd);
+					m_IHandler.command(cmd);
 				}
 				else
 				{
@@ -42,8 +44,9 @@ public class CConsole extends CThread {
 		//BLog.output("TEST", "BConsole Run exit\n");
 	} 
 	
-	public void Start()
+	public void Start(IHandler cIHandler)
 	{
+		m_IHandler = cIHandler;
 		super.startThread();
 	}
 	
@@ -70,6 +73,8 @@ public class CConsole extends CThread {
         return str;  
     }
 	
+	
+	private IHandler m_IHandler;
 //	private Scanner m_Scanner;
 	private InputStreamReader m_IStreamReader;
 	private BufferedReader m_BufferReader;
