@@ -72,6 +72,11 @@ public class CFileSystem {
 		return file.getParent();
 	}
 	
+	public static boolean removeFile(String fileName)
+	{
+		File file = new File(fileName);
+		return file.delete();
+	}
 	/*
 	 * ********************************************************************
 	 */
