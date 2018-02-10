@@ -56,5 +56,23 @@ public class AccountProxy {
 		return m_cAccount.dump();
 	}
 	
+	// extend
+	
+	public List<String> getHoldStockIDList()
+	{
+		List<String> retList = new ArrayList<String>();
+		List<HoldStock> ctnList = new ArrayList<HoldStock>();
+		int iRet = this.getHoldStockList(ctnList);
+		if(0 == iRet)
+		{
+			for(int i=0; i<ctnList.size(); i++)
+			{
+				HoldStock cHoldStock = ctnList.get(i);
+				retList.add(cHoldStock.stockID);
+			}
+		}
+		return retList;
+	}
+	
 	private Account m_cAccount;
 }

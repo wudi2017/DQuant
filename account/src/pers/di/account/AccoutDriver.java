@@ -88,7 +88,7 @@ public class AccoutDriver {
 	}
 	
 	// get hold stocks
-	public int getHoldStockList(List<String> ctnHoldList)
+	public int getHoldStockIDList(List<String> ctnHoldList)
 	{
 		if(null == m_accountEntity) return -1;
 		if(null == ctnHoldList) return -1;

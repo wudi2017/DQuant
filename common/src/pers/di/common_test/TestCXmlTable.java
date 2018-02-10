@@ -44,7 +44,21 @@ public class TestCXmlTable {
 			RowCursor cursor = cTable.addRow();
 			cursor.setColume("name", "xiaoming");
 			cursor.setColume("age", "23");
-			cursor.setColume("ID", "8754");
+			cursor.setColume("ID1", "8754");
+			cursor.setColume("ID2", "8754");
+			cursor.setColume("ID3", "8754");
+			cursor.setColume("I4D", "8754");
+			cursor.setColume("ID5", "8754");
+			cursor.setColume("I6D", "8754");
+			cursor.setColume("I7D", "8754");
+			cursor.setColume("I8D", "8754");
+			cursor.setColume("I9D", "8754");
+			cursor.setColume("I0D", "8754");
+			cursor.setColume("IeD", "8754");
+			cursor.setColume("IxD", "8754");
+			cursor.setColume("IdfaD", "8754");
+			cursor.setColume("I122D", "8754");
+			cursor.setColume("I234D", "8754");
 			CTest.EXPECT_TRUE(null != cursor);
 		}
 		

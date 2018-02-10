@@ -82,11 +82,11 @@ public class TestQuantStrategy_Standard {
 		@Override
 		public void onDayStart(QuantContext ctx) {
 			CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
-			for(int i=0; i<m_seletctID.size(); i++)
-			{
-				String stockID = m_seletctID.get(i);
-				super.addCurrentDayInterestMinuteDataID(stockID);
-			}
+
+			// add hold stock to InterestMinuteDataIDs
+			super.addCurrentDayInterestMinuteDataIDs(ctx.ap().getHoldStockIDList());
+			// add select to InterestMinuteDataIDs
+			super.addCurrentDayInterestMinuteDataIDs(m_seletctID);
 		}
 		
 		public void onHandleBuy(QuantContext ctx)
