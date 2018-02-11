@@ -60,6 +60,9 @@ public class TestCXmlTable {
 			cursor.setColume("I122D", "8754");
 			cursor.setColume("I234D", "8754");
 			CTest.EXPECT_TRUE(null != cursor);
+			
+			CTest.EXPECT_LONG_EQ(cursor.columes().size(), 17);
+			
 		}
 		
 		// row2

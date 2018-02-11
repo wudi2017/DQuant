@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,12 +23,18 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+/*
+ * Node store,
+ *    Node could have property-value
+ */
 public class CXmlTable {
 	
 	public enum CALLBACKTYPE
@@ -45,6 +53,19 @@ public class CXmlTable {
 		public RowCursor()
 		{
 			m_node = null;
+		}
+		
+		public List<String> columes()
+		{
+			List<String> columes = new ArrayList<String>();
+			NamedNodeMap attrs = ((Element)m_node).getAttributes();
+			for(int i=0 ;i<attrs.getLength(); i++)
+			{
+				Attr attr = (Attr) attrs.item(i);
+				String attrName = attr.getName();
+				columes.add(attrName);
+			}
+			return columes;
 		}
 		
 		public boolean setColume(String name, String value)
