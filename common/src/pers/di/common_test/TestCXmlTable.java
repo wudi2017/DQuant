@@ -28,7 +28,7 @@ public class TestCXmlTable {
 	@CTest.test
 	public static void test_ctable()
 	{
-		String datafile = "test.xml";
+		String datafile = CSystem.getRunSessionRoot() + "/test.xml";
 		CFileSystem.removeFile(datafile);
 		CTest.EXPECT_TRUE(!CFileSystem.isFileExist(datafile));
 		
@@ -61,7 +61,7 @@ public class TestCXmlTable {
 			cursor.setColume("I234D", "8754");
 			CTest.EXPECT_TRUE(null != cursor);
 			
-			CTest.EXPECT_LONG_EQ(cursor.columes().size(), 17);
+			CTest.EXPECT_LONG_EQ(cursor.columesMap().size(), 17);
 			
 		}
 		

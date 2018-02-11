@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,17 +56,18 @@ public class CXmlTable {
 			m_node = null;
 		}
 		
-		public List<String> columes()
+		public Map<String,String> columesMap()
 		{
-			List<String> columes = new ArrayList<String>();
+			Map<String,String> columesMap = new HashMap<String,String>();
 			NamedNodeMap attrs = ((Element)m_node).getAttributes();
 			for(int i=0 ;i<attrs.getLength(); i++)
 			{
 				Attr attr = (Attr) attrs.item(i);
 				String attrName = attr.getName();
-				columes.add(attrName);
+				String attrValue = attr.getValue();
+				columesMap.put(attrName, attrValue);
 			}
-			return columes;
+			return columesMap;
 		}
 		
 		public boolean setColume(String name, String value)
