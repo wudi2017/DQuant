@@ -63,6 +63,9 @@ public class TestCXmlTable {
 			
 			CTest.EXPECT_LONG_EQ(cursor.columesMap().size(), 17);
 			
+			CTest.EXPECT_NULL(cursor.getColume("XXXXXXXXXX"));
+			CTest.EXPECT_NOT_NULL(cursor.getColume("I234D"));
+			
 		}
 		
 		// row2

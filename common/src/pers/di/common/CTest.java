@@ -41,6 +41,36 @@ public abstract class CTest {
 		return TCE-s_curTestPerformanceTCB;
 	}
 	
+	public static void EXPECT_NULL(Object bActual)
+	{
+		if(null != bActual) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        outputProcess("[CTEST] NG(%d) expect(null) actual(object) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	
+	public static void EXPECT_NOT_NULL(Object bActual)
+	{
+		if(null == bActual) 
+		{
+			s_curTestInnnerErrorCount++;
+			
+			StackTraceElement[] trace = new Throwable().getStackTrace();
+	        // 下标为0的元素是上一行语句的信息, 下标为1的才是调用printLine的地方的信息
+	        StackTraceElement tmp = trace[1];
+	        outputProcess("[CTEST] NG(%d) expect(null) actual(object) (%s:%d)",
+	        		s_curTestInnnerErrorCount, 
+	        		tmp.getFileName(), tmp.getLineNumber());
+		}
+	}
+	
 	public static void EXPECT_TRUE(boolean bActual)
 	{
 		if(!bActual) 

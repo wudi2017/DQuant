@@ -80,9 +80,17 @@ public class CXmlTable {
 			return true;
 		}
 
-		public String getColume(String name)
+		public boolean hasColume(String name)
 		{
 			if(null == m_node)
+			{
+				return false;
+			}
+			return ((Element)m_node).hasAttribute(name);
+		}
+		public String getColume(String name)
+		{
+			if(null == m_node || !((Element)m_node).hasAttribute(name))
 			{
 				return null;
 			}
