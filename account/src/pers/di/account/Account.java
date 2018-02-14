@@ -7,6 +7,17 @@ import pers.di.account.common.*;
 import pers.di.common.*;
 
 public abstract class Account {
+	
+	public static interface ICallback
+	{
+		public enum CALLBACKTYPE
+		{
+			INVALID,
+			CHANGED,
+		}
+		abstract public void onNotify(CALLBACKTYPE cb);
+	}
+	
 
 	public abstract String ID();
 	public abstract String date();
@@ -21,6 +32,8 @@ public abstract class Account {
 	public abstract int getDealOrderList(List<DealOrder> ctnList);
 	
 	public abstract int getHoldStockList(List<HoldStock> ctnList);
+	
+	public abstract void registerCallback(ICallback cb);
 	
 	
 	/*************************************************************************************/
@@ -43,6 +56,27 @@ public abstract class Account {
 				dTotalAssets += ctnHoldStockList.get(i).totalAmount*ctnHoldStockList.get(i).curPrice;
 			}
 			ctnTotalAssets.set(dTotalAssets);
+			iRet = 0;
+		}
+		
+		return iRet;
+	}
+	
+	public int getTotalStockMarketValue(CObjectContainer<Double> ctnTotalStockMarketValue)
+	{
+		int iRet = -1;
+
+		List<HoldStock> ctnHoldStockList = new ArrayList<HoldStock>();
+		int iRetGetHoldList = getHoldStockList(ctnHoldStockList);
+		
+		if(0==iRetGetHoldList)
+		{
+			Double dTotalStockMarketValue = 0.0;
+			for(int i=0; i<ctnHoldStockList.size(); i++)
+			{
+				dTotalStockMarketValue += ctnHoldStockList.get(i).totalAmount*ctnHoldStockList.get(i).curPrice;
+			}
+			ctnTotalStockMarketValue.set(dTotalStockMarketValue);
 			iRet = 0;
 		}
 		

@@ -5,6 +5,7 @@ import java.util.*;
 
 import pers.di.account.Account;
 import pers.di.account.IMarketOpe;
+import pers.di.account.Account.ICallback;
 import pers.di.account.common.*;
 import pers.di.account.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
@@ -174,6 +175,12 @@ public class AccountEntity extends Account {
 		
 		return 0;
 	}
+	
+	@Override
+	public void registerCallback(ICallback cb)
+	{
+		m_ICallback = cb;
+	}
 
 	/*
 	 * ******************************************************************************************
@@ -181,6 +188,7 @@ public class AccountEntity extends Account {
 	
 	public AccountEntity()
 	{
+		m_ICallback = null;
 		m_cIMarketOpe = null;
 		m_accountStore = null;
 		m_initFlag = false;
@@ -217,6 +225,10 @@ public class AccountEntity extends Account {
 		
 		m_initFlag = true;
 		CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s OK", accID);
+		
+		if(null != m_ICallback)
+			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
+		
 		return 0;
 	}
 	
@@ -226,6 +238,9 @@ public class AccountEntity extends Account {
 
 		m_accountStore.storeEntity().date = date;
 		m_accountStore.storeEntity().time = time;
+		
+		if(null != m_ICallback)
+			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
 		return 0;
 	}
@@ -247,6 +262,9 @@ public class AccountEntity extends Account {
 				
 			}
 		}
+		
+		if(null != m_ICallback)
+			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
 		return 0;
 	}
@@ -273,6 +291,9 @@ public class AccountEntity extends Account {
 		}
 		
 		m_accountStore.sync2File();
+		
+		if(null != m_ICallback)
+			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
 		return 0; 
 	}
@@ -419,18 +440,27 @@ public class AccountEntity extends Account {
 				amount*price, dealCost, m_accountStore.storeEntity().money);
 		
 		m_accountStore.sync2File();
+		
+		if(null != m_ICallback)
+			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 	}
 	
 	public int reset(double fInitMoney)
 	{
 		m_accountStore.storeEntity().reset(fInitMoney);
 		m_accountStore.sync2File();
+		
+		if(null != m_ICallback)
+			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
+		
 		return 0;
 	}
 	
 	/*
 	 * ******************************************************************************************
 	 */
+	
+	private ICallback m_ICallback;
 	private IMarketOpe m_cIMarketOpe;
 	private AccountStore m_accountStore;
 	private boolean m_initFlag;

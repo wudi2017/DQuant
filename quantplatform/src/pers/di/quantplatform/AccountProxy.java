@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
+import pers.di.account.Account.ICallback;
 import pers.di.account.common.CommissionOrder;
 import pers.di.account.common.HoldStock;
 import pers.di.account.common.TRANACT;
@@ -49,6 +50,16 @@ public class AccountProxy {
 	public int getTotalAssets(CObjectContainer<Double> ctnTotalAssets)
 	{
 		return m_cAccount.getTotalAssets(ctnTotalAssets);
+	}
+	
+	public int getTotalStockMarketValue(CObjectContainer<Double> ctnTotalStockMarketValue)
+	{
+		return m_cAccount.getTotalStockMarketValue(ctnTotalStockMarketValue);
+	}
+	
+	public void registerCallback(ICallback cb)
+	{
+		m_cAccount.registerCallback(cb);
 	}
 	
 	public String dump()

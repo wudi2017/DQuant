@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
+import pers.di.account.Account.ICallback;
 import pers.di.account.common.*;
 import pers.di.common.*;
 
@@ -14,6 +15,16 @@ public class TestAccountDriver {
 	
 	public static double s_transactionCostsRatioBuy = 0.02f;
 	public static double s_transactionCostsRatioSell = 0.05f;
+	
+	public static class AccountNotify implements ICallback
+	{
+
+		@Override
+		public void onNotify(CALLBACKTYPE cb) {
+			CLog.output("TEST", "AccountNotify");
+		}
+		
+	}
 	
 	public static class MockMarketOpe extends IMarketOpe
 	{
@@ -37,6 +48,7 @@ public class TestAccountDriver {
 		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
 		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
 		Account acc = cAccoutDriver.account();
+		acc.registerCallback(new AccountNotify());
 		
 		// set default
 		{
@@ -485,7 +497,7 @@ public class TestAccountDriver {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		CSystem.start();
-		CLog.config_setTag("TEST", false);
+		CLog.config_setTag("TEST", true);
 		CLog.config_setTag("ACCOUNT", false);
 		CTest.ADD_TEST(TestAccountDriver.class);
 		CTest.RUN_ALL_TESTS("TestAccountDriver.");
