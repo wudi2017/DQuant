@@ -16,6 +16,9 @@ public class CSystem {
 		CLog.config_setLogCfg(logconfigDir, "log_config.xml");
 		CLog.config_setLogFile(logDir, "default.log");
 		CLog.start();
+		
+		CLog.output("COMMON", "RWRoot: %s", getRWRoot());
+		CLog.output("COMMON", "RunSessionRoot: %s", getRunSessionRoot());
 	}
 	
 	public static void stop()
