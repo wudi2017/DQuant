@@ -37,5 +37,10 @@ public class EngineListener {
 		m_stockDataEngine.removeCurrentDayInterestMinuteDataID(this, dataID);
 	}
 	
+	public List<String> getCurrentDayInterestMinuteDataIDs()
+	{
+		return m_stockDataEngine.getCurrentDayInterestMinuteDataIDs(this);
+	}
+	
 	private StockDataEngine m_stockDataEngine;
 }

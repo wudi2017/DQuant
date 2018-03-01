@@ -248,6 +248,19 @@ public class StockDataEngine {
 		}
 	}
 	
+	public List<String> getCurrentDayInterestMinuteDataIDs(EngineListener listener)
+	{
+		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
+		if(null != cDAContext)
+		{
+			return cDAContext.getCurrentDayInterestMinuteDataIDs();
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
 	public void clearListener(EngineListener listener)
 	{
 		{

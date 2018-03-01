@@ -29,6 +29,11 @@ public class DAContext {
 		m_dataAccessPool.removeCurrentDayInterestMinuteDataID(dataID);
 	}
 	
+	public List<String> getCurrentDayInterestMinuteDataIDs()
+	{
+		return m_dataAccessPool.getCurrentDayInterestMinuteDataIDs();
+	}
+	
 	public void clearCurrentDayInterestMinuteDataCache()
 	{
 		m_dataAccessPool.clearCurrentDayInterestMinuteDataCache();

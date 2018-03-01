@@ -45,12 +45,19 @@ public class DACurrentDayTimePriceCache {
 	
 	public void removeCurrentDayInterestMinuteDataID(String dataID)
 	{
-		if(!m_CurrentDayInterestMinuteDataIDs.contains(dataID))
+		if(m_CurrentDayInterestMinuteDataIDs.contains(dataID))
 		{
 			m_CurrentDayInterestMinuteDataIDs.remove(dataID);
 			m_realtimeCacheStockTimeMap.remove(dataID);
 			m_historyCacheStockTimeMap.remove(dataID);
 		}
+	}
+	
+	public List<String> getCurrentDayInterestMinuteDataIDs()
+	{
+		List<String> retList = new ArrayList<String>();
+		retList.addAll(m_CurrentDayInterestMinuteDataIDs);
+		return retList;
 	}
 	
 	public void buildAll(String date, String time)

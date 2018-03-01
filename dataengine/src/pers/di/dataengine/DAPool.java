@@ -25,6 +25,11 @@ public class DAPool {
 		m_currentDayTimePriceCache.removeCurrentDayInterestMinuteDataID(dataID);
 	}
 	
+	public List<String> getCurrentDayInterestMinuteDataIDs()
+	{
+		return m_currentDayTimePriceCache.getCurrentDayInterestMinuteDataIDs();
+	}
+	
 	public void clearCurrentDayInterestMinuteDataCache()
 	{
 		m_currentDayTimePriceCache.clear();

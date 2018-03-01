@@ -31,6 +31,7 @@ public class QuantSession {
 		
 		// init m_stratety
 		m_stratety = strategy;
+		m_stratety.setListener(m_listener);
 		
 		// init default object
 		if(null == m_context)
@@ -100,11 +101,11 @@ public class QuantSession {
 		m_stratety.onDayStart(m_context);
 		
 		// for CurrentDayInterestMinuteDataIDs
-		m_listener.addCurrentDayInterestMinuteDataIDs(m_stratety.getCurrentDayInterestMinuteDataIDs());
+		List<String> InterestMinuteDataIDs = m_stratety.getCurrentDayInterestMinuteDataIDs();
 		String StrategyInterestIDs = "";
-		for(int i=0; i<m_stratety.getCurrentDayInterestMinuteDataIDs().size(); i++)
+		for(int i=0; i<InterestMinuteDataIDs.size(); i++)
 		{
-			String StockID = m_stratety.getCurrentDayInterestMinuteDataIDs().get(i);
+			String StockID = InterestMinuteDataIDs.get(i);
 			StrategyInterestIDs += StockID  + " ";
 		}
 		
@@ -133,8 +134,6 @@ public class QuantSession {
 				double price = ctx.pool().get(sHoldStockID).price();
 				m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 			}
-			
-			m_stratety.clearCurrentDayInterestMinuteDataIDs();
 			
 			// callback for strategy onMinuteData
 			m_stratety.onMinuteData(m_context);

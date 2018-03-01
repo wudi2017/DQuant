@@ -2,6 +2,8 @@ package pers.di.quantplatform;
 
 import java.util.*;
 
+import pers.di.dataengine.EngineListener;
+
 public abstract class QuantStrategy {
 	
 	public abstract void onInit(QuantContext ctx);
@@ -17,27 +19,32 @@ public abstract class QuantStrategy {
 	
 	public QuantStrategy()
 	{
-		m_currentDayInterestMinuteDataIDs = new ArrayList<String>();
+	}
+	
+	public void setListener(EngineListener listener)
+	{
+		m_listener = listener;
 	}
 	
 	public final boolean addCurrentDayInterestMinuteDataID(String ID)
 	{
-		m_currentDayInterestMinuteDataIDs.add(ID);
+		m_listener.addCurrentDayInterestMinuteDataID(ID);
 		return true;
 	}
 	public final boolean addCurrentDayInterestMinuteDataIDs(List<String> IDs)
 	{
-		m_currentDayInterestMinuteDataIDs.addAll(IDs);
+		m_listener.addCurrentDayInterestMinuteDataIDs(IDs);
 		return true;
 	}
-	public final boolean clearCurrentDayInterestMinuteDataIDs()
+	public final boolean removeCurrentDayInterestMinuteDataID(String ID)
 	{
-		m_currentDayInterestMinuteDataIDs.clear();
+		m_listener.removeCurrentDayInterestMinuteDataID(ID);
 		return true;
 	}
 	public final List<String> getCurrentDayInterestMinuteDataIDs()
 	{
-		return m_currentDayInterestMinuteDataIDs;
+		return m_listener.getCurrentDayInterestMinuteDataIDs();
 	}
-	private List<String> m_currentDayInterestMinuteDataIDs;
+	
+	private EngineListener m_listener;
 }
