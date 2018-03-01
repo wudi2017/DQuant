@@ -43,6 +43,16 @@ public class DACurrentDayTimePriceCache {
 		}
 	}
 	
+	public void removeCurrentDayInterestMinuteDataID(String dataID)
+	{
+		if(!m_CurrentDayInterestMinuteDataIDs.contains(dataID))
+		{
+			m_CurrentDayInterestMinuteDataIDs.remove(dataID);
+			m_realtimeCacheStockTimeMap.remove(dataID);
+			m_historyCacheStockTimeMap.remove(dataID);
+		}
+	}
+	
 	public void buildAll(String date, String time)
 	{
 		// 确认数据是历史还是实时

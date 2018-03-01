@@ -24,10 +24,17 @@ public class DAContext {
 		m_dataAccessPool.addCurrentDayInterestMinuteDataID(dataID);
 	}
 	
-	public void clearCurrentDayInterestMinuteDataIDs()
+	public void removeCurrentDayInterestMinuteDataID(String dataID)
 	{
-		m_dataAccessPool.clearCurrentDayInterestMinuteDataIDs();
+		m_dataAccessPool.removeCurrentDayInterestMinuteDataID(dataID);
 	}
+	
+	public void clearCurrentDayInterestMinuteDataCache()
+	{
+		m_dataAccessPool.clearCurrentDayInterestMinuteDataCache();
+	}
+	
+	
 	
 	public void setDateTime(String date, String time)
 	{

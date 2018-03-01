@@ -37,8 +37,8 @@ public class EngineTaskDayFinish extends CDateTimeThruster.ScheduleTask
 				e.printStackTrace();
 			}
 			
-			// clearCurrentDayInterestMinuteDataIDs
-			cDAContext.clearCurrentDayInterestMinuteDataIDs();
+			// clearCurrentDayInterestMinuteDataCache
+			cDAContext.clearCurrentDayInterestMinuteDataCache();
 		}
 	}
 	private SharedSession m_taskSharedSession;

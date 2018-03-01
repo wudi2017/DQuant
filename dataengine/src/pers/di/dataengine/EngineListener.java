@@ -32,5 +32,10 @@ public class EngineListener {
 		}
 	}
 	
+	public void removeCurrentDayInterestMinuteDataID(String dataID)
+	{
+		m_stockDataEngine.removeCurrentDayInterestMinuteDataID(this, dataID);
+	}
+	
 	private StockDataEngine m_stockDataEngine;
 }

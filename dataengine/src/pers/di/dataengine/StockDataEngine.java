@@ -239,6 +239,15 @@ public class StockDataEngine {
 		}
 	}
 	
+	public void removeCurrentDayInterestMinuteDataID(EngineListener listener, String dataID)
+	{
+		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
+		if(null != cDAContext)
+		{
+			cDAContext.removeCurrentDayInterestMinuteDataID(dataID);
+		}
+	}
+	
 	public void clearListener(EngineListener listener)
 	{
 		{
