@@ -10,63 +10,114 @@ import pers.di.account.common.*;
 import pers.di.account.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
 import pers.di.common.CObjectContainer;
+import pers.di.common.CSyncObj;
 import pers.di.common.CUtilsDateTime;
 import pers.di.common.CUtilsMath;
 
 public class AccountEntity extends Account {
 	
 	@Override
+	public boolean aceessLock()
+	{
+		return m_cSync.Lock();
+	}
+	
+	@Override
+	public boolean aceessUnLock()
+	{
+		return m_cSync.UnLock();
+	}
+	
+	@Override
 	public String ID() {
 		
-		if(!m_initFlag) return null;
+		this.aceessLock();
 		
-		return m_accountStore.accountID();
+		String retID = null;
+		if(m_initFlag) 
+		{
+			retID = m_accountStore.accountID();
+		}
+
+		this.aceessUnLock();
+		
+		return retID;
 	}
 	
 	@Override
 	public String date()
 	{
-		if(!m_initFlag) return null;
+		this.aceessLock();
 		
-		return m_accountStore.storeEntity().date;
+		String retDate = null;
+		if(m_initFlag) 
+		{
+			 retDate = m_accountStore.storeEntity().date;
+		}
+		
+		this.aceessUnLock();
+		
+		return retDate;
 	}
 	
 	@Override
 	public String time()
 	{
-		if(!m_initFlag) return null;
+		this.aceessLock();
 		
-		return m_accountStore.storeEntity().time;
+		String retTime = null;
+		if(m_initFlag)
+		{
+			retTime = m_accountStore.storeEntity().time;
+		}
+		
+		this.aceessUnLock();
+		
+		return retTime;
 	}
 
 	@Override
 	public int getMoney(CObjectContainer<Double> ctnMoney) {
 		
-		if(!m_initFlag) return -1;
+		this.aceessLock();
 		
-		double availableMoney = 0.0;
-		availableMoney = m_accountStore.storeEntity().money;
-		for(int i=0; i<m_accountStore.storeEntity().commissionOrderList.size(); i++)
+		int ret = -1;
+		
+		if(m_initFlag)
 		{
-			CommissionOrder cCommissionOrder = m_accountStore.storeEntity().commissionOrderList.get(i);
-			if(TRANACT.BUY == cCommissionOrder.tranAct)
+			double availableMoney = 0.0;
+			availableMoney = m_accountStore.storeEntity().money;
+			for(int i=0; i<m_accountStore.storeEntity().commissionOrderList.size(); i++)
 			{
-				double lockedMoney = cCommissionOrder.price * (cCommissionOrder.amount-cCommissionOrder.dealAmount);
-				availableMoney = availableMoney-lockedMoney;
+				CommissionOrder cCommissionOrder = m_accountStore.storeEntity().commissionOrderList.get(i);
+				if(TRANACT.BUY == cCommissionOrder.tranAct)
+				{
+					double lockedMoney = cCommissionOrder.price * (cCommissionOrder.amount-cCommissionOrder.dealAmount);
+					availableMoney = availableMoney-lockedMoney;
+				}
 			}
+			ctnMoney.set(availableMoney);
+			ret = 0;
 		}
-		ctnMoney.set(availableMoney);
+
+		this.aceessUnLock();
 		
-		return 0;
+		return ret;
 	}
 	
 	@Override
 	public int postTradeOrder(TRANACT tranact, String stockID, int amount, double price)
 	{
+		this.aceessLock();
+		
 		// reset price 4-5ignore
 		price = (double)CUtilsMath.saveNDecimal(price, 3);
 		
-		if(!m_initFlag) return -1;
+		if(!m_initFlag) 
+		{
+			this.aceessUnLock();
+			return -1;
+		}
 		
 		CLog.output("ACCOUNT", "@AccountEntity CommissionOrder [%s %s] [%s %s %d %.3f]",
 				m_accountStore.storeEntity().date, m_accountStore.storeEntity().time,
@@ -78,6 +129,7 @@ public class AccountEntity extends Account {
 			if(0 != amount%100 || amount<=0)
 			{
 				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder amount error!");
+				this.aceessUnLock();
 				return -1;
 			}
 			CObjectContainer<Double> money = new CObjectContainer<Double>();
@@ -85,6 +137,7 @@ public class AccountEntity extends Account {
 			if(Double.compare(money.get(), amount*price) < 0)
 			{
 				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder money error!");
+				this.aceessUnLock();
 				return -1;
 			}
 			
@@ -100,6 +153,7 @@ public class AccountEntity extends Account {
 			m_accountStore.sync2File();
 			
 			m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
+			this.aceessUnLock();
 			return 0;
 		}
 		
@@ -109,6 +163,7 @@ public class AccountEntity extends Account {
 			if(amount<=0)
 			{
 				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder amount error!");
+				this.aceessUnLock();
 				return -1;
 			}
 			boolean bCheck = false;
@@ -124,6 +179,7 @@ public class AccountEntity extends Account {
 			if(!bCheck)
 			{
 				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder availableAmount error!");
+				this.aceessUnLock();
 				return -1;
 			}
 						
@@ -139,47 +195,74 @@ public class AccountEntity extends Account {
 			m_accountStore.sync2File();
 			
 			m_cIMarketOpe.postTradeRequest(TRANACT.SELL, stockID, amount, price);
+			this.aceessUnLock();
 			return 0;
 		}
 		
+		this.aceessUnLock();
 		return -1;
 	}
 
 	@Override
 	public int getCommissionOrderList(List<CommissionOrder> ctnList) {
 		
-		if(!m_initFlag) return -1;
+		this.aceessLock();
+		
+		if(!m_initFlag) 
+		{
+			this.aceessUnLock();
+			return -1;
+		}
 		
 		ctnList.clear();
 		ctnList.addAll(m_accountStore.storeEntity().commissionOrderList);
+		
+		this.aceessUnLock();
 		return 0;
 	}
 	
 	@Override
 	public int getDealOrderList(List<DealOrder> ctnList)
 	{
-		if(!m_initFlag) return -1;
+		this.aceessLock();
+		
+		if(!m_initFlag) 
+		{
+			this.aceessUnLock();
+			return -1;
+		}
 		
 		ctnList.clear();
 		ctnList.addAll(m_accountStore.storeEntity().dealOrderList);
+		
+		this.aceessUnLock();
 		return 0;
 	}
 
 	@Override
 	public int getHoldStockList(List<HoldStock> ctnList) {
 		
-		if(!m_initFlag) return -1;
+		this.aceessLock();
+		
+		if(!m_initFlag) 
+		{
+			this.aceessUnLock();
+			return -1;
+		}
 		
 		ctnList.clear();
 		ctnList.addAll(m_accountStore.storeEntity().holdStockList);
 		
+		this.aceessUnLock();
 		return 0;
 	}
 	
 	@Override
 	public void registerCallback(ICallback cb)
 	{
+		this.aceessLock();
 		m_ICallback = cb;
+		this.aceessUnLock();
 	}
 
 	/*
@@ -188,6 +271,7 @@ public class AccountEntity extends Account {
 	
 	public AccountEntity()
 	{
+		m_cSync = new CSyncObj();
 		m_ICallback = null;
 		m_cIMarketOpe = null;
 		m_accountStore = null;
@@ -196,6 +280,7 @@ public class AccountEntity extends Account {
 	
 	public int load(String dataRoot, String accID, IMarketOpe cIMarketOpe, boolean bCreate)
 	{
+		this.aceessLock();
 		
 		m_cIMarketOpe = cIMarketOpe;
 		
@@ -208,17 +293,23 @@ public class AccountEntity extends Account {
 				if(iStoreInit)
 				{
 					m_initFlag = true;
+					
+					this.aceessUnLock();
 					return 0;
 				}
 				else
 				{
 					CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!", accID);
+					
+					this.aceessUnLock();
 					return -1;
 				}
 			}
 			else
 			{
 				CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!", accID);
+				
+				this.aceessUnLock();
 				return -1;
 			}
 		}
@@ -229,12 +320,19 @@ public class AccountEntity extends Account {
 		if(null != m_ICallback)
 			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
+		this.aceessUnLock();
 		return 0;
 	}
 	
 	public int setDateTime(String date, String time)
 	{
-		if(!m_initFlag) return -1;
+		this.aceessLock();
+		
+		if(!m_initFlag) 
+		{
+			this.aceessUnLock();
+			return -1;
+		}
 
 		m_accountStore.storeEntity().date = date;
 		m_accountStore.storeEntity().time = time;
@@ -242,15 +340,22 @@ public class AccountEntity extends Account {
 		if(null != m_ICallback)
 			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
+		this.aceessUnLock();
 		return 0;
 	}
 	
 	public int flushCurrentPrice(String stockID, double price)
 	{
+		this.aceessLock();
+		
 		// reset price 4-5ignore
 		price = (double)CUtilsMath.saveNDecimal(price, 3);
 				
-		if(!m_initFlag) return -1;
+		if(!m_initFlag) 
+		{
+			this.aceessUnLock();
+			return -1;
+		}
 		
 		for(int i=0; i< m_accountStore.storeEntity().holdStockList.size(); i++)
 		{
@@ -266,17 +371,27 @@ public class AccountEntity extends Account {
 		if(null != m_ICallback)
 			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
+		this.aceessUnLock();
 		return 0;
 	}
 	
 	public int newDayBegin() {
+		
+		this.aceessLock();
+		this.aceessUnLock();
 		
 		return 0;
 	}
 
 	public int newDayEnd() {
 		
-		if(!m_initFlag) return -1;
+		this.aceessLock();
+		
+		if(!m_initFlag) 
+		{
+			this.aceessUnLock();
+			return -1;
+		}
 		
 		// Çå¿ÕÎ¯ÍÐ±í
 		m_accountStore.storeEntity().commissionOrderList.clear();
@@ -295,11 +410,14 @@ public class AccountEntity extends Account {
 		if(null != m_ICallback)
 			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
+		this.aceessUnLock();
 		return 0; 
 	}
 	
 	public void onDeal(TRANACT tranact, String stockID, int amount, double price, double cost) 
 	{
+		this.aceessLock();
+		
 		// reset price 4-5ignore
 		price = (double)CUtilsMath.saveNDecimal(price, 3);
 		cost = (double)CUtilsMath.saveNDecimal(cost, 3);
@@ -443,16 +561,21 @@ public class AccountEntity extends Account {
 		
 		if(null != m_ICallback)
 			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
+		
+		this.aceessUnLock();
 	}
 	
 	public int reset(double fInitMoney)
 	{
+		this.aceessLock();
+		
 		m_accountStore.storeEntity().reset(fInitMoney);
 		m_accountStore.sync2File();
 		
 		if(null != m_ICallback)
 			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
+		this.aceessUnLock();
 		return 0;
 	}
 	
@@ -460,6 +583,7 @@ public class AccountEntity extends Account {
 	 * ******************************************************************************************
 	 */
 	
+	private CSyncObj m_cSync;
 	private ICallback m_ICallback;
 	private IMarketOpe m_cIMarketOpe;
 	private AccountStore m_accountStore;

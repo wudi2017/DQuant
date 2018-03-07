@@ -5,6 +5,7 @@ import java.util.*;
 import pers.di.account.common.*;
 import pers.di.account.detail.*;
 import pers.di.common.CLog;
+import pers.di.common.CSyncObj;
 
 public class AccoutDriver {
 	
@@ -23,6 +24,7 @@ public class AccoutDriver {
 	
 	public AccoutDriver(String dataRoot)
 	{
+		m_cSync = new CSyncObj();
 		m_dataRoot = dataRoot;
 		m_accountEntity = null;
 		m_innerMarketReplier = null;
@@ -32,6 +34,8 @@ public class AccoutDriver {
 	// if bCreate is true, will try create new account when open account failed
 	public int load(String accID, IMarketOpe cIMarketOpe, boolean bCreate)
 	{
+		m_cSync.Lock();
+		
 		// init m_accountEntity m_innerMarketReplier
 		if(null != cIMarketOpe)
 		{
@@ -51,85 +55,121 @@ public class AccoutDriver {
 		{
 			CLog.error("ACCOUNT", "AccoutDriver init IMarketOpe failed\n");
 		}
+		
+		m_cSync.UnLock();
 		return 0;
 	}
 	
 	// reset account entity
 	public int reset(double fInitMoney)
 	{
-		return m_accountEntity.reset(fInitMoney);
+		int iRet = -1;
+		m_cSync.Lock();
+		iRet = m_accountEntity.reset(fInitMoney);
+		m_cSync.UnLock();
+		return iRet;
 	}
 	
 	// market deal callback
 	public void onDeal(TRANACT tranact, String id, int amount, double price, double cost) 
 	{
+		m_cSync.Lock();
 		if(null != m_accountEntity)
 		{
 			m_accountEntity.onDeal(tranact, id, amount, price, cost);
 		}
+		m_cSync.UnLock();
 	}
 	
 	// get account
 	public Account account()
 	{
 		Account acc = null;
+		m_cSync.Lock();
 		if(null != m_accountEntity)
 		{
 			acc = m_accountEntity;
 		}
+		m_cSync.UnLock();
 		return acc;
 	}
 	
 	// set date time
 	public int setDateTime(String date, String time)
 	{
-		if(null == m_accountEntity) return -1;
-		return m_accountEntity.setDateTime(date, time);
+		int iRet = -1;
+		m_cSync.Lock();
+		if(null != m_accountEntity) 
+		{
+			iRet = m_accountEntity.setDateTime(date, time);
+		}
+		m_cSync.UnLock();
+		return iRet;
 	}
 	
 	// get hold stocks
 	public int getHoldStockIDList(List<String> ctnHoldList)
 	{
-		if(null == m_accountEntity) return -1;
-		if(null == ctnHoldList) return -1;
-		List<HoldStock> ctnList = new ArrayList<HoldStock>();
-		int iRet = m_accountEntity.getHoldStockList(ctnList);
-		if(0 == iRet)
+		int iRet = -1;
+		m_cSync.Lock();
+		if(null != m_accountEntity && null != ctnHoldList)
 		{
-			for(int i=0; i<ctnList.size(); i++)
+			List<HoldStock> ctnList = new ArrayList<HoldStock>();
+			int iRetGet = m_accountEntity.getHoldStockList(ctnList);
+			if(0 == iRetGet)
 			{
-				HoldStock cHoldStock = ctnList.get(i);
-				ctnHoldList.add(cHoldStock.stockID);
+				for(int i=0; i<ctnList.size(); i++)
+				{
+					HoldStock cHoldStock = ctnList.get(i);
+					ctnHoldList.add(cHoldStock.stockID);
+				}
+				iRet = 0;
 			}
-			return 0;
 		}
-		else
-		{
-			return -1;
-		}
+		m_cSync.UnLock();
+		return iRet;
 	}
 	
 	// flush current price
 	public int flushCurrentPrice(String stockID, double price)
 	{
-		if(null == m_accountEntity) return -1;
-		return m_accountEntity.flushCurrentPrice(stockID, price);
+		int iRet = -1;
+		m_cSync.Lock();
+		if(null != m_accountEntity) 
+		{
+			iRet = m_accountEntity.flushCurrentPrice(stockID, price);
+		}
+		m_cSync.UnLock();
+		return iRet;
 	}
 	
 	// new day begin
 	public int newDayBegin()
 	{
-		if(null == m_accountEntity) return -1;
-		return m_accountEntity.newDayBegin();
+		int iRet = -1;
+		m_cSync.Lock();
+		if(null != m_accountEntity) 
+		{
+			iRet = m_accountEntity.newDayBegin();
+		}
+		m_cSync.UnLock();
+		return iRet;
 	}
 	
 	// new day end
 	public int newDayEnd()
 	{
-		if(null == m_accountEntity) return -1;
-		return m_accountEntity.newDayEnd();
+		int iRet = -1;
+		m_cSync.Lock();
+		if(null != m_accountEntity) 
+		{
+			iRet = m_accountEntity.newDayEnd();
+		}
+		m_cSync.UnLock();
+		return iRet;
 	}
 	
+	private CSyncObj m_cSync; 
 	private String m_dataRoot;
 	private AccountEntity m_accountEntity;
 	private InnerMarketReplier m_innerMarketReplier;

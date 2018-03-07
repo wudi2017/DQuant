@@ -18,6 +18,8 @@ public abstract class Account {
 		abstract public void onNotify(CALLBACKTYPE cb);
 	}
 	
+	public abstract boolean aceessLock();
+	public abstract boolean aceessUnLock();
 
 	public abstract String ID();
 	public abstract String date();
@@ -40,6 +42,8 @@ public abstract class Account {
 	
 	public int getTotalAssets(CObjectContainer<Double> ctnTotalAssets)
 	{
+		this.aceessLock();
+		
 		int iRet = -1;
 		
 		CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
@@ -59,11 +63,15 @@ public abstract class Account {
 			iRet = 0;
 		}
 		
+		this.aceessUnLock();
+		
 		return iRet;
 	}
 	
 	public int getTotalStockMarketValue(CObjectContainer<Double> ctnTotalStockMarketValue)
 	{
+		this.aceessLock();
+		
 		int iRet = -1;
 
 		List<HoldStock> ctnHoldStockList = new ArrayList<HoldStock>();
@@ -80,11 +88,15 @@ public abstract class Account {
 			iRet = 0;
 		}
 		
+		this.aceessUnLock();
+		
 		return iRet;
 	}
 	
 	public int getHoldStock(String stockID, CObjectContainer<HoldStock> ctnHoldStock)
 	{
+		this.aceessLock();
+		
 		List<HoldStock> ctnList = new ArrayList<HoldStock>();
 		int iRet = getHoldStockList(ctnList);
 		if(0 == iRet)
@@ -97,11 +109,15 @@ public abstract class Account {
 				}
 			}
 		}
+		
+		this.aceessUnLock();
 		return 0;
 	}
 	
 	public String dump()
 	{
+		this.aceessLock();
+		
 		String DumpInfo = String.format("---ACCOUNT---INFO--- %s %s", date(), time());
 		
 		CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
@@ -169,6 +185,8 @@ public abstract class Account {
 						cDealOrder.amount, cDealOrder.price, cDealOrder.cost);
 			}
 		}
+		
+		this.aceessUnLock();
 		
 		return DumpInfo;
 	}
