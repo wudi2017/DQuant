@@ -344,8 +344,8 @@ public class TestQuantStrategy_Standard {
 				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
 				CObjectContainer<Double> money = new CObjectContainer<Double>();
 				int iRetMoney = ctx.ap().getMoney(money);
-				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 100240.600, 3);
-				CTest.EXPECT_DOUBLE_EQ(money.get(), 3238.600, 3);
+				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 100085.782, 3);
+				CTest.EXPECT_DOUBLE_EQ(money.get(), 3083.782, 3);
 			}
 			if(ctx.date().equals("2016-03-28"))
 			{
@@ -353,8 +353,8 @@ public class TestQuantStrategy_Standard {
 				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
 				CObjectContainer<Double> money = new CObjectContainer<Double>();
 				int iRetMoney = ctx.ap().getMoney(money);
-				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 104631.022, 3);
-				CTest.EXPECT_DOUBLE_EQ(money.get(), 37934.622, 3);
+				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 104522.797, 3);
+				CTest.EXPECT_DOUBLE_EQ(money.get(), 37826.397, 3);
 			}
 			
 		}
