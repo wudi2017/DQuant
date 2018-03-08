@@ -1,7 +1,9 @@
 package pers.di.dataengine.tasks;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import pers.di.common.CListObserver;
 import pers.di.common.CLog;
@@ -19,7 +21,7 @@ public class TranDayChecker {
 	public TranDayChecker(SharedSession taskSharedSession)
 	{
 		m_taskSharedSession =  taskSharedSession;
-		m_hisTranDate = null;
+		m_hisTranDates = null;
 		
 		m_bIsTranDate = false;
 		m_lastValidCheckDate = "0000-00-00";
@@ -36,7 +38,7 @@ public class TranDayChecker {
 		
 		if(m_taskSharedSession.bHistoryTest)
 		{
-			if(null == m_hisTranDate)
+			if(null == m_hisTranDates)
 			{
 				initializeHistoryTranDate(date);
 			}
@@ -53,7 +55,7 @@ public class TranDayChecker {
 			}
 			else
 			{
-				bIsTranDate = m_hisTranDate.contains(date);
+				bIsTranDate = m_hisTranDates.contains(date);
 			}
 		}
 		else
@@ -127,7 +129,7 @@ public class TranDayChecker {
 	
 	private void initializeHistoryTranDate(String date)
 	{
-		m_hisTranDate = new ArrayList<String>();
+		m_hisTranDates = new HashSet<String>();
 		CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
 		int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
 				"999999", "2008-01-01", "2100-01-01", obsKLineListSZZS);
@@ -144,19 +146,19 @@ public class TranDayChecker {
 			}
 		}
 		
-		int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_taskSharedSession.beginDate, true);
-		int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_taskSharedSession.endDate, true);
+//		int iB = StockUtils.indexDayKAfterDate(obsKLineListSZZS, m_taskSharedSession.beginDate, true);
+//		int iE = StockUtils.indexDayKBeforeDate(obsKLineListSZZS, m_taskSharedSession.endDate, true);
 		
-		for(int i = iB; i <= iE; i++)  
+		for(int i = 0; i < obsKLineListSZZS.size(); i++)  
         {  
 			KLine cStockDayShangZheng = obsKLineListSZZS.get(i);  
 			String curDateStr = cStockDayShangZheng.date;
-			m_hisTranDate.add(curDateStr);
+			m_hisTranDates.add(curDateStr);
         }
 	}
 	
 	private SharedSession m_taskSharedSession;
-	private List<String> m_hisTranDate;
+	private Set<String> m_hisTranDates;
 	
 	private boolean m_bIsTranDate;
 	private String m_lastValidCheckDate;
