@@ -375,6 +375,14 @@ public class AccountEntity extends Account {
 		return 0;
 	}
 	
+	public int commit()
+	{
+		this.aceessLock();
+		m_accountStore.sync2File();
+		this.aceessUnLock();
+		return 0;
+	}
+	
 	public int newDayBegin() {
 		
 		this.aceessLock();

@@ -6,6 +6,8 @@ import pers.di.account.common.*;
 import pers.di.account.detail.*;
 import pers.di.common.CLog;
 import pers.di.common.CSyncObj;
+import pers.di.common.CThread;
+import pers.di.common.CUtilsDateTime;
 
 public class AccoutDriver {
 	
@@ -27,6 +29,7 @@ public class AccoutDriver {
 		m_cSync = new CSyncObj();
 		m_dataRoot = dataRoot;
 		m_accountEntity = null;
+		m_FlushThread = new FlushThread(this);
 		m_innerMarketReplier = null;
 	}
 	
@@ -55,8 +58,20 @@ public class AccoutDriver {
 		{
 			CLog.error("ACCOUNT", "AccoutDriver init IMarketOpe failed\n");
 		}
-		
+
 		m_cSync.UnLock();
+		return 0;
+	}
+	
+	public int start()
+	{
+		m_FlushThread.startThread();
+		return 0;
+	}
+	
+	public int stop()
+	{
+		m_FlushThread.stopThread();
 		return 0;
 	}
 	
@@ -142,7 +157,7 @@ public class AccoutDriver {
 		m_cSync.UnLock();
 		return iRet;
 	}
-	
+
 	// new day begin
 	public int newDayBegin()
 	{
@@ -169,8 +184,47 @@ public class AccoutDriver {
 		return iRet;
 	}
 	
+	private int commit()
+	{
+		int iRet = -1;
+		m_cSync.Lock();
+		if(null != m_accountEntity) 
+		{
+			iRet = m_accountEntity.commit();
+		}
+		m_cSync.UnLock();
+		return iRet;
+	}
+	
+	private static class FlushThread extends CThread
+	{
+		public FlushThread(AccoutDriver accDriver)
+		{
+			m_lastFlushTC = 0;
+			m_accDriver = accDriver;
+		}
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			while(!checkQuit())
+			{
+				this.msleep(300);
+				long lCurTC = CUtilsDateTime.GetCurrentTimeMillis();
+				if(lCurTC - m_lastFlushTC > 3000)
+				{
+					m_accDriver.commit();
+					m_lastFlushTC = lCurTC;
+				}
+			}
+		}
+		private long m_lastFlushTC;
+		private AccoutDriver m_accDriver;
+	}
+	
+	
 	private CSyncObj m_cSync; 
 	private String m_dataRoot;
 	private AccountEntity m_accountEntity;
+	private FlushThread m_FlushThread;
 	private InnerMarketReplier m_innerMarketReplier;
 }
