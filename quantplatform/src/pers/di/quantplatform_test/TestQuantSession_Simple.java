@@ -236,7 +236,7 @@ public class TestQuantSession_Simple {
 			double buyCostAll = 500*12.331*s_transactionCostsRatioBuy + 800*12.612*s_transactionCostsRatioBuy;
 			double sellCost = 1000*12.508*s_transactionCostsRatioSell;
 			double ExpectMoney = 
-					10*10000-500*12.331-800*12.612+1000*12.508-(buyCostAll/1300*1000+sellCost);
+					10*10000-500*12.331-800*12.612+1000*12.508-buyCostAll-sellCost;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(),ExpectMoney, 2);
 			
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
