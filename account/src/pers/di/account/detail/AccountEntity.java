@@ -430,8 +430,6 @@ public class AccountEntity extends Account {
 		price = (double)CUtilsMath.saveNDecimal(price, 3);
 		cost = (double)CUtilsMath.saveNDecimal(cost, 3);
 				
-		double dealCost = 0.0; // 此费用是成交单费用，买入直接=buycost，卖出=sellcost+buycost
-		
 		// commission order update
 		Collections.sort(m_accountStore.storeEntity().commissionOrderList);
 		int leftDistribution = amount;
@@ -479,7 +477,6 @@ public class AccountEntity extends Account {
 				cNewHoldStock.stockID = stockID;
 				cNewHoldStock.totalAmount = 0;
 				cNewHoldStock.availableAmount = 0;
-				cNewHoldStock.totalBuyCost = 0;
 				cNewHoldStock.curPrice = 0;
 				cNewHoldStock.refPrimeCostPrice = 0;
 				cHoldStock = cNewHoldStock;
@@ -490,16 +487,19 @@ public class AccountEntity extends Account {
 			int oriTotalAmount = cHoldStock.totalAmount;
 			cHoldStock.totalAmount = cHoldStock.totalAmount + amount;
 			cHoldStock.availableAmount = cHoldStock.availableAmount;
-			cHoldStock.totalBuyCost = cHoldStock.totalBuyCost + cost;
 			cHoldStock.curPrice = price;
 			cHoldStock.refPrimeCostPrice = 
 					(cHoldStock.refPrimeCostPrice*oriTotalAmount + price*amount + cost) / cHoldStock.totalAmount;
 			cHoldStock.refPrimeCostPrice = CUtilsMath.saveNDecimal(cHoldStock.refPrimeCostPrice, 3);
-			dealCost = cost;
 			
 			// 更新 money
-			m_accountStore.storeEntity().money = m_accountStore.storeEntity().money - price*amount;
+			m_accountStore.storeEntity().money = m_accountStore.storeEntity().money - price*amount - cost;
 			m_accountStore.storeEntity().money = CUtilsMath.saveNDecimal(m_accountStore.storeEntity().money, 3);
+			if(m_accountStore.storeEntity().money < 0)
+			{
+				CLog.error("ACCOUNT", "BuyDeal Not have enough money to pay the stockmoney:%.3f cost:%.3f !! currentMoney:%.3f", 
+						price*amount, cost, m_accountStore.storeEntity().money);
+			}
 		}
 		else if(tranact == TRANACT.SELL)
 		{
@@ -516,15 +516,11 @@ public class AccountEntity extends Account {
 			
 			if(null != cHoldStock)
 			{
-				double oriAveBuyCost = cHoldStock.totalBuyCost/cHoldStock.totalAmount;
-				double balanceBuyCost = oriAveBuyCost*amount; // 计算买入费用
-				double balanceSellCost = cost; //结算卖出费用
 				double sellRawProfit = (price - cHoldStock.refPrimeCostPrice)*amount; // 卖出裸利润
 				
 				// 重置对象 (交易费用在卖出价钱中扣除)
 				cHoldStock.totalAmount = cHoldStock.totalAmount - amount;
 				cHoldStock.availableAmount = cHoldStock.availableAmount - amount;
-				cHoldStock.totalBuyCost = cHoldStock.totalBuyCost - balanceBuyCost;
 				cHoldStock.curPrice = price;
 				
 				cHoldStock.refPrimeCostPrice = 
@@ -532,11 +528,9 @@ public class AccountEntity extends Account {
 				cHoldStock.refPrimeCostPrice = CUtilsMath.saveNDecimal(cHoldStock.refPrimeCostPrice, 3);
 				
 				m_accountStore.storeEntity().money = 
-						m_accountStore.storeEntity().money + price*amount - balanceBuyCost - balanceSellCost;
+						m_accountStore.storeEntity().money + price*amount - cost;
 				m_accountStore.storeEntity().money = CUtilsMath.saveNDecimal(m_accountStore.storeEntity().money, 3);
-				
-				dealCost = balanceBuyCost + balanceSellCost;
-				
+
 				// 清仓
 				if(cHoldStock.totalAmount == 0)
 				{
@@ -557,13 +551,13 @@ public class AccountEntity extends Account {
 		dealOrder.stockID = stockID;
 		dealOrder.amount = amount;
 		dealOrder.price = price;
-		dealOrder.cost = (double)dealCost;
+		dealOrder.cost = cost;
 		m_accountStore.storeEntity().dealOrderList.add(dealOrder);
 				
 		CLog.output("ACCOUNT", "@AccountEntity DealOrder [%s %s] [%s %s %d %.3f %.3f(%.3f) %.3f]",
 				m_accountStore.storeEntity().date, m_accountStore.storeEntity().time,
 				tranact.toString(), stockID, amount, price,
-				amount*price, dealCost, m_accountStore.storeEntity().money);
+				amount*price, cost, m_accountStore.storeEntity().money);
 		
 		m_accountStore.sync2File();
 		

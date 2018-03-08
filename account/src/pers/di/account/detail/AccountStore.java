@@ -205,7 +205,6 @@ public class AccountStore {
             		String totalAmount = String.format("%d", cHoldStock.totalAmount);
             		String availableAmount = String.format("%d", cHoldStock.availableAmount);
             		String curPrice =String.format("%.3f", cHoldStock.curPrice);
-            		String totalBuyCost =String.format("%.3f", cHoldStock.totalBuyCost);
             		String refPrimeCostPrice =String.format("%.3f", cHoldStock.refPrimeCostPrice);
             				
             		Element Node_holdStock = doc.createElement("holdStock");
@@ -213,7 +212,6 @@ public class AccountStore {
             		Node_holdStock.setAttribute("stockID", cHoldStock.stockID);
             		Node_holdStock.setAttribute("totalAmount", totalAmount);
             		Node_holdStock.setAttribute("availableAmount", availableAmount);
-            		Node_holdStock.setAttribute("totalBuyCost", totalBuyCost);
             		Node_holdStock.setAttribute("curPrice", curPrice);
             		Node_holdStock.setAttribute("refPrimeCostPrice", refPrimeCostPrice);
             		
@@ -418,7 +416,6 @@ public class AccountStore {
 				        	String stockID = ((Element)node_holdStock).getAttribute("stockID");
 				        	String totalAmount = ((Element)node_holdStock).getAttribute("totalAmount");
 				        	String availableAmount = ((Element)node_holdStock).getAttribute("availableAmount");
-				        	String totalBuyCost = ((Element)node_holdStock).getAttribute("totalBuyCost");
 				        	String curPrice = ((Element)node_holdStock).getAttribute("curPrice");
 				        	String refPrimeCostPrice = ((Element)node_holdStock).getAttribute("refPrimeCostPrice");
 				        	
@@ -427,7 +424,6 @@ public class AccountStore {
 				        	cHoldStock.stockID = stockID;
 				        	cHoldStock.totalAmount = Integer.parseInt(totalAmount);
 				        	cHoldStock.availableAmount = Integer.parseInt(availableAmount);
-				        	cHoldStock.totalBuyCost = Double.parseDouble(totalBuyCost);
 				        	cHoldStock.curPrice = Double.parseDouble(curPrice);
 				        	cHoldStock.refPrimeCostPrice = Double.parseDouble(refPrimeCostPrice);
 				        	holdStockList.add(cHoldStock);

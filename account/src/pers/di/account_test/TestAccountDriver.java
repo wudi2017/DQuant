@@ -95,7 +95,9 @@ public class TestAccountDriver {
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f - 100*1.60f - 200*2.00f - 500*10.6f, 2);
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
+					10*10000f - 100*1.60f*(1+s_transactionCostsRatioBuy) - 200*2.00f*(1+s_transactionCostsRatioBuy) - 500*10.6f*(1+s_transactionCostsRatioBuy),
+					2);
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
 			CTest.EXPECT_TRUE(ctnHoldList.size() == 2);
@@ -108,7 +110,6 @@ public class TestAccountDriver {
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, (100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
 							(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300 , 2);
@@ -118,7 +119,6 @@ public class TestAccountDriver {
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-11-11");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 500);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 0);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, (500*10.60f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 10.6, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
 							(500*10.60f)*(1+s_transactionCostsRatioBuy)/500, 2);
@@ -157,8 +157,8 @@ public class TestAccountDriver {
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
 			double buyCost = 500*10.6f*s_transactionCostsRatioBuy;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
-					10*10000f - 100*1.60f - 200*2.00f - 500*10.6f + 100*10.0f
-					-100*(buyCost/500)-100*10.0f*s_transactionCostsRatioSell, 2);
+					10*10000f - 100*1.60f*(1+s_transactionCostsRatioBuy) - 200*2.00f*(1+s_transactionCostsRatioBuy) - 500*10.6f*(1+s_transactionCostsRatioBuy) 
+					+ 100*10.0f*(1-s_transactionCostsRatioSell) , 2);
 			
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
@@ -172,7 +172,6 @@ public class TestAccountDriver {
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, (100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
 							(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300, 2);
@@ -182,8 +181,6 @@ public class TestAccountDriver {
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-11-11");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 400);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 400);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, 
-							(400*10.60f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 10.0, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
 							(500*10.6f-100*10.0f+500*10.6f*s_transactionCostsRatioBuy+100*10.0f*s_transactionCostsRatioSell)/400, 2);
@@ -199,9 +196,9 @@ public class TestAccountDriver {
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			double cost = 500*10.6f*s_transactionCostsRatioBuy + 100*10.0f*s_transactionCostsRatioSell + 400*5.25f*s_transactionCostsRatioSell;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
-					10*10000f - 100*1.60f - 200*2.00f - 500*10.6f + 100*10.0f + 400*5.25f - cost, 2);
+					10*10000f - 100*1.60f*(1+s_transactionCostsRatioBuy) - 200*2.00f*(1+s_transactionCostsRatioBuy) - 500*10.6f*(1+s_transactionCostsRatioBuy) 
+					+ 100*10.0f*(1-s_transactionCostsRatioSell) + 400*5.25f*(1-s_transactionCostsRatioSell), 2);
 			
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
@@ -215,8 +212,6 @@ public class TestAccountDriver {
 					CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
 					CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
 					CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
-					CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, 
-							(100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
 					CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
 							(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300, 2);
@@ -255,8 +250,6 @@ public class TestAccountDriver {
 				CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-10-10");
 				CTest.EXPECT_LONG_EQ(cHoldStock.totalAmount, 300);
 				CTest.EXPECT_LONG_EQ(cHoldStock.availableAmount, 300);
-				CTest.EXPECT_DOUBLE_EQ(cHoldStock.totalBuyCost, 
-						(100*1.60f+200*2.00f)*s_transactionCostsRatioBuy, 2);
 				CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 2.00, 2);
 				CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
 						(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300, 2);
@@ -352,9 +345,8 @@ public class TestAccountDriver {
 			CTest.EXPECT_STR_EQ(cDealOrder1.stockID, "600001");
 			CTest.EXPECT_LONG_EQ(cDealOrder1.amount, 100);
 			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.price, 1.12f, 2);
-			double aveBuy = (100*1.6+200*2.00)*s_transactionCostsRatioBuy/300;
 			CTest.EXPECT_DOUBLE_EQ(cDealOrder1.cost, 
-					100*aveBuy+100*1.12f*s_transactionCostsRatioSell, 2);
+					100*1.12f*s_transactionCostsRatioSell, 2);
 		}
 		
 		String dumpInfoBeforeEnd = acc.dump();
@@ -368,7 +360,7 @@ public class TestAccountDriver {
 	}
 	
 	@CTest.test
-	public static void test_accountDriver_buy_sell_inputcheck()
+	public static void test_accountDriver_inputcheck_buy_sell()
 	{
 		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
 		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
@@ -482,7 +474,8 @@ public class TestAccountDriver {
 		
 		CObjectContainer<Double> ctnTotalAssets = new CObjectContainer<Double>();
 		CTest.EXPECT_LONG_EQ(acc.getTotalAssets(ctnTotalAssets), 0);
-		CTest.EXPECT_DOUBLE_EQ(ctnTotalAssets.get(), 10*10000f+1000*3.2f, 2);
+		CTest.EXPECT_DOUBLE_EQ(ctnTotalAssets.get(), 10*10000f+1000*3.2f 
+				-1000*16.8*(s_transactionCostsRatioBuy)-2000*20*(s_transactionCostsRatioBuy)-500*10.6*(s_transactionCostsRatioBuy), 2);
 		
 		CObjectContainer<HoldStock> cHoldStock = new CObjectContainer<HoldStock>();
 		CTest.EXPECT_LONG_EQ(acc.getHoldStock("600001", cHoldStock), 0);

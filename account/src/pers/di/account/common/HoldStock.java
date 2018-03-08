@@ -10,7 +10,6 @@ public class HoldStock {
 	public String stockID; // 股票ID
 	public int totalAmount; // 持有总量（股）
 	public int availableAmount; // 可卖数量
-	public double totalBuyCost; // 买入费用总计
 	public double curPrice; // 当前价
 	public double refPrimeCostPrice; // 参考成本价（只做本次仓位建仓后的参考成本价格，未有实际用途）
 	
@@ -25,7 +24,6 @@ public class HoldStock {
 		stockID = "";
 		totalAmount = 0;
 		availableAmount = 0;
-		totalBuyCost = 0.0f;
 		curPrice = 0.0f;
 		refPrimeCostPrice = 0.0f;
 	}
@@ -36,7 +34,6 @@ public class HoldStock {
 		stockID = c.stockID;
 		totalAmount = c.totalAmount;
 		availableAmount = c.availableAmount;
-		totalBuyCost = c.totalBuyCost;
 		curPrice = c.curPrice;
 		refPrimeCostPrice = c.refPrimeCostPrice;
 	}

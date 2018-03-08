@@ -146,11 +146,11 @@ public abstract class Account {
 		for(int i=0; i<cHoldStockList.size(); i++ )
 		{
 			HoldStock cHoldStock = cHoldStockList.get(i);
-			DumpInfo+=String.format("\n    -HoldStock: %s %d %d %.3f %.3f %.3f(%.3f)", 
+			DumpInfo+=String.format("\n    -HoldStock: %s %d %d %.3f %.3f %.3f", 
 					cHoldStock.stockID,
 					cHoldStock.totalAmount, cHoldStock.availableAmount,
 					cHoldStock.refPrimeCostPrice, cHoldStock.curPrice, 
-					cHoldStock.totalAmount*cHoldStock.curPrice, -cHoldStock.totalBuyCost);
+					cHoldStock.totalAmount*cHoldStock.curPrice);
 		}
 				
 		// ´òÓ¡Î¯ÍÐµ¥

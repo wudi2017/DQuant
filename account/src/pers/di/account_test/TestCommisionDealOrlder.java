@@ -75,14 +75,14 @@ public class TestCommisionDealOrlder {
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 12.1f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 12.8f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 9.89f);
-		acc.postTradeOrder(TRANACT.BUY, "600002", 300, 21.18f);
+		acc.postTradeOrder(TRANACT.BUY, "600002", 300, 21.18f); // chengjiao all
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 11.89f);
 		cAccoutDriver.newDayEnd();
 		//check
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f - 300*21.18f, 2);
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f - 300*21.18f*(1+0.02), 2);
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
 			CTest.EXPECT_TRUE(ctnHoldList.size() == 1);
@@ -91,15 +91,17 @@ public class TestCommisionDealOrlder {
 		
 		cAccoutDriver.setDateTime("2017-10-11", "13:00:01");
 		cAccoutDriver.newDayBegin();
-		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 11.5f); // chengjiao 100
-		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 12.5f); // chengjiao 200
+		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 11.5f); // chengjiao 100 10.55
+		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 12.5f); // chengjiao 200 10.55
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 9.18f);
-		acc.postTradeOrder(TRANACT.BUY, "600001", 400, 10.96f);// chengjiao 100
+		acc.postTradeOrder(TRANACT.BUY, "600001", 400, 10.96f);// chengjiao 100 10.55
 		//check
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 10*10000f-300*21.18f-100*11.5f-200*12.5f-300*9.18f-400*10.96f, 2);
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), 
+					10*10000f-300*21.18f*(1+0.02)
+					-100*11.5f-200*12.5f-300*9.18f-400*10.96f, 2);
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
 			CTest.EXPECT_TRUE(ctnHoldList.size() == 1);
@@ -111,7 +113,12 @@ public class TestCommisionDealOrlder {
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			double availableMoney = 10*10000f-300*21.18f-300*10.96f-500*9.89f-300*9.18-100*24.88-200*23.05-400*10.55;
+			double availableMoney = 10*10000f-300*21.18f*(1+0.02)
+					-400*10.55-250
+					-300*9.18-300*10.96f
+					-100*24.88*(1+0.02)-200*23.05*(1+0.02)
+					-500*9.89f
+					;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), availableMoney, 2);
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
@@ -144,7 +151,9 @@ public class TestCommisionDealOrlder {
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			double availableMoney = 10*10000f-300*21.18f-100*24.88-200*23.05-400*10.55;
+			double availableMoney = 10*10000f-300*21.18f*(1+0.02)
+					-400*10.55-250
+					-100*24.88*(1+0.02)-200*23.05*(1+0.02);
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), availableMoney, 2);
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
@@ -161,7 +170,10 @@ public class TestCommisionDealOrlder {
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			CTest.EXPECT_TRUE(acc.getMoney(ctnMoney) == 0);
-			double availableMoney = 10*10000f-300*21.18f-100*24.88-200*23.05-400*10.55 + 200*9.85-150-250/2;
+			double availableMoney = 10*10000f-300*21.18f*(1+0.02)
+					-400*10.55-250
+					-100*24.88*(1+0.02)-200*23.05*(1+0.02)
+					+200*9.85-150;
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), availableMoney, 2);
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
