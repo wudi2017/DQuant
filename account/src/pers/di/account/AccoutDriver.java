@@ -208,9 +208,9 @@ public class AccoutDriver {
 			// TODO Auto-generated method stub
 			while(!checkQuit())
 			{
-				this.msleep(300);
+				this.msleep(1000);
 				long lCurTC = CUtilsDateTime.GetCurrentTimeMillis();
-				if(lCurTC - m_lastFlushTC > 3000)
+				if(lCurTC - m_lastFlushTC > 1000*15)
 				{
 					m_accDriver.commit();
 					m_lastFlushTC = lCurTC;

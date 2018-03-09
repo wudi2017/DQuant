@@ -97,12 +97,6 @@ public class AccountStore {
 	
 	public boolean sync2File()
 	{
-		File cfile=new File(m_accXMLFile);
-		if(cfile.exists())
-		{
-			cfile.delete();
-		}
-		
 		Document doc=null;
 		DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
 		try {
@@ -256,16 +250,48 @@ public class AccountStore {
 			e.printStackTrace();
 		}
 		
-		// 更新到文件
-		File cfile_new = new File(m_accXMLFile);
-		try {
-			FileWriter fw = new FileWriter(cfile_new.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(formatedXmlStr);
-		    bw.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// 判断变化试图更新到文件
+		boolean bNeedRewriteFile = false;
+		File cfile=new File(m_accXMLFile);
+		if(cfile.exists())
+		{
+			try
+			{
+				BufferedReader reader = new BufferedReader(new FileReader(cfile));
+		        int fileLen = (int)cfile.length();
+		        char[] chars = new char[fileLen];
+		        reader.read(chars);
+		        reader.close();
+		        String oldXmlStr = String.valueOf(chars);
+		        if(!oldXmlStr.equals(formatedXmlStr))
+		        {
+		        	bNeedRewriteFile = true;
+		        }
+			}
+	        catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		if(bNeedRewriteFile)
+		{
+			if(cfile.exists())
+			{
+				cfile.delete();
+			}
+			
+			// 更新到文件
+			File cfile_new = new File(m_accXMLFile);
+			try {
+				FileWriter fw = new FileWriter(cfile_new.getAbsoluteFile());
+				BufferedWriter bw = new BufferedWriter(fw);
+				bw.write(formatedXmlStr);
+			    bw.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return true;

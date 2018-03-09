@@ -152,8 +152,10 @@ public class AccountEntity extends Account {
 			m_accountStore.storeEntity().commissionOrderList.add(cCommissionOrder);
 			m_accountStore.sync2File();
 			
-			m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
 			this.aceessUnLock();
+			
+			m_cIMarketOpe.postTradeRequest(TRANACT.BUY, stockID, amount, price);
+
 			return 0;
 		}
 		
