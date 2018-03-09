@@ -66,6 +66,7 @@ public class TestRealAccountOpe {
 		}
 				
 		// 委托列表测试
+		for(int iTest=0; iTest<100; iTest++)
 		{
 			List<THSApi.CommissionOrder> container = new ArrayList<THSApi.CommissionOrder>();
 	        int ret = THSApi.getCommissionOrderList(container);
@@ -77,6 +78,8 @@ public class TestRealAccountOpe {
 	        			cCommissionOrder.commissionAmount, cCommissionOrder.commissionPrice,
 	        			cCommissionOrder.dealAmount, cCommissionOrder.dealPrice);
 	        }
+	        
+	        CThread.msleep(1000);
 		}
 				
 		// 成交列表测试
@@ -105,37 +108,32 @@ public class TestRealAccountOpe {
 		}
 	}
 	
+	public static class TestAccReplier extends IMarketDealReplier
+	{
+
+		@Override
+		public void onDeal(TRANACT tranact, String stockID, int amount, double price, double cost) {
+			// TODO Auto-generated method stub
+			CLog.output("TEST", "TestAccReplier.onDeal tranact:%s stockID:%s amount:%d price:%.3f cost:%.3f" , 
+					tranact.toString(), stockID, amount, price, cost);
+		}
+		
+	}
+	
 	@CTest.test
 	public static void testRealAccountOpe()
 	{
+		TestAccReplier cTestAccReplier = new TestAccReplier();
 		RealAccountOpe cRealAccountOpe = new RealAccountOpe();
+		cRealAccountOpe.registerDealReplier(cTestAccReplier);
+
+		int iBuy = cRealAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 200, 4.0f);
+		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iBuy);
 		
-//		int iInit = cRealAccountOpe.newDayInit();
-//		CTest.EXPECT_LONG_EQ(0, iInit);
-//		
-//		int iEnd = cRealAccountOpe.newDayTranEnd();
-//		CTest.EXPECT_LONG_EQ(0, iEnd);
+		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 4.1f);
+		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iSell);
 		
-//		int iBuy = cRealAccountOpe.pushBuyOrder(CUtilsDateTime.GetCurDateStr(), CUtilsDateTime.GetCurTimeStr(), 
-//				"601988", 100, 0.99f);
-//		CTest.EXPECT_LONG_EQ(0, iBuy);
-//		
-//		int iSell = cRealAccountOpe.pushBuyOrder(CUtilsDateTime.GetCurDateStr(), CUtilsDateTime.GetCurTimeStr(), 
-//				"601988", 100, 0.99f);
-//		CTest.EXPECT_LONG_EQ(0, iSell);
-		
-//		CTHSApi.ObjectContainer<Float> ctnAvailableMoney = new CTHSApi.ObjectContainer<Float>();
-//		int iAvailableMoney = cRealAccountOpe.getAvailableMoney(ctnAvailableMoney);
-//		CTest.EXPECT_LONG_EQ(0, iAvailableMoney);
-		
-//		CTHSApi.ObjectContainer<Float> ctnMoney = new CTHSApi.ObjectContainer<Float>();
-//		int iMoney = cRealAccountOpe.getMoney(ctnMoney);
-//		CTest.EXPECT_LONG_EQ(0, iMoney);
-//		CTest.EXPECT_TRUE(ctnMoney.get() > 100.0f);
-		
-//		List<HoldStock> ctnHoldStock = new ArrayList<HoldStock>();
-//		int iHold = cRealAccountOpe.getHoldStockList(ctnHoldStock);
-//		CTest.EXPECT_LONG_EQ(0, iHold);
+		CThread.msleep(3000);
 	}
 	
 	@CTest.test
