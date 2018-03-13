@@ -66,7 +66,7 @@ public class TestRealAccountOpe {
 		}
 				
 		// Î¯ÍÐÁÐ±í²âÊÔ
-		for(int iTest=0; iTest<100; iTest++)
+		for(int iTest=0; iTest<1; iTest++)
 		{
 			List<THSApi.CommissionOrder> container = new ArrayList<THSApi.CommissionOrder>();
 	        int ret = THSApi.getCommissionOrderList(container);
@@ -133,7 +133,7 @@ public class TestRealAccountOpe {
 		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 4.1f);
 		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iSell);
 		
-		CThread.msleep(3000);
+		CThread.msleep(1000*20);
 	}
 	
 	@CTest.test
@@ -162,7 +162,7 @@ public class TestRealAccountOpe {
 		// TODO Auto-generated method stub
 		CSystem.start();
 		CTest.ADD_TEST(TestRealAccountOpe.class);
-		CTest.RUN_ALL_TESTS("TestRealAccountOpe.testTHSApi");
+		CTest.RUN_ALL_TESTS("TestRealAccountOpe.testRealAccountOpe");
 		CSystem.stop();
 	}
 }
