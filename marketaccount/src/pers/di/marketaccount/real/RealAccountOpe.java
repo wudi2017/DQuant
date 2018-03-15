@@ -16,8 +16,23 @@ public class RealAccountOpe extends IMarketOpe {
 		m_THSApiInitFlag = THSApi.initialize();
 		m_dealMonitorMap = new HashMap<String, DealMonitorItem>();
 		m_sync = new CSyncObj();
-		m_MonitorDealThread = new MonitorDealThread(this);
-		m_MonitorDealThread.startThread();
+		m_MonitorTimerThread = new MonitorTimerThread(this);
+		m_lastConnectCheckTC = 0;
+		m_lastDealCheckTC = 0;
+	}
+	
+	@Override
+	public int start()
+	{
+		m_MonitorTimerThread.startThread();
+		return 0;
+	}
+	
+	@Override
+	public int stop()
+	{
+		m_MonitorTimerThread.stopThread();
+		return 0;
 	}
 
 	@Override
@@ -112,8 +127,55 @@ public class RealAccountOpe extends IMarketOpe {
 		return 0;
 	}
 	
-	public void onMonitorDeal()
+	public void onTimer()
 	{
+		long CurTC = CUtilsDateTime.GetCurrentTimeMillis();
+		if(CurTC - m_lastConnectCheckTC > 1000*60) // 试图重连检查
+		{
+			this.reconnectCheck();
+			m_lastConnectCheckTC = CurTC;
+		}
+		if(CurTC - m_lastDealCheckTC > 1000*3) // 成交检查
+		{
+			this.dealCheck();
+			m_lastDealCheckTC = CurTC;
+		}
+	}
+	
+	private void reconnectCheck()
+	{
+		int ret = -1;
+		THSApi.ObjectContainer<Float> container = new THSApi.ObjectContainer<Float>();
+		for(int iCheckTimes=0; iCheckTimes<5; iCheckTimes++)
+		{
+			ret =  THSApi.getTotalAssets(container);
+			if(0 == ret)
+			{
+				break;
+			}
+			else
+			{
+				m_THSApiInitFlag = THSApi.initialize();
+				if(0 == m_THSApiInitFlag)
+				{
+					break;
+				}
+				else
+				{
+					CLog.error("ACCOUNT", "RealAccountOpe reconnectCheck THSApi.initialize err(%d)", m_THSApiInitFlag);
+				}
+			}
+			CThread.msleep(1000);
+		}
+	}
+	
+	private void dealCheck()
+	{
+		if(0 != m_THSApiInitFlag)
+		{
+			return;
+		}
+		
 		//CLog.output("TEST", "onMonitorDeal");
 		// get commission 
 		List<THSApi.CommissionOrder> commissionOrders = new ArrayList<THSApi.CommissionOrder>();
@@ -136,6 +198,7 @@ public class RealAccountOpe extends IMarketOpe {
     				  if(CommissionKey.equals(keyCheck))
     				  {
     					  cRealCommision = cCommisionTmp;
+    					  break;
     				  }
     			  }
     			  
@@ -172,9 +235,9 @@ public class RealAccountOpe extends IMarketOpe {
         }
 	}
 	
-	public static class MonitorDealThread extends CThread
+	public static class MonitorTimerThread extends CThread
 	{
-		public MonitorDealThread(RealAccountOpe cRealAccountOpe)
+		public MonitorTimerThread(RealAccountOpe cRealAccountOpe)
 		{
 			m_RealAccountOpe = cRealAccountOpe;
 		}
@@ -183,12 +246,8 @@ public class RealAccountOpe extends IMarketOpe {
 		public void run() {
 			while(!this.checkQuit())
 			{
-				if(0 == m_RealAccountOpe.m_THSApiInitFlag)
-				{
-					m_RealAccountOpe.onMonitorDeal();
-				}
-				
-				this.Wait(3000);
+				m_RealAccountOpe.onTimer();
+				this.Wait(1000);
 			}
 		}
 		
@@ -210,6 +269,8 @@ public class RealAccountOpe extends IMarketOpe {
 	// "601988_13:20:12",DealMonitorItem
 	private Map<String, DealMonitorItem> m_dealMonitorMap;
 	private CSyncObj m_sync;
-	private MonitorDealThread m_MonitorDealThread;
+	private MonitorTimerThread m_MonitorTimerThread;
+	private long m_lastConnectCheckTC;
+	private long m_lastDealCheckTC;
 	
 }

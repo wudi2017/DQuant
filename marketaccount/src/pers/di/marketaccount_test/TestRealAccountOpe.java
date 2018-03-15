@@ -121,27 +121,65 @@ public class TestRealAccountOpe {
 	}
 	
 	@CTest.test
-	public static void testRealAccountOpe()
+	public static void test_realaccountope_single()
 	{
 		TestAccReplier cTestAccReplier = new TestAccReplier();
 		RealAccountOpe cRealAccountOpe = new RealAccountOpe();
 		cRealAccountOpe.registerDealReplier(cTestAccReplier);
+		cRealAccountOpe.start();
 
 		int iBuy = cRealAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 200, 4.0f);
 		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iBuy);
+//		
+//		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 4.1f);
+//		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iSell);
 		
-		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 4.1f);
-		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iSell);
+		CThread.msleep(1000*60*5);
 		
-		CThread.msleep(1000*20);
+		cRealAccountOpe.stop();
 	}
 	
 	@CTest.test
-	public static void test_mockaccountope()
+	public static void test_mockaccountope_single()
+	{
+		TestAccReplier cTestAccReplier = new TestAccReplier();
+		MockAccountOpe MockAccountOpe = new MockAccountOpe();
+		MockAccountOpe.registerDealReplier(cTestAccReplier);
+		MockAccountOpe.start();
+
+		int iBuy = MockAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 200, 4.0f);
+		CLog.output("TEST", "test_mockaccountope.postTradeRequest iBuy(%d)", iBuy);
+//		
+//		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 4.1f);
+//		CLog.output("TEST", "test_mockaccountope.postTradeRequest iBuy(%d)", iSell);
+		
+		CThread.msleep(1000*3);
+		
+		MockAccountOpe.stop();
+	}
+	
+	@CTest.test
+	public static void testRealAccountOpe_withAccDriver()
+	{
+		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
+		cAccoutDriver.load("real001" ,  new RealAccountOpe(), true);
+		cAccoutDriver.reset(10*10000f);
+		cAccoutDriver.start();
+		
+		Account acc = cAccoutDriver.account();
+		acc.postTradeOrder(TRANACT.BUY, "601988", 200, 4.0f);
+		
+		CThread.msleep(1000*60*5);
+		cAccoutDriver.stop();
+	}
+
+	@CTest.test
+	public static void test_mockaccountope_withAccDriver()
 	{
 		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
 		cAccoutDriver.load("mock001" ,  new MockAccountOpe(), true);
 		cAccoutDriver.reset(10*10000f);
+		cAccoutDriver.start();
 		
 		Account acc = cAccoutDriver.account();
 		
@@ -156,13 +194,15 @@ public class TestRealAccountOpe {
 		acc.postTradeOrder(TRANACT.SELL, "300348", 2000, 28.301f);
 		cAccoutDriver.newDayEnd();
 		
+		CThread.msleep(1000*3);
+		cAccoutDriver.stop();
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		CSystem.start();
 		CTest.ADD_TEST(TestRealAccountOpe.class);
-		CTest.RUN_ALL_TESTS("TestRealAccountOpe.testRealAccountOpe");
+		CTest.RUN_ALL_TESTS("TestRealAccountOpe.testRealAccountOpe_withAccDriver");
 		CSystem.stop();
 	}
 }

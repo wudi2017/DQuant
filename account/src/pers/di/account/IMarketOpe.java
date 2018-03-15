@@ -12,6 +12,16 @@ import pers.di.common.*;
 abstract public class IMarketOpe {
 	
 	/*
+	 * 启动市场操作接口
+	 */
+	abstract public int start();
+	
+	/*
+	 * 停止市场操作接口
+	 */
+	abstract public int stop();
+	
+	/*
 	 * 抛送市场交易请求
 	 * param tranact: transaction action
 	 * id: stock ID

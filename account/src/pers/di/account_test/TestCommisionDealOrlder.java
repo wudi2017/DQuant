@@ -24,6 +24,18 @@ public class TestCommisionDealOrlder {
 		static int iPostTimes600001SELL=0;
 		
 		@Override
+		public int start()
+		{
+			return 0;
+		}
+		
+		@Override
+		public int stop()
+		{
+			return 0;
+		}
+		
+		@Override
 		public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
 			
 			// 600001 

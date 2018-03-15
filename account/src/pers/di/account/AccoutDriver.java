@@ -30,6 +30,7 @@ public class AccoutDriver {
 		m_dataRoot = dataRoot;
 		m_accountEntity = null;
 		m_FlushThread = new FlushThread(this);
+		m_MarketOpe = null;
 		m_innerMarketReplier = null;
 	}
 	
@@ -42,14 +43,15 @@ public class AccoutDriver {
 		// init m_accountEntity m_innerMarketReplier
 		if(null != cIMarketOpe)
 		{
+			m_MarketOpe = cIMarketOpe;
 			m_innerMarketReplier = new InnerMarketReplier(this);
-			if( 0 != cIMarketOpe.registerDealReplier(m_innerMarketReplier))
+			if( 0 != m_MarketOpe.registerDealReplier(m_innerMarketReplier))
 			{
 				CLog.error("ACCOUNT", "AccoutDriver init cIMarketOpe.registerDealReplier failed\n");
 			}
 			
 			m_accountEntity =  new AccountEntity();
-			if(0 != m_accountEntity.load(m_dataRoot, accID, cIMarketOpe, bCreate))
+			if(0 != m_accountEntity.load(m_dataRoot, accID, m_MarketOpe, bCreate))
 			{
 				CLog.error("ACCOUNT", "AccoutDriver init m_accountEntity.load failed\n");
 			}
@@ -66,11 +68,19 @@ public class AccoutDriver {
 	public int start()
 	{
 		m_FlushThread.startThread();
+		if(null != m_MarketOpe)
+		{
+			m_MarketOpe.start();
+		}
 		return 0;
 	}
 	
 	public int stop()
 	{
+		if(null != m_MarketOpe)
+		{
+			m_MarketOpe.stop();
+		}
 		m_FlushThread.stopThread();
 		return 0;
 	}
@@ -226,5 +236,6 @@ public class AccoutDriver {
 	private String m_dataRoot;
 	private AccountEntity m_accountEntity;
 	private FlushThread m_FlushThread;
+	private IMarketOpe m_MarketOpe;
 	private InnerMarketReplier m_innerMarketReplier;
 }

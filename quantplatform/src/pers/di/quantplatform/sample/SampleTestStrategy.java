@@ -21,6 +21,18 @@ public class SampleTestStrategy {
 	public static class MockMarketOpe extends IMarketOpe
 	{
 		@Override
+		public int start()
+		{
+			return 0;
+		}
+		
+		@Override
+		public int stop()
+		{
+			return 0;
+		}
+		
+		@Override
 		public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
 			if(tranact == TRANACT.BUY)
 			{
