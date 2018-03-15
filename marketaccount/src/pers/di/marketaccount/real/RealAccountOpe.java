@@ -14,6 +14,7 @@ public class RealAccountOpe extends IMarketOpe {
 	public RealAccountOpe()
 	{
 		m_THSApiInitFlag = THSApi.initialize();
+		CLog.output("ACCOUNT", "RealAccountOpe THSApi.initialize m_THSApiInitFlag = %d", m_THSApiInitFlag);
 		m_dealMonitorMap = new HashMap<String, DealMonitorItem>();
 		m_sync = new CSyncObj();
 		m_MonitorTimerThread = new MonitorTimerThread(this);
@@ -25,6 +26,7 @@ public class RealAccountOpe extends IMarketOpe {
 	public int start()
 	{
 		m_MonitorTimerThread.startThread();
+		CLog.output("ACCOUNT", "RealAccountOpe start");
 		return 0;
 	}
 	
@@ -32,6 +34,7 @@ public class RealAccountOpe extends IMarketOpe {
 	public int stop()
 	{
 		m_MonitorTimerThread.stopThread();
+		CLog.output("ACCOUNT", "RealAccountOpe stop");
 		return 0;
 	}
 
@@ -40,6 +43,7 @@ public class RealAccountOpe extends IMarketOpe {
 		
 		if(0 != m_THSApiInitFlag)
 		{
+			CLog.error("ACCOUNT", "RealAccountOpe postTradeRequest failed, m_THSApiInitFlag = %d", m_THSApiInitFlag);
 			return -1;
 		}
 		
@@ -48,6 +52,7 @@ public class RealAccountOpe extends IMarketOpe {
         int ret_getCommission_before = THSApi.getCommissionOrderList(commissionOrdersBefore);
         if(0 != ret_getCommission_before)
         {
+        	CLog.error("ACCOUNT", "RealAccountOpe postTradeRequest getCommissionOrderList failed, ret_getCommission_before = %d", ret_getCommission_before);
         	return -1;
         }
         
@@ -76,6 +81,7 @@ public class RealAccountOpe extends IMarketOpe {
 	        int ret_getCommission_after = THSApi.getCommissionOrderList(commissionOrdersAfter);
 	        if(0 != ret_getCommission_after)
 	        {
+	        	CLog.error("ACCOUNT", "RealAccountOpe postTradeRequest getCommissionOrderList failed, ret_getCommission_after = %d", ret_getCommission_after);
 	        	return -1;
 	        }
 	        
@@ -208,7 +214,7 @@ public class RealAccountOpe extends IMarketOpe {
     				  int commissionAmount = cRealCommision.commissionAmount;
 					  int dealAmount = cRealCommision.dealAmount;
 					  
-					  CLog.output("TEST", "CommissionKey:%s dealAmountCallback:%d (commissionAmount:%d dealAmount:%d)", 
+					  CLog.output("ACCOUNT", "CommissionKey:%s dealAmountCallback:%d (commissionAmount:%d dealAmount:%d)", 
 							  CommissionKey, cDealMonitorItem.dealAmountCallback, commissionAmount, dealAmount);
 					  
 					  if(dealAmount > cDealMonitorItem.dealAmountCallback) // 存在新成交，需要回调
