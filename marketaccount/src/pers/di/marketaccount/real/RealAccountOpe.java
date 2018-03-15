@@ -10,16 +10,23 @@ import pers.di.thsapi.*;
 import pers.di.thsapi.THSApi.*;
 
 public class RealAccountOpe extends IMarketOpe {
-
+	
+	public static double s_transactionCostsRatio_TransferFee = 0.00002; // 买卖过户费比率
+	public static double s_transactionCostsRatio_Poundage = 0.00025; // 买卖手续费比率（佣金部分）
+	public static double s_transactionCosts_MinPoundage = 5.0; // 最小手续费
+	
+	public static double s_transactionCostsRatio_Sell_StampDuty = 0.001; // 卖出印花税比率
+	
 	public RealAccountOpe()
 	{
-		m_THSApiInitFlag = THSApi.initialize();
-		CLog.output("ACCOUNT", "RealAccountOpe THSApi.initialize m_THSApiInitFlag = %d", m_THSApiInitFlag);
+		m_THSApiInitFlag = WrapperTHSApi.initialize();
+		CLog.output("ACCOUNT", "RealAccountOpe WrapperTHSApi.initialize m_THSApiInitFlag = %d", m_THSApiInitFlag);
 		m_dealMonitorMap = new HashMap<String, DealMonitorItem>();
 		m_sync = new CSyncObj();
 		m_MonitorTimerThread = new MonitorTimerThread(this);
 		m_lastConnectCheckTC = 0;
 		m_lastDealCheckTC = 0;
+		m_lastClearDealMonitorTC = 0;
 	}
 	
 	@Override
@@ -49,7 +56,7 @@ public class RealAccountOpe extends IMarketOpe {
 		
 		// get commission before
 		List<THSApi.CommissionOrder> commissionOrdersBefore = new ArrayList<THSApi.CommissionOrder>();
-        int ret_getCommission_before = THSApi.getCommissionOrderList(commissionOrdersBefore);
+        int ret_getCommission_before = WrapperTHSApi.getCommissionOrderList(commissionOrdersBefore);
         if(0 != ret_getCommission_before)
         {
         	CLog.error("ACCOUNT", "RealAccountOpe postTradeRequest getCommissionOrderList failed, ret_getCommission_before = %d", ret_getCommission_before);
@@ -59,14 +66,14 @@ public class RealAccountOpe extends IMarketOpe {
 		// commit
 		if(tranact.equals(TRANACT.BUY))
 		{
-			int iBuyRet = THSApi.buyStock(id, amount, (float)price);
+			int iBuyRet = WrapperTHSApi.buyStock(id, amount, (float)price);
 			CLog.output("ACCOUNT", " @RealAccountOpe pushBuyOrder err(%d) [%s %d %.3f %.3f] \n", 
 					iBuyRet,
 					id, amount, price, amount*price);
 		}
 		if(tranact.equals(TRANACT.SELL))
 		{
-			int iSellRet = THSApi.sellStock(id, amount, (float)price);
+			int iSellRet = WrapperTHSApi.sellStock(id, amount, (float)price);
 			CLog.output("ACCOUNT", " @RealAccountOpe pushSellOrder err(%d) [%s %d %.3f %.3f] \n", 
 					iSellRet,
 					id, amount, price, amount*price);
@@ -78,7 +85,7 @@ public class RealAccountOpe extends IMarketOpe {
 			CThread.msleep(1000);
 			// get 1 times
 			List<THSApi.CommissionOrder> commissionOrdersAfter = new ArrayList<THSApi.CommissionOrder>();
-	        int ret_getCommission_after = THSApi.getCommissionOrderList(commissionOrdersAfter);
+	        int ret_getCommission_after = WrapperTHSApi.getCommissionOrderList(commissionOrdersAfter);
 	        if(0 != ret_getCommission_after)
 	        {
 	        	CLog.error("ACCOUNT", "RealAccountOpe postTradeRequest getCommissionOrderList failed, ret_getCommission_after = %d", ret_getCommission_after);
@@ -87,8 +94,7 @@ public class RealAccountOpe extends IMarketOpe {
 	        
 	        
 	        // check changed
-	        boolean bFindNewCommit = false;
-	        String sKey = "";
+	        THSApi.CommissionOrder newCommitItem = null;
 	        for(int iAfter=0;iAfter<commissionOrdersAfter.size();iAfter++)
 	        {
 	        	THSApi.CommissionOrder cCommissionOrderAfter = commissionOrdersAfter.get(iAfter);
@@ -106,16 +112,16 @@ public class RealAccountOpe extends IMarketOpe {
 	        	
 	        	if(!bExitInBefore) // find the new commit
 	        	{
-	        		bFindNewCommit = true;
-	        		sKey = cCommissionOrderAfter.stockID + "_" + cCommissionOrderAfter.time;
+	        		newCommitItem = cCommissionOrderAfter;
 	        		break;
 	        	}
 	        }
 	        
 	        // find new commit and add to monitor, for waiting dealReply
-	        if(bFindNewCommit)
+	        if(null != newCommitItem && newCommitItem.stockID.equals(id))
 	        {
 	        	m_sync.Lock();
+	        	String sKey = newCommitItem.stockID + "_" + newCommitItem.time;
 	        	if(!m_dealMonitorMap.containsKey(sKey))
 	        	{
 	        		DealMonitorItem cDealMonitorItem = new DealMonitorItem();
@@ -123,6 +129,7 @@ public class RealAccountOpe extends IMarketOpe {
 	        		cDealMonitorItem.tranact = tranact;
 	        		cDealMonitorItem.dealAmountCallback = 0;
 	        		cDealMonitorItem.dealAvePrice = 0.0f;
+	        		
 	        		m_dealMonitorMap.put(sKey, cDealMonitorItem);
 	        	}
 	        	m_sync.UnLock();
@@ -146,6 +153,11 @@ public class RealAccountOpe extends IMarketOpe {
 			this.dealCheck();
 			m_lastDealCheckTC = CurTC;
 		}
+		if(CurTC - m_lastClearDealMonitorTC > 1000*60*5)
+		{
+			this.clearMonitorCheck();
+			m_lastClearDealMonitorTC = CurTC;
+		}
 	}
 	
 	private void reconnectCheck()
@@ -154,21 +166,21 @@ public class RealAccountOpe extends IMarketOpe {
 		THSApi.ObjectContainer<Float> container = new THSApi.ObjectContainer<Float>();
 		for(int iCheckTimes=0; iCheckTimes<5; iCheckTimes++)
 		{
-			ret =  THSApi.getTotalAssets(container);
+			ret =  WrapperTHSApi.getTotalAssets(container);
 			if(0 == ret)
 			{
 				break;
 			}
 			else
 			{
-				m_THSApiInitFlag = THSApi.initialize();
+				m_THSApiInitFlag = WrapperTHSApi.initialize();
 				if(0 == m_THSApiInitFlag)
 				{
 					break;
 				}
 				else
 				{
-					CLog.error("ACCOUNT", "RealAccountOpe reconnectCheck THSApi.initialize err(%d)", m_THSApiInitFlag);
+					CLog.error("ACCOUNT", "RealAccountOpe reconnectCheck WrapperTHSApi.initialize err(%d)", m_THSApiInitFlag);
 				}
 			}
 			CThread.msleep(1000);
@@ -185,61 +197,138 @@ public class RealAccountOpe extends IMarketOpe {
 		//CLog.output("TEST", "onMonitorDeal");
 		// get commission 
 		List<THSApi.CommissionOrder> commissionOrders = new ArrayList<THSApi.CommissionOrder>();
-        int ret_getCommission = THSApi.getCommissionOrderList(commissionOrders);
+        int ret_getCommission = WrapperTHSApi.getCommissionOrderList(commissionOrders);
         if(0 == ret_getCommission)
         {
         	m_sync.Lock();
         	
-    		for (Map.Entry<String, DealMonitorItem> entry : m_dealMonitorMap.entrySet()) { 
+        	Iterator<Map.Entry<String, DealMonitorItem>> it = m_dealMonitorMap.entrySet().iterator(); 
+        	while(it.hasNext())
+        	{
+        		Map.Entry<String, DealMonitorItem> entry= it.next();
+        		
+				String CommissionKey = entry.getKey();
+				DealMonitorItem cDealMonitorItem = entry.getValue();
+				  
+				// find commission
+				THSApi.CommissionOrder cRealCommision = null;
+				for(int iCommit=0; iCommit<commissionOrders.size(); iCommit++)
+				{
+					THSApi.CommissionOrder cCommisionTmp = commissionOrders.get(iCommit);
+					String keyCheck = cCommisionTmp.stockID + "_" + cCommisionTmp.time;
+					if(CommissionKey.equals(keyCheck))
+					{
+						cRealCommision = cCommisionTmp;
+						break;
+					}
+				}
     			  
-    			  String CommissionKey = entry.getKey();
-    			  DealMonitorItem cDealMonitorItem = entry.getValue();
-    			  
-    			  // find commission
-    			  THSApi.CommissionOrder cRealCommision = null;
-    			  for(int iCommit=0; iCommit<commissionOrders.size(); iCommit++)
-    			  {
-    				  THSApi.CommissionOrder cCommisionTmp = commissionOrders.get(iCommit);
-    				  String keyCheck = cCommisionTmp.stockID + "_" + cCommisionTmp.time;
-    				  if(CommissionKey.equals(keyCheck))
-    				  {
-    					  cRealCommision = cCommisionTmp;
-    					  break;
-    				  }
-    			  }
-    			  
-    			  // check dealcallback
-    			  if(null != cRealCommision)
-    			  {
-    				  int commissionAmount = cRealCommision.commissionAmount;
-					  int dealAmount = cRealCommision.dealAmount;
+				// check dealcallback
+    			if(null != cRealCommision)
+    			{
+    				CLog.output("ACCOUNT", "CommissionKey:%s dealAmountCallback:%d (commissionAmount:%d dealAmount:%d)", 
+    						CommissionKey, cDealMonitorItem.dealAmountCallback, cRealCommision.commissionAmount, cRealCommision.dealAmount);
 					  
-					  CLog.output("ACCOUNT", "CommissionKey:%s dealAmountCallback:%d (commissionAmount:%d dealAmount:%d)", 
-							  CommissionKey, cDealMonitorItem.dealAmountCallback, commissionAmount, dealAmount);
-					  
-					  if(dealAmount > cDealMonitorItem.dealAmountCallback) // 存在新成交，需要回调
-					  {
-						  if(0 == cDealMonitorItem.dealAmountCallback) // 首次成交
-						  {
-							  
-						  }
+					if(cRealCommision.dealAmount > cDealMonitorItem.dealAmountCallback) // 存在新成交，需要回调
+					{
+						int curDealAmount = cRealCommision.dealAmount - cDealMonitorItem.dealAmountCallback;
+						float curDealPrice = (cRealCommision.dealAmount * cRealCommision.dealPrice
+								- cDealMonitorItem.dealAmountCallback * cDealMonitorItem.dealAvePrice)
+								/curDealAmount;
 						  
-						  // calc param & callback
-						  String stockID = cDealMonitorItem.stockID;
-						  TRANACT tranact = cDealMonitorItem.tranact;
-						  int amount = dealAmount - cDealMonitorItem.dealAmountCallback;
-						  float price = cRealCommision.dealPrice;
-						  float cost = 0.0f;
+						// 本次过户费
+						double fTransferFee = s_transactionCostsRatio_TransferFee * curDealAmount * curDealPrice;
+						  
+						// 本次佣金
+						double fPoundage = 0.0f;
+						if(0 == cDealMonitorItem.dealAmountCallback) // 首次成交
+						{
+							double fSTDPoundage = s_transactionCostsRatio_Poundage * curDealAmount * curDealPrice;
+							if(fSTDPoundage < s_transactionCosts_MinPoundage)
+							{
+								fPoundage = s_transactionCosts_MinPoundage; // 最小值
+							}
+							else
+							{
+								fPoundage = fSTDPoundage; // 标准值
+							}
+						}
+						else
+						{
+							double fAllSTDPoundage = s_transactionCostsRatio_Poundage * cRealCommision.dealAmount * cRealCommision.dealPrice;
+							if(fAllSTDPoundage <= s_transactionCosts_MinPoundage) // 标准值小于最小值，本次为0
+							{
+								fPoundage = 0;
+							}
+							else
+							{
+								double lastCallbackPoundage = s_transactionCostsRatio_Poundage * cDealMonitorItem.dealAmountCallback * cDealMonitorItem.dealAvePrice;
+								if(lastCallbackPoundage < s_transactionCosts_MinPoundage)
+								{
+									fPoundage = fAllSTDPoundage - s_transactionCosts_MinPoundage; // 上次佣金小于最小值，则为全体标准值-最小值
+								}
+								else
+								{
+									fPoundage = s_transactionCostsRatio_Poundage * curDealAmount * curDealPrice; // 上次已经大于最小值，则为本次成交标准值
+								}
+							}
+						}
 
-						  super.dealReply(tranact, stockID, amount, price, 0.0f);
-					  }
-    			  }
-    			  
+						// 本次卖出印花税
+						double fSellStampDuty = 0;
+						if(TRANACT.SELL == cDealMonitorItem.tranact)
+						{
+							fSellStampDuty = s_transactionCostsRatio_Sell_StampDuty * curDealAmount * curDealPrice;
+						}
+						  
+						// calc param & callback
+						String stockID = cDealMonitorItem.stockID;
+						TRANACT tranact = cDealMonitorItem.tranact;
+						int amount = curDealAmount;
+						float price = curDealPrice;
+						double cost = fTransferFee + fPoundage + fSellStampDuty;
+
+						super.dealReply(tranact, stockID, amount, price, cost);
+						  
+						// update cDealMonitorItem
+						cDealMonitorItem.dealAmountCallback += amount;
+						cDealMonitorItem.dealAvePrice = cRealCommision.dealPrice;
+					}
+					
+					// if all deal all, remove the deal monitor
+					if(cDealMonitorItem.dealAmountCallback == cRealCommision.commissionAmount)
+					{
+						it.remove(); 
+					}
+    			} 
     		}
-    		
     		m_sync.UnLock();
         }
 	}
+	
+	private void clearMonitorCheck()
+	{
+		String timeStr = CUtilsDateTime.GetCurTimeStr();
+		if(timeStr.compareTo("00:00:00") >= 0 && timeStr.compareTo("00:10:00") <= 0)
+		{
+			// in 00:00:00 - 00:10:00, clear all DealMonitorItem
+			m_sync.Lock();
+			
+			Iterator<Map.Entry<String, DealMonitorItem>> it = m_dealMonitorMap.entrySet().iterator(); 
+			while(it.hasNext())
+			{ 
+				Map.Entry<String, DealMonitorItem> entry= it.next(); 
+				
+				String key= entry.getKey(); 
+				DealMonitorItem cDealMonitorItem = entry.getValue();
+				
+				it.remove(); 
+			} 
+			
+			m_sync.UnLock();
+		}
+	}
+	
 	
 	public static class MonitorTimerThread extends CThread
 	{
@@ -267,7 +356,6 @@ public class RealAccountOpe extends IMarketOpe {
 		public int dealAmountCallback;  // 已成交回调数量
 		public float dealAvePrice; // 已成交均价
 	}
-	
 	// 实盘账户初始化标志
 	private int m_THSApiInitFlag;
 	
@@ -278,5 +366,6 @@ public class RealAccountOpe extends IMarketOpe {
 	private MonitorTimerThread m_MonitorTimerThread;
 	private long m_lastConnectCheckTC;
 	private long m_lastDealCheckTC;
+	private long m_lastClearDealMonitorTC;
 	
 }

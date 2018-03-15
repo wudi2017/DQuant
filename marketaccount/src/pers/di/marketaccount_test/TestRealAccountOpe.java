@@ -11,7 +11,7 @@ import pers.di.account_test.TestAccountDriver.MockMarketOpe;
 import pers.di.common.*;
 import pers.di.marketaccount.mock.MockAccountOpe;
 import pers.di.marketaccount.real.RealAccountOpe;
-
+import pers.di.marketaccount.real.WrapperTHSApi;
 import pers.di.thsapi.*;
 
 public class TestRealAccountOpe {
@@ -123,18 +123,20 @@ public class TestRealAccountOpe {
 	@CTest.test
 	public static void test_realaccountope_single()
 	{
+		WrapperTHSApi.s_bMockFlag = true;
+		
 		TestAccReplier cTestAccReplier = new TestAccReplier();
 		RealAccountOpe cRealAccountOpe = new RealAccountOpe();
 		cRealAccountOpe.registerDealReplier(cTestAccReplier);
 		cRealAccountOpe.start();
 
-		int iBuy = cRealAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 200, 4.0f);
+		int iBuy = cRealAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 20000, 2.0f);
 		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iBuy);
-//		
-//		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 4.1f);
+	
+//		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 2.1f);
 //		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iSell);
 		
-		CThread.msleep(1000*60*5);
+		CThread.msleep(1000*60);
 		
 		cRealAccountOpe.stop();
 	}
@@ -147,9 +149,9 @@ public class TestRealAccountOpe {
 		MockAccountOpe.registerDealReplier(cTestAccReplier);
 		MockAccountOpe.start();
 
-		int iBuy = MockAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 200, 4.0f);
+		int iBuy = MockAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 20000, 2.0f);
 		CLog.output("TEST", "test_mockaccountope.postTradeRequest iBuy(%d)", iBuy);
-//		
+		
 //		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 4.1f);
 //		CLog.output("TEST", "test_mockaccountope.postTradeRequest iBuy(%d)", iSell);
 		
@@ -200,9 +202,9 @@ public class TestRealAccountOpe {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		CSystem.start();
+		//CSystem.start();
 		CTest.ADD_TEST(TestRealAccountOpe.class);
-		CTest.RUN_ALL_TESTS("TestRealAccountOpe.testRealAccountOpe_withAccDriver");
-		CSystem.stop();
+		CTest.RUN_ALL_TESTS("TestRealAccountOpe.test_realaccountope_single");
+		//CSystem.stop();
 	}
 }
