@@ -70,6 +70,10 @@ public class RealAccountOpe extends IMarketOpe {
 			CLog.output("ACCOUNT", " @RealAccountOpe pushBuyOrder err(%d) [%s %d %.3f %.3f] \n", 
 					iBuyRet,
 					id, amount, price, amount*price);
+			if(0 != iBuyRet)
+			{
+				return iBuyRet;
+			}
 		}
 		if(tranact.equals(TRANACT.SELL))
 		{
@@ -77,6 +81,10 @@ public class RealAccountOpe extends IMarketOpe {
 			CLog.output("ACCOUNT", " @RealAccountOpe pushSellOrder err(%d) [%s %d %.3f %.3f] \n", 
 					iSellRet,
 					id, amount, price, amount*price);
+			if(0 != iSellRet)
+			{
+				return iSellRet;
+			}
 		}
 		
 		// get commission after

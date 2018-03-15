@@ -123,7 +123,7 @@ public class TestRealAccountOpe {
 	@CTest.test
 	public static void test_realaccountope_single()
 	{
-		WrapperTHSApi.s_bMockFlag = true;
+		WrapperTHSApi.s_bMockFlag = false;
 		
 		TestAccReplier cTestAccReplier = new TestAccReplier();
 		RealAccountOpe cRealAccountOpe = new RealAccountOpe();
@@ -202,9 +202,9 @@ public class TestRealAccountOpe {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		//CSystem.start();
+		CSystem.start();
 		CTest.ADD_TEST(TestRealAccountOpe.class);
 		CTest.RUN_ALL_TESTS("TestRealAccountOpe.test_realaccountope_single");
-		//CSystem.stop();
+		CSystem.stop();
 	}
 }
