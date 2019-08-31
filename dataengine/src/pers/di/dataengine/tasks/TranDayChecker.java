@@ -100,30 +100,8 @@ public class TranDayChecker {
 		
 		m_bIsTranDate = bIsTranDate;
 		m_lastValidCheckDate = date;
-		
-		// first call onStart
 		CLog.output("DENGINE", "[%s %s] TranDayChecker.check = %b", date, time, bIsTranDate);
-		if(m_bIsTranDate)
-		{
-			//call listener: TRADINGDAYSTART
-			List<ListenerCallback> lcbs = m_taskSharedSession.tranDayStartCbs;
-			for(int i=0; i<lcbs.size(); i++)
-			{
-				ListenerCallback lcb = lcbs.get(i);
-				
-				// create event
-				EETradingDayStart ev = new EETradingDayStart();
-				DAContext cDAContext = m_taskSharedSession.listenerDataContext.get(lcb.listener);
-				cDAContext.setDateTime(date, time);
-				ev.ctx = cDAContext;
-				
-				try {
-					lcb.md.invoke(lcb.obj, ev);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		
 		return bIsTranDate;
 	}
 	

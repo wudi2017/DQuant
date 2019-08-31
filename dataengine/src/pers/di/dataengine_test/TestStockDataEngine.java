@@ -26,132 +26,63 @@ public class TestStockDataEngine {
 		TestCommonHelper.InitLocalData(newestDate, stockIDs);
 	}
 
-	public static class EngineListenerTesterX
+	public static class EngineListenerTesterX implements IEngineListener
 	{
-		public EngineListenerTesterX()
+		public void onInitialize(DAContext context)
 		{
-			m_listener = StockDataEngine.instance().createListener();
-			m_listener.subscribe(EEID.INITIALIZE, this, "onInitialize");
-			m_listener.subscribe(EEID.UNINITIALIZE, this, "onUnInitialize");
-			m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
-			m_listener.subscribe(EEID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
-			m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
-		}
-		
-		public void onInitialize(EEObject ev)
-		{
-			EEInitialize e = (EEInitialize)ev;
 			CLog.output("TEST", "EngineListenerTesterX.onInitialize");
 		}
-		public void onUnInitialize(EEObject ev)
+		public void onUnInitialize(DAContext context)
 		{
-			EEUnInitialize e = (EEUnInitialize)ev;
 			CLog.output("TEST", "EngineListenerTesterX.onUnInitialize");
 		}
-		
-		public void onTradingDayStart(EEObject ev)
+		public void onTradingDayStart(DAContext context)
 		{
-			EETradingDayStart e = (EETradingDayStart)ev;
-			DAContext ctx = e.ctx;
-			
-			CLog.output("TEST", "EngineListenerTesterX.onNewDayStart %s %s", ctx.date(), ctx.time());
+			CLog.output("TEST", "EngineListenerTesterX.onNewDayStart %s %s", context.date(), context.time());
 			
 			String logstr = "";
-			for(int i=0; i<ctx.pool().size(); i++)
-			{
-				logstr = logstr + " " + ctx.pool().get(i).ID();
-			}
-			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
+			int xx = context.pool().size();
+			CLog.output("TEST", "    pool.size %d", context.pool().size());
 			
-			m_listener.addCurrentDayInterestMinuteDataID("600000");
-			m_listener.addCurrentDayInterestMinuteDataID("300163");
+			context.addCurrentDayInterestMinuteDataID("600000");
+			context.addCurrentDayInterestMinuteDataID("300163");
 		}
-		
-		public void onMinuteTimePrices(EEObject ev)
+		public void onTradingDayFinish(DAContext context)
 		{
-			EETimePricesData e = (EETimePricesData)ev;
-			DAContext ctx = e.ctx;
-			
-			CLog.output("TEST", "EngineListenerTesterX.onDayDataPush %s %s", ctx.date(), ctx.time());
-		
-			CLog.output("TEST", "    600000 cDATimePrices size %d", 
-					ctx.pool().get("600000").timePrices().size());
-			CLog.output("TEST", "    300163 cDATimePrices size %d", 
-					ctx.pool().get("300163").timePrices().size());
-			CLog.output("TEST", "    002468 cDATimePrices size %d", 
-					ctx.pool().get("002468").timePrices().size());
+			CLog.output("TEST", "EngineListenerTesterX.onNewDayFinish %s %s", context.date(), context.time());
+			CLog.output("TEST", "    pool.size %d", context.pool().size());
 		}
-		
-		public void onTradingDayFinish(EEObject ev)
+		public void onMinuteTimePrices(DAContext context)
 		{
-			EETradingDayFinish e = (EETradingDayFinish)ev;
-			DAContext ctx = e.ctx;
-			
-			CLog.output("TEST", "EngineListenerTesterX.onNewDayFinish %s %s", ctx.date(), ctx.time());
-			
-			String logstr = "";
-			for(int i=0; i<ctx.pool().size(); i++)
-			{
-				logstr = logstr + " " + ctx.pool().get(i).ID();
-			}
-			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
-			
+			CLog.output("TEST", "EngineListenerTesterX.onDayDataPush %s %s", context.date(), context.time());
 		}
-
-		private EngineListener m_listener;
 	}
 	
-	public static class EngineListenerTesterY
+	public static class EngineListenerTesterY implements IEngineListener
 	{
-		public EngineListenerTesterY()
+		public void onInitialize(DAContext context)
 		{
-			m_listener = StockDataEngine.instance().createListener();
-			m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
-			m_listener.subscribe(EEID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
-			m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
+			CLog.output("TEST", "EngineListenerTesterY.onInitialize");
 		}
-		
-		public void onTradingDayStart(EEObject ev)
+		public void onUnInitialize(DAContext context)
 		{
-			EETradingDayStart e = (EETradingDayStart)ev;
-			DAContext ctx = e.ctx;
-			CLog.output("TEST", "EngineListenerTesterY.onNewDayStart %s %s", ctx.date(), ctx.time());
-			
-			m_listener.addCurrentDayInterestMinuteDataID("600000");
+			CLog.output("TEST", "EngineListenerTesterY.onUnInitialize");
 		}
-		
-		public void onMinuteTimePrices(EEObject ev)
+		public void onTradingDayStart(DAContext context)
 		{
-			EETimePricesData e = (EETimePricesData)ev;
-			DAContext ctx = e.ctx;
+			CLog.output("TEST", "EngineListenerTesterY.onNewDayStart %s %s", context.date(), context.time());
 			
-			CLog.output("TEST", "EngineListenerTesterY.onDayDataPush %s %s", ctx.date(), ctx.time());
-		
-			CLog.output("TEST", "    600000 cDATimePrices size %d", 
-					ctx.pool().get("600000").timePrices().size());
-			CLog.output("TEST", "    300163 cDATimePrices size %d", 
-					ctx.pool().get("300163").timePrices().size());
-			CLog.output("TEST", "    002468 cDATimePrices size %d", 
-					ctx.pool().get("002468").timePrices().size());
+			//context.addCurrentDayInterestMinuteDataID("600000");
 		}
-		
-		public void onTradingDayFinish(EEObject ev)
+		public void onTradingDayFinish(DAContext context)
 		{
-			EETradingDayFinish e = (EETradingDayFinish)ev;
-			DAContext ctx = e.ctx;
-			
-			CLog.output("TEST", "EngineListenerTesterY.onNewDayFinish %s %s", ctx.date(), ctx.time());
-			
-			String logstr = "";
-			for(int i=0; i<ctx.pool().size(); i++)
-			{
-				logstr = logstr + " " + ctx.pool().get(i).ID();
-			}
-			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
-			
+			CLog.output("TEST", "EngineListenerTesterY.onNewDayFinish %s %s", context.date(), context.time());
+			CLog.output("TEST", "    pool.size %d", context.pool().size());
 		}
-
-		private EngineListener m_listener;
+		public void onMinuteTimePrices(DAContext context)
+		{
+			CLog.output("TEST", "EngineListenerTesterY.onDayDataPush %s %s", context.date(), context.time());
+		}
 	}
 	
 
@@ -162,78 +93,44 @@ public class TestStockDataEngine {
 		EngineListenerTesterY cEngineListenerTesterY = new EngineListenerTesterY();
 		
 		StockDataEngine.instance().config("TriggerMode", "HistoryTest 2017-01-01 2017-02-03");
+		StockDataEngine.instance().registerListener(cEngineListenerTesterX);
+		StockDataEngine.instance().registerListener(cEngineListenerTesterY);
 		StockDataEngine.instance().run();
 	}
 	
 	
-	public static class EngineListenerTesterZ
+	public static class EngineListenerTesterZ implements IEngineListener
 	{
-		public EngineListenerTesterZ()
+		public void onInitialize(DAContext context)
 		{
-			m_listener = StockDataEngine.instance().createListener();
-			m_listener.subscribe(EEID.INITIALIZE, this, "onInitialize");
-			m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
-			m_listener.subscribe(EEID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
-			m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
-		}
-		
-		public void onInitialize(EEObject ev)
-		{
-			EEInitialize e = (EEInitialize)ev;
 			CLog.output("TEST", "EngineListenerTesterZ.onInitialize");
-			
-			m_listener.addCurrentDayInterestMinuteDataID("600000");
-			m_listener.addCurrentDayInterestMinuteDataID("000002");
+//			context.addCurrentDayInterestMinuteDataID("600000");
+//			context.addCurrentDayInterestMinuteDataID("000002");
 		}
-		public void onTradingDayStart(EEObject ev)
+		public void onUnInitialize(DAContext context)
 		{
-			EETradingDayStart e = (EETradingDayStart)ev;
-			DAContext ctx = e.ctx;
+			CLog.output("TEST", "EngineListenerTesterZ.onUnInitialize");
+		}
+		public void onTradingDayStart(DAContext context)
+		{
+			CLog.output("TEST", "EngineListenerTesterZ.onNewDayStart %s %s", context.date(), context.time());
+			CLog.output("TEST", "    pool.size %d", context.pool().size());
 			
-			CLog.output("TEST", "EngineListenerTesterZ.onNewDayStart %s %s", ctx.date(), ctx.time());
-			
-			String logstr = "";
-			for(int i=0; i<ctx.pool().size(); i++)
-			{
-				logstr = logstr + " " + ctx.pool().get(i).ID();
-			}
-			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
-			
-			m_listener.addCurrentDayInterestMinuteDataID("600000");
-			m_listener.addCurrentDayInterestMinuteDataID("000002");
+//			context.addCurrentDayInterestMinuteDataID("600000");
+//			context.addCurrentDayInterestMinuteDataID("000002");
 		}
 		
-		public void onMinuteTimePrices(EEObject ev)
+		public void onMinuteTimePrices(DAContext context)
 		{
-			EETimePricesData e = (EETimePricesData)ev;
-			DAContext ctx = e.ctx;
-			
-			CLog.output("TEST", "EngineListenerTesterX.onDayDataPush %s %s", ctx.date(), ctx.time());
-		
-			CLog.output("TEST", "    600000 cDATimePrices size %d", 
-					ctx.pool().get("600000").timePrices().size());
-			
-			CLog.output("TEST", "    000002 cDATimePrices size %d", 
-					ctx.pool().get("000002").timePrices().size());
+			CLog.output("TEST", "EngineListenerTesterZ.onDayDataPush %s %s", context.date(), context.time());
 		}
 		
-		public void onTradingDayFinish(EEObject ev)
+		public void onTradingDayFinish(DAContext context)
 		{
-			EETradingDayFinish e = (EETradingDayFinish)ev;
-			DAContext ctx = e.ctx;
-			
-			CLog.output("TEST", "EngineListenerTesterZ.onNewDayFinish %s %s", ctx.date(), ctx.time());
-			
-			String logstr = "";
-			for(int i=0; i<ctx.pool().size(); i++)
-			{
-				logstr = logstr + " " + ctx.pool().get(i).ID();
-			}
-			CLog.output("TEST", "    pool.size %d %s", ctx.pool().size(), logstr);
+			CLog.output("TEST", "EngineListenerTesterZ.onNewDayFinish %s %s", context.date(), context.time());
+			CLog.output("TEST", "    pool.size %d", context.pool().size());
 			
 		}
-
-		private EngineListener m_listener;
 	}
 	
 	@CTest.test
@@ -242,6 +139,7 @@ public class TestStockDataEngine {
 		EngineListenerTesterZ cEngineListenerTesterZ = new EngineListenerTesterZ();
 
 		StockDataEngine.instance().config("TriggerMode", "Realtime");
+		StockDataEngine.instance().registerListener(cEngineListenerTesterZ);
 		StockDataEngine.instance().run();
 	}
 	

@@ -5,6 +5,7 @@ import java.util.List;
 import pers.di.common.CListObserver;
 import pers.di.dataapi.StockDataApi;
 
+//data access pool
 public class DAPool {
 
 	public DAPool()

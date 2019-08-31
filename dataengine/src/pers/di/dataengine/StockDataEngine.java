@@ -21,14 +21,21 @@ public class StockDataEngine {
 	} 
 	
 	/*
-	 * 重置数据路径
-	 * 如果不调用，就是默认路径
+	 * reset dataroot
+	 * if not reset the dataroot, the data root is default
 	 */
 	public boolean resetDataRoot(String dateRoot)
 	{
 		boolean bRet = StockDataApi.instance().resetDataRoot(dateRoot);
 		CLog.output("DENGINE", "ResetDataRoot: %s", StockDataApi.instance().dataRoot());
 		return bRet;
+	}
+	/*
+	 * get dataroot
+	 */
+	public String getDataRoot()
+	{
+		return StockDataApi.instance().dataRoot();
 	}
 	/*
 	 * 配置量化引擎
@@ -81,12 +88,12 @@ public class StockDataEngine {
 		return 0;
 	}
 	
-	public EngineListener createListener()
+	public int registerListener(IEngineListener listener)
 	{
-		EngineListener cEngineListener = new EngineListener(this);
+		m_SharedSession.listeners.add(listener);
 		DAContext cDAContext = new DAContext();
-		m_SharedSession.listenerDataContext.put(cEngineListener, cDAContext);
-		return cEngineListener ;
+		m_SharedSession.listenerContext.put(listener, cDAContext);
+		return 0;
 	}
 	
 	public int run()
@@ -109,197 +116,98 @@ public class StockDataEngine {
 		m_CDateTimeThruster.schedule(new EngineTaskDayFinish("21:00:00", m_SharedSession));
 		
 		
-		// call initialize
-		List<ListenerCallback> lcbs_init = m_SharedSession.initializeCbs;
-		for(int i=0; i<lcbs_init.size(); i++)
+		// callback listener initialize
+		for(int i=0; i<m_SharedSession.listeners.size(); i++)
 		{
-			ListenerCallback lcb = lcbs_init.get(i);
-			EEInitialize ev = new EEInitialize();
-			try {
-				lcb.md.invoke(lcb.obj, ev);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			IEngineListener listener = m_SharedSession.listeners.get(i);
+			listener.onInitialize(m_SharedSession.listenerContext.get(listener));
 		}
 		
 		// run CDateTimeThruster
 		m_CDateTimeThruster.run();
 		
-		// call unInitialize
-		List<ListenerCallback> lcbs_unInit = m_SharedSession.unInitializeCbs;
-		for(int i=0; i<lcbs_unInit.size(); i++)
+		// callback listener unInitialize
+		for(int i=0; i<m_SharedSession.listeners.size(); i++)
 		{
-			ListenerCallback lcb = lcbs_unInit.get(i);
-			EEUnInitialize ev = new EEUnInitialize();
-			try {
-				lcb.md.invoke(lcb.obj, ev);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			IEngineListener listener = m_SharedSession.listeners.get(i);
+			listener.onUnInitialize(m_SharedSession.listenerContext.get(listener));
 		}
 		
 		return 0;
 	}
 	
-	public void subscribe(EngineListener listener, EEID eID, Object obj, String methodname)
-	{
-		if(eID == EEID.INITIALIZE)
-		{
-			try {
-				if(null != obj && null!= methodname)
-				{
-					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EEObject.class);
-					ListenerCallback lcb = new ListenerCallback();
-					lcb.listener = listener;
-					lcb.obj = obj;
-					lcb.md = md;
-					m_SharedSession.initializeCbs.add(lcb);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(eID == EEID.UNINITIALIZE)
-		{
-			try {
-				if(null != obj && null!= methodname)
-				{
-					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EEObject.class);
-					ListenerCallback lcb = new ListenerCallback();
-					lcb.listener = listener;
-					lcb.obj = obj;
-					lcb.md = md;
-					m_SharedSession.unInitializeCbs.add(lcb);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(eID == EEID.TRADINGDAYSTART)
-		{
-			try {
-				if(null != obj && null!= methodname)
-				{
-					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EEObject.class);
-					ListenerCallback lcb = new ListenerCallback();
-					lcb.listener = listener;
-					lcb.obj = obj;
-					lcb.md = md;
-					m_SharedSession.tranDayStartCbs.add(lcb);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(eID == EEID.MINUTETIMEPRICES)
-		{
-			try {
-				if(null != obj && null!= methodname)
-				{
-					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EEObject.class);
-					ListenerCallback lcb = new ListenerCallback();
-					lcb.listener = listener;
-					lcb.obj = obj;
-					lcb.md = md;
-					m_SharedSession.minuteTimePricesCbs.add(lcb);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(eID == EEID.TRADINGDAYFINISH)
-		{
-			try {
-				if(null != obj && null!= methodname)
-				{
-					Class<?> clz = Class.forName(obj.getClass().getName());
-					Method md = clz.getMethod(methodname, EEObject.class);
-					ListenerCallback lcb = new ListenerCallback();
-					lcb.listener = listener;
-					lcb.obj = obj;
-					lcb.md = md;
-					m_SharedSession.tranDayFinishCbs.add(lcb);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
 	
-	public void addCurrentDayInterestMinuteDataID(EngineListener listener, String dataID)
-	{
-		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
-		if(null != cDAContext)
-		{
-			cDAContext.addCurrentDayInterestMinuteDataID(dataID);
-		}
-	}
 	
-	public void removeCurrentDayInterestMinuteDataID(EngineListener listener, String dataID)
-	{
-		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
-		if(null != cDAContext)
-		{
-			cDAContext.removeCurrentDayInterestMinuteDataID(dataID);
-		}
-	}
-	
-	public List<String> getCurrentDayInterestMinuteDataIDs(EngineListener listener)
-	{
-		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
-		if(null != cDAContext)
-		{
-			return cDAContext.getCurrentDayInterestMinuteDataIDs();
-		}
-		else
-		{
-			return null;
-		}
-	}
-	
-	public void clearListener(EngineListener listener)
-	{
-		{
-			Iterator<ListenerCallback> it = m_SharedSession.initializeCbs.iterator();
-			while(it.hasNext()){
-				ListenerCallback lcb = it.next();
-			    if(lcb.listener.equals(listener)){
-			        it.remove();
-			    }
-			}
-		}
-		{
-			Iterator<ListenerCallback> it = m_SharedSession.tranDayStartCbs.iterator();
-			while(it.hasNext()){
-				ListenerCallback lcb = it.next();
-			    if(lcb.listener.equals(listener)){
-			        it.remove();
-			    }
-			}
-		}
-		{
-			Iterator<ListenerCallback> it = m_SharedSession.minuteTimePricesCbs.iterator();
-			while(it.hasNext()){
-				ListenerCallback lcb = it.next();
-			    if(lcb.listener.equals(listener)){
-			        it.remove();
-			    }
-			}
-		}
-		{
-			Iterator<ListenerCallback> it = m_SharedSession.tranDayFinishCbs.iterator();
-			while(it.hasNext()){
-				ListenerCallback lcb = it.next();
-			    if(lcb.listener.equals(listener)){
-			        it.remove();
-			    }
-			}
-		}
-	}
+//	public void addCurrentDayInterestMinuteDataID(EngineListener listener, String dataID)
+//	{
+//		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
+//		if(null != cDAContext)
+//		{
+//			cDAContext.addCurrentDayInterestMinuteDataID(dataID);
+//		}
+//	}
+//	
+//	public void removeCurrentDayInterestMinuteDataID(EngineListener listener, String dataID)
+//	{
+//		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
+//		if(null != cDAContext)
+//		{
+//			cDAContext.removeCurrentDayInterestMinuteDataID(dataID);
+//		}
+//	}
+//	
+//	public List<String> getCurrentDayInterestMinuteDataIDs(EngineListener listener)
+//	{
+//		DAContext cDAContext = m_SharedSession.listenerDataContext.get(listener);
+//		if(null != cDAContext)
+//		{
+//			return cDAContext.getCurrentDayInterestMinuteDataIDs();
+//		}
+//		else
+//		{
+//			return null;
+//		}
+//	}
+//	
+//	public void clearListener(EngineListener listener)
+//	{
+//		{
+//			Iterator<ListenerCallback> it = m_SharedSession.initializeCbs.iterator();
+//			while(it.hasNext()){
+//				ListenerCallback lcb = it.next();
+//			    if(lcb.listener.equals(listener)){
+//			        it.remove();
+//			    }
+//			}
+//		}
+//		{
+//			Iterator<ListenerCallback> it = m_SharedSession.tranDayStartCbs.iterator();
+//			while(it.hasNext()){
+//				ListenerCallback lcb = it.next();
+//			    if(lcb.listener.equals(listener)){
+//			        it.remove();
+//			    }
+//			}
+//		}
+//		{
+//			Iterator<ListenerCallback> it = m_SharedSession.minuteTimePricesCbs.iterator();
+//			while(it.hasNext()){
+//				ListenerCallback lcb = it.next();
+//			    if(lcb.listener.equals(listener)){
+//			        it.remove();
+//			    }
+//			}
+//		}
+//		{
+//			Iterator<ListenerCallback> it = m_SharedSession.tranDayFinishCbs.iterator();
+//			while(it.hasNext()){
+//				ListenerCallback lcb = it.next();
+//			    if(lcb.listener.equals(listener)){
+//			        it.remove();
+//			    }
+//			}
+//		}
+//	}
 	
 	private SharedSession m_SharedSession;
 	private CDateTimeThruster m_CDateTimeThruster;

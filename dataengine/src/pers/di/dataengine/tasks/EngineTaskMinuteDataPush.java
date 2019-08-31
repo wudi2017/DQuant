@@ -19,23 +19,13 @@ public class EngineTaskMinuteDataPush extends CDateTimeThruster.ScheduleTask
 		}
 		CLog.output("DENGINE", "[%s %s] EngineTaskMinuteDataPush", date, time);
 		
-		//call listener
-		List<ListenerCallback> lcbs = m_taskSharedSession.minuteTimePricesCbs;
-		for(int i=0; i<lcbs.size(); i++)
+		// callback listener onMinuteTimePrices
+		for(int i=0; i<m_taskSharedSession.listeners.size(); i++)
 		{
-			ListenerCallback lcb = lcbs.get(i);
-			
-			// create event
-			EETimePricesData ev = new EETimePricesData();
-			DAContext cDAContext = m_taskSharedSession.listenerDataContext.get(lcb.listener);
-			cDAContext.setDateTime(date, time);
-			ev.ctx = cDAContext;
-						
-			try {
-				lcb.md.invoke(lcb.obj, ev);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			IEngineListener listener = m_taskSharedSession.listeners.get(i);
+			DAContext context = m_taskSharedSession.listenerContext.get(listener);
+			context.setDateTime(date, time);
+			listener.onMinuteTimePrices(context);
 		}
 	}
 	private SharedSession m_taskSharedSession;

@@ -9,12 +9,10 @@ public class SharedSession {
 	public SharedSession()
 	{
 		tranDayChecker = new TranDayChecker(this);
-		initializeCbs = new ArrayList<ListenerCallback>();
-		unInitializeCbs = new ArrayList<ListenerCallback>();
-		tranDayStartCbs = new ArrayList<ListenerCallback>();
-		minuteTimePricesCbs = new ArrayList<ListenerCallback>();
-		tranDayFinishCbs = new ArrayList<ListenerCallback>();
 		listenerDataContext = new HashMap<EngineListener, DAContext>();
+		
+		listeners = new ArrayList<IEngineListener>();
+		listenerContext = new HashMap<IEngineListener, DAContext>();
 	}
 	
 	// base parameter
@@ -25,11 +23,8 @@ public class SharedSession {
 	
 	// running variable
 	public TranDayChecker tranDayChecker;
-	public List<ListenerCallback> initializeCbs;
-	public List<ListenerCallback> unInitializeCbs;
-	public List<ListenerCallback> tranDayStartCbs;
-	public List<ListenerCallback> minuteTimePricesCbs;
-	public List<ListenerCallback> tranDayFinishCbs;
 	public Map<EngineListener, DAContext> listenerDataContext;
 	
+	public List<IEngineListener> listeners;
+	public Map<IEngineListener, DAContext> listenerContext;
 }

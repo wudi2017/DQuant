@@ -29,7 +29,20 @@ public class EngineTaskTrandingDayCheck extends CDateTimeThruster.ScheduleTask
 		
 		CLog.output("DENGINE", "[%s %s] EngineTaskTrandingDayCheck", date, time);
 		
-		m_taskSharedSession.tranDayChecker.check(date, time);
+		boolean bIsTranDate = m_taskSharedSession.tranDayChecker.check(date, time);
+		
+		// first call onTradingDayStart if is tran date
+		if(bIsTranDate)
+		{
+			// callback listener onTradingDayStart
+			for(int i=0; i<m_taskSharedSession.listeners.size(); i++)
+			{
+				IEngineListener listener = m_taskSharedSession.listeners.get(i);
+				DAContext context = m_taskSharedSession.listenerContext.get(listener);
+				context.setDateTime(date, time);
+				listener.onTradingDayStart(context);
+			}
+		}
 	}
 	
 	private StockDataEngine m_stockDataEngine;
