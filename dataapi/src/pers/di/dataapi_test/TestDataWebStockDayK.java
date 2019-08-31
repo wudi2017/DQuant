@@ -14,7 +14,7 @@ public class TestDataWebStockDayK {
 		DataWebStockDayK cDataWebStockDayK = new DataWebStockDayK();
 		
 		List<KLine> ctnKLine = new ArrayList<KLine>();
-		int error = cDataWebStockDayK.getKLine("300428", "20170311", "20170911", ctnKLine);
+		int error = cDataWebStockDayK.getKLine("000488", "20180706", "20190831", ctnKLine);
 		
 		if(0 == error)
 		{

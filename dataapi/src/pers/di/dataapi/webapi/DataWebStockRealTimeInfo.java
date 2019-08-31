@@ -21,37 +21,23 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 {
 	public DataWebStockRealTimeInfo()
 	{
-		m_InterestStockIDs = new ArrayList<String>();
 	}
 	
-	public int setInterestStockIDs(List<String> stockIDs)
-	{
-		m_InterestStockIDs.clear();
-		m_InterestStockIDs.addAll(stockIDs);
-		return 0;
-	}
-	public int setInterestStockID(String stockID)
-	{
-		m_InterestStockIDs.clear();
-		m_InterestStockIDs.add(stockID);
-		return 0;
-	}
-	
-	public int getRealTimeInfo(List<RealTimeInfoLite> container)
+	public int getRealTimeInfo(List<String> stockIDs, List<RealTimeInfoLite> container)
 	{
 		container.clear();
 		int error = 0;
 		
-		if(m_InterestStockIDs.size() <= 0)
+		if(stockIDs.size() <= 0)
 		{
 			return error;
 		}
 		
 		// e.g http://hq.sinajs.cn/list=sz300163,sz300164,sh600004,
 		String urlStr = "http://hq.sinajs.cn/list=";
-		for(int i=0; i<m_InterestStockIDs.size(); i++)
+		for(int i=0; i<stockIDs.size(); i++)
 		{
-			String id=m_InterestStockIDs.get(i);
+			String id=stockIDs.get(i);
 			String tmpId = "";
 			if(id.startsWith("60") && 6 == id.length())
 			{
@@ -144,7 +130,7 @@ public class DataWebStockRealTimeInfo extends HttpHelper
 			}
 			
 			// check
-			if(container.size() != m_InterestStockIDs.size())
+			if(container.size() != stockIDs.size())
 			{
 				throw new Exception("invalid DataWebStockRealTimeInfo");
 			}
@@ -248,6 +234,4 @@ public class DataWebStockRealTimeInfo extends HttpHelper
         bos.close();    
         return bos.toByteArray();    
     }  
-    
-    private List<String> m_InterestStockIDs;
 }

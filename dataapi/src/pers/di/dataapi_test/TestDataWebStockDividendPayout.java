@@ -13,7 +13,7 @@ public class TestDataWebStockDividendPayout {
 	
 	public static void test_getDividendPayout_1()
 	{
-		String StockID = "000555";
+		String StockID = "000488";
 		List<DividendPayout> container = new ArrayList<DividendPayout>();
 		int error = s_cDataWebStockDividendPayout.getDividendPayout(StockID, container);
 		if(0 == error)

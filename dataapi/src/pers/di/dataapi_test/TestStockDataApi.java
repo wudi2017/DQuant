@@ -84,43 +84,48 @@ public class TestStockDataApi {
 		String stockID = "600000";
 
 		CListObserver<KLine> obsKLineList = new CListObserver<KLine>();
-		int error = s_StockDataApi.buildDayKLineListObserver(stockID, "2011-05-23", "2017-05-25", obsKLineList);
+		int error = s_StockDataApi.buildDayKLineListObserver(stockID, "2011-05-23", "2019-08-31", obsKLineList);
 		// CLog.output("TEST", "KLine count: %d", obsKLineList.size());
-		CTest.EXPECT_LONG_EQ(obsKLineList.size(), 1428);
+		CTest.EXPECT_LONG_EQ(obsKLineList.size(), 1983);
 		int iCheckCnt = 0;
 		for(int i=0; i<obsKLineList.size(); i++)
 		{
 			KLine cKLine = obsKLineList.get(i);
 			if(cKLine.date.equals("2011-05-23")) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.open, 5.44, 2);
+				CTest.EXPECT_DOUBLE_EQ(cKLine.open, 4.99, 2);
 				iCheckCnt++;
 			}
 			if(cKLine.date.equals("2012-09-27")) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.high, 3.26, 2);
+				CTest.EXPECT_DOUBLE_EQ(cKLine.high, 2.81, 2);
 				iCheckCnt++;
 			}
 			if(cKLine.date.equals("2013-06-25")) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.low, 3.52, 2);
+				CTest.EXPECT_DOUBLE_EQ(cKLine.low, 3.07, 2);
 				iCheckCnt++;
 			}
 			if(cKLine.date.equals("2017-05-25")) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.93, 2);
+				CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.48, 2);
 				iCheckCnt++;
 			}
 			if(cKLine.date.equals("2017-05-26")) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.93, 2);
+				CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.39, 2);
+				iCheckCnt++;
+			}
+			if(cKLine.date.equals("2019-08-30")) 
+			{
+				CTest.EXPECT_DOUBLE_EQ(cKLine.close, 11.28, 2);
 				iCheckCnt++;
 			}
 		}
-		CTest.EXPECT_LONG_EQ(iCheckCnt, 4);
+		CTest.EXPECT_LONG_EQ(iCheckCnt, 6);
 	}
 	
-	@CTest.test
+	//@CTest.test
 	public static void test_buildMinTimePriceListObserver()
 	{
 		// test single

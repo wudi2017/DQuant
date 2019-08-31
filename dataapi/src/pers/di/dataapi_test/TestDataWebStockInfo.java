@@ -10,7 +10,7 @@ public class TestDataWebStockInfo {
 			DataWebStockInfo cDataWebStockInfo = new DataWebStockInfo();
 			
 			{
-				String stockID = "300550";
+				String stockID = "000488";
 				
 				System.out.println("getRealTimeInfoMore -----------------------------------");
 				StockInfo ctnStockInfo = new StockInfo();

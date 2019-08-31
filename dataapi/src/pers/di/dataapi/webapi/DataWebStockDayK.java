@@ -49,7 +49,7 @@ public class DataWebStockDayK {
 	 * ÆäËû£º
 	 *     doc: http://blog.csdn.net/xp5xp6/article/details/53121481
 	 *     v1.0: url: e.g "http://biz.finance.sina.com.cn/stock/flash_hq/kline_data.php?symbol=sz000002&begin_date=20160101&end_date=21000101"
-	 *     v2.0: url: e.g "http://quotes.money.163.com/service/chddata.html?code=0601857&start=20171105&end=20170809&fields=TCLOSE;HIGH;LOW;TOPEN;VOTURNOVER;"
+	 *     v2.0: url: e.g "http://quotes.money.163.com/service/chddata.html?code=0601857&start=20170705&end=20170809&fields=TCLOSE;HIGH;LOW;TOPEN;VOTURNOVER;"
 	 
 	 */
 	public int getKLine(String id, String begin_date, String end_date, List<KLine> container)

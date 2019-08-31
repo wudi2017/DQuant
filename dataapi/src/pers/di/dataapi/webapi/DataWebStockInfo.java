@@ -34,8 +34,9 @@ public class DataWebStockInfo extends HttpHelper
 		
 		// get base info
 		List<RealTimeInfoLite> ctnRealTimeInfos = new ArrayList<RealTimeInfoLite>();
-		m_cDataWebStockRealTimeInfo.setInterestStockID(id);
-		int errGetRealTimeInfo = m_cDataWebStockRealTimeInfo.getRealTimeInfo(ctnRealTimeInfos);
+		List ids = new ArrayList<String>();
+		ids.add(id);
+		int errGetRealTimeInfo = m_cDataWebStockRealTimeInfo.getRealTimeInfo(ids, ctnRealTimeInfos);
 		if(0 != errGetRealTimeInfo) 
 		{
 			error = -2;

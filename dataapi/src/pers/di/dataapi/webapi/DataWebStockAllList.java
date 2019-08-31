@@ -45,7 +45,7 @@ public class DataWebStockAllList extends HttpHelper
 		if(null == container) return 0;
 		
 		try{  
-			String allStockListUrl = "http://quote.eastmoney.com/stocklist.html";
+			String allStockListUrl = "http://quote.eastmoney.com/stock_list.html";
 //            URL url = new URL(allStockListUrl);  
 //            HttpURLConnection conn = (HttpURLConnection)url.openConnection();  
 //            InputStream inputStream = conn.getInputStream(); 

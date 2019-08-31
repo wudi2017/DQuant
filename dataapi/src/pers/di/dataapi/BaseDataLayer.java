@@ -545,8 +545,7 @@ public class BaseDataLayer {
 	
 	public int getRealTimeInfo(List<String> stockIDs, List<RealTimeInfoLite> container)
 	{
-		m_cDataWebStockRealTimeInfo.setInterestStockIDs(stockIDs);
-		return m_cDataWebStockRealTimeInfo.getRealTimeInfo(container);
+		return m_cDataWebStockRealTimeInfo.getRealTimeInfo(stockIDs, container);
 	}
 	
 	
