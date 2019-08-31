@@ -15,7 +15,7 @@ public class TestDataWebStockDayDetail {
 	public static void test_getDayDetail()
 	{
 		List<TradeDetail> ctnTradeDetails = new ArrayList<TradeDetail>();
-		int error = s_cDataWebStockDayDetail.getDayDetail("300351", "2016-09-02", ctnTradeDetails);
+		int error = s_cDataWebStockDayDetail.getDayDetail("300163", "2019-08-30", ctnTradeDetails);
 		if(0 == error)
 		{
 			for(int i = 0; i < ctnTradeDetails.size(); i++)  
@@ -33,7 +33,7 @@ public class TestDataWebStockDayDetail {
 	
 	public static void main(String[] args){
 		
-		for(int i=0; i<1; i++)
+		for(int i=0; i<30; i++)
 		{
 			CLog.output("TEST","call getDayDetail times: %d" , i);
 			test_getDayDetail();

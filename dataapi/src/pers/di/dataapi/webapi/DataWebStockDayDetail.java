@@ -175,6 +175,7 @@ public class DataWebStockDayDetail extends HttpHelper
 			int iPage = 1;
 			while(true)
 			{
+				CThread.msleep(500);
 				String curPageUrlStr = urlStr + String.valueOf(iPage);
 				
 				URL url = new URL(curPageUrlStr);    
@@ -248,6 +249,9 @@ public class DataWebStockDayDetail extends HttpHelper
 	    	        	container.add(cTradeDetail);
 	                }
 	            }
+	            
+	            
+	            System.out.println("add page:"+iPage);
 	            
 	            // next page
 				iPage++;
