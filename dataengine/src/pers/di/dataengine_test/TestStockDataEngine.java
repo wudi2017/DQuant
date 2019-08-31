@@ -44,13 +44,15 @@ public class TestStockDataEngine {
 			int xx = context.pool().size();
 			CLog.output("TEST", "    pool.size %d", context.pool().size());
 			
-			context.addCurrentDayInterestMinuteDataID("600000");
-			context.addCurrentDayInterestMinuteDataID("300163");
+//			context.addCurrentDayInterestMinuteDataID("600000");
+//			context.addCurrentDayInterestMinuteDataID("300163");
 		}
 		public void onTradingDayFinish(DAContext context)
 		{
 			CLog.output("TEST", "EngineListenerTesterX.onNewDayFinish %s %s", context.date(), context.time());
 			CLog.output("TEST", "    pool.size %d", context.pool().size());
+			
+			CLog.output("TEST", "    pool.size %d", context.pool().get("300163").dayKLines().size());
 		}
 		public void onMinuteTimePrices(DAContext context)
 		{

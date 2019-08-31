@@ -33,7 +33,7 @@ public class TestDataWebStockDayDetail {
 	
 	public static void main(String[] args){
 		
-		for(int i=0; i<200; i++)
+		for(int i=0; i<1; i++)
 		{
 			CLog.output("TEST","call getDayDetail times: %d" , i);
 			test_getDayDetail();
