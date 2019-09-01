@@ -172,10 +172,11 @@ public class DataWebStockDayDetail extends HttpHelper
 		urlStr = urlStr + tmpId + "&date=" + date + "&page=";
 		
 		try{  
+			System.out.print("DataWebStockDayDetail-LoadPages["+tmpId+"]:");
 			int iPage = 1;
 			while(true)
 			{
-				CThread.msleep(500);
+				CThread.msleep(1600);
 				String curPageUrlStr = urlStr + String.valueOf(iPage);
 				
 				URL url = new URL(curPageUrlStr);    
@@ -185,7 +186,8 @@ public class DataWebStockDayDetail extends HttpHelper
 		        conn.setReadTimeout(15*1000); //设置读取超时时间
 		        
 		        //防止屏蔽程序抓取而返回403错误  
-		        conn.setRequestProperty("User-Agent", getRandomUserAgent());  
+		        String randomUA = getRandomUserAgent();
+		        conn.setRequestProperty("User-Agent", randomUA);  
 				InputStream inputStream = conn.getInputStream(); 
 				byte[] getData = readInputStream(inputStream); 
 				String data = new String(getData, "gbk");  
@@ -251,11 +253,12 @@ public class DataWebStockDayDetail extends HttpHelper
 	            }
 	            
 	            
-	            System.out.println("add page:"+iPage);
+	            System.out.print(".");
 	            
 	            // next page
 				iPage++;
 			}
+			System.out.print("\n");
 
 		}
 		catch(Exception e) {  

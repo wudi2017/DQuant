@@ -18,12 +18,32 @@ public class TestDataWebStockDayDetail {
 		int error = s_cDataWebStockDayDetail.getDayDetail("600004", "2019-08-30", ctnTradeDetails);
 		if(0 == error)
 		{
-			for(int i = 0; i < ctnTradeDetails.size(); i++)  
-	        {  
-				TradeDetail cTradeDetail = ctnTradeDetails.get(i);  
-	            System.out.println(cTradeDetail.time + "," 
-	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-	        } 
+			System.out.println("List<TradeDetail> size=" + ctnTradeDetails.size());
+			if(ctnTradeDetails.size() > 11)
+			{
+				for(int i = 0; i < 5; i++)  
+		        { 
+					TradeDetail cTradeDetail = ctnTradeDetails.get(i); 
+					System.out.println(cTradeDetail.time + "," 
+		            		+ cTradeDetail.price + "," + cTradeDetail.volume);
+		        }
+				System.out.println("...");
+				for(int i = ctnTradeDetails.size()-5; i < ctnTradeDetails.size(); i++)  
+		        { 
+					TradeDetail cTradeDetail = ctnTradeDetails.get(i); 
+					System.out.println(cTradeDetail.time + "," 
+		            		+ cTradeDetail.price + "," + cTradeDetail.volume);
+		        }
+			}
+			else
+			{
+				for(int i = 0; i < ctnTradeDetails.size(); i++)  
+		        {  
+					TradeDetail cTradeDetail = ctnTradeDetails.get(i);  
+					System.out.println(cTradeDetail.time + "," 
+		            		+ cTradeDetail.price + "," + cTradeDetail.volume); 
+		        }
+			}
 		}
 		else
 		{
