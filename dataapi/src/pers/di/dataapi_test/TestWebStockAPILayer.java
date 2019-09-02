@@ -1,45 +1,48 @@
-package pers.di.webstockapi_test;
+package pers.di.dataapi_test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.common.CLog;
+import pers.di.dataapi.common.StockItem;
+import pers.di.dataapi.webapi.DataWebStockAllList;
+import pers.di.webstockapi.WebStock;
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
+import pers.di.dataapi.WebStockAPILayer;
+import pers.di.dataapi.common.*;
 
-import pers.di.webstockapi.*;
-import pers.di.webstockapi.WebStockAPI.*;
-
-public class TestWebStockAPI {
-
+public class TestWebStockAPILayer {
+	
 	@CTest.test
-	public void test_getAllStockList()
-	{
-		List<StockItem> ctnStockItem = new ArrayList<StockItem>();
-		int error = WebStock.API.getAllStockList(ctnStockItem);
-		if(0 == error)
+	public void test_getAllStockList() {
+		
+		for(int iTime=0; iTime<2; iTime++)
 		{
-			for(int i = 0; i < ctnStockItem.size(); i++)  
-	        {  
-				StockItem cStockItem = ctnStockItem.get(i);  
-	            // System.out.println(cStockItem.name + "," + cStockItem.id);  
-	        } 
-			//System.out.println("count:" + ctnStockItem.size()); 
+			List<StockItem> ctnStockItem = new ArrayList<StockItem>();
+			int error = WebStockAPILayer.getAllStockList(ctnStockItem);
+			if(0 == error)
+			{
+				for(int i = 0; i < ctnStockItem.size(); i++)  
+		        {  
+					StockItem cStockItem = ctnStockItem.get(i);  
+		            // System.out.println(cStockItem.name + "," + cStockItem.id);  
+		        } 
+				System.out.println("count:" + ctnStockItem.size()); 
+			}
+			else
+			{
+				System.out.println("ERROR:" + error);
+			}
+			CTest.EXPECT_LONG_EQ(error, 0);
+			CTest.EXPECT_TRUE(ctnStockItem.size() > 3000);
 		}
-		else
-		{
-			System.out.println("ERROR:" + error);
-		}
-		CTest.EXPECT_LONG_EQ(error, 0);
-		CTest.EXPECT_TRUE(ctnStockItem.size() > 3000);
 	}
 	
 	@CTest.test
-	public void test_getStockInfo()
-	{
+	public void test_getStockInfo() {
 		String stockID = "000488";
 		StockInfo ctnStockInfo = new StockInfo();
-		int error = WebStock.API.getStockInfo(stockID, ctnStockInfo);
+		int error = WebStockAPILayer.getStockInfo(stockID, ctnStockInfo);
 		if(0 == error)
 		{ 
 			System.out.println(ctnStockInfo.name);
@@ -64,7 +67,7 @@ public class TestWebStockAPI {
 	{
 		String StockID = "000488";
 		List<DividendPayout> container = new ArrayList<DividendPayout>();
-		int error = WebStock.API.getDividendPayout(StockID, container);
+		int error = WebStockAPILayer.getDividendPayout(StockID, container);
 		if(0 == error)
 		{
 			System.out.println(String.format("DataWebStockDividendPayout.getDividendPayout %s OK!", StockID));
@@ -89,7 +92,7 @@ public class TestWebStockAPI {
 	public void test_getKLine()
 	{
 		List<KLine> ctnKLine = new ArrayList<KLine>();
-		int error = WebStock.API.getKLine("000488", "20180706", "20190831", ctnKLine);
+		int error = WebStockAPILayer.getKLine("000488", "20180706", "20190831", ctnKLine);
 		if(0 == error)
 		{
 			System.out.println("List<TradeDetail> size=" + ctnKLine.size());
@@ -136,7 +139,7 @@ public class TestWebStockAPI {
 	public void test_getTransactionRecordHistory()
 	{
 		List<TransactionRecord> ctnTradeDetails = new ArrayList<TransactionRecord>();
-		int error = WebStock.API.getTransactionRecordHistory("300163", "2012-08-21", ctnTradeDetails);
+		int error = WebStockAPILayer.getTransactionRecordHistory("300163", "2012-08-21", ctnTradeDetails);
 		if(0 == error)
 		{
 			System.out.println("List<TradeDetail> size=" + ctnTradeDetails.size());
@@ -183,7 +186,7 @@ public class TestWebStockAPI {
 			List<String> ids = new ArrayList<String>();
 			ids.add("300163");ids.add("300164");ids.add("600004");
 			List<RealTimeInfoLite> ctnRTInfos = new ArrayList<RealTimeInfoLite>();
-			int error = WebStock.API.getRealTimeInfo(ids, ctnRTInfos);
+			int error = WebStockAPILayer.getRealTimeInfo(ids, ctnRTInfos);
 			CTest.EXPECT_LONG_EQ(error, 0);
 			CTest.EXPECT_LONG_EQ(ctnRTInfos.size(), 3);
 			
@@ -202,16 +205,16 @@ public class TestWebStockAPI {
 			List<String> ids = new ArrayList<String>();
 			ids.add("300163");ids.add("300164");ids.add("000003");
 			List<RealTimeInfoLite> ctnRTInfos = new ArrayList<RealTimeInfoLite>();
-			int error = WebStock.API.getRealTimeInfo(ids, ctnRTInfos);
+			int error = WebStockAPILayer.getRealTimeInfo(ids, ctnRTInfos);
 			CTest.EXPECT_LONG_NE(error, 0);
 			CTest.EXPECT_LONG_EQ(ctnRTInfos.size(), 2);
 		}
 	}
-
+	
 	public static void main(String[] args) {
 		CSystem.start();
-		CTest.ADD_TEST(TestWebStockAPI.class);
-		CTest.RUN_ALL_TESTS("TestWebStockAPI.");
+		CTest.ADD_TEST(TestWebStockAPILayer.class);
+		CTest.RUN_ALL_TESTS("TestWebStockAPILayer.");
 		CSystem.stop();
 	}
 }

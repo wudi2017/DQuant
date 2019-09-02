@@ -53,8 +53,9 @@ public interface WebStockAPI {
 	
 	public int getAllStockList(List<StockItem> container);
 	public int getStockInfo(String stockID, StockInfo container);
+	public int getDividendPayout(String stockID, List<DividendPayout> container);
 	public int getKLine(String stockID, String beginDate, String endDate, List<KLine> container);
 	public int getTransactionRecordHistory(String stockID, String date, List<TransactionRecord> container);
 	public int getRealTimeInfo(List<String> stockIDs, List<RealTimeInfoLite> container);
-	public int getDividendPayout(String stockID, List<DividendPayout> container);
+	
 }

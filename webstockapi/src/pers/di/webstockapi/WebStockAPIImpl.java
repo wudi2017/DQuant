@@ -27,6 +27,11 @@ public class WebStockAPIImpl implements WebStockAPI {
 	}
 
 	@Override
+	public int getDividendPayout(String stockID, List<DividendPayout> container) {
+		return m_DataWebStockDividendPayout.getDividendPayout(stockID, container);
+	}
+	
+	@Override
 	public int getKLine(String stockID, String beginDate, String endDate, List<KLine> container) {
 		return m_DataWebStockDayK.getKLine(stockID, beginDate, endDate, container);
 	}
@@ -39,11 +44,6 @@ public class WebStockAPIImpl implements WebStockAPI {
 	@Override
 	public int getRealTimeInfo(List<String> stockIDs, List<RealTimeInfoLite> container) {
 		return m_DataWebStockRealTimeInfo.getRealTimeInfo(stockIDs, container);
-	}
-
-	@Override
-	public int getDividendPayout(String stockID, List<DividendPayout> container) {
-		return m_DataWebStockDividendPayout.getDividendPayout(stockID, container);
 	}
 
 	private DataWebStockAllList m_DataWebStockAllList;
