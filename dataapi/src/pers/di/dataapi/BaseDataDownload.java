@@ -471,13 +471,13 @@ public class BaseDataDownload {
 	public int downloadStockDetail(String id, String date) {
 		s_fmt.format("@downloadStocKLineDetail stockID(%s) date(%s)\n",id,date);
 		
-		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
-		int error = m_DataWebStockDayDetail.getDayDetail(id, date, ctnTradeDetail);
+		List<TransactionRecord> ctnTransactionRecord = new ArrayList<TransactionRecord>();
+		int error = m_DataWebStockDayDetail.getDayDetail(id, date, ctnTransactionRecord);
 		if(0 == error)
 		{
 			try
 			{
-				m_baseDataStorage.saveDayDetail(id, date, ctnTradeDetail);
+				m_baseDataStorage.saveDayDetail(id, date, ctnTransactionRecord);
 			}
 			catch(Exception e)
 			{

@@ -4,7 +4,7 @@ package pers.di.dataapi.common;
  * 日内交易明细
  * 时间-价格-成交量
  */
-public class TradeDetail implements Comparable
+public class TransactionRecord implements Comparable
 {
 	public String time;
 	public double price;
@@ -12,7 +12,7 @@ public class TradeDetail implements Comparable
 	@Override
 	public int compareTo(Object o) {
 		// TODO Auto-generated method stub
-		TradeDetail sdto = (TradeDetail)o;
+		TransactionRecord sdto = (TransactionRecord)o;
 	    return this.time.compareTo(sdto.time);
 	}
 }

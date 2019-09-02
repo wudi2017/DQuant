@@ -3,7 +3,6 @@ package pers.di.dataapi_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.dataapi.common.TradeDetail;
 import pers.di.dataapi.webapi.DataWebStockDayDetail;
 import pers.di.common.CLog;
 import pers.di.dataapi.common.*;
@@ -14,7 +13,7 @@ public class TestDataWebStockDayDetail {
 	
 	public static void test_getDayDetail()
 	{
-		List<TradeDetail> ctnTradeDetails = new ArrayList<TradeDetail>();
+		List<TransactionRecord> ctnTradeDetails = new ArrayList<TransactionRecord>();
 		int error = s_cDataWebStockDayDetail.getDayDetail("600004", "2019-08-30", ctnTradeDetails);
 		if(0 == error)
 		{
@@ -23,25 +22,25 @@ public class TestDataWebStockDayDetail {
 			{
 				for(int i = 0; i < 5; i++)  
 		        { 
-					TradeDetail cTradeDetail = ctnTradeDetails.get(i); 
-					System.out.println(cTradeDetail.time + "," 
-		            		+ cTradeDetail.price + "," + cTradeDetail.volume);
+					TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
+					System.out.println(cTransactionRecord.time + "," 
+		            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);
 		        }
 				System.out.println("...");
 				for(int i = ctnTradeDetails.size()-5; i < ctnTradeDetails.size(); i++)  
 		        { 
-					TradeDetail cTradeDetail = ctnTradeDetails.get(i); 
-					System.out.println(cTradeDetail.time + "," 
-		            		+ cTradeDetail.price + "," + cTradeDetail.volume);
+					TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
+					System.out.println(cTransactionRecord.time + "," 
+		            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);
 		        }
 			}
 			else
 			{
 				for(int i = 0; i < ctnTradeDetails.size(); i++)  
 		        {  
-					TradeDetail cTradeDetail = ctnTradeDetails.get(i);  
-					System.out.println(cTradeDetail.time + "," 
-		            		+ cTradeDetail.price + "," + cTradeDetail.volume); 
+					TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
+					System.out.println(cTransactionRecord.time + "," 
+		            		+ cTransactionRecord.price + "," + cTransactionRecord.volume); 
 		        }
 			}
 		}

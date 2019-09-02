@@ -192,17 +192,17 @@ public class BaseDataLayer {
 	{
 		int error = 0;
 		
-		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
-		int errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
+		List<TransactionRecord> ctnTransactionRecord = new ArrayList<TransactionRecord>();
+		int errTransactionRecord = m_cBaseDataStorage.getDayDetail(id, date, ctnTransactionRecord);
 		
 		// 濡傛灉鏈湴涓嶅瓨鍦紝涓嬭浇鍚庤幏鍙�
-		if(0 != errTradeDetail)
+		if(0 != errTransactionRecord)
 		{
 			m_cBaseDataDownload.downloadStockDetail(id, date);
-			errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
+			errTransactionRecord = m_cBaseDataStorage.getDayDetail(id, date, ctnTransactionRecord);
 		}
 				
-		if(0 == errTradeDetail && ctnTradeDetail.size() != 0)
+		if(0 == errTransactionRecord && ctnTransactionRecord.size() != 0)
 		{
 			int iSec093000 = 9*3600 + 30*60 + 0;
 			int iSec130000 = 13*3600 + 0*60 + 0;
@@ -210,7 +210,7 @@ public class BaseDataLayer {
             int iSecBegin = 0;
             int iSecEnd = 0;
             int iStdSecEnd = 0;
-            double preClosePrice = ctnTradeDetail.get(0).price;
+            double preClosePrice = ctnTransactionRecord.get(0).price;
             // add 涓婂崍
             for(int i = 0; i < 24; i++)
             {
@@ -233,18 +233,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec093000 + i5Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
-    			for(int j = 0; j < ctnTradeDetail.size(); j++)  
+    			List<TransactionRecord> tmpList = new ArrayList<TransactionRecord>();
+    			for(int j = 0; j < ctnTransactionRecord.size(); j++)  
     	        {  
-    				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
-//    	            System.out.println(cTradeDetail.time + "," 
-//    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-    	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[2]);
+    				TransactionRecord cTransactionRecord = ctnTransactionRecord.get(j);  
+//    	            System.out.println(cTransactionRecord.time + "," 
+//    	            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);  
+    	            int iSec = Integer.parseInt(cTransactionRecord.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTransactionRecord.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTransactionRecord.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTradeDetail);
+    	            	tmpList.add(cTransactionRecord);
     	            }
     	        } 
     			// 璁＄畻5mink鍚庢坊鍔犲埌鎬昏〃
@@ -258,18 +258,18 @@ public class BaseDataLayer {
     			double K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TradeDetail cTradeDetail = tmpList.get(k);  
+    				TransactionRecord cTransactionRecord = tmpList.get(k);  
     				if(0 == k) {
-    					K5MinOpen = cTradeDetail.price;
-    					K5MinClose = cTradeDetail.price;
-    					K5MinLow = cTradeDetail.price;
-    					K5MinHigh = cTradeDetail.price;
+    					K5MinOpen = cTransactionRecord.price;
+    					K5MinClose = cTransactionRecord.price;
+    					K5MinLow = cTransactionRecord.price;
+    					K5MinHigh = cTransactionRecord.price;
     				}
-    				if(tmpList.size()-1 == k) K5MinClose = cTradeDetail.price;
-    				if(cTradeDetail.price > K5MinHigh) K5MinHigh = cTradeDetail.price;
-    				if(cTradeDetail.price < K5MinLow) K5MinLow = cTradeDetail.price;
-    				K5MinVolume = K5MinVolume + cTradeDetail.volume;
-    				//System.out.println(cTradeDetail.time);
+    				if(tmpList.size()-1 == k) K5MinClose = cTransactionRecord.price;
+    				if(cTransactionRecord.price > K5MinHigh) K5MinHigh = cTransactionRecord.price;
+    				if(cTransactionRecord.price < K5MinLow) K5MinLow = cTransactionRecord.price;
+    				K5MinVolume = K5MinVolume + cTransactionRecord.volume;
+    				//System.out.println(cTransactionRecord.time);
     			}
     			KLine cKLine = new KLine();
     			cKLine.time = StdEndTimeStr;
@@ -305,18 +305,18 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec130000 + i5Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
-    			for(int j = 0; j < ctnTradeDetail.size(); j++)  
+    			List<TransactionRecord> tmpList = new ArrayList<TransactionRecord>();
+    			for(int j = 0; j < ctnTransactionRecord.size(); j++)  
     	        {  
-    				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
-//    	            System.out.println(cTradeDetail.time + "," 
-//    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-    	            int iSec = Integer.parseInt(cTradeDetail.time.split(":")[0])*3600
-    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[1])*60
-    	            		+ Integer.parseInt(cTradeDetail.time.split(":")[2]);
+    				TransactionRecord cTransactionRecord = ctnTransactionRecord.get(j);  
+//    	            System.out.println(cTransactionRecord.time + "," 
+//    	            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);  
+    	            int iSec = Integer.parseInt(cTransactionRecord.time.split(":")[0])*3600
+    	            		+ Integer.parseInt(cTransactionRecord.time.split(":")[1])*60
+    	            		+ Integer.parseInt(cTransactionRecord.time.split(":")[2]);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTradeDetail);
+    	            	tmpList.add(cTransactionRecord);
     	            }
     	        } 
     			// 璁＄畻5mink鍚庢坊鍔犲埌鎬昏〃
@@ -330,18 +330,18 @@ public class BaseDataLayer {
     			double K5MinVolume = preClosePrice;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TradeDetail cTradeDetail = tmpList.get(k);  
+    				TransactionRecord cTransactionRecord = tmpList.get(k);  
     				if(0 == k) {
-    					K5MinOpen = cTradeDetail.price;
-    					K5MinClose = cTradeDetail.price;
-    					K5MinLow = cTradeDetail.price;
-    					K5MinHigh = cTradeDetail.price;
+    					K5MinOpen = cTransactionRecord.price;
+    					K5MinClose = cTransactionRecord.price;
+    					K5MinLow = cTransactionRecord.price;
+    					K5MinHigh = cTransactionRecord.price;
     				}
-    				if(tmpList.size()-1 == k) K5MinClose = cTradeDetail.price;
-    				if(cTradeDetail.price > K5MinHigh) K5MinHigh = cTradeDetail.price;
-    				if(cTradeDetail.price < K5MinLow) K5MinLow = cTradeDetail.price;
-    				K5MinVolume = K5MinVolume + cTradeDetail.volume;
-    				//System.out.println(cTradeDetail.time);
+    				if(tmpList.size()-1 == k) K5MinClose = cTransactionRecord.price;
+    				if(cTransactionRecord.price > K5MinHigh) K5MinHigh = cTransactionRecord.price;
+    				if(cTransactionRecord.price < K5MinLow) K5MinLow = cTransactionRecord.price;
+    				K5MinVolume = K5MinVolume + cTransactionRecord.volume;
+    				//System.out.println(cTransactionRecord.time);
     			}
     			KLine cKLine = new KLine();
     			cKLine.time = StdEndTimeStr;
@@ -372,17 +372,17 @@ public class BaseDataLayer {
 	{
 		int error = 0;
 		
-		List<TradeDetail> ctnTradeDetail = new ArrayList<TradeDetail>();
-		int errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
+		List<TransactionRecord> ctnTransactionRecord = new ArrayList<TransactionRecord>();
+		int errTransactionRecord = m_cBaseDataStorage.getDayDetail(id, date, ctnTransactionRecord);
 		
 		// 濡傛灉鏈湴涓嶅瓨鍦紝涓嬭浇鍚庤幏鍙�
-		if(0 != errTradeDetail)
+		if(0 != errTransactionRecord)
 		{
 			m_cBaseDataDownload.downloadStockDetail(id, date);
-			errTradeDetail = m_cBaseDataStorage.getDayDetail(id, date, ctnTradeDetail);
+			errTransactionRecord = m_cBaseDataStorage.getDayDetail(id, date, ctnTransactionRecord);
 		}
 		
-		if(0 == errTradeDetail && ctnTradeDetail.size() != 0)
+		if(0 == errTransactionRecord && ctnTransactionRecord.size() != 0)
 		{
 			int iSec092500 = 9*3600 + 25*60 + 0;
 			int iSec093000 = 9*3600 + 30*60 + 0;
@@ -391,7 +391,7 @@ public class BaseDataLayer {
             int iSecBegin = 0;
             int iSecEnd = 0;
             int iStdSecEnd = 0;
-            double preClosePrice = ctnTradeDetail.get(0).price;
+            double preClosePrice = ctnTransactionRecord.get(0).price;
             // add 涓婂崍
             for(int i = 0; i < 120; i++)
             {
@@ -414,16 +414,16 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec093000 + i1Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
-    			for(int j = 0; j < ctnTradeDetail.size(); j++)  
+    			List<TransactionRecord> tmpList = new ArrayList<TransactionRecord>();
+    			for(int j = 0; j < ctnTransactionRecord.size(); j++)  
     	        {  
-    				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
-//    	            System.out.println(cTradeDetail.time + "," 
-//    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-    	            int iSec = CUtilsDateTime.GetSecondFromTimeStr(cTradeDetail.time);
+    				TransactionRecord cTransactionRecord = ctnTransactionRecord.get(j);  
+//    	            System.out.println(cTransactionRecord.time + "," 
+//    	            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);  
+    	            int iSec = CUtilsDateTime.GetSecondFromTimeStr(cTransactionRecord.time);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTradeDetail);
+    	            	tmpList.add(cTransactionRecord);
     	            }
     	        } 
     			// 璁＄畻5mink鍚庢坊鍔犲埌鎬昏〃
@@ -438,18 +438,18 @@ public class BaseDataLayer {
     			double K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TradeDetail cTradeDetail = tmpList.get(k);  
+    				TransactionRecord cTransactionRecord = tmpList.get(k);  
     				if(0 == k) {
-    					K1MinOpen = cTradeDetail.price;
-    					K1MinClose = cTradeDetail.price;
-    					K1MinLow = cTradeDetail.price;
-    					K1MinHigh = cTradeDetail.price;
+    					K1MinOpen = cTransactionRecord.price;
+    					K1MinClose = cTransactionRecord.price;
+    					K1MinLow = cTransactionRecord.price;
+    					K1MinHigh = cTransactionRecord.price;
     				}
-    				if(tmpList.size()-1 == k) K1MinClose = cTradeDetail.price;
-    				if(cTradeDetail.price > K1MinHigh) K1MinHigh = cTradeDetail.price;
-    				if(cTradeDetail.price < K1MinLow) K1MinLow = cTradeDetail.price;
-    				K1MinVolume = K1MinVolume + cTradeDetail.volume;
-    				//System.out.println(cTradeDetail.time);
+    				if(tmpList.size()-1 == k) K1MinClose = cTransactionRecord.price;
+    				if(cTransactionRecord.price > K1MinHigh) K1MinHigh = cTransactionRecord.price;
+    				if(cTransactionRecord.price < K1MinLow) K1MinLow = cTransactionRecord.price;
+    				K1MinVolume = K1MinVolume + cTransactionRecord.volume;
+    				//System.out.println(cTransactionRecord.time);
     			}
     			KLine cKLine = new KLine();
     			cKLine.time = StdEndTimeStr;
@@ -485,16 +485,16 @@ public class BaseDataLayer {
                     iStdSecEnd = iSec130000 + i1Min*(i+1);
             	}
             	//System.out.println("iSecBegin:" + iSecBegin + " -- iSecEnd:" + iSecEnd );
-    			List<TradeDetail> tmpList = new ArrayList<TradeDetail>();
-    			for(int j = 0; j < ctnTradeDetail.size(); j++)  
+    			List<TransactionRecord> tmpList = new ArrayList<TransactionRecord>();
+    			for(int j = 0; j < ctnTransactionRecord.size(); j++)  
     	        {  
-    				TradeDetail cTradeDetail = ctnTradeDetail.get(j);  
-//    	            System.out.println(cTradeDetail.time + "," 
-//    	            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
-    	            int iSec = CUtilsDateTime.GetSecondFromTimeStr(cTradeDetail.time);
+    				TransactionRecord cTransactionRecord = ctnTransactionRecord.get(j);  
+//    	            System.out.println(cTransactionRecord.time + "," 
+//    	            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);  
+    	            int iSec = CUtilsDateTime.GetSecondFromTimeStr(cTransactionRecord.time);
     	            if(iSec >= iSecBegin && iSec < iSecEnd)
     	            {
-    	            	tmpList.add(cTradeDetail);
+    	            	tmpList.add(cTransactionRecord);
     	            }
     	        } 
     			// 璁＄畻5mink鍚庢坊鍔犲埌鎬昏〃
@@ -508,18 +508,18 @@ public class BaseDataLayer {
     			double K1MinVolume = 0.0f;
     			for(int k = 0; k < tmpList.size(); k++) 
     			{
-    				TradeDetail cTradeDetail = tmpList.get(k);  
+    				TransactionRecord cTransactionRecord = tmpList.get(k);  
     				if(0 == k) {
-    					K1MinOpen = cTradeDetail.price;
-    					K1MinClose = cTradeDetail.price;
-    					K1MinLow = cTradeDetail.price;
-    					K1MinHigh = cTradeDetail.price;
+    					K1MinOpen = cTransactionRecord.price;
+    					K1MinClose = cTransactionRecord.price;
+    					K1MinLow = cTransactionRecord.price;
+    					K1MinHigh = cTransactionRecord.price;
     				}
-    				if(tmpList.size()-1 == k) K1MinClose = cTradeDetail.price;
-    				if(cTradeDetail.price > K1MinHigh) K1MinHigh = cTradeDetail.price;
-    				if(cTradeDetail.price < K1MinLow) K1MinLow = cTradeDetail.price;
-    				K1MinVolume = K1MinVolume + cTradeDetail.volume;
-    				//System.out.println(cTradeDetail.time);
+    				if(tmpList.size()-1 == k) K1MinClose = cTransactionRecord.price;
+    				if(cTransactionRecord.price > K1MinHigh) K1MinHigh = cTransactionRecord.price;
+    				if(cTransactionRecord.price < K1MinLow) K1MinLow = cTransactionRecord.price;
+    				K1MinVolume = K1MinVolume + cTransactionRecord.volume;
+    				//System.out.println(cTransactionRecord.time);
     			}
     			KLine cKLine = new KLine();
     			cKLine.time = StdEndTimeStr;

@@ -32,7 +32,6 @@ import org.w3c.dom.Element;
 //import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import pers.di.dataapi.common.TradeDetail;
 import pers.di.common.CLog;
 import pers.di.common.CThread;
 import pers.di.dataapi.common.*;
@@ -139,7 +138,7 @@ public class DataWebStockDayDetail extends HttpHelper
 	
 	// get the page HTML and parse it
 	// 
-	public int getDayDetail(String id, String date, List<TradeDetail> container)
+	public int getDayDetail(String id, String date, List<TransactionRecord> container)
 	{
 		limitAccessSpeed(1500);
 		
@@ -244,11 +243,11 @@ public class DataWebStockDayDetail extends HttpHelper
 	                }
 	                else
 	                {
-	    	        	TradeDetail cTradeDetail = new TradeDetail();
-	    	        	cTradeDetail.time = ColTranTime;
-	    	        	cTradeDetail.price = Double.parseDouble(ColTranPrice);
-	    	        	cTradeDetail.volume = Double.parseDouble(ColTranCol)*100;
-	    	        	container.add(cTradeDetail);
+	                	TransactionRecord cTransactionRecord = new TransactionRecord();
+	                	cTransactionRecord.time = ColTranTime;
+	                	cTransactionRecord.price = Double.parseDouble(ColTranPrice);
+	                	cTransactionRecord.volume = Double.parseDouble(ColTranCol)*100;
+	    	        	container.add(cTransactionRecord);
 	                }
 	            }
 	            

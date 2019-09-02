@@ -193,7 +193,7 @@ public class BaseDataStorage {
 		return 0;
 	}
 	
-	public int getDayDetail(String id, String date, List<TradeDetail> container)
+	public int getDayDetail(String id, String date, List<TransactionRecord> container)
 	{
 		int error = 0;
 		
@@ -216,7 +216,7 @@ public class BaseDataStorage {
             	KLine cKLine = new KLine();
             	String[] cols = tempString.split(",");
 
-            	TradeDetail cTradeDetail = new TradeDetail();
+            	TransactionRecord cTradeDetail = new TransactionRecord();
 	        	cTradeDetail.time = cols[0];
 	        	cTradeDetail.price = Double.parseDouble(cols[1]);
 	        	cTradeDetail.volume = Double.parseDouble(cols[2]);
@@ -236,7 +236,7 @@ public class BaseDataStorage {
 		}
 		return error;
 	}
-	public int saveDayDetail(String id, String date, List<TradeDetail> container)
+	public int saveDayDetail(String id, String date, List<TransactionRecord> container)
 	{
 		String stocKLineDir = s_workDir + "/" + id;
 		if(!CFileSystem.createDir(stocKLineDir)) return -10;
@@ -248,7 +248,7 @@ public class BaseDataStorage {
 			FileOutputStream cOutputStream = new FileOutputStream(cfile);
 			for(int i = 0; i < container.size(); i++)  
 	        {  
-				TradeDetail cTradeDetail = container.get(i);  
+				TransactionRecord cTradeDetail = container.get(i);  
 //			            System.out.println(cTradeDetail.time + "," 
 //			            		+ cTradeDetail.price + "," + cTradeDetail.volume);  
 				cOutputStream.write((cTradeDetail.time + ",").getBytes());
