@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import pers.di.common.*;
-import pers.di.dataapi.webapi.*;
 import pers.di.dataapi.common.*;
 
 /*
@@ -16,7 +15,6 @@ public class BaseDataLayer {
 	{
 		m_cBaseDataStorage = new BaseDataStorage(workDir);
 		m_cBaseDataDownload = new BaseDataDownload(m_cBaseDataStorage);
-		m_cDataWebStockRealTimeInfo = new DataWebStockRealTimeInfo();
 	}
 	
 	public boolean resetDataRoot(String dateRoot)
@@ -545,7 +543,7 @@ public class BaseDataLayer {
 	
 	public int getRealTimeInfo(List<String> stockIDs, List<RealTimeInfoLite> container)
 	{
-		return m_cDataWebStockRealTimeInfo.getRealTimeInfo(stockIDs, container);
+		return WebStockAPILayer.getRealTimeInfo(stockIDs, container);
 	}
 	
 	
@@ -687,7 +685,6 @@ public class BaseDataLayer {
 	
 	private BaseDataDownload m_cBaseDataDownload;
 	private BaseDataStorage m_cBaseDataStorage;
-	private DataWebStockRealTimeInfo m_cDataWebStockRealTimeInfo;
 	
 	public static Random random = new Random();
 	public static Formatter fmt = new Formatter(System.out);

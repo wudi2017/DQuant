@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.dataapi.common.StockItem;
-import pers.di.dataapi.webapi.DataWebStockAllList;
 import pers.di.webstockapi.WebStock;
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
@@ -92,7 +91,7 @@ public class TestWebStockAPILayer {
 	public void test_getKLine()
 	{
 		List<KLine> ctnKLine = new ArrayList<KLine>();
-		int error = WebStockAPILayer.getKLine("000488", "20180706", "20190831", ctnKLine);
+		int error = WebStockAPILayer.getKLine("600000", "20110523", "20190831", ctnKLine);
 		if(0 == error)
 		{
 			System.out.println("List<TradeDetail> size=" + ctnKLine.size());
@@ -130,9 +129,9 @@ public class TestWebStockAPILayer {
 			System.out.println("ERROR:" + error);
 		}
 		CTest.EXPECT_LONG_EQ(error, 0);
-		CTest.EXPECT_LONG_EQ(ctnKLine.size(), 283);
-		CTest.EXPECT_DOUBLE_EQ(ctnKLine.get(0).open, 11.56);
-		CTest.EXPECT_DOUBLE_EQ(ctnKLine.get(283-1).open, 4.69);
+		CTest.EXPECT_LONG_EQ(ctnKLine.size(), 1983);
+		CTest.EXPECT_DOUBLE_EQ(ctnKLine.get(0).open, 14.17);
+		CTest.EXPECT_DOUBLE_EQ(ctnKLine.get(1983-1).open, 11.34);
 	}
 	
 	@CTest.test
@@ -214,7 +213,7 @@ public class TestWebStockAPILayer {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestWebStockAPILayer.class);
-		CTest.RUN_ALL_TESTS("TestWebStockAPILayer.");
+		CTest.RUN_ALL_TESTS("TestWebStockAPILayer.test_getKLine");
 		CSystem.stop();
 	}
 }

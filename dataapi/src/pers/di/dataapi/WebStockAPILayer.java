@@ -63,7 +63,7 @@ public class WebStockAPILayer {
 	public static int getKLine(String stockID, String beginDate, String endDate, List<KLine> container)
 	{
 		List<pers.di.webstockapi.WebStockAPI.KLine> ctnwsKLine = new ArrayList<pers.di.webstockapi.WebStockAPI.KLine>();
-		int error = WebStock.API.getKLine("000488", "20180706", "20190831", ctnwsKLine);
+		int error = WebStock.API.getKLine(stockID, beginDate, endDate, ctnwsKLine);
 		if(0 == error)
 		{
 			for(int i = 0; i < ctnwsKLine.size(); i++)  
