@@ -9,7 +9,6 @@ public class SharedSession {
 	public SharedSession()
 	{
 		tranDayChecker = new TranDayChecker(this);
-		listenerDataContext = new HashMap<EngineListener, DAContext>();
 		
 		listeners = new ArrayList<IEngineListener>();
 		listenerContext = new HashMap<IEngineListener, DAContext>();
@@ -23,7 +22,6 @@ public class SharedSession {
 	
 	// running variable
 	public TranDayChecker tranDayChecker;
-	public Map<EngineListener, DAContext> listenerDataContext;
 	
 	public List<IEngineListener> listeners;
 	public Map<IEngineListener, DAContext> listenerContext;
