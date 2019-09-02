@@ -31,7 +31,7 @@ public class TestStockDataApi {
 	@CTest.setup
 	public static void setup()
 	{
-		TestCommonHelper.InitLocalData(s_newestDate, s_stockIDs);
+		CommonTestHelper.InitLocalData(s_newestDate, s_stockIDs);
 	}
 	
 //	@CTest.test
@@ -207,7 +207,7 @@ public class TestStockDataApi {
 		CTest.EXPECT_TRUE(CFileSystem.isDirExist(newRootDir));
 		
 		// init test data
-		TestCommonHelper.InitLocalData(s_newestDate, s_stockIDs);
+		CommonTestHelper.InitLocalData(s_newestDate, s_stockIDs);
 		
 		String workDir = newRootDir;
 		String stockID = s_stockIDs.get(0);

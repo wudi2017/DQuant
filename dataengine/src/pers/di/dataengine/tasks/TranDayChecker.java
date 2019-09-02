@@ -14,7 +14,6 @@ import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.RealTimeInfoLite;
 import pers.di.dataapi.common.StockUtils;
 import pers.di.dataengine.DAContext;
-import pers.di.dataengine.EETradingDayStart;
 
 public class TranDayChecker {
 	

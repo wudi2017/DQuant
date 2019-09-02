@@ -9,7 +9,7 @@ import pers.di.common.CTest;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.StockDataApi;
 
-public class TestCommonHelper {
+public class CommonTestHelper {
 	
 	private static StockDataApi s_StockDataApi = StockDataApi.instance();
 	private static String s_updateFinish = "updateFinish.txt";

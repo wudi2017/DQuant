@@ -11,7 +11,7 @@ import pers.di.common.CTest;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.common.KLine;
 import pers.di.dataapi.common.TimePrice;
-import pers.di.dataapi_test.TestCommonHelper;
+import pers.di.dataapi_test.CommonTestHelper;
 import pers.di.dataengine.*;
 import pers.di.dataapi.*;
 
@@ -23,67 +23,58 @@ public class TestStockDataEngine {
 		String newestDate = "2017-08-10";
 		 List<String> stockIDs = new ArrayList<String>()
 			{{add("999999");add("600000");add("300163");add("002468");}};
-		TestCommonHelper.InitLocalData(newestDate, stockIDs);
+			CommonTestHelper.InitLocalData(newestDate, stockIDs);
 	}
 
-	public static class EngineListenerTesterX implements IEngineListener
+	public static class EngineListenerTesterX extends IEngineListener
 	{
-		public void onInitialize(DAContext context)
-		{
-			CLog.output("TEST", "EngineListenerTesterX.onInitialize");
-		}
-		public void onUnInitialize(DAContext context)
-		{
-			CLog.output("TEST", "EngineListenerTesterX.onUnInitialize");
-		}
-		public void onTradingDayStart(DAContext context)
-		{
-			CLog.output("TEST", "EngineListenerTesterX.onNewDayStart %s %s", context.date(), context.time());
-			
-			String logstr = "";
-			int xx = context.pool().size();
-			CLog.output("TEST", "    pool.size %d", context.pool().size());
-			
-//			context.addCurrentDayInterestMinuteDataID("600000");
-//			context.addCurrentDayInterestMinuteDataID("300163");
-		}
+		@Override
 		public void onTradingDayFinish(DAContext context)
 		{
-			CLog.output("TEST", "EngineListenerTesterX.onNewDayFinish %s %s", context.date(), context.time());
-			CLog.output("TEST", "    pool.size %d", context.pool().size());
-			
-			CLog.output("TEST", "    pool.size %d", context.pool().get("300163").dayKLines().size());
-		}
-		public void onMinuteTimePrices(DAContext context)
-		{
-			CLog.output("TEST", "EngineListenerTesterX.onDayDataPush %s %s", context.date(), context.time());
+			String stockID = "300163";
+			DAKLines cDAKLines = context.pool().get(stockID).dayKLines();
+			KLine cCurrentKLine =  cDAKLines.get(cDAKLines.size()-1);
+			CLog.output("TEST", "AllStockCnt:%d ID:%s ALLKLineSize:%d Date:%s Close:%.3f", 
+					context.pool().size(),
+					stockID,
+					cDAKLines.size(),
+					cCurrentKLine.date,
+					cCurrentKLine.close);
 		}
 	}
 	
-	public static class EngineListenerTesterY implements IEngineListener
+	public static class EngineListenerTesterY extends IEngineListener
 	{
+		@Override
 		public void onInitialize(DAContext context)
 		{
-			CLog.output("TEST", "EngineListenerTesterY.onInitialize");
 		}
+		@Override
 		public void onUnInitialize(DAContext context)
 		{
-			CLog.output("TEST", "EngineListenerTesterY.onUnInitialize");
 		}
+		@Override
 		public void onTradingDayStart(DAContext context)
 		{
-			CLog.output("TEST", "EngineListenerTesterY.onNewDayStart %s %s", context.date(), context.time());
-			
-			//context.addCurrentDayInterestMinuteDataID("600000");
+			if(context.date().equals("2017-01-11"))
+			{
+				context.addCurrentDayInterestMinuteDataID("002468");
+			}
 		}
-		public void onTradingDayFinish(DAContext context)
-		{
-			CLog.output("TEST", "EngineListenerTesterY.onNewDayFinish %s %s", context.date(), context.time());
-			CLog.output("TEST", "    pool.size %d", context.pool().size());
-		}
+		@Override
 		public void onMinuteTimePrices(DAContext context)
 		{
-			CLog.output("TEST", "EngineListenerTesterY.onDayDataPush %s %s", context.date(), context.time());
+			if(context.date().equals("2017-01-11"))
+			{
+				String stockID = "002468";
+				DATimePrices cDATimePrices = context.pool().get(stockID).timePrices();
+				TimePrice cCurrentTimePrice =  cDATimePrices.get(cDATimePrices.size()-1);
+				CLog.output("TEST", "EngineListenerTesterY.onDayDataPush ID:%s Time:%s PriceCount:%d Price:%.3f", 
+						stockID,
+						cCurrentTimePrice.time,
+						cDATimePrices.size(),
+						cCurrentTimePrice.price);
+			}
 		}
 	}
 	
@@ -101,7 +92,7 @@ public class TestStockDataEngine {
 	}
 	
 	
-	public static class EngineListenerTesterZ implements IEngineListener
+	public static class EngineListenerTesterZ extends IEngineListener
 	{
 		public void onInitialize(DAContext context)
 		{
