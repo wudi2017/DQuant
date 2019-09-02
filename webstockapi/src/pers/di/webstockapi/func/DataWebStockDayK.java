@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +26,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import pers.di.common.CHttp;
+import pers.di.webstockapi.WebStockAPI.DividendPayout;
 import pers.di.webstockapi.WebStockAPI.KLine;
 
 public class DataWebStockDayK {
@@ -90,7 +92,45 @@ public class DataWebStockDayK {
         	return error;
 		}
 		
-		Collections.sort(container);
+		Collections.sort(container, new Comparator<KLine>() {
+            public int compare(KLine o1, KLine o2) {
+            	KLine sdto = o2;
+    			int iRet = 0;
+    			// date compare
+    			if(null != o1.date && null != sdto.date)
+    			{
+    				iRet = o1.date.compareTo(sdto.date);
+    				if(0 == iRet)
+    				{
+    					// time compare
+    					if(null != o1.time && null != sdto.time)
+    					{
+    						return o1.time.compareTo(sdto.time);
+    					}
+    					else if(null != o1.time && null == sdto.time)
+    					{
+    						return 1;
+    					}
+    					else 
+    					{
+    						return 0;
+    					}
+    				}
+    				else
+    				{
+    					return iRet;
+    				}
+    			}
+    			else if(null != o1.date && null == sdto.date)
+    			{
+    				return 1;
+    			}
+    			else 
+    			{
+    				return 0;
+    			}
+            }
+        });
 		
 		return error;
 	}

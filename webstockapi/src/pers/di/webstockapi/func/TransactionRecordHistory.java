@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Comparator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -34,6 +35,7 @@ import org.xml.sax.InputSource;
 
 import pers.di.common.CLog;
 import pers.di.common.CThread;
+import pers.di.webstockapi.WebStockAPI.DividendPayout;
 import pers.di.webstockapi.WebStockAPI.TransactionRecord;
 
 public class TransactionRecordHistory extends HttpHelper 
@@ -267,7 +269,11 @@ public class TransactionRecordHistory extends HttpHelper
         	return error;
         }  
 		
-		Collections.sort(container);
+		Collections.sort(container, new Comparator<TransactionRecord>() {
+            public int compare(TransactionRecord o1, TransactionRecord o2) {
+                return o1.time.compareTo(o2.time);
+            }
+        });
 		return error;
 	}
 	

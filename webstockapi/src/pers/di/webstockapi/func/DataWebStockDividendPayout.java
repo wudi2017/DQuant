@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -192,7 +193,11 @@ public class DataWebStockDividendPayout  extends HttpHelper
         	return error;
         }  
 		
-		Collections.sort(container);
+		Collections.sort(container, new Comparator<DividendPayout>() {
+            public int compare(DividendPayout o1, DividendPayout o2) {
+                return o1.date.compareTo(o2.date);
+            }
+        });
 		return error;
 	}
 	
