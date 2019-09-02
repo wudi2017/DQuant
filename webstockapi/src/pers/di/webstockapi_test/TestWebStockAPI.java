@@ -211,7 +211,7 @@ public class TestWebStockAPI {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestWebStockAPI.class);
-		CTest.RUN_ALL_TESTS("TestWebStockAPI.test_getTransactionRecordHistory");
+		CTest.RUN_ALL_TESTS("TestWebStockAPI.");
 		CSystem.stop();
 	}
 }
