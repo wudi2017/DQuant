@@ -15,11 +15,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.htmlparser.Node;
-import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
-
 import org.htmlparser.filters.TagNameFilter;
-import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.NodeList;
 
 import pers.di.webstockapi.WebStockAPI.StockItem;

@@ -3,7 +3,6 @@ package pers.di.webstockapi_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.common.CLog;
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
 

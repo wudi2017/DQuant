@@ -14,19 +14,6 @@ import java.util.Comparator;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.htmlparser.Node;
-import org.htmlparser.NodeFilter;
-import org.htmlparser.Parser;
-import org.htmlparser.filters.NodeClassFilter;
-import org.htmlparser.filters.OrFilter;
-import org.htmlparser.filters.TagNameFilter;
-import org.htmlparser.tags.TableTag;
-import org.htmlparser.util.NodeIterator;
-import org.htmlparser.util.NodeList;
-import org.htmlparser.visitors.HtmlPage;
-
-import org.htmlparser.Parser;
-import org.htmlparser.filters.TagNameFilter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 //import org.w3c.dom.Node;
@@ -37,6 +24,11 @@ import pers.di.common.CLog;
 import pers.di.common.CThread;
 import pers.di.webstockapi.WebStockAPI.DividendPayout;
 import pers.di.webstockapi.WebStockAPI.TransactionRecord;
+
+import org.htmlparser.Node;
+import org.htmlparser.Parser;
+import org.htmlparser.filters.TagNameFilter;
+import org.htmlparser.util.NodeList;
 
 public class TransactionRecordHistory extends HttpHelper 
 {
@@ -270,7 +262,8 @@ public class TransactionRecordHistory extends HttpHelper
         }  
 		
 		Collections.sort(container, new Comparator<TransactionRecord>() {
-            public int compare(TransactionRecord o1, TransactionRecord o2) {
+            @Override
+			public int compare(TransactionRecord o1, TransactionRecord o2) {
                 return o1.time.compareTo(o2.time);
             }
         });

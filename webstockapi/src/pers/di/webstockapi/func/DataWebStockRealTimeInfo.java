@@ -8,11 +8,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.htmlparser.Node;
-import org.htmlparser.Parser;
-import org.htmlparser.filters.TagNameFilter;
-import org.htmlparser.util.NodeList;
-
 import pers.di.webstockapi.WebStockAPI.RealTimeInfoLite;
 
 public class DataWebStockRealTimeInfo extends HttpHelper

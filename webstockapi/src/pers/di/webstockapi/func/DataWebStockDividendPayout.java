@@ -15,20 +15,14 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.htmlparser.Node;
-import org.htmlparser.NodeFilter;
-import org.htmlparser.Parser;
-import org.htmlparser.filters.NodeClassFilter;
-import org.htmlparser.filters.OrFilter;
-import org.htmlparser.filters.TagNameFilter;
-import org.htmlparser.tags.TableTag;
-import org.htmlparser.util.NodeIterator;
-import org.htmlparser.util.NodeList;
-import org.htmlparser.visitors.HtmlPage;
-
 import pers.di.common.CLog;
 import pers.di.common.CThread;
 import pers.di.webstockapi.WebStockAPI.DividendPayout;
+
+import org.htmlparser.Node;
+import org.htmlparser.Parser;
+import org.htmlparser.filters.TagNameFilter;
+import org.htmlparser.util.NodeList;
 
 public class DataWebStockDividendPayout  extends HttpHelper
 {
@@ -194,7 +188,8 @@ public class DataWebStockDividendPayout  extends HttpHelper
         }  
 		
 		Collections.sort(container, new Comparator<DividendPayout>() {
-            public int compare(DividendPayout o1, DividendPayout o2) {
+            @Override
+			public int compare(DividendPayout o1, DividendPayout o2) {
                 return o1.date.compareTo(o2.date);
             }
         });

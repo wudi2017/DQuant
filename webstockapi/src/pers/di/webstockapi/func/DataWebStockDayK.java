@@ -1,24 +1,12 @@
 package pers.di.webstockapi.func;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,7 +14,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import pers.di.common.CHttp;
-import pers.di.webstockapi.WebStockAPI.DividendPayout;
 import pers.di.webstockapi.WebStockAPI.KLine;
 
 public class DataWebStockDayK {
@@ -93,7 +80,8 @@ public class DataWebStockDayK {
 		}
 		
 		Collections.sort(container, new Comparator<KLine>() {
-            public int compare(KLine o1, KLine o2) {
+            @Override
+			public int compare(KLine o1, KLine o2) {
             	KLine sdto = o2;
     			int iRet = 0;
     			// date compare

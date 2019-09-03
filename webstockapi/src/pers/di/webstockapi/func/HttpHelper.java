@@ -2,7 +2,6 @@ package pers.di.webstockapi.func;
 
 import java.util.*;
 
-import pers.di.common.CLog;
 import pers.di.common.CRandom;
 import pers.di.common.CUtilsDateTime;
 
