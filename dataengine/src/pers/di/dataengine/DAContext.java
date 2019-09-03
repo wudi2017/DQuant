@@ -25,6 +25,14 @@ public class DAContext {
 		m_dataAccessPool.addCurrentDayInterestMinuteDataID(dataID);
 	}
 	
+	public void addCurrentDayInterestMinuteDataIDs(List<String> dataIDs)
+	{
+		for(int i=0; i<dataIDs.size(); i++)
+		{
+			m_dataAccessPool.addCurrentDayInterestMinuteDataID(dataIDs.get(i));
+		}
+	}
+	
 	public void removeCurrentDayInterestMinuteDataID(String dataID)
 	{
 		m_dataAccessPool.removeCurrentDayInterestMinuteDataID(dataID);

@@ -87,12 +87,34 @@ public class StockDataEngine {
 		}
 		return 0;
 	}
-	
+
 	public int registerListener(IEngineListener listener)
 	{
 		m_SharedSession.listeners.add(listener);
 		DAContext cDAContext = new DAContext();
 		m_SharedSession.listenerContext.put(listener, cDAContext);
+		return 0;
+	}
+	
+	public int unRegisterListener(IEngineListener listener)
+	{
+		{
+			Iterator<Map.Entry<IEngineListener, DAContext>> iterator = m_SharedSession.listenerContext.entrySet().iterator();
+	        while(iterator.hasNext()){
+	        	Map.Entry<IEngineListener, DAContext> entry = iterator.next();
+	            if (listener == entry.getKey()) {  
+	            	iterator.remove();   
+	            }  
+	        }
+		}
+		{
+			Iterator<IEngineListener> iterator = m_SharedSession.listeners.iterator();  
+	        while (iterator.hasNext()) {   
+	            if (listener == iterator.next()) {  
+	                iterator.remove(); 
+	            }  
+	        }  
+		}
 		return 0;
 	}
 	

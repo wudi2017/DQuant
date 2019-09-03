@@ -14,15 +14,35 @@ import pers.di.dataengine.*;
 
 public class QuantSession {
 	
+	public static class QuantListener extends IEngineListener
+	{
+		public QuantListener(QuantSession qs)
+		{
+			m_QuantSession = qs;
+		}
+		public void onInitialize(DAContext context){
+			m_QuantSession.onInitialize(context);
+		}
+		public void onUnInitialize(DAContext context){
+			m_QuantSession.onUnInitialize(context);
+		};
+		public void onTradingDayStart(DAContext context){
+			m_QuantSession.onTradingDayStart(context);
+		};
+		public void onTradingDayFinish(DAContext context){
+			m_QuantSession.onTradingDayFinish(context);
+		};
+		public void onMinuteTimePrices(DAContext context){
+			m_QuantSession.onMinuteTimePrices(context);
+		};
+		public QuantSession m_QuantSession;
+	}
+	
 	public QuantSession(String triggerCfgStr, AccoutDriver accoutDriver, QuantStrategy strategy)
 	{
 		// init m_listener and StockDataEngine
-		m_listener = StockDataEngine.instance().createListener();
-		m_listener.subscribe(EEID.INITIALIZE, this, "onInitialize");
-		m_listener.subscribe(EEID.UNINITIALIZE, this, "onUnInitialize");
-		m_listener.subscribe(EEID.TRADINGDAYSTART, this, "onTradingDayStart");
-		m_listener.subscribe(EEID.MINUTETIMEPRICES, this, "onMinuteTimePrices");
-		m_listener.subscribe(EEID.TRADINGDAYFINISH, this, "onTradingDayFinish");
+		m_listener = new QuantListener(this);
+		StockDataEngine.instance().registerListener(m_listener);
 		StockDataEngine.instance().config("TriggerMode", triggerCfgStr);
 
 		// init m_accountDriver m_accountProxy
@@ -31,12 +51,12 @@ public class QuantSession {
 		
 		// init m_stratety
 		m_stratety = strategy;
-		m_stratety.setListener(m_listener);
-		
+
 		// init default object
 		if(null == m_context)
 		{
-			m_context = new QuantContext(m_accountProxy);
+			m_context = new QuantContext();
+			m_context.setAccountProxy(m_accountProxy);
 		}
 	}
 	
@@ -52,13 +72,15 @@ public class QuantSession {
 	{
 		CLog.output("QENGINE", "The QuantSession is running now...");
 		StockDataEngine.instance().run();
-		StockDataEngine.instance().clearListener(m_listener);
+		StockDataEngine.instance().unRegisterListener(m_listener);
 		return true;
 	}
 	
-	public void onInitialize(EEObject ev)
+	public void onInitialize(DAContext context)
 	{
 		CLog.output("QENGINE", "QuantSession.onInitialize");
+		
+		m_context.setDAContext(context);
 		
 		if(null != m_stratety)
 		{
@@ -66,9 +88,11 @@ public class QuantSession {
 		}
 	}
 	
-	public void onUnInitialize(EEObject ev)
+	public void onUnInitialize(DAContext context)
 	{
 		CLog.output("QENGINE", "QuantSession.onUnInitialize");
+		
+		m_context.setDAContext(context);
 		
 		if(null != m_stratety)
 		{
@@ -76,24 +100,21 @@ public class QuantSession {
 		}
 	}
 	
-	public void onTradingDayStart(EEObject ev)
+	public void onTradingDayStart(DAContext context)
 	{
-		EETradingDayStart e = (EETradingDayStart)ev;
-		DAContext ctx = e.ctx;
+		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayStart", context.date(), context.time());
 		
-		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayStart", ctx.date(), ctx.time());
-		
-		m_context.set(ctx.date(), ctx.time(), ctx.pool());
+		m_context.setDAContext(context);
 		
 		// update account stock price info
-		m_accountDriver.setDateTime(ctx.date(), ctx.time());
+		m_accountDriver.setDateTime(context.date(), context.time());
 		m_accountDriver.newDayBegin();
 		List<String> ctnHoldStockIDList = new ArrayList<String>();
 		m_accountDriver.getHoldStockIDList(ctnHoldStockIDList);
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
-			double price = ctx.pool().get(sHoldStockID).price();
+			double price = context.pool().get(sHoldStockID).price();
 			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 		}
 		
@@ -101,7 +122,7 @@ public class QuantSession {
 		m_stratety.onDayStart(m_context);
 		
 		// for CurrentDayInterestMinuteDataIDs
-		List<String> InterestMinuteDataIDs = m_stratety.getCurrentDayInterestMinuteDataIDs();
+		List<String> InterestMinuteDataIDs = m_context.getCurrentDayInterestMinuteDataIDs();
 		String StrategyInterestIDs = "";
 		for(int i=0; i<InterestMinuteDataIDs.size(); i++)
 		{
@@ -110,28 +131,25 @@ public class QuantSession {
 		}
 		
 		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayStart MinuteDataIDs StrategyInterest[%s]", 
-				ctx.date(), ctx.time(), StrategyInterestIDs);
+				context.date(), context.time(), StrategyInterestIDs);
 	}
 	
-	public void onMinuteTimePrices(EEObject ev)
+	public void onMinuteTimePrices(DAContext context)
 	{
-		EETimePricesData e = (EETimePricesData)ev;
-		DAContext ctx = e.ctx;
-		
-		CLog.output("QENGINE", "[%s %s] QuantSession.onMinuteTimePrices ", ctx.date(), ctx.time());
+		CLog.output("QENGINE", "[%s %s] QuantSession.onMinuteTimePrices ", context.date(), context.time());
 		
 		if(null != m_stratety)
 		{
-			m_context.set(ctx.date(), ctx.time(), ctx.pool());
+			m_context.setDAContext(context);
 			
 			// update account stock price info
-			m_accountDriver.setDateTime(ctx.date(), ctx.time());
+			m_accountDriver.setDateTime(context.date(), context.time());
 			List<String> ctnHoldStockIDList = new ArrayList<String>();
 			m_accountDriver.getHoldStockIDList(ctnHoldStockIDList);
 			for(int i=0; i<ctnHoldStockIDList.size(); i++)
 			{
 				String sHoldStockID = ctnHoldStockIDList.get(i);
-				double price = ctx.pool().get(sHoldStockID).price();
+				double price = context.pool().get(sHoldStockID).price();
 				m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 			}
 			
@@ -140,23 +158,20 @@ public class QuantSession {
 		}
 	}
 	
-	public void onTradingDayFinish(EEObject ev)
+	public void onTradingDayFinish(DAContext context)
 	{
-		EETradingDayFinish e = (EETradingDayFinish)ev;
-		DAContext ctx = e.ctx;
+		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayFinish ", context.date(), context.time());
 		
-		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayFinish ", ctx.date(), ctx.time());
-		
-		m_context.set(ctx.date(), ctx.time(), ctx.pool());
+		m_context.setDAContext(context);
 		
 		// update account stock price info
-		m_accountDriver.setDateTime(ctx.date(), ctx.time());
+		m_accountDriver.setDateTime(context.date(), context.time());
 		List<String> ctnHoldStockIDList = new ArrayList<String>();
 		m_accountDriver.getHoldStockIDList(ctnHoldStockIDList);
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
-			double price = ctx.pool().get(sHoldStockID).price();
+			double price = context.pool().get(sHoldStockID).price();
 			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
 		}
 	
@@ -166,7 +181,7 @@ public class QuantSession {
 		m_accountDriver.newDayEnd();
 	}
 	
-	private EngineListener m_listener;
+	private IEngineListener m_listener;
 	private QuantContext m_context;
 	private AccountProxy m_accountProxy;
 	private AccoutDriver m_accountDriver;

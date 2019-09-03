@@ -7,7 +7,6 @@ import pers.di.account.common.*;
 import pers.di.common.*;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataapi.common.*;
-import pers.di.dataapi_test.TestCommonHelper;
 import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
 
@@ -96,9 +95,9 @@ public class TestQuantStrategy_Standard {
 			CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
 
 			// add hold stock to InterestMinuteDataIDs
-			super.addCurrentDayInterestMinuteDataIDs(ctx.ap().getHoldStockIDList());
+			ctx.addCurrentDayInterestMinuteDataIDs(ctx.ap().getHoldStockIDList());
 			// add select to InterestMinuteDataIDs
-			super.addCurrentDayInterestMinuteDataIDs(m_seletctID);
+			ctx.addCurrentDayInterestMinuteDataIDs(m_seletctID);
 		}
 		
 		public void onHandleBuy(QuantContext ctx)

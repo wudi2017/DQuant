@@ -7,7 +7,7 @@ import pers.di.account.*;
 import pers.di.account.common.TRANACT;
 import pers.di.common.*;
 import pers.di.dataapi.common.*;
-import pers.di.dataapi_test.TestCommonHelper;
+import pers.di.dataapi_test.CommonTestHelper;
 import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
 
@@ -61,7 +61,7 @@ public class SampleTestStrategy {
 		@Override
 		public void onDayStart(QuantContext ctx) {
 			CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
-			super.addCurrentDayInterestMinuteDataID("600000");
+			ctx.addCurrentDayInterestMinuteDataID("600000");
 		}
 
 		@Override
@@ -118,7 +118,7 @@ public class SampleTestStrategy {
 		String newestDate = "2017-08-10";
 		 List<String> stockIDs = new ArrayList<String>()
 			{{add("999999");add("600000");add("300163");add("002468");}};
-		TestCommonHelper.InitLocalData(newestDate, stockIDs);
+		CommonTestHelper.InitLocalData(newestDate, stockIDs);
 	}
 	
 	@CTest.test

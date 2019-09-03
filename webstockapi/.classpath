@@ -4,7 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry kind="lib" path="D:/MyProgram/QuantS17/external/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="D:/MyProgram/QuantS17/external/DQuant.jar"/>
+	<classpathentry kind="lib" path="D:/MyProgram/QuantS17/external/DQuant.jar" sourcepath="/dataengine"/>
 	<classpathentry kind="lib" path="D:/MyProgram/QuantS17/external/htmlparser-1.6.jar"/>
 	<classpathentry kind="lib" path="D:/MyProgram/QuantS17/external/jeromq-0.3.4.jar"/>
 	<classpathentry kind="lib" path="D:/MyProgram/QuantS17/external/json-20170516.jar"/>

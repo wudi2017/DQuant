@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/dataapi"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/dataengine"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/external"/>
 	<classpathentry kind="lib" path="/external/jar/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="/external/jar/htmlparser-1.6.jar"/>
@@ -15,5 +14,7 @@
 	<classpathentry kind="lib" path="/external/jar/THSApi.jar"/>
 	<classpathentry kind="lib" path="/external/jar/xmlParserAPIs-2.0.2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/account"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/webstockapi"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/dataengine"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
