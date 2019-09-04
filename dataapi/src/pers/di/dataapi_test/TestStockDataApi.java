@@ -26,7 +26,7 @@ public class TestStockDataApi {
 	
 	private static String s_newestDate = "2017-08-10";
 	private static List<String> s_stockIDs = new ArrayList<String>()
-		{{add("600000");add("300163");add("002468");}};
+		{{add("600056");add("600000");add("300163");}};
 	
 	@CTest.setup
 	public static void setup()
@@ -81,48 +81,42 @@ public class TestStockDataApi {
 	@CTest.test
 	public static void test_buildDayKLineListObserver()
 	{
-		String stockID = "600000";
+		String stockID = "600056";
 
 		CListObserver<KLine> obsKLineList = new CListObserver<KLine>();
-		int error = s_StockDataApi.buildDayKLineListObserver(stockID, "2011-05-23", "2019-08-31", obsKLineList);
+		int error = s_StockDataApi.buildDayKLineListObserver(stockID, "1998-01-01", "2019-08-31", obsKLineList);
 		// CLog.output("TEST", "KLine count: %d", obsKLineList.size());
-		CTest.EXPECT_LONG_EQ(obsKLineList.size(), 1983);
+		CTest.EXPECT_LONG_EQ(obsKLineList.size(), 5042);
 		int iCheckCnt = 0;
 		for(int i=0; i<obsKLineList.size(); i++)
 		{
 			KLine cKLine = obsKLineList.get(i);
-			if(cKLine.date.equals("2011-05-23")) 
+			if(0==i) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.open, 4.99, 2);
+				CLog.output("TEST", "begindate:%s", cKLine.date);
+			}
+			if(cKLine.date.equals("2004-10-12")) 
+			{
+				CTest.EXPECT_DOUBLE_EQ(cKLine.open, -0.95, 2);
 				iCheckCnt++;
 			}
-			if(cKLine.date.equals("2012-09-27")) 
+			if(cKLine.date.equals("2008-01-02")) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.high, 2.81, 2);
+				CTest.EXPECT_DOUBLE_EQ(cKLine.open, 7.43, 2);
 				iCheckCnt++;
 			}
 			if(cKLine.date.equals("2013-06-25")) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.low, 3.07, 2);
+				CTest.EXPECT_DOUBLE_EQ(cKLine.low, 5.97, 2);
 				iCheckCnt++;
 			}
-			if(cKLine.date.equals("2017-05-25")) 
+			if(cKLine.date.equals("2017-11-07")) 
 			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.48, 2);
-				iCheckCnt++;
-			}
-			if(cKLine.date.equals("2017-05-26")) 
-			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.39, 2);
-				iCheckCnt++;
-			}
-			if(cKLine.date.equals("2019-08-30")) 
-			{
-				CTest.EXPECT_DOUBLE_EQ(cKLine.close, 11.28, 2);
+				CTest.EXPECT_DOUBLE_EQ(cKLine.high, 28.46, 2);
 				iCheckCnt++;
 			}
 		}
-		CTest.EXPECT_LONG_EQ(iCheckCnt, 6);
+		CTest.EXPECT_LONG_EQ(iCheckCnt, 4);
 	}
 	
 	//@CTest.test

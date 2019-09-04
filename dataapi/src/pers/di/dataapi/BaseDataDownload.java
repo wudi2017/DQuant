@@ -318,7 +318,7 @@ public class BaseDataDownload {
 				String curDate = CUtilsDateTime.GetCurDateStr();
 				String paramToDate = curDate.replace("-", "");
 				List<KLine> ctnKLineNew = new ArrayList<KLine>();
-				int errGetWebKLineNew = WebStockAPILayer.getKLine(id, "20080101", paramToDate, ctnKLineNew);// 获取网络日K数据
+				int errGetWebKLineNew = WebStockAPILayer.getKLine(id, "19900101", paramToDate, ctnKLineNew);// 获取网络日K数据
 				
 				List<DividendPayout> ctnDividendPayoutNew = new ArrayList<DividendPayout>();
 				int errDividendPayoutNew = WebStockAPILayer.getDividendPayout(id, ctnDividendPayoutNew);//获取网络分红派息数据
