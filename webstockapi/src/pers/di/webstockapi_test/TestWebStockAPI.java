@@ -53,7 +53,7 @@ public class TestWebStockAPI {
 			System.out.println("ERROR:" + error);
 		}
 		CTest.EXPECT_LONG_EQ(error, 0);
-		CTest.EXPECT_TRUE(ctnStockInfo.name.length() > 2);
+		CTest.EXPECT_TRUE(ctnStockInfo.name.equals("ÖÐ¹úÒ½Ò©"));
 		CTest.EXPECT_TRUE(ctnStockInfo.date.length() == 10);
 		CTest.EXPECT_TRUE(ctnStockInfo.time.length() == 8);
 	}
@@ -119,7 +119,7 @@ public class TestWebStockAPI {
 	public void test_getKLine()
 	{
 		List<KLine> ctnKLine = new ArrayList<KLine>();
-		int error = WebStock.API.getKLine("000488", "20180706", "20190831", ctnKLine);
+		int error = WebStock.API.getKLine("600056", "20040701", "20190831", ctnKLine);
 		if(0 == error)
 		{
 			System.out.println("List<TradeDetail> size=" + ctnKLine.size());
@@ -157,9 +157,9 @@ public class TestWebStockAPI {
 			System.out.println("ERROR:" + error);
 		}
 		CTest.EXPECT_LONG_EQ(error, 0);
-		CTest.EXPECT_LONG_EQ(ctnKLine.size(), 283);
-		CTest.EXPECT_DOUBLE_EQ(ctnKLine.get(0).open, 11.56);
-		CTest.EXPECT_DOUBLE_EQ(ctnKLine.get(283-1).open, 4.69);
+		CTest.EXPECT_LONG_EQ(ctnKLine.size(), 3499);
+		CTest.EXPECT_DOUBLE_EQ(ctnKLine.get(0).open, 5.6);
+		CTest.EXPECT_DOUBLE_EQ(ctnKLine.get(3499-1).open, 13.37);
 	}
 	
 	@CTest.test
@@ -241,7 +241,7 @@ public class TestWebStockAPI {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestWebStockAPI.class);
-		CTest.RUN_ALL_TESTS("TestWebStockAPI.test_getDividendPayout");
+		CTest.RUN_ALL_TESTS("TestWebStockAPI.");
 		CSystem.stop();
 	}
 }
