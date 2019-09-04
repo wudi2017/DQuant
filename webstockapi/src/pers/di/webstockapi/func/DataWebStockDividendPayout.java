@@ -40,6 +40,11 @@ public class DataWebStockDividendPayout  extends HttpHelper
 		
 		int error = 0;
 		
+		if(null != container)
+		{
+			container.clear();
+		}
+		
 		// e.g http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/300163.phtml
 		String urlStr = "http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/";
 		
@@ -127,7 +132,9 @@ public class DataWebStockDividendPayout  extends HttpHelper
                     	String tmpStr = cTmpNodecol.toPlainTextString();
                     	//System.out.println(tmpStr);
                     	if(5 == j)
-                    		cDividendPayout.date = tmpStr;
+                    		cDividendPayout.date = tmpStr; // 除权除息日
+                    	if(7 == j && cDividendPayout.date.length()<8)
+                    		cDividendPayout.date = tmpStr; // 红股上市日
                     	if(1 == j)
                     		cDividendPayout.songGu = Double.parseDouble(tmpStr);
                     	if(2 == j)

@@ -36,7 +36,7 @@ public class TestWebStockAPI {
 	@CTest.test
 	public void test_getStockInfo()
 	{
-		String stockID = "000488";
+		String stockID = "600056";
 		StockInfo ctnStockInfo = new StockInfo();
 		int error = WebStock.API.getStockInfo(stockID, ctnStockInfo);
 		if(0 == error)
@@ -61,27 +61,58 @@ public class TestWebStockAPI {
 	@CTest.test
 	public void test_getDividendPayout()
 	{
-		String StockID = "000488";
-		List<DividendPayout> container = new ArrayList<DividendPayout>();
-		int error = WebStock.API.getDividendPayout(StockID, container);
-		if(0 == error)
 		{
-			System.out.println(String.format("DataWebStockDividendPayout.getDividendPayout %s OK!", StockID));
-			for(int i = 0; i < container.size(); i++)  
-	        {  
-				DividendPayout cDividendPayout = container.get(i);  
-				System.out.println(String.format("%s %.1f %.1f %.1f",
-						cDividendPayout.date,
-						cDividendPayout.songGu,
-						cDividendPayout.zhuanGu,
-						cDividendPayout.paiXi));
-	        } 
+			String StockID = "000488";
+			List<DividendPayout> container = new ArrayList<DividendPayout>();
+			int error = WebStock.API.getDividendPayout(StockID, container);
+			if(0 == WebStock.API.getDividendPayout(StockID, container))
+			{
+				System.out.println(String.format("DataWebStockDividendPayout.getDividendPayout %s OK!", StockID));
+				for(int i = 0; i < container.size(); i++)  
+		        {  
+					DividendPayout cDividendPayout = container.get(i);  
+					System.out.println(String.format("%s %.1f %.1f %.1f",
+							cDividendPayout.date,
+							cDividendPayout.songGu,
+							cDividendPayout.zhuanGu,
+							cDividendPayout.paiXi));
+		        } 
+			}
+			CTest.EXPECT_LONG_EQ(error, 0);
+			CTest.EXPECT_TRUE(container.size() >= 18);
+			CTest.EXPECT_DOUBLE_EQ(container.get(0).songGu, 1.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(0).zhuanGu, 0.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(0).paiXi, 3.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(1).songGu, 2.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(1).zhuanGu, 6.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(1).paiXi, 0.5);
 		}
-		CTest.EXPECT_LONG_EQ(error, 0);
-		CTest.EXPECT_TRUE(container.size() > 10);
-		CTest.EXPECT_DOUBLE_EQ(container.get(1).songGu, 2.0);
-		CTest.EXPECT_DOUBLE_EQ(container.get(1).zhuanGu, 6.0);
-		CTest.EXPECT_DOUBLE_EQ(container.get(1).paiXi, 0.5);
+		{
+			String StockID = "600056";
+			List<DividendPayout> container = new ArrayList<DividendPayout>();
+			int error = WebStock.API.getDividendPayout(StockID, container);
+			if(0 == WebStock.API.getDividendPayout(StockID, container))
+			{
+				System.out.println(String.format("DataWebStockDividendPayout.getDividendPayout %s OK!", StockID));
+				for(int i = 0; i < container.size(); i++)  
+		        {  
+					DividendPayout cDividendPayout = container.get(i);  
+					System.out.println(String.format("%s %.1f %.1f %.1f",
+							cDividendPayout.date,
+							cDividendPayout.songGu,
+							cDividendPayout.zhuanGu,
+							cDividendPayout.paiXi));
+		        } 
+			}
+			CTest.EXPECT_LONG_EQ(error, 0);
+			CTest.EXPECT_TRUE(container.size() >= 18);
+			CTest.EXPECT_DOUBLE_EQ(container.get(0).songGu, 0.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(0).zhuanGu, 0.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(0).paiXi, 4.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(7).songGu, 0.0);
+			CTest.EXPECT_DOUBLE_EQ(container.get(7).zhuanGu, 4.91);
+			CTest.EXPECT_DOUBLE_EQ(container.get(7).paiXi, 0.0);
+		}
 	}
 	
 	@CTest.test
@@ -210,7 +241,7 @@ public class TestWebStockAPI {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestWebStockAPI.class);
-		CTest.RUN_ALL_TESTS("TestWebStockAPI.");
+		CTest.RUN_ALL_TESTS("TestWebStockAPI.test_getDividendPayout");
 		CSystem.stop();
 	}
 }
