@@ -45,8 +45,9 @@ public class TransactionRecordHistory extends HttpHelper
 	 *     
 	 * ÆäËû£º
 	 *     doc: https://blog.csdn.net/weixin_42163573/article/details/81256348
-	 *     v1.0: url: e.g "http://market.finance.sina.com.cn/downxls.php?date=2015-02-16&symbol=sz300163"
-	 *     v2.0: url: e.g "http://market.finance.sina.com.cn/transHis.php?symbol=sz000001&date=2018-04-27&page=78"
+	 *     v1.0: url: e.g. "http://market.finance.sina.com.cn/downxls.php?date=2015-02-16&symbol=sz300163"
+	 *     v2.0: url: e.g. "http://market.finance.sina.com.cn/transHis.php?symbol=sz000001&date=2018-04-27&page=78"
+	 *     v2.1: url: e.g. "http://stock.gtimg.cn/data/index.php?appn=detail&action=download&c=sh600103&d=20170124"
 	 
 	 */
 	
@@ -140,6 +141,7 @@ public class TransactionRecordHistory extends HttpHelper
 		
 		// "http://market.finance.sina.com.cn/transHis.php?symbol=sz000001&date=2018-04-27&page=78";
 		String urlStr = "http://market.finance.sina.com.cn/transHis.php?symbol=";
+
 		
 		if(id.contains("999999")) 
 		{
