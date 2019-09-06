@@ -89,7 +89,7 @@ public class TestStockDataApi {
 			KLine cKLine = obsKLineList.get(i);
 			if(0==i) 
 			{
-				CLog.output("TEST", "begindate:%s", cKLine.date);
+				//CLog.output("TEST", "begindate:%s", cKLine.date);
 			}
 			if(cKLine.date.equals("2004-10-12")) 
 			{
@@ -126,7 +126,6 @@ public class TestStockDataApi {
 //			int error = WebStockAPILayer.getDividendPayout(stockID, container);
 //			if(0 == error)
 //			{
-//				System.out.println(String.format("DataWebStockDividendPayout.getDividendPayout %s OK!", stockID));
 //				for(int i = 0; i < container.size(); i++)  
 //		        {  
 //					DividendPayout cDividendPayout = container.get(i);  
@@ -161,33 +160,36 @@ public class TestStockDataApi {
 			CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
 			int errObsTimePriceList = s_StockDataApi.buildMinTimePriceListObserver(stockID, "2017-05-12", 
 					"09:25:00", "15:00:00", obsTimePriceList);
-			CTest.EXPECT_LONG_EQ(obsTimePriceList.size(), 237);
+			CTest.EXPECT_LONG_EQ(obsTimePriceList.size(), 242);
 			int iCheckCnt = 0;
 			for(int i=0; i<obsTimePriceList.size(); i++)
 			{
 				TimePrice cTimePrice = obsTimePriceList.get(i);
-				if(i < 5)
-				{
-					CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
-				}
-				if(i > obsTimePriceList.size()-5)
-				{
-					CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
-				}
-				
-				
-//				if(cTimePrice.time.equals("09:26:00")) 
+//				if(i < 5)
 //				{
-//					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.00, 2);
 //					CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
-//					iCheckCnt++;
 //				}
-//				if(cTimePrice.time.equals("15:00:00")) 
+//				if(i > obsTimePriceList.size()-5)
 //				{
-//					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.00, 2);
 //					CLog.output("TEST", "time: %s close: %f", cTimePrice.time, cTimePrice.price);
-//					iCheckCnt++;
 //				}
+
+				
+				if(cTimePrice.time.equals("09:26:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.00, 2);
+					iCheckCnt++;
+				}
+				if(cTimePrice.time.equals("09:30:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 10.74, 2);
+					iCheckCnt++;
+				}
+				if(cTimePrice.time.equals("15:00:00")) 
+				{
+					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 11.08, 2);
+					iCheckCnt++;
+				}
 				PoiList.add(new CurvePoint(i,cTimePrice.price));
 			}
 			
@@ -196,7 +198,7 @@ public class TestStockDataApi {
 			cCImageCurve.GenerateImage();
 			
 			
-			CTest.EXPECT_LONG_EQ(iCheckCnt, 5);
+			CTest.EXPECT_LONG_EQ(iCheckCnt, 2);
 		}
 	}
 	
@@ -246,7 +248,7 @@ public class TestStockDataApi {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);
-		CTest.RUN_ALL_TESTS("TestStockDataApi.test_buildMinTimePriceListObserver");
+		CTest.RUN_ALL_TESTS("TestStockDataApi.");
 		CSystem.stop();
 	}
 }
