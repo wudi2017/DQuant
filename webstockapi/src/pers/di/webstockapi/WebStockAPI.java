@@ -34,13 +34,13 @@ public interface WebStockAPI {
 		public double close;
 		public double low;
 		public double high;
-		public double volume;
+		public double volume; // 单位手
 	}
 	public class TransactionRecord
 	{
 		public String time; // e.g. 13:25:20
 		public double price; 
-		public double volume; 
+		public double volume; // 单位手
 	}
 	public class RealTimeInfoLite
 	{

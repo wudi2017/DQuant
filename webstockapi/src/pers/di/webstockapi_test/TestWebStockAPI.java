@@ -5,7 +5,7 @@ import java.util.List;
 
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
-
+import pers.di.common.CUtilsDateTime;
 import pers.di.webstockapi.*;
 import pers.di.webstockapi.WebStockAPI.*;
 
@@ -165,45 +165,99 @@ public class TestWebStockAPI {
 	@CTest.test
 	public void test_getTransactionRecordHistory()
 	{
-		List<TransactionRecord> ctnTradeDetails = new ArrayList<TransactionRecord>();
-		int error = WebStock.API.getTransactionRecordHistory("300163", "2012-08-21", ctnTradeDetails);
-		if(0 == error)
+		// slow, call one times
+		if(false)
 		{
-			System.out.println("List<TradeDetail> size=" + ctnTradeDetails.size());
-			if(ctnTradeDetails.size() > 11)
+			List<TransactionRecord> ctnTradeDetails = new ArrayList<TransactionRecord>();
+			int error = WebStock.API.getTransactionRecordHistory("300163", "2012-08-21", ctnTradeDetails);
+			if(0 == error)
 			{
-				for(int i = 0; i < 5; i++)  
-		        { 
-					TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
-					System.out.println(cTransactionRecord.time + "," 
-		            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);
-		        }
-				System.out.println("...");
-				for(int i = ctnTradeDetails.size()-5; i < ctnTradeDetails.size(); i++)  
-		        { 
-					TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
-					System.out.println(cTransactionRecord.time + "," 
-		            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);
-		        }
+				System.out.println("List<TradeDetail> size=" + ctnTradeDetails.size());
+				if(ctnTradeDetails.size() > 11)
+				{
+					for(int i = 0; i < 5; i++)  
+			        { 
+						TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
+						System.out.println(cTransactionRecord.time + "," 
+			            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);
+			        }
+					System.out.println("...");
+					for(int i = ctnTradeDetails.size()-5; i < ctnTradeDetails.size(); i++)  
+			        { 
+						TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
+						System.out.println(cTransactionRecord.time + "," 
+			            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);
+			        }
+				}
+				else
+				{
+					for(int i = 0; i < ctnTradeDetails.size(); i++)  
+			        {  
+						TransactionRecord cTransactionRecord = ctnTradeDetails.get(i);  
+						System.out.println(cTransactionRecord.time + "," 
+			            		+ cTransactionRecord.price + "," + cTransactionRecord.volume); 
+			        }
+				}
 			}
 			else
 			{
-				for(int i = 0; i < ctnTradeDetails.size(); i++)  
-		        {  
-					TransactionRecord cTransactionRecord = ctnTradeDetails.get(i);  
-					System.out.println(cTransactionRecord.time + "," 
-		            		+ cTransactionRecord.price + "," + cTransactionRecord.volume); 
-		        }
+				System.out.println("ERROR:" + error);
 			}
+			CTest.EXPECT_LONG_EQ(error, 0);
+			CTest.EXPECT_LONG_EQ(ctnTradeDetails.size(), 203);
+			CTest.EXPECT_DOUBLE_EQ(ctnTradeDetails.get(0).price, 12.37);
+			CTest.EXPECT_DOUBLE_EQ(ctnTradeDetails.get(203-1).price, 12.83);
 		}
-		else
+		// fast get data, test more times
+		String testDate = "2018-08-21";
+		for(int iTime=0; iTime<5; iTime++)
 		{
-			System.out.println("ERROR:" + error);
+			List<TransactionRecord> ctnTradeDetails = new ArrayList<TransactionRecord>();
+			int error = WebStock.API.getTransactionRecordHistory("300163", testDate, ctnTradeDetails);
+			if(0 == error)
+			{
+				System.out.println("TestTimes="+iTime+" List<TradeDetail> size=" + ctnTradeDetails.size());
+				if(ctnTradeDetails.size() > 11)
+				{
+					for(int i = 0; i < 5; i++)  
+			        { 
+						TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
+						System.out.println(cTransactionRecord.time + "," 
+			            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);
+			        }
+					System.out.println("...");
+					for(int i = ctnTradeDetails.size()-5; i < ctnTradeDetails.size(); i++)  
+			        { 
+						TransactionRecord cTransactionRecord = ctnTradeDetails.get(i); 
+						System.out.println(cTransactionRecord.time + "," 
+			            		+ cTransactionRecord.price + "," + cTransactionRecord.volume);
+			        }
+				}
+				else
+				{
+					for(int i = 0; i < ctnTradeDetails.size(); i++)  
+			        {  
+						TransactionRecord cTransactionRecord = ctnTradeDetails.get(i);  
+						System.out.println(cTransactionRecord.time + "," 
+			            		+ cTransactionRecord.price + "," + cTransactionRecord.volume); 
+			        }
+				}
+			}
+			else
+			{
+				System.out.println("ERROR:" + error);
+			}
+			
+			if(testDate.equals("2018-08-21"))
+			{
+				CTest.EXPECT_LONG_EQ(error, 0);
+				CTest.EXPECT_LONG_EQ(ctnTradeDetails.size(), 756);
+				CTest.EXPECT_DOUBLE_EQ(ctnTradeDetails.get(0).price, 3.27);
+				CTest.EXPECT_DOUBLE_EQ(ctnTradeDetails.get(756-1).price, 3.33);
+			}
+			
+			testDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(testDate, 1);
 		}
-		CTest.EXPECT_LONG_EQ(error, 0);
-		CTest.EXPECT_LONG_EQ(ctnTradeDetails.size(), 203);
-		CTest.EXPECT_DOUBLE_EQ(ctnTradeDetails.get(0).price, 12.37);
-		CTest.EXPECT_DOUBLE_EQ(ctnTradeDetails.get(203-1).price, 12.83);
 	}
 	
 	@CTest.test

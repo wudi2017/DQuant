@@ -133,7 +133,18 @@ public class TransactionRecordHistory extends HttpHelper
 	
 	// get the page HTML and parse it
 	// 
+	
 	public int getTransactionRecordHistory(String id, String date, List<TransactionRecord> container)
+	{
+		int err = getTransactionRecordHistory_V3(id, date, container);
+		if(0 != err)
+		{
+			err = getTransactionRecordHistory_V2(id, date, container);
+		}
+		return err;
+	}
+		 
+	public int getTransactionRecordHistory_V2(String id, String date, List<TransactionRecord> container)
 	{
 		limitAccessSpeed(1500);
 		
@@ -164,10 +175,12 @@ public class TransactionRecordHistory extends HttpHelper
 			error = -10;
 			return error;
 		}
+		
+		System.out.print("TransactionRecordHistory-V2-LoadPages["+tmpId+"]["+date+"]:");
+		
 		urlStr = urlStr + tmpId + "&date=" + date + "&page=";
 		
 		try{  
-			System.out.print("DataWebStockDayDetail-LoadPages["+tmpId+"]:");
 			int iPage = 1;
 			while(true)
 			{
@@ -242,7 +255,7 @@ public class TransactionRecordHistory extends HttpHelper
 	                	TransactionRecord cTransactionRecord = new TransactionRecord();
 	                	cTransactionRecord.time = ColTranTime;
 	                	cTransactionRecord.price = Double.parseDouble(ColTranPrice);
-	                	cTransactionRecord.volume = Double.parseDouble(ColTranCol)*100;
+	                	cTransactionRecord.volume = Double.parseDouble(ColTranCol);
 	    	        	container.add(cTransactionRecord);
 	                }
 	            }
@@ -269,6 +282,103 @@ public class TransactionRecordHistory extends HttpHelper
                 return o1.time.compareTo(o2.time);
             }
         });
+		return error;
+	}
+	
+	public int getTransactionRecordHistory_V3(String id, String date, List<TransactionRecord> container)
+	{
+		limitAccessSpeed(1500);
+		
+		int error = 0;
+		
+		// "http://stock.gtimg.cn/data/index.php?appn=detail&action=download&c=sh600103&d=20170124";
+		String urlStr = "http://stock.gtimg.cn/data/index.php?appn=detail&action=download&c=";
+		
+		if(id.contains("999999")) 
+		{
+			error = 0;
+			return error; // 上证指数没有交易明细
+		}
+		
+		// add symbol=sz000001
+		String tmpId = "";
+		if(id.startsWith("60") && 6 == id.length())
+		{
+			tmpId = "sh" + id;
+		}
+		else if((id.startsWith("00") ||  id.startsWith("30")) && 6 == id.length())
+		{
+			tmpId = "sz" + id;
+		}
+		else
+		{
+			error = -10;
+			return error;
+		}
+		
+		System.out.print("TransactionRecordHistory-V3-Load["+tmpId+"]["+date+"]...\n");
+		
+		date = date.replace("-", "");
+		urlStr = urlStr + tmpId + "&d=" + date;
+		
+		try{  
+			
+			URL url = new URL(urlStr);    
+	        HttpURLConnection conn = (HttpURLConnection)url.openConnection();    
+
+	        conn.setConnectTimeout(5*1000);  //设置连接超时间 
+	        conn.setReadTimeout(15*1000); //设置读取超时时间
+	        
+	        //防止屏蔽程序抓取而返回403错误  
+	        String randomUA = getRandomUserAgent();
+	        conn.setRequestProperty("User-Agent", randomUA);  
+			InputStream inputStream = conn.getInputStream(); 
+			byte[] getData = readInputStream(inputStream); 
+			String data = new String(getData, "gbk");  
+			if(null == data || data.equals("暂无数据") || data.length()<10)
+			{
+				return -20;
+			}
+			
+			// 
+			String[] lines = data.split("\n");
+			for(int i=0; i<lines.length; i++)
+			{
+				String line = lines[i];
+				
+				String[] cols = line.split("\t");
+				String tranTime = cols[0];
+	        	String price = cols[1];
+	        	String volume = cols[3];
+	        	
+	        	if(cols.length < 5
+	        			|| tranTime.length()!="00:00:00".length())
+	        	{
+	        		continue;
+	        	}
+	        	
+	        	TransactionRecord cTransactionRecord = new TransactionRecord();
+	        	cTransactionRecord.time = tranTime;
+	        	cTransactionRecord.price = Double.parseDouble(price);
+	        	cTransactionRecord.volume = Double.parseDouble(volume);
+	        	container.add(cTransactionRecord);
+			}
+			
+		}
+		catch(Exception e) {  
+        	e.printStackTrace();
+			System.out.println("Exception[DataWebStockDayDetail]:" + e.getMessage()); 
+			error = -1;
+        	return error;
+        }  
+		
+		Collections.sort(container, new Comparator<TransactionRecord>() {
+            @Override
+			public int compare(TransactionRecord o1, TransactionRecord o2) {
+                return o1.time.compareTo(o2.time);
+            }
+        });
+		
 		return error;
 	}
 	
