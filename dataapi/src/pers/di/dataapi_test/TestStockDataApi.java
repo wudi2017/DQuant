@@ -243,12 +243,18 @@ public class TestStockDataApi {
 		
 	}
 	
+	@CTest.test
+	public static void test_updateAllLocalStocks()
+	{
+		String dateStr = CUtilsDateTime.GetCurDateStr();
+		s_StockDataApi.updateAllLocalStocks(dateStr);
+	}
 	
 	public static StockDataApi s_StockDataApi = StockDataApi.instance();
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);
-		CTest.RUN_ALL_TESTS("TestStockDataApi.");
+		CTest.RUN_ALL_TESTS("TestStockDataApi.test_updateAllLocalStocks");
 		CSystem.stop();
 	}
 }

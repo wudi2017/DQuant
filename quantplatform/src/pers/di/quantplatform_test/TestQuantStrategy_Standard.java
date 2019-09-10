@@ -92,7 +92,7 @@ public class TestQuantStrategy_Standard {
 	
 		@Override
 		public void onDayStart(QuantContext ctx) {
-			CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
+			//CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
 
 			// add hold stock to InterestMinuteDataIDs
 			ctx.addCurrentDayInterestMinuteDataIDs(ctx.ap().getHoldStockIDList());
@@ -118,7 +118,7 @@ public class TestQuantStrategy_Standard {
 				
 				if(fRatio < -0.02)
 				{
-					cIntentCreateList.add(stockID);
+					cIntentCreateList.add(stockID); // 当天跌幅2%后买入
 				}
 			}
 			
@@ -282,7 +282,7 @@ public class TestQuantStrategy_Standard {
 
 		@Override
 		public void onDayFinish(QuantContext ctx) {
-			CLog.output("TEST", "TestStrategy.onDayFinish %s %s", ctx.date(), ctx.time());
+			//CLog.output("TEST", "TestStrategy.onDayFinish %s %s", ctx.date(), ctx.time());
 			
 			m_seletctID.clear();
 			
@@ -304,15 +304,15 @@ public class TestQuantStrategy_Standard {
 						KLine cStockDayBefore1 = cDAKLines.get(iSize-2);
 						KLine cStockDayBefore2 = cDAKLines.get(iSize-3);
 
-						if(cStockDayCur.close < cStockDayCur.open 
-								&& cStockDayCur.close < cStockDayBefore1.close
-								&& cStockDayBefore1.close < cStockDayBefore1.open
-								&& cStockDayBefore1.close < cStockDayBefore2.close
+						if(cStockDayCur.close < cStockDayCur.open //当天是阴线
+								&& cStockDayCur.close < cStockDayBefore1.close //当天收盘价低于昨天收盘价
+								&& cStockDayBefore1.close < cStockDayBefore1.open // 昨天是阴线
+								&& cStockDayBefore1.close < cStockDayBefore2.close // 昨天收盘价小于前天收盘价
 								)
 						{
 							SelectResult cSelectResult = new SelectResult();
 							cSelectResult.stockID = cDAStock.ID();
-							cSelectResult.fPriority = cStockDayBefore2.close - cStockDayCur.close;
+							cSelectResult.fPriority = cStockDayBefore2.close - cStockDayCur.close; // 优先级为跌价格
 							cSelectResultList.add(cSelectResult);
 						}
 					}
@@ -348,25 +348,25 @@ public class TestQuantStrategy_Standard {
 			String accInfo = ctx.ap().dump();
 			CLog.output("TEST", "dump account\n%s", accInfo);
 			
-			// test check
-			if(ctx.date().equals("2016-03-11"))
-			{
-				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
-				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
-				CObjectContainer<Double> money = new CObjectContainer<Double>();
-				int iRetMoney = ctx.ap().getMoney(money);
-				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 100085.782, 3);
-				CTest.EXPECT_DOUBLE_EQ(money.get(), 3083.782, 3);
-			}
-			if(ctx.date().equals("2016-03-28"))
-			{
-				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
-				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
-				CObjectContainer<Double> money = new CObjectContainer<Double>();
-				int iRetMoney = ctx.ap().getMoney(money);
-				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 104522.797, 3);
-				CTest.EXPECT_DOUBLE_EQ(money.get(), 37826.397, 3);
-			}
+//			// test check
+//			if(ctx.date().equals("2016-03-11"))
+//			{
+//				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
+//				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
+//				CObjectContainer<Double> money = new CObjectContainer<Double>();
+//				int iRetMoney = ctx.ap().getMoney(money);
+//				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 100085.782, 3);
+//				CTest.EXPECT_DOUBLE_EQ(money.get(), 3083.782, 3);
+//			}
+//			if(ctx.date().equals("2016-03-28"))
+//			{
+//				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
+//				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
+//				CObjectContainer<Double> money = new CObjectContainer<Double>();
+//				int iRetMoney = ctx.ap().getMoney(money);
+//				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 104522.797, 3);
+//				CTest.EXPECT_DOUBLE_EQ(money.get(), 37826.397, 3);
+//			}
 			
 		}
 		
@@ -385,7 +385,7 @@ public class TestQuantStrategy_Standard {
 		Account acc = cAccoutDriver.account();
 		
 		QuantSession qSession = new QuantSession(
-				"HistoryTest 2016-03-01 2016-04-01", 
+				"HistoryTest 2019-04-01 2019-08-30", 
 				cAccoutDriver, 
 				new TestStrategy());
 		qSession.run();
