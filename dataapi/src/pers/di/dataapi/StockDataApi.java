@@ -313,7 +313,7 @@ public class StockDataApi {
 							
 
 							TimePrice cStockDayDetail = new TimePrice();
-							cStockDayDetail.price = changedprice;
+							cStockDayDetail.price = CUtilsMath.saveNDecimal(changedprice, 2);
 							cStockDayDetail.time = cMinKLine.time;
 							detailDataList.add(cStockDayDetail);
 				        } 

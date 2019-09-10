@@ -51,7 +51,7 @@ public class TestQuantSession_Simple {
 	@CTest.setup
 	public static void setup()
 	{
-		String newestDate = "2017-08-10";
+		String newestDate = "2019-09-10";
 		 List<String> stockIDs = new ArrayList<String>()
 			{{add("999999");add("600000");add("300163");add("002468");}};
 		CommonTestHelper.InitLocalData(newestDate, stockIDs);
@@ -98,58 +98,33 @@ public class TestQuantSession_Simple {
 			// 遍历某只股票某日分时线
 			DATimePrices cTimePrices = ctx.pool().get(StockID).timePrices();
 			CTest.EXPECT_TRUE(cTimePrices.size()!=0);
-			CTest.EXPECT_TRUE(cTimePrices.get(cTimePrices.size()-1).time.equals(ctx.time()));
-			boolean bCheckTimePrice1 = false;
-			boolean bCheckTimePrice2 = false;
-			boolean bCheckTimePrice3 = false;
-			boolean bCheckTimePrice4 = false;
-			for(int i=0; i<cTimePrices.size(); i++)
+			TimePrice currentTimePrice = cTimePrices.get(cTimePrices.size()-1);
+			CTest.EXPECT_TRUE(currentTimePrice.time.equals(ctx.time()));
+
+			// CLog.output("TEST", "%s %s %s %.3f", StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
+			if(ctx.date().equals("2019-04-02") 
+					&& currentTimePrice.time.equals("09:30:00"))
 			{
+				CTest.EXPECT_DOUBLE_EQ(currentTimePrice.price, 11.15, 2);//11.15
 				onTimePricesCheckCount++;
-				TimePrice cTimePrice = cTimePrices.get(i);
-				// CLog.output("TEST", "%s %s %s %.3f", StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
-				if(ctx.date().equals("2017-01-16") 
-						&& cTimePrice.time.equals("09:30:00"))
-				{
-					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.33, 2);
-					bCheckTimePrice1 = true;
-				}
-				if(ctx.date().equals("2017-01-16") 
-						&& cTimePrice.time.equals("11:06:00"))
-				{
-					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.24, 2);
-					bCheckTimePrice2 = true;
-				}
-				if(ctx.date().equals("2017-01-16") 
-						&& cTimePrice.time.equals("14:40:00"))
-				{
-					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.61, 2);
-					bCheckTimePrice3 = true;
-				}
-				if(ctx.date().equals("2017-01-17") 
-						&& cTimePrice.time.equals("09:30:00"))
-				{
-					CTest.EXPECT_DOUBLE_EQ(cTimePrice.price, 12.51, 2);
-					bCheckTimePrice4 = true;
-				}
 			}
-			if(ctx.date().compareTo("2017-01-16") == 0)
+			if(ctx.date().equals("2019-04-15") 
+					&& currentTimePrice.time.equals("11:06:00"))
 			{
-				CTest.EXPECT_TRUE(bCheckTimePrice1);
+				CTest.EXPECT_DOUBLE_EQ(currentTimePrice.price, 11.41, 2);//11.4073
+				onTimePricesCheckCount++;
 			}
-			if(ctx.date().compareTo("2017-01-16") == 0
-					&& ctx.time().equals("11:06:00"))
+			if(ctx.date().equals("2019-04-15") 
+					&& currentTimePrice.time.equals("14:07:00"))
 			{
-				CTest.EXPECT_TRUE(bCheckTimePrice2);
+				CTest.EXPECT_DOUBLE_EQ(currentTimePrice.price, 11.26, 2);//11.261799
+				onTimePricesCheckCount++;
 			}
-			if(ctx.date().compareTo("2017-01-16") == 0
-					&& ctx.time().equals("14:41:00"))
+			if(ctx.date().equals("2019-04-29") 
+					&& currentTimePrice.time.equals("15:00:00"))
 			{
-				CTest.EXPECT_TRUE(bCheckTimePrice3);
-			}
-			if(ctx.date().compareTo("2017-01-17") == 0)
-			{
-				CTest.EXPECT_TRUE(bCheckTimePrice4);
+				CTest.EXPECT_DOUBLE_EQ(currentTimePrice.price, 11.13, 2);//11.12599
+				onTimePricesCheckCount++;
 			}
 			
 			DATimePrices cTimePrices2 = ctx.pool().get("600004").timePrices();
@@ -157,20 +132,20 @@ public class TestQuantSession_Simple {
 			
 			
 			// call account op
-			if(ctx.date().compareTo("2017-01-16") == 0 &&
+			if(ctx.date().compareTo("2019-04-02") == 0 &&
 					ctx.time().compareTo("09:30:00") == 0)
 			{
-				ctx.ap().pushBuyOrder(StockID, 500, ctx.pool().get(StockID).price()); // 500 12.330769~12.331
+				ctx.ap().pushBuyOrder(StockID, 500, ctx.pool().get(StockID).price()); 
 			}
-			if(ctx.date().compareTo("2017-01-16") == 0 &&
-					ctx.time().compareTo("14:40:00") == 0)
+			if(ctx.date().compareTo("2019-04-15") == 0 &&
+					ctx.time().compareTo("14:07:00") == 0)
 			{
-				ctx.ap().pushBuyOrder(StockID, 800, ctx.pool().get(StockID).price()); // 800 12.611877~12.612
+				ctx.ap().pushBuyOrder(StockID, 800, ctx.pool().get(StockID).price()); 
 			}
-			if(ctx.date().compareTo("2017-01-17") == 0 &&
-					ctx.time().compareTo("09:30:00") == 0)
+			if(ctx.date().compareTo("2019-04-29") == 0 &&
+					ctx.time().compareTo("15:00:00") == 0)
 			{
-				ctx.ap().pushSellOrder(StockID, 1000, ctx.pool().get(StockID).price()); // 1000 12.507691~12.508
+				ctx.ap().pushSellOrder(StockID, 1000, ctx.pool().get(StockID).price());
 			}
 		}
 
@@ -184,27 +159,17 @@ public class TestQuantSession_Simple {
 			// 遍历某只股票日K线
 			DAKLines cKLines = ctx.pool().get(StockID).dayKLines();
 			CTest.EXPECT_TRUE(cKLines.size()!=0);
-			CTest.EXPECT_TRUE(cKLines.get(cKLines.size()-1).date.equals(ctx.date())); // 此处只能拿到前一交易日k线
-			boolean bCheckPrice = false;
-			for(int i=0; i<cKLines.size(); i++)
+			KLine cCurrentKLine = cKLines.get(cKLines.size()-1);
+			CTest.EXPECT_TRUE(cCurrentKLine.date.equals(ctx.date())); // 此处只能拿到前一交易日k线
+
+			if(cCurrentKLine.date.equals("2019-04-02"))
 			{
-				KLine cKLine = cKLines.get(i);
-				//CLog.output("TEST", "date %s close %.3f", cKLine.date, cKLine.close);
-				
-				if(cKLine.date.equals("2017-01-16"))
-				{
-					CTest.EXPECT_DOUBLE_EQ(cKLine.open, 12.33, 2);
-					CTest.EXPECT_DOUBLE_EQ(cKLine.close, 12.58, 2);
-					CTest.EXPECT_DOUBLE_EQ(cKLine.high, 12.62, 2);
-					CTest.EXPECT_DOUBLE_EQ(cKLine.low, 12.23, 2);
-					bCheckPrice = true;
-				}
+				CTest.EXPECT_DOUBLE_EQ(cCurrentKLine.open, 11.15, 2);
+				CTest.EXPECT_DOUBLE_EQ(cCurrentKLine.close, 11.09, 2);
+				CTest.EXPECT_DOUBLE_EQ(cCurrentKLine.high, 11.17, 2);
+				CTest.EXPECT_DOUBLE_EQ(cCurrentKLine.low, 11.06, 2);
 			}
-			if(ctx.date().compareTo("2017-01-16") >= 0)
-			{
-				CTest.EXPECT_TRUE(bCheckPrice);
-			}
-			
+
 		}
 	}
 	
@@ -227,7 +192,7 @@ public class TestQuantSession_Simple {
 		Account acc = cAccoutDriver.account();
 		
 		QuantSession qSession = new QuantSession(
-				"HistoryTest 2017-01-01 2017-02-03", 
+				"HistoryTest 2019-04-01 2019-04-30", 
 				cAccoutDriver, 
 				new TestStrategy());
 		qSession.run();
@@ -235,37 +200,34 @@ public class TestQuantSession_Simple {
 		// check data
 		CTest.EXPECT_LONG_EQ(onInitCalled, 1);
 		CTest.EXPECT_LONG_EQ(onUnInitCalled, 1);
-		CTest.EXPECT_LONG_EQ(onDayBeginCalled, 19);
-		CTest.EXPECT_LONG_EQ(onDayEndCalled, 19);
-		CTest.EXPECT_LONG_EQ(onEveryMinuteCalled, 19*242);
-		CTest.EXPECT_LONG_EQ(onTimePricesCheckCount, 19* (1+242)*242/2 );
+		CTest.EXPECT_LONG_EQ(onDayBeginCalled, 21);
+		CTest.EXPECT_LONG_EQ(onDayEndCalled, 21);
+		CTest.EXPECT_LONG_EQ(onEveryMinuteCalled, 21*242);
+		CTest.EXPECT_LONG_EQ(onTimePricesCheckCount, 4 );
 		
 		// check acc
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			acc.getMoney(ctnMoney);
 
-			double buyCostAll = 500*12.331*s_transactionCostsRatioBuy + 800*12.612*s_transactionCostsRatioBuy;
-			double sellCost = 1000*12.508*s_transactionCostsRatioSell;
+			double buyCostAll = 500*11.15*s_transactionCostsRatioBuy + 800*11.26*s_transactionCostsRatioBuy;
+			double sellCost = 1000*11.13*s_transactionCostsRatioSell;
 			double ExpectMoney = 
-					10*10000-500*12.331-800*12.612+1000*12.508-buyCostAll-sellCost;
-			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(),ExpectMoney, 2);
+					10*10000-500*11.15-800*11.26+1000*11.13-buyCostAll-sellCost;
+			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), ExpectMoney, 2);
 			
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
 			CTest.EXPECT_TRUE(ctnHoldList.size() == 1);
-			if(ctnHoldList.size() == 1)
-			{
-				HoldStock cHoldStock = ctnHoldList.get(0);
-				CTest.EXPECT_STR_EQ(cHoldStock.stockID, "600000");
-				CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2017-01-16");
-				
-				double expectRefPrimeCostPrice = 0.0f;
-				expectRefPrimeCostPrice=(500*12.331+800*12.612+buyCostAll)/(500+800);
-				double sellProfit = 1000*(12.507691f - expectRefPrimeCostPrice);
-				expectRefPrimeCostPrice=(expectRefPrimeCostPrice*(1300-1000) + sellCost - sellProfit)/(1300-1000);
-				CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, expectRefPrimeCostPrice, 2);
-			}
+
+			HoldStock cHoldStock = ctnHoldList.get(0);
+			CTest.EXPECT_STR_EQ(cHoldStock.stockID, "600000");
+			CTest.EXPECT_STR_EQ(cHoldStock.createDate, "2019-04-02");
+			double expectRefPrimeCostPrice = 0.0f;
+			expectRefPrimeCostPrice=(500*11.15+800*11.26+buyCostAll)/(500+800);
+			double sellProfit = 1000*(11.13 - expectRefPrimeCostPrice);
+			expectRefPrimeCostPrice=(expectRefPrimeCostPrice*(1300-1000) + sellCost - sellProfit)/(1300-1000);
+			CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, expectRefPrimeCostPrice, 2);
 		}
 		
 	}
