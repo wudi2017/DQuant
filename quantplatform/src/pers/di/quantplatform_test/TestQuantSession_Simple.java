@@ -12,6 +12,7 @@ import pers.di.dataapi.common.TimePrice;
 import pers.di.dataapi_test.CommonTestHelper;
 import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
+import pers.di.quantplatform_test.SampleTestStrategy.TestStrategy;
 
 public class TestQuantSession_Simple {
 	
@@ -191,11 +192,7 @@ public class TestQuantSession_Simple {
 		}
 		Account acc = cAccoutDriver.account();
 		
-		QuantSession qSession = new QuantSession(
-				"HistoryTest 2019-04-01 2019-04-30", 
-				cAccoutDriver, 
-				new TestStrategy());
-		qSession.run();
+		Quant.instance().run("HistoryTest 2019-04-01 2019-04-30", cAccoutDriver, new TestStrategy());
 		
 		// check data
 		CTest.EXPECT_LONG_EQ(onInitCalled, 1);

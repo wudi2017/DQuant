@@ -1,4 +1,4 @@
-package pers.di.quantplatform.sample;
+package pers.di.quantplatform_test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,12 +131,7 @@ public class SampleTestStrategy {
 			CLog.error("TEST", "SampleTestStrategy AccoutDriver ERR!");
 		}
 		
-		QuantSession qSession = new QuantSession(
-				"HistoryTest 2017-01-01 2017-01-03", 
-				cAccoutDriver, 
-				new TestStrategy());
-		
-		qSession.run();
+		Quant.instance().run("HistoryTest 2017-01-01 2017-01-03", cAccoutDriver, new TestStrategy());
 	}
 	
 	public static void main(String[] args) {

@@ -3,6 +3,7 @@ import java.util.*;
 
 import pers.di.account.*;
 import pers.di.account.common.HoldStock;
+import pers.di.common.CDateTimeThruster;
 import pers.di.common.CListObserver;
 import pers.di.common.CLog;
 import pers.di.common.CTest;
@@ -11,38 +12,48 @@ import pers.di.common.CUtilsDateTime;
 import pers.di.dataapi.StockDataApi;
 import pers.di.dataapi.common.*;
 import pers.di.dataengine.*;
+import pers.di.dataengine.tasks.SharedSession;
 
-public class QuantSession {
+public class Quant {
 	
 	public static class QuantListener extends IEngineListener
 	{
-		public QuantListener(QuantSession qs)
+		public QuantListener(Quant quant)
 		{
-			m_QuantSession = qs;
+			m_quant = quant;
 		}
 		public void onInitialize(DAContext context){
-			m_QuantSession.onInitialize(context);
+			m_quant.onInitialize(context);
 		}
 		public void onUnInitialize(DAContext context){
-			m_QuantSession.onUnInitialize(context);
+			m_quant.onUnInitialize(context);
 		};
 		public void onTradingDayStart(DAContext context){
-			m_QuantSession.onTradingDayStart(context);
+			m_quant.onTradingDayStart(context);
 		};
 		public void onTradingDayFinish(DAContext context){
-			m_QuantSession.onTradingDayFinish(context);
+			m_quant.onTradingDayFinish(context);
 		};
 		public void onMinuteTimePrices(DAContext context){
-			m_QuantSession.onMinuteTimePrices(context);
+			m_quant.onMinuteTimePrices(context);
 		};
-		public QuantSession m_QuantSession;
+		public Quant m_quant;
 	}
 	
-	public QuantSession(String triggerCfgStr, AccoutDriver accoutDriver, QuantStrategy strategy)
+	private static Quant s_instance = new Quant(); 
+	private Quant ()
+	{
+	}
+	public static Quant instance() {  
+		return s_instance;  
+	} 
+	
+	public void run(String triggerCfgStr, AccoutDriver accoutDriver, QuantStrategy strategy)
 	{
 		// init m_listener and StockDataEngine
 		m_listener = new QuantListener(this);
 		StockDataEngine.instance().registerListener(m_listener);
+		
 		StockDataEngine.instance().config("TriggerMode", triggerCfgStr);
 
 		// init m_accountDriver m_accountProxy
@@ -58,6 +69,9 @@ public class QuantSession {
 			m_context = new QuantContext();
 			m_context.setAccountProxy(m_accountProxy);
 		}
+		
+		StockDataEngine.instance().run();
+		StockDataEngine.instance().unRegisterListener(m_listener);
 	}
 	
 	/*
@@ -66,14 +80,6 @@ public class QuantSession {
 	public boolean resetDataRoot(String dateRoot)
 	{
 		return StockDataEngine.instance().resetDataRoot(dateRoot);
-	}
-	
-	public boolean run()
-	{
-		CLog.output("QENGINE", "The QuantSession is running now...");
-		StockDataEngine.instance().run();
-		StockDataEngine.instance().unRegisterListener(m_listener);
-		return true;
 	}
 	
 	public void onInitialize(DAContext context)

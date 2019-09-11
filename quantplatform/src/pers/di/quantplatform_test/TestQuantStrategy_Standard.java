@@ -9,6 +9,7 @@ import pers.di.dataapi.StockDataApi;
 import pers.di.dataapi.common.*;
 import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
+import pers.di.quantplatform_test.TestQuantSession_Simple.TestStrategy;
 
 public class TestQuantStrategy_Standard {
 	
@@ -384,11 +385,7 @@ public class TestQuantStrategy_Standard {
 		}
 		Account acc = cAccoutDriver.account();
 		
-		QuantSession qSession = new QuantSession(
-				"HistoryTest 2019-04-01 2019-08-30", 
-				cAccoutDriver, 
-				new TestStrategy());
-		qSession.run();
+		Quant.instance().run("HistoryTest 2019-04-01 2019-08-30", cAccoutDriver, new TestStrategy());
 		
 		CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
 		int iRetTotalAssets = acc.getTotalAssets(totalAssets);
