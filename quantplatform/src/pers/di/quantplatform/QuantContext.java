@@ -31,7 +31,7 @@ public class QuantContext {
 		return m_context.time();
 	}
 
-	public AccountProxy ap()
+	public AccountProxy accountProxy()
 	{
 		return m_accountProxy;
 	}

@@ -12,7 +12,6 @@ import pers.di.dataapi.common.TimePrice;
 import pers.di.dataapi_test.CommonTestHelper;
 import pers.di.dataengine.*;
 import pers.di.quantplatform.*;
-import pers.di.quantplatform_test.SampleTestStrategy.TestStrategy;
 
 public class TestQuantSession_Simple {
 	
@@ -62,91 +61,91 @@ public class TestQuantSession_Simple {
 	public static class TestStrategy extends QuantStrategy
 	{
 		@Override
-		public void onInit(QuantContext ctx) {
+		public void onInit(QuantContext context) {
 			//CLog.output("TEST", "TestStrategy.onInit %s %s", ctx.date(), ctx.time());
 			onInitCalled++;
 		}
 	
 		@Override
-		public void onUnInit(QuantContext ctx) {
+		public void onUnInit(QuantContext context) {
 			//CLog.output("TEST", "TestStrategy.onInit %s %s", ctx.date(), ctx.time());
 			onUnInitCalled++;
 		}
 		
 		@Override
-		public void onDayStart(QuantContext ctx) {
+		public void onDayStart(QuantContext context) {
 			//CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
-			ctx.addCurrentDayInterestMinuteDataID("600000");
+			context.addCurrentDayInterestMinuteDataID("600000");
 			onDayBeginCalled++;
 		}
 
 		@Override
-		public void onMinuteData(QuantContext ctx) {
+		public void onMinuteData(QuantContext context) {
 			//CLog.output("TEST", "TestStrategy.onMinuteData %s %s", ctx.date(), ctx.time());
 
 			onEveryMinuteCalled++;
 			
 			// 遍历所有股票
-			CTest.EXPECT_TRUE(ctx.pool().size()!=0);
-			for(int i=0; i<ctx.pool().size(); i++)
+			CTest.EXPECT_TRUE(context.pool().size()!=0);
+			for(int i=0; i<context.pool().size(); i++)
 			{
-				DAStock stock = ctx.pool().get(i);
+				DAStock stock = context.pool().get(i);
 				//CLog.output("TEST", "stock %s %s", stock.ID(), stock.name());
 			}
 			
 			String StockID = "600000";
 			
 			// 遍历某只股票某日分时线
-			DATimePrices cTimePrices = ctx.pool().get(StockID).timePrices();
+			DATimePrices cTimePrices = context.pool().get(StockID).timePrices();
 			CTest.EXPECT_TRUE(cTimePrices.size()!=0);
 			TimePrice currentTimePrice = cTimePrices.get(cTimePrices.size()-1);
-			CTest.EXPECT_TRUE(currentTimePrice.time.equals(ctx.time()));
+			CTest.EXPECT_TRUE(currentTimePrice.time.equals(context.time()));
 
 			// CLog.output("TEST", "%s %s %s %.3f", StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
-			if(ctx.date().equals("2019-04-02") 
+			if(context.date().equals("2019-04-02") 
 					&& currentTimePrice.time.equals("09:30:00"))
 			{
 				CTest.EXPECT_DOUBLE_EQ(currentTimePrice.price, 11.15, 2);//11.15
 				onTimePricesCheckCount++;
 			}
-			if(ctx.date().equals("2019-04-15") 
+			if(context.date().equals("2019-04-15") 
 					&& currentTimePrice.time.equals("11:06:00"))
 			{
 				CTest.EXPECT_DOUBLE_EQ(currentTimePrice.price, 11.41, 2);//11.4073
 				onTimePricesCheckCount++;
 			}
-			if(ctx.date().equals("2019-04-15") 
+			if(context.date().equals("2019-04-15") 
 					&& currentTimePrice.time.equals("14:07:00"))
 			{
 				CTest.EXPECT_DOUBLE_EQ(currentTimePrice.price, 11.26, 2);//11.261799
 				onTimePricesCheckCount++;
 			}
-			if(ctx.date().equals("2019-04-29") 
+			if(context.date().equals("2019-04-29") 
 					&& currentTimePrice.time.equals("15:00:00"))
 			{
 				CTest.EXPECT_DOUBLE_EQ(currentTimePrice.price, 11.13, 2);//11.12599
 				onTimePricesCheckCount++;
 			}
 			
-			DATimePrices cTimePrices2 = ctx.pool().get("600004").timePrices();
+			DATimePrices cTimePrices2 = context.pool().get("600004").timePrices();
 			CTest.EXPECT_LONG_EQ(cTimePrices2.size(), 0);
 			
 			
 			// call account op
-			if(ctx.date().compareTo("2019-04-02") == 0 &&
-					ctx.time().compareTo("09:30:00") == 0)
+			if(context.date().compareTo("2019-04-02") == 0 &&
+					context.time().compareTo("09:30:00") == 0)
 			{
-				ctx.ap().pushBuyOrder(StockID, 500, ctx.pool().get(StockID).price()); 
+				context.accountProxy().pushBuyOrder(StockID, 500, context.pool().get(StockID).price()); 
 			}
-			if(ctx.date().compareTo("2019-04-15") == 0 &&
-					ctx.time().compareTo("14:07:00") == 0)
+			if(context.date().compareTo("2019-04-15") == 0 &&
+					context.time().compareTo("14:07:00") == 0)
 			{
-				ctx.ap().pushBuyOrder(StockID, 800, ctx.pool().get(StockID).price()); 
+				context.accountProxy().pushBuyOrder(StockID, 800, context.pool().get(StockID).price()); 
 			}
-			if(ctx.date().compareTo("2019-04-29") == 0 &&
-					ctx.time().compareTo("15:00:00") == 0)
+			if(context.date().compareTo("2019-04-29") == 0 &&
+					context.time().compareTo("15:00:00") == 0)
 			{
-				ctx.ap().pushSellOrder(StockID, 1000, ctx.pool().get(StockID).price());
+				context.accountProxy().pushSellOrder(StockID, 1000, context.pool().get(StockID).price());
 			}
 		}
 

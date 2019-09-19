@@ -82,40 +82,40 @@ public class TestQuantStrategy_Standard {
 		}
 		
 		@Override
-		public void onInit(QuantContext ctx) {
+		public void onInit(QuantContext context) {
 			
 		}
 		
 		@Override
-		public void onUnInit(QuantContext ctx) {
+		public void onUnInit(QuantContext context) {
 			
 		}
 	
 		@Override
-		public void onDayStart(QuantContext ctx) {
-			//CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
+		public void onDayStart(QuantContext context) {
+			//CLog.output("TEST", "TestStrategy.onDayStart %s %s", context.date(), context.time());
 
 			// add hold stock to InterestMinuteDataIDs
-			ctx.addCurrentDayInterestMinuteDataIDs(ctx.ap().getHoldStockIDList());
+			context.addCurrentDayInterestMinuteDataIDs(context.accountProxy().getHoldStockIDList());
 			// add select to InterestMinuteDataIDs
-			ctx.addCurrentDayInterestMinuteDataIDs(m_seletctID);
+			context.addCurrentDayInterestMinuteDataIDs(m_seletctID);
 		}
 		
-		public void onHandleBuy(QuantContext ctx)
+		public void onHandleBuy(QuantContext context)
 		{
 			// find want create IDs
 			List<String> cIntentCreateList = new ArrayList<String>();
 			for(int i=0; i<m_seletctID.size(); i++)
 			{
 				String stockID = m_seletctID.get(i);
-				DAStock cDAStock = ctx.pool().get(stockID);
+				DAStock cDAStock = context.pool().get(stockID);
 
 				double fYesterdayClosePrice = cDAStock.dayKLines().lastPrice();
 				double fNowPrice = cDAStock.price();
 				double fRatio = (fNowPrice - fYesterdayClosePrice)/fYesterdayClosePrice;
 				
 //							CLog.output("TEST", "TestStrategy.onMinuteData %s %s [%s %.3f]", 
-//									ctx.date(), ctx.time(), stockID, fRatio);
+//									context.date(), context.time(), stockID, fRatio);
 				
 				if(fRatio < -0.02)
 				{
@@ -124,9 +124,9 @@ public class TestQuantStrategy_Standard {
 			}
 			
 			List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
-			int iRetHoldStockList = ctx.ap().getHoldStockList(cHoldStockList);
+			int iRetHoldStockList = context.accountProxy().getHoldStockList(cHoldStockList);
 			List<CommissionOrder> cCommissionOrderList = new ArrayList<CommissionOrder>();
-			int iRetBuyCommissionOrderList =  ctx.ap().getCommissionOrderList(cCommissionOrderList);
+			int iRetBuyCommissionOrderList =  context.accountProxy().getCommissionOrderList(cCommissionOrderList);
 			
 			// remove already hold
 			Iterator<String> it = cIntentCreateList.iterator();
@@ -207,9 +207,9 @@ public class TestQuantStrategy_Standard {
 
 				// 买入量
 				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
-				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
+				int iRetTotalAssets = context.accountProxy().getTotalAssets(totalAssets);
 				CObjectContainer<Double> money = new CObjectContainer<Double>();
-				int iRetMoney = ctx.ap().getMoney(money);
+				int iRetMoney = context.accountProxy().getMoney(money);
 				if(0 == iRetTotalAssets && 0 == iRetMoney)
 				{
 					double fMaxPositionRatio = 0.3333f;
@@ -218,10 +218,10 @@ public class TestQuantStrategy_Standard {
 					Double buyMoney = Math.min(dMaxMoney, dMaxPositionMoney);
 					buyMoney = Math.min(buyMoney, money.get());
 					
-					double curPrice = ctx.pool().get(createID).price();
+					double curPrice = context.pool().get(createID).price();
 					int amount = (int)(buyMoney/curPrice);
 					amount = amount/100*100; // 买入整手化
-					ctx.ap().pushBuyOrder(createID, amount, curPrice); // 500 12.330769
+					context.accountProxy().pushBuyOrder(createID, amount, curPrice); // 500 12.330769
 				}
 				else
 				{
@@ -230,16 +230,16 @@ public class TestQuantStrategy_Standard {
 			}
 		}
 		
-		public void onHandleSell(QuantContext ctx)
+		public void onHandleSell(QuantContext context)
 		{
 			List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
-			int iRetHoldStockList = ctx.ap().getHoldStockList(cHoldStockList);
+			int iRetHoldStockList = context.accountProxy().getHoldStockList(cHoldStockList);
 			
 			for(int i=0; i<cHoldStockList.size(); i++)
 			{
 				HoldStock cHoldStock = cHoldStockList.get(i);
 				boolean bSell = false;
-				DAStock cDAStock = ctx.pool().get(cHoldStock.stockID);
+				DAStock cDAStock = context.pool().get(cHoldStock.stockID);
 				double curPrice = cDAStock.price();
 				
 				// 调查天数控制
@@ -269,33 +269,33 @@ public class TestQuantStrategy_Standard {
 				
 				if(bSell && cHoldStock.availableAmount > 0)
 				{
-					ctx.ap().pushSellOrder(cHoldStock.stockID, cHoldStock.availableAmount, curPrice); 
+					context.accountProxy().pushSellOrder(cHoldStock.stockID, cHoldStock.availableAmount, curPrice); 
 				}
 			}
 		}
 
 		@Override
-		public void onMinuteData(QuantContext ctx) {
-			//CLog.output("TEST", "TestStrategy.onMinuteData %s %s", ctx.date(), ctx.time());
-			onHandleSell(ctx);
-			onHandleBuy(ctx);
+		public void onMinuteData(QuantContext context) {
+			//CLog.output("TEST", "TestStrategy.onMinuteData %s %s", context.date(), context.time());
+			onHandleSell(context);
+			onHandleBuy(context);
 		}
 
 		@Override
-		public void onDayFinish(QuantContext ctx) {
-			//CLog.output("TEST", "TestStrategy.onDayFinish %s %s", ctx.date(), ctx.time());
+		public void onDayFinish(QuantContext context) {
+			//CLog.output("TEST", "TestStrategy.onDayFinish %s %s", context.date(), context.time());
 			
 			m_seletctID.clear();
 			
 			// select strategy
 			List<SelectResult> cSelectResultList = new ArrayList<SelectResult>();
-			for(int i=0; i<ctx.pool().size(); i++)
+			for(int i=0; i<context.pool().size(); i++)
 			{
-				DAStock cDAStock = ctx.pool().get(i);
+				DAStock cDAStock = context.pool().get(i);
 				
 				// stock set 
 				if(cDAStock.ID().compareTo("000001") >= 0 && cDAStock.ID().compareTo("000200") <= 0 &&
-						cDAStock.dayKLines().lastDate().equals(ctx.date())) {	
+						cDAStock.dayKLines().lastDate().equals(context.date())) {	
 					
 					DAKLines cDAKLines = cDAStock.dayKLines();
 					int iSize = cDAKLines.size();
@@ -346,25 +346,25 @@ public class TestQuantStrategy_Standard {
 			logStr += String.format("]");
 			CLog.output("TEST", "%s", logStr);
 			// output acc info
-			String accInfo = ctx.ap().dump();
+			String accInfo = context.accountProxy().dump();
 			CLog.output("TEST", "dump account\n%s", accInfo);
 			
 //			// test check
-//			if(ctx.date().equals("2016-03-11"))
+//			if(context.date().equals("2016-03-11"))
 //			{
 //				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
-//				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
+//				int iRetTotalAssets = context.accountProxy().getTotalAssets(totalAssets);
 //				CObjectContainer<Double> money = new CObjectContainer<Double>();
-//				int iRetMoney = ctx.ap().getMoney(money);
+//				int iRetMoney = context.accountProxy().getMoney(money);
 //				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 100085.782, 3);
 //				CTest.EXPECT_DOUBLE_EQ(money.get(), 3083.782, 3);
 //			}
-//			if(ctx.date().equals("2016-03-28"))
+//			if(context.date().equals("2016-03-28"))
 //			{
 //				CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
-//				int iRetTotalAssets = ctx.ap().getTotalAssets(totalAssets);
+//				int iRetTotalAssets = context.accountProxy().getTotalAssets(totalAssets);
 //				CObjectContainer<Double> money = new CObjectContainer<Double>();
-//				int iRetMoney = ctx.ap().getMoney(money);
+//				int iRetMoney = context.accountProxy().getMoney(money);
 //				CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 104522.797, 3);
 //				CTest.EXPECT_DOUBLE_EQ(money.get(), 37826.397, 3);
 //			}
@@ -385,7 +385,7 @@ public class TestQuantStrategy_Standard {
 		}
 		Account acc = cAccoutDriver.account();
 		
-		Quant.instance().run("HistoryTest 2019-04-01 2019-08-30", cAccoutDriver, new TestStrategy());
+		Quant.instance().run("HistoryTest 2019-05-01 2019-06-30", cAccoutDriver, new TestStrategy());
 		
 		CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
 		int iRetTotalAssets = acc.getTotalAssets(totalAssets);
