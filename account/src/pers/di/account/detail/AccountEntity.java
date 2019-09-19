@@ -3,9 +3,9 @@ package pers.di.account.detail;
 import java.math.BigDecimal;
 import java.util.*;
 
-import pers.di.account.Account;
+import pers.di.account.IAccount;
 import pers.di.account.IMarketOpe;
-import pers.di.account.Account.ICallback;
+import pers.di.account.IAccount.ICallback;
 import pers.di.account.common.*;
 import pers.di.account.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
@@ -14,7 +14,7 @@ import pers.di.common.CSyncObj;
 import pers.di.common.CUtilsDateTime;
 import pers.di.common.CUtilsMath;
 
-public class AccountEntity extends Account {
+public class AccountEntity extends IAccount {
 	
 	@Override
 	public boolean aceessLock()

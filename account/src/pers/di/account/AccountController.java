@@ -9,22 +9,22 @@ import pers.di.common.CSyncObj;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 
-public class AccoutDriver {
+public class AccountController {
 	
 	public static class InnerMarketReplier extends IMarketDealReplier
 	{
-		public InnerMarketReplier(AccoutDriver cAccoutDriver)
+		public InnerMarketReplier(AccountController cAccountController)
 		{
-			m_cAccoutDriver = cAccoutDriver;
+			m_cAccountController = cAccountController;
 		}
 		@Override
 		public void onDeal(TRANACT tranact, String id, int amount, double price, double cost) {
-			m_cAccoutDriver.onDeal(tranact, id, amount, price, cost);
+			m_cAccountController.onDeal(tranact, id, amount, price, cost);
 		}	
-		private AccoutDriver m_cAccoutDriver;
+		private AccountController m_cAccountController;
 	}
 	
-	public AccoutDriver(String dataRoot)
+	public AccountController(String dataRoot)
 	{
 		m_cSync = new CSyncObj();
 		m_dataRoot = dataRoot;
@@ -107,9 +107,9 @@ public class AccoutDriver {
 	}
 	
 	// get account
-	public Account account()
+	public IAccount account()
 	{
-		Account acc = null;
+		IAccount acc = null;
 		m_cSync.Lock();
 		if(null != m_accountEntity)
 		{
@@ -208,10 +208,10 @@ public class AccoutDriver {
 	
 	private static class FlushThread extends CThread
 	{
-		public FlushThread(AccoutDriver accDriver)
+		public FlushThread(AccountController cAccountController)
 		{
 			m_lastFlushTC = 0;
-			m_accDriver = accDriver;
+			m_cAccountController = cAccountController;
 		}
 		@Override
 		public void run() {
@@ -222,13 +222,13 @@ public class AccoutDriver {
 				long lCurTC = CUtilsDateTime.GetCurrentTimeMillis();
 				if(lCurTC - m_lastFlushTC > 1000*15)
 				{
-					m_accDriver.commit();
+					m_cAccountController.commit();
 					m_lastFlushTC = lCurTC;
 				}
 			}
 		}
 		private long m_lastFlushTC;
-		private AccoutDriver m_accDriver;
+		private AccountController m_cAccountController;
 	}
 	
 	

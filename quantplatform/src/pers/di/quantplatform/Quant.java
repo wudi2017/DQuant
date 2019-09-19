@@ -48,7 +48,7 @@ public class Quant {
 		return s_instance;  
 	} 
 	
-	public void run(String triggerCfgStr, AccoutDriver accoutDriver, QuantStrategy strategy)
+	public void run(String triggerCfgStr, AccountController cAccountController, QuantStrategy strategy)
 	{
 		// init m_listener and StockDataEngine
 		m_listener = new QuantListener(this);
@@ -56,9 +56,9 @@ public class Quant {
 		
 		StockDataEngine.instance().config("TriggerMode", triggerCfgStr);
 
-		// init m_accountDriver m_accountProxy
-		m_accountDriver = accoutDriver;
-		m_accountProxy = new AccountProxy(accoutDriver);
+		// init m_cAccountController m_accountProxy
+		m_cAccountController = cAccountController;
+		m_accountProxy = new AccountProxy(cAccountController);
 		
 		// init m_stratety
 		m_stratety = strategy;
@@ -113,15 +113,15 @@ public class Quant {
 		m_context.setDAContext(context);
 		
 		// update account stock price info
-		m_accountDriver.setDateTime(context.date(), context.time());
-		m_accountDriver.newDayBegin();
+		m_cAccountController.setDateTime(context.date(), context.time());
+		m_cAccountController.newDayBegin();
 		List<String> ctnHoldStockIDList = new ArrayList<String>();
-		m_accountDriver.getHoldStockIDList(ctnHoldStockIDList);
+		m_cAccountController.getHoldStockIDList(ctnHoldStockIDList);
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
 			double price = context.pool().get(sHoldStockID).price();
-			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
+			m_cAccountController.flushCurrentPrice(sHoldStockID, price);
 		}
 		
 		// callback for strategy onDayStart
@@ -149,14 +149,14 @@ public class Quant {
 			m_context.setDAContext(context);
 			
 			// update account stock price info
-			m_accountDriver.setDateTime(context.date(), context.time());
+			m_cAccountController.setDateTime(context.date(), context.time());
 			List<String> ctnHoldStockIDList = new ArrayList<String>();
-			m_accountDriver.getHoldStockIDList(ctnHoldStockIDList);
+			m_cAccountController.getHoldStockIDList(ctnHoldStockIDList);
 			for(int i=0; i<ctnHoldStockIDList.size(); i++)
 			{
 				String sHoldStockID = ctnHoldStockIDList.get(i);
 				double price = context.pool().get(sHoldStockID).price();
-				m_accountDriver.flushCurrentPrice(sHoldStockID, price);
+				m_cAccountController.flushCurrentPrice(sHoldStockID, price);
 			}
 			
 			// callback for strategy onMinuteData
@@ -171,25 +171,25 @@ public class Quant {
 		m_context.setDAContext(context);
 		
 		// update account stock price info
-		m_accountDriver.setDateTime(context.date(), context.time());
+		m_cAccountController.setDateTime(context.date(), context.time());
 		List<String> ctnHoldStockIDList = new ArrayList<String>();
-		m_accountDriver.getHoldStockIDList(ctnHoldStockIDList);
+		m_cAccountController.getHoldStockIDList(ctnHoldStockIDList);
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
 			double price = context.pool().get(sHoldStockID).price();
-			m_accountDriver.flushCurrentPrice(sHoldStockID, price);
+			m_cAccountController.flushCurrentPrice(sHoldStockID, price);
 		}
 	
 		// callback for strategy onDayFinish
 		m_stratety.onDayFinish(m_context);
 		
-		m_accountDriver.newDayEnd();
+		m_cAccountController.newDayEnd();
 	}
 	
 	private IEngineListener m_listener;
 	private QuantContext m_context;
 	private AccountProxy m_accountProxy;
-	private AccoutDriver m_accountDriver;
+	private AccountController m_cAccountController;
 	private QuantStrategy m_stratety;
 }

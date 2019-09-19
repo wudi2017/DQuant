@@ -6,7 +6,7 @@ import java.util.List;
 import pers.di.account.common.*;
 import pers.di.common.*;
 
-public abstract class Account {
+public abstract class IAccount {
 	
 	public static interface ICallback
 	{

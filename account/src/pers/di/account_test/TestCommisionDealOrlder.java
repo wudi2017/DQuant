@@ -3,8 +3,8 @@ package pers.di.account_test;
 import java.util.ArrayList;
 import java.util.List;
 
-import pers.di.account.Account;
-import pers.di.account.AccoutDriver;
+import pers.di.account.IAccount;
+import pers.di.account.AccountController;
 import pers.di.account.IMarketOpe;
 import pers.di.account.common.CommissionOrder;
 import pers.di.account.common.HoldStock;
@@ -75,21 +75,21 @@ public class TestCommisionDealOrlder {
 	@CTest.test
 	public static void test_commision_sort()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
-		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-10", "14:00:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 600, 10.6f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 12.1f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 12.8f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 9.89f);
 		acc.postTradeOrder(TRANACT.BUY, "600002", 300, 21.18f); // chengjiao all
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 11.89f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		//check
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
@@ -101,8 +101,8 @@ public class TestCommisionDealOrlder {
 		}
 		
 		
-		cAccoutDriver.setDateTime("2017-10-11", "13:00:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-11", "13:00:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 11.5f); // chengjiao 100 10.55
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 12.5f); // chengjiao 200 10.55
 		acc.postTradeOrder(TRANACT.BUY, "600001", 300, 9.18f);
@@ -158,7 +158,7 @@ public class TestCommisionDealOrlder {
 				}
 			}
 		}
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		//check
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
@@ -173,8 +173,8 @@ public class TestCommisionDealOrlder {
 		}
 				
 		
-		cAccoutDriver.setDateTime("2017-10-12", "14:30:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-12", "14:30:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.SELL, "600001", 200, 8.68f); // chengjiao 100
 		acc.postTradeOrder(TRANACT.SELL, "600001", 100, 10.85f);
 		acc.postTradeOrder(TRANACT.SELL, "600001", 100, 8.18f); // chufa maichu, chengjiao 100
@@ -201,7 +201,7 @@ public class TestCommisionDealOrlder {
 				}
 			}
 		}
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 	}
 	
 	

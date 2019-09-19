@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
-import pers.di.account.Account.ICallback;
+import pers.di.account.IAccount.ICallback;
 import pers.di.account.common.CommissionOrder;
 import pers.di.account.common.HoldStock;
 import pers.di.account.common.TRANACT;
@@ -12,9 +12,9 @@ import pers.di.common.*;
 
 public class AccountProxy {
 	
-	public AccountProxy(AccoutDriver accoutDriver)
+	public AccountProxy(AccountController cTestAccountController)
 	{
-		m_cAccount = accoutDriver.account();
+		m_cAccount = cTestAccountController.account();
 	}
 	
 	public String ID()
@@ -85,5 +85,5 @@ public class AccountProxy {
 		return retList;
 	}
 	
-	private Account m_cAccount;
+	private IAccount m_cAccount;
 }

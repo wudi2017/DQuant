@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
-import pers.di.account.Account.ICallback;
+import pers.di.account.IAccount.ICallback;
 import pers.di.account.common.*;
 import pers.di.common.*;
 
-public class TestAccountDriver {
+public class TestAccountController {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 	
@@ -57,9 +57,9 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_reset()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		Account acc = cAccoutDriver.account();
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		IAccount acc = cAccountController.account();
 		acc.registerCallback(new AccountNotify());
 		
 		// set default
@@ -71,7 +71,7 @@ public class TestAccountDriver {
 		}
 		
 		// call reset
-		cAccoutDriver.reset(10*10000f);
+		cAccountController.reset(10*10000f);
 		
 		// check
 		{
@@ -87,20 +87,20 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_buy()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
-		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-10", "14:00:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
-		cAccoutDriver.setDateTime("2017-11-11", "13:38:55");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-11-11", "13:38:55");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
 		
 		// check
@@ -143,25 +143,25 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_sell()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
 		// buy
-		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
+		cAccountController.setDateTime("2017-10-10", "14:00:01");
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
-		cAccoutDriver.newDayEnd();
-		cAccoutDriver.setDateTime("2017-11-11", "13:38:55");
+		cAccountController.newDayEnd();
+		cAccountController.setDateTime("2017-11-11", "13:38:55");
 		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
 		// sell
-		cAccoutDriver.setDateTime("2017-11-13", "14:44:44");
+		cAccountController.setDateTime("2017-11-13", "14:44:44");
 		acc.postTradeOrder(TRANACT.SELL, "300002", 100, 10.0f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
 		// check
 		{
@@ -201,9 +201,9 @@ public class TestAccountDriver {
 		}
 		
 		// sell
-		cAccoutDriver.setDateTime("2017-11-14", "09:50:01");
+		cAccountController.setDateTime("2017-11-14", "09:50:01");
 		acc.postTradeOrder(TRANACT.SELL, "300002", 400, 5.25f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		// check
 		{
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
@@ -235,21 +235,21 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_flushCurrentPrice()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
-		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-10", "14:00:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
-		cAccoutDriver.setDateTime("2017-10-11", "14:30:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-11", "14:30:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
 		List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 		CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
@@ -266,7 +266,7 @@ public class TestAccountDriver {
 				CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, 
 						(100*1.60f + 200*2.0f)*(1+s_transactionCostsRatioBuy)/300, 2);
 				
-				cAccoutDriver.flushCurrentPrice("600001", 3.14f);
+				cAccountController.flushCurrentPrice("600001", 3.14f);
 				CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 3.14, 2);
 			}
 		}
@@ -275,21 +275,21 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_CommissionOrder()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
-		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-10", "14:00:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
-		cAccoutDriver.setDateTime("2017-10-11", "14:30:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-11", "14:30:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
-		cAccoutDriver.setDateTime("2017-10-11", "14:32:01");
+		cAccountController.setDateTime("2017-10-11", "14:32:01");
 		acc.postTradeOrder(TRANACT.SELL, "600001", 100, 1.12f);
 		
 		List<CommissionOrder> ctnCommissionList = new ArrayList<CommissionOrder>();
@@ -310,28 +310,28 @@ public class TestAccountDriver {
 		CTest.EXPECT_DOUBLE_EQ(cCommissionOrder1.price, 1.12f, 2);
 		CTest.EXPECT_TRUE(0 == cCommissionOrder1.tranAct.compareTo(TRANACT.SELL));
 		
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
 	}
 	
 	@CTest.test
 	public static void test_accountDriver_DealOrder()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
-		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-10", "14:00:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
-		cAccoutDriver.setDateTime("2017-10-11", "14:30:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-11", "14:30:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
-		cAccoutDriver.setDateTime("2017-10-11", "14:32:01");
+		cAccountController.setDateTime("2017-10-11", "14:32:01");
 		acc.postTradeOrder(TRANACT.SELL, "600001", 100, 1.12f);
 		
 		List<DealOrder> ctnDealList = new ArrayList<DealOrder>();
@@ -364,7 +364,7 @@ public class TestAccountDriver {
 		String dumpInfoBeforeEnd = acc.dump();
 		CLog.output("TEST", "\n%s", dumpInfoBeforeEnd);
 		
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
 		String dumpInfoAfterEnd = acc.dump();
 		CLog.output("TEST", "\n%s", dumpInfoAfterEnd);
@@ -374,15 +374,15 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_inputcheck_buy_sell()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
 		{
-			cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
-			cAccoutDriver.newDayBegin();
+			cAccountController.setDateTime("2017-10-10", "14:00:01");
+			cAccountController.newDayBegin();
 			int ret = acc.postTradeOrder(TRANACT.BUY, "600001", 20000, 1.5f);
 			CTest.EXPECT_LONG_EQ(ret, 0);
 			ret = acc.postTradeOrder(TRANACT.BUY, "600002", 20000, 1.5f);
@@ -396,12 +396,12 @@ public class TestAccountDriver {
 			List<CommissionOrder> ctnCommissionList = new ArrayList<CommissionOrder>();
 			CTest.EXPECT_TRUE(acc.getCommissionOrderList(ctnCommissionList) == 0);
 			CTest.EXPECT_LONG_EQ(ctnCommissionList.size(), 3);
-			cAccoutDriver.newDayEnd();
+			cAccountController.newDayEnd();
 		}
 		
 		{
-			cAccoutDriver.setDateTime("2017-10-11", "14:00:01");
-			cAccoutDriver.newDayBegin();
+			cAccountController.setDateTime("2017-10-11", "14:00:01");
+			cAccountController.newDayBegin();
 			int ret = acc.postTradeOrder(TRANACT.SELL, "600001", 20000, 1.5f);
 			CTest.EXPECT_LONG_EQ(ret, 0);
 			ret = acc.postTradeOrder(TRANACT.SELL, "600002", 20000, 1.5f);
@@ -415,7 +415,7 @@ public class TestAccountDriver {
 			List<CommissionOrder> ctnCommissionList = new ArrayList<CommissionOrder>();
 			CTest.EXPECT_TRUE(acc.getCommissionOrderList(ctnCommissionList) == 0);
 			CTest.EXPECT_LONG_EQ(ctnCommissionList.size(), 3);
-			cAccoutDriver.newDayEnd();
+			cAccountController.newDayEnd();
 		}
 		
 	}
@@ -423,14 +423,14 @@ public class TestAccountDriver {
 	@CTest.test
 	public static void test_accountDriver_performance()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
-		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-10", "14:00:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 100, 1.60f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 200, 2.00f);
 		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
@@ -443,40 +443,40 @@ public class TestAccountDriver {
 		int iTest = 0;
 		for(; iTest<10000*100; iTest++)
 		{
-			cAccoutDriver.setDateTime("2017-10-10", "14:00:30");
+			cAccountController.setDateTime("2017-10-10", "14:00:30");
 			for(int i=0; i<ctnHoldList.size(); i++)
 			{
 				HoldStock cHoldStock = ctnHoldList.get(i);
 				if(cHoldStock.stockID.equals("600001"))
 				{
-					cAccoutDriver.flushCurrentPrice("600001", 3.14f);
+					cAccountController.flushCurrentPrice("600001", 3.14f);
 				}
 				if(cHoldStock.stockID.equals("300002"))
 				{
-					cAccoutDriver.flushCurrentPrice("300002", 6.28f);
+					cAccountController.flushCurrentPrice("300002", 6.28f);
 				}
 			}
 		}
 		CTest.EXPECT_LONG_EQ(iTest, iTestTimes);
 		
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 	}
 	
 	@CTest.test
 	public static void test_accountDriver_totalassets_singleHoldStock_refProfit()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true);
-		cAccoutDriver.reset(10*10000f);
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.reset(10*10000f);
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
-		cAccoutDriver.setDateTime("2017-10-10", "14:00:01");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2017-10-10", "14:00:01");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "600001", 1000, 16.8f);
 		acc.postTradeOrder(TRANACT.BUY, "600001", 2000, 20.0f);
 		acc.postTradeOrder(TRANACT.BUY, "300002", 500, 10.6f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
 		List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
 		CTest.EXPECT_STR_EQ(acc.date(), "2017-10-10");
@@ -504,8 +504,8 @@ public class TestAccountDriver {
 		CSystem.start();
 		CLog.config_setTag("TEST", true);
 		CLog.config_setTag("ACCOUNT", false);
-		CTest.ADD_TEST(TestAccountDriver.class);
-		CTest.RUN_ALL_TESTS("TestAccountDriver.");
+		CTest.ADD_TEST(TestAccountController.class);
+		CTest.RUN_ALL_TESTS("TestAccountController.");
 		CLog.output("TEST", "END");
 		CSystem.stop();
 	}

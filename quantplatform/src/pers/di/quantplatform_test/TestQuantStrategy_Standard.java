@@ -377,15 +377,15 @@ public class TestQuantStrategy_Standard {
 	@CTest.test
 	public void test_QuantStragety()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		if(0 != cAccoutDriver.load("mock001" ,  new MockMarketOpe(), true)
-				|| 0 != cAccoutDriver.reset(10*10000f))
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		if(0 != cAccountController.load("mock001" ,  new MockMarketOpe(), true)
+				|| 0 != cAccountController.reset(10*10000f))
 		{
-			CLog.error("TEST", "SampleTestStrategy AccoutDriver ERR!");
+			CLog.error("TEST", "SampleTestStrategy AccountController ERR!");
 		}
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
-		Quant.instance().run("HistoryTest 2019-05-01 2019-06-30", cAccoutDriver, new TestStrategy());
+		Quant.instance().run("HistoryTest 2019-05-01 2019-06-30", cAccountController, new TestStrategy());
 		
 		CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
 		int iRetTotalAssets = acc.getTotalAssets(totalAssets);
