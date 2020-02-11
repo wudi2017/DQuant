@@ -23,7 +23,7 @@ public class TestWebStockAPI {
 				StockItem cStockItem = ctnStockItem.get(i);  
 	            // System.out.println(cStockItem.name + "," + cStockItem.id);  
 	        } 
-			//System.out.println("count:" + ctnStockItem.size()); 
+			CTest.outputLog("getAllStockList:%d", ctnStockItem.size());
 		}
 		else
 		{

@@ -2,12 +2,11 @@ package pers.di.marketaccount_test;
 
 import java.util.*;
 
-import pers.di.account.Account;
-import pers.di.account.AccoutDriver;
+import pers.di.account.IAccount;
+import pers.di.account.AccountController;
 import pers.di.account.common.HoldStock;
 import pers.di.account.common.TRANACT;
 import pers.di.account.detail.*;
-import pers.di.account_test.TestAccountDriver.MockMarketOpe;
 import pers.di.common.*;
 import pers.di.marketaccount.mock.MockAccountOpe;
 import pers.di.marketaccount.real.RealAccountOpe;
@@ -163,41 +162,41 @@ public class TestRealAccountOpe {
 	@CTest.test
 	public static void testRealAccountOpe_withAccDriver()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("real001" ,  new RealAccountOpe(), true);
-		cAccoutDriver.reset(10*10000f);
-		cAccoutDriver.start();
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("real001" ,  new RealAccountOpe(), true);
+		cAccountController.reset(10*10000f);
+		cAccountController.start();
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		acc.postTradeOrder(TRANACT.BUY, "601988", 200, 4.0f);
 		
 		CThread.msleep(1000*60*5);
-		cAccoutDriver.stop();
+		cAccountController.stop();
 	}
 
 	@CTest.test
 	public static void test_mockaccountope_withAccDriver()
 	{
-		AccoutDriver cAccoutDriver = new AccoutDriver(s_accountDataRoot);
-		cAccoutDriver.load("mock001" ,  new MockAccountOpe(), true);
-		cAccoutDriver.reset(10*10000f);
-		cAccoutDriver.start();
+		AccountController cAccountController = new AccountController(s_accountDataRoot);
+		cAccountController.load("mock001" ,  new MockAccountOpe(), true);
+		cAccountController.reset(10*10000f);
+		cAccountController.start();
 		
-		Account acc = cAccoutDriver.account();
+		IAccount acc = cAccountController.account();
 		
 		// buy
-		cAccoutDriver.setDateTime("2016-12-02", "14:55:02");
-		cAccoutDriver.newDayBegin();
+		cAccountController.setDateTime("2016-12-02", "14:55:02");
+		cAccountController.newDayBegin();
 		acc.postTradeOrder(TRANACT.BUY, "300348", 2000, 28.931f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 
 		// sell
-		cAccoutDriver.setDateTime("2016-12-06", "14:33:29");
+		cAccountController.setDateTime("2016-12-06", "14:33:29");
 		acc.postTradeOrder(TRANACT.SELL, "300348", 2000, 28.301f);
-		cAccoutDriver.newDayEnd();
+		cAccountController.newDayEnd();
 		
 		CThread.msleep(1000*3);
-		cAccoutDriver.stop();
+		cAccountController.stop();
 	}
 
 	public static void main(String[] args) {

@@ -354,6 +354,11 @@ public abstract class CTest {
 		return RUN_ALL_TESTS("");
 	}
 	
+	public static void outputLog(String format, Object... args) {
+		String logstr = String.format(format, args);
+		System.out.println(logstr);
+	}
+	
 	private static long s_curTestPerformanceTCB = 0;
 	private static int s_curTestInnnerErrorCount = 0;
 	private static long s_curTestInnnerTCB = 0;
