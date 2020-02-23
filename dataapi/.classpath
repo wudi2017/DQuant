@@ -11,6 +11,6 @@
 	<classpathentry kind="lib" path="/external/jar/protobuf-java-2.4.1.jar"/>
 	<classpathentry kind="lib" path="/external/jar/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/external/jar/xmlParserAPIs-2.0.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/webstockapi"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/webstock"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -10,6 +10,6 @@
 	<classpathentry kind="lib" path="/external/jar/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/external/jar/xmlParserAPIs-2.0.2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/dataapi"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/localstock"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

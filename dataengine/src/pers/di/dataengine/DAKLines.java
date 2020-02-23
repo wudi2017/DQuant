@@ -2,8 +2,8 @@ package pers.di.dataengine;
 
 import pers.di.common.CListObserver;
 import pers.di.common.CUtilsDateTime;
-import pers.di.dataapi.common.KLine;
-import pers.di.dataapi.StockDataApi;
+import pers.di.localstock.StockDataApi;
+import pers.di.localstock.common.KLine;
 
 public class DAKLines {
 	public DAKLines(DAPool pool, String stockID)

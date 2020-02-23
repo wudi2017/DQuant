@@ -9,11 +9,11 @@ import pers.di.common.CListObserver;
 import pers.di.common.CLog;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
-import pers.di.dataapi.StockDataApi;
-import pers.di.dataapi.common.KLine;
-import pers.di.dataapi.common.RealTimeInfoLite;
-import pers.di.dataapi.common.StockUtils;
 import pers.di.dataengine.DAContext;
+import pers.di.localstock.StockDataApi;
+import pers.di.localstock.common.KLine;
+import pers.di.localstock.common.RealTimeInfoLite;
+import pers.di.localstock.common.StockUtils;
 
 public class TranDayChecker {
 	

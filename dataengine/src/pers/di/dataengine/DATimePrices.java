@@ -1,8 +1,8 @@
 package pers.di.dataengine;
 
 import pers.di.common.CListObserver;
-import pers.di.dataapi.common.TimePrice;
-import pers.di.dataapi.StockDataApi;
+import pers.di.localstock.StockDataApi;
+import pers.di.localstock.common.TimePrice;
 
 public class DATimePrices {
 

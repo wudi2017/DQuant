@@ -3,7 +3,7 @@ package pers.di.dataengine;
 import java.util.List;
 
 import pers.di.common.CListObserver;
-import pers.di.dataapi.StockDataApi;
+import pers.di.localstock.StockDataApi;
 
 //data access pool
 public class DAPool {

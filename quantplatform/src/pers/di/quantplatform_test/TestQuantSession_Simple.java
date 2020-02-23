@@ -7,10 +7,10 @@ import pers.di.account.*;
 import pers.di.account.common.HoldStock;
 import pers.di.account.common.TRANACT;
 import pers.di.common.*;
-import pers.di.dataapi.common.KLine;
-import pers.di.dataapi.common.TimePrice;
-import pers.di.dataapi_test.CommonTestHelper;
 import pers.di.dataengine.*;
+import pers.di.localstock.common.KLine;
+import pers.di.localstock.common.TimePrice;
+import pers.di.localstock_test.CommonTestHelper;
 import pers.di.quantplatform.*;
 
 public class TestQuantSession_Simple {

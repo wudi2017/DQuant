@@ -1,8 +1,8 @@
 package pers.di.dataengine.tasks;
 
 import pers.di.common.*;
-import pers.di.dataapi.StockDataApi;
 import pers.di.dataengine.*;
+import pers.di.localstock.StockDataApi;
 
 public class EngineTaskAllDataUpdate extends CDateTimeThruster.ScheduleTask
 {

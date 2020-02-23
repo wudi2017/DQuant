@@ -6,7 +6,7 @@ import java.util.*;
 import org.json.JSONObject;
 import pers.di.common.*;
 import pers.di.dataengine.tasks.*;
-import pers.di.dataapi.StockDataApi;
+import pers.di.localstock.StockDataApi;
 
 public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine(); 
