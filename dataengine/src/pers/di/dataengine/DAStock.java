@@ -1,7 +1,7 @@
 package pers.di.dataengine;
 
 import pers.di.common.CObjectObserver;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 import pers.di.localstock.common.StockInfo;
 
 public class DAStock {
@@ -11,7 +11,7 @@ public class DAStock {
 		m_pool = pool;
 		m_stockID = stockID;
 		obsStockInfo = new CObjectObserver<StockInfo>();
-		int errStockInfo = StockDataApi.instance().buildStockInfoObserver(stockID, obsStockInfo);
+		int errStockInfo = LocalStock.instance().buildStockInfoObserver(stockID, obsStockInfo);
 		if(0 != errStockInfo)
 		{
 			obsStockInfo.build(new StockInfo());

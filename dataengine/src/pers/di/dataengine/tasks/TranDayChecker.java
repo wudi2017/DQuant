@@ -10,7 +10,7 @@ import pers.di.common.CLog;
 import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataengine.DAContext;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 import pers.di.localstock.common.KLine;
 import pers.di.localstock.common.RealTimeInfoLite;
 import pers.di.localstock.common.StockUtils;
@@ -61,9 +61,9 @@ public class TranDayChecker {
 		{
 			// 确认今天是否是交易日
 			String yesterdayDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(date, -1);
-			StockDataApi.instance().updateLocalStocks("999999", yesterdayDate);
+			LocalStock.instance().updateLocalStocks("999999", yesterdayDate);
 			CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
-			int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
+			int errKLineListSZZS = LocalStock.instance().buildDayKLineListObserver(
 					"999999", "2000-01-01", "2100-01-01", obsKLineListSZZS);
 			for(int i = 0; i < obsKLineListSZZS.size(); i++)  
 	        {  
@@ -83,7 +83,7 @@ public class TranDayChecker {
 					List<RealTimeInfoLite> ctnRealTimeInfos = new ArrayList<RealTimeInfoLite>();
 					List<String> stockIDs = new ArrayList<String>();
 					stockIDs.add("999999");
-					int errRealTimeInfo = StockDataApi.instance().loadRealTimeInfo(stockIDs, ctnRealTimeInfos);
+					int errRealTimeInfo = LocalStock.instance().loadRealTimeInfo(stockIDs, ctnRealTimeInfos);
 					if(0 == errRealTimeInfo)
 					{
 						if(ctnRealTimeInfos.get(0).date.compareTo(date) == 0)
@@ -108,18 +108,18 @@ public class TranDayChecker {
 	{
 		m_hisTranDates = new HashSet<String>();
 		CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
-		int errKLineListSZZS = StockDataApi.instance().buildDayKLineListObserver(
+		int errKLineListSZZS = LocalStock.instance().buildDayKLineListObserver(
 				"999999", "1990-01-01", "2100-01-01", obsKLineListSZZS);
 		if(0 != errKLineListSZZS)
 		{
-			StockDataApi.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
+			LocalStock.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
 		}
 		else
 		{
 			if(obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date.compareTo(date) < 0
 					&& obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date.compareTo(CUtilsDateTime.GetCurDateStr()) < 0)
 			{
-				StockDataApi.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
+				LocalStock.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
 			}
 		}
 		

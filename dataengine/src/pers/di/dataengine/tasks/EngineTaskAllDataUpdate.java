@@ -2,7 +2,7 @@ package pers.di.dataengine.tasks;
 
 import pers.di.common.*;
 import pers.di.dataengine.*;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 
 public class EngineTaskAllDataUpdate extends CDateTimeThruster.ScheduleTask
 {
@@ -17,7 +17,7 @@ public class EngineTaskAllDataUpdate extends CDateTimeThruster.ScheduleTask
 			return;
 		}
 		CLog.output("DENGINE", "[%s %s] AllDataUpdate...", date, time);
-		StockDataApi.instance().updateAllLocalStocks(date);
+		LocalStock.instance().updateAllLocalStocks(date);
 		CLog.output("DENGINE", "[%s %s] AllDataUpdate Success", date, time);
 	}
 	private SharedSession m_taskSharedSession;

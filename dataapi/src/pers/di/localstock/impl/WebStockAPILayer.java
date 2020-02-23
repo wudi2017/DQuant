@@ -1,4 +1,4 @@
-package pers.di.localstock;
+package pers.di.localstock.impl;
 
 import java.util.ArrayList;
 import java.util.List;

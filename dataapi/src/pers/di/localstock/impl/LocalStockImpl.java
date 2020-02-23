@@ -1,27 +1,36 @@
-package pers.di.localstock;
+package pers.di.localstock.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import pers.di.common.*;
-import pers.di.localstock.common.*;
+import pers.di.common.CListObserver;
+import pers.di.common.CLog;
+import pers.di.common.CObjectContainer;
+import pers.di.common.CObjectObserver;
+import pers.di.common.CUtilsDateTime;
+import pers.di.common.CUtilsMath;
+import pers.di.localstock.ILocalStock;
+import pers.di.localstock.common.KLine;
+import pers.di.localstock.common.RealTimeInfoLite;
+import pers.di.localstock.common.StockInfo;
+import pers.di.localstock.common.StockItem;
+import pers.di.localstock.common.TimePrice;
 
-public class StockDataApi {
-	
-	private static StockDataApi s_instance = new StockDataApi(CSystem.getRWRoot() + "\\data"); 
-	public static StockDataApi instance() {  
-		return s_instance;  
-	} 
-	private StockDataApi(String rootDir) 
+public class LocalStockImpl implements ILocalStock {
+	public LocalStockImpl(String rootDir) 
 	{
 		m_cBaseDataLayer = new BaseDataLayer(rootDir);
 		m_cCache = new StockDataApiCache();
 	}
 	
+	@Override
 	public boolean resetDataRoot(String dateRoot)
 	{
 		m_cCache.clearAllCache();
 		return m_cBaseDataLayer.resetDataRoot(dateRoot);
 	}
+	
+	@Override
 	public String dataRoot()
 	{
 		return m_cBaseDataLayer.dataRoot();
@@ -32,6 +41,7 @@ public class StockDataApi {
 	 * 
 	 * localLatestDate 时间戳在全部更新完毕后即更新
 	 */
+	@Override
 	public int updateAllLocalStocks(String dateStr)
 	{
 		if(null == m_cCache.localLatestDate)
@@ -67,6 +77,7 @@ public class StockDataApi {
 	/*
 	 * 强制更新单只股票数据
 	 */
+	@Override
 	public int updateLocalStocks(String stockID, String dateStr)
 	{
 		if(null == m_cCache.localLatestDate)
@@ -114,6 +125,7 @@ public class StockDataApi {
 	 * 参数：
 	 *     observer 观察器
 	 */
+	@Override
 	public int buildAllStockIDObserver(CListObserver<String> observer)
 	{
 		int error = 0;
@@ -151,6 +163,7 @@ public class StockDataApi {
 	 * 参数：
 	 *     observer 观察器
 	 */
+	@Override
 	public int buildStockInfoObserver(String id, CObjectObserver<StockInfo> observer)
 	{
 		int error = 0;
@@ -192,6 +205,7 @@ public class StockDataApi {
 	 * 参数：
 	 *     observer 观察器
 	 */
+	@Override
 	public int buildDayKLineListObserver(String stockID, String fromDate, String toDate, CListObserver<KLine> observer)
 	{
 		int error = 0;
@@ -252,6 +266,7 @@ public class StockDataApi {
 	 * 参数：
 	 *     observer 观察器
 	 */
+	@Override
 	public int buildMinTimePriceListObserver(String id, String date, 
 			String beginTime, String endTime, CListObserver<TimePrice> observer)
 	{
@@ -364,6 +379,7 @@ public class StockDataApi {
 	 * 参数：
 	 *     container 
 	 */
+	@Override
 	public int loadRealTimeInfo(List<String> stockIDs, List<RealTimeInfoLite> container)
 	{
 		return m_cBaseDataLayer.getRealTimeInfo(stockIDs, container);

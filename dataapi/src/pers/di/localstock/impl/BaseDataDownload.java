@@ -1,4 +1,4 @@
-package pers.di.localstock;
+package pers.di.localstock.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;

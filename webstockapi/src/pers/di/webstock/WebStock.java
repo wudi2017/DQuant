@@ -1,6 +1,6 @@
 package pers.di.webstock;
 
-import pers.di.webstock.func.WebStockAPIImpl;
+import pers.di.webstock.impl.WebStockImpl;
 
 public class WebStock {
 	
@@ -8,6 +8,6 @@ public class WebStock {
 		return s_instance;  
 	} 
 	
-	private static IWebStock s_instance = new WebStockAPIImpl(); 
+	private static IWebStock s_instance = new WebStockImpl(); 
 	private WebStock () {}
 }

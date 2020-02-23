@@ -1,4 +1,4 @@
-package pers.di.webstock.func;
+package pers.di.webstock.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -7,11 +7,9 @@ import pers.di.common.CFile;
 import pers.di.common.CFileSystem;
 import pers.di.common.CTest;
 import pers.di.common.CUtilsDateTime;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 
 public class CommonTestHelper {
-	
-	private static StockDataApi s_StockDataApi = StockDataApi.instance();
 	private static String s_updateFinish = "updateFinish.txt";
 	private static String s_newestDate = "2017-08-10";
 	private static List<String> s_stockIDs = new ArrayList<String>()
@@ -23,7 +21,7 @@ public class CommonTestHelper {
 		
 	public static void InitLocalData(String newestDate, List<String> stockIDs)
 	{
-		String dataRoot = s_StockDataApi.dataRoot();
+		String dataRoot = LocalStock.instance().dataRoot();
 		String fileName = dataRoot + "\\" + s_updateFinish;
 		
 		boolean bAlreadyInitOK = true;
@@ -80,7 +78,7 @@ public class CommonTestHelper {
 			for(int i=0; i<stockIDs.size();i++)
 			{
 				String stockID = stockIDs.get(i);
-				int ret = s_StockDataApi.updateLocalStocks(stockID, newestDate);
+				int ret = LocalStock.instance().updateLocalStocks(stockID, newestDate);
 				CTest.EXPECT_LONG_EQ(0, ret);
 			}
 

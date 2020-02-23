@@ -6,8 +6,8 @@ import java.util.List;
 import pers.di.webstock.WebStock;
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
-import pers.di.localstock.WebStockAPILayer;
 import pers.di.localstock.common.*;
+import pers.di.localstock.impl.WebStockAPILayer;
 
 public class TestWebStockAPILayer {
 	

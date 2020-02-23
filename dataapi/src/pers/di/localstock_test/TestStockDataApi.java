@@ -32,16 +32,16 @@ public class TestStockDataApi {
 //	@CTest.test
 //	public static void test_updateAllLocalStocks()
 //	{
-//		s_StockDataApi.updateAllLocalStocks("2017-08-15");
+//		LocalStock.instance().updateAllLocalStocks("2017-08-15");
 //	}
 	
 	@CTest.test
 	public static void test_updateLocalStocks()
 	{
-		String workDir = StockDataApi.instance().dataRoot();
+		String workDir = LocalStock.instance().dataRoot();
 		String stockID = s_stockIDs.get(0);
 		String dateStr = s_newestDate;
-		int ret = s_StockDataApi.updateLocalStocks(stockID, dateStr);
+		int ret = LocalStock.instance().updateLocalStocks(stockID, dateStr);
 		CTest.EXPECT_LONG_EQ(0, ret);
 			
 		String checkFileName = "";
@@ -57,7 +57,7 @@ public class TestStockDataApi {
 	public static void test_buildAllStockIDObserver()
 	{
 		CListObserver<String> observer = new CListObserver<String>();
-		int error = s_StockDataApi.buildAllStockIDObserver(observer);
+		int error = LocalStock.instance().buildAllStockIDObserver(observer);
 		CTest.EXPECT_LONG_EQ(error, 0);
 		CTest.EXPECT_TRUE(observer.size() >= 3);
 	}
@@ -68,7 +68,7 @@ public class TestStockDataApi {
 		String stockID = "600000";
 		
 		CObjectObserver<StockInfo> observer = new CObjectObserver<StockInfo>();
-		int error = s_StockDataApi.buildStockInfoObserver(stockID, observer);
+		int error = LocalStock.instance().buildStockInfoObserver(stockID, observer);
 		CTest.EXPECT_LONG_EQ(error, 0);
 		CTest.EXPECT_STR_EQ(observer.get().name, "ÆÖ·¢ÒøÐÐ");
 	}
@@ -79,7 +79,7 @@ public class TestStockDataApi {
 		String stockID = "600056";
 
 		CListObserver<KLine> obsKLineList = new CListObserver<KLine>();
-		int error = s_StockDataApi.buildDayKLineListObserver(stockID, "1998-01-01", "2019-08-31", obsKLineList);
+		int error = LocalStock.instance().buildDayKLineListObserver(stockID, "1998-01-01", "2019-08-31", obsKLineList);
 		// CLog.output("TEST", "KLine count: %d", obsKLineList.size());
 		CTest.EXPECT_LONG_EQ(obsKLineList.size(), 5042);
 		int iCheckCnt = 0;
@@ -145,7 +145,7 @@ public class TestStockDataApi {
 //			}
 //			
 //			CListObserver<KLine> obsKLineList = new CListObserver<KLine>();
-//			error = s_StockDataApi.buildDayKLineListObserver(stockID, "2017-05-12", "2017-05-12", obsKLineList);
+//			error = LocalStock.instance().buildDayKLineListObserver(stockID, "2017-05-12", "2017-05-12", obsKLineList);
 //			if(0 == error)
 //			{
 //				KLine cKLine = obsKLineList.get(0);
@@ -157,7 +157,7 @@ public class TestStockDataApi {
 			List<CurvePoint> PoiList = new ArrayList<CurvePoint>();
 			
 			CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
-			int errObsTimePriceList = s_StockDataApi.buildMinTimePriceListObserver(stockID, "2017-05-12", 
+			int errObsTimePriceList = LocalStock.instance().buildMinTimePriceListObserver(stockID, "2017-05-12", 
 					"09:25:00", "15:00:00", obsTimePriceList);
 			CTest.EXPECT_LONG_EQ(obsTimePriceList.size(), 242);
 			int iCheckCnt = 0;
@@ -207,7 +207,7 @@ public class TestStockDataApi {
 		List<RealTimeInfoLite> ctnRealTimeInfos = new ArrayList<RealTimeInfoLite>();
 		List<String> stocks = new ArrayList<String>();
 		stocks.add("600000");
-		int error = s_StockDataApi.loadRealTimeInfo(stocks, ctnRealTimeInfos);
+		int error = LocalStock.instance().loadRealTimeInfo(stocks, ctnRealTimeInfos);
 		CTest.EXPECT_LONG_EQ(error, 0);
 		CTest.EXPECT_TRUE(ctnRealTimeInfos.get(0).curPrice>0);
 		CTest.EXPECT_TRUE(ctnRealTimeInfos.get(0).time.length()==8);
@@ -219,8 +219,8 @@ public class TestStockDataApi {
 		String newRootDir = "C:\\temp\\NewRoot1";
 		CFileSystem.removeDir(newRootDir);
 		CTest.EXPECT_FALSE(CFileSystem.isDirExist(newRootDir));
-		s_StockDataApi.resetDataRoot(newRootDir);
-		CTest.EXPECT_STR_EQ(s_StockDataApi.dataRoot(), newRootDir);
+		LocalStock.instance().resetDataRoot(newRootDir);
+		CTest.EXPECT_STR_EQ(LocalStock.instance().dataRoot(), newRootDir);
 		CTest.EXPECT_TRUE(CFileSystem.isDirExist(newRootDir));
 		
 		// init test data
@@ -229,7 +229,7 @@ public class TestStockDataApi {
 		String workDir = newRootDir;
 		String stockID = s_stockIDs.get(0);
 		String dateStr = s_newestDate;
-		int ret = s_StockDataApi.updateLocalStocks(stockID, dateStr);
+		int ret = LocalStock.instance().updateLocalStocks(stockID, dateStr);
 		CTest.EXPECT_LONG_EQ(0, ret);
 			
 		String checkFileName = "";
@@ -246,10 +246,9 @@ public class TestStockDataApi {
 	public static void test_updateAllLocalStocks()
 	{
 		String dateStr = CUtilsDateTime.GetCurDateStr();
-		s_StockDataApi.updateAllLocalStocks(dateStr);
+		LocalStock.instance().updateAllLocalStocks(dateStr);
 	}
 	
-	public static StockDataApi s_StockDataApi = StockDataApi.instance();
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestStockDataApi.class);

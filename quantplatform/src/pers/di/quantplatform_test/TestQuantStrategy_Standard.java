@@ -6,7 +6,7 @@ import pers.di.account.*;
 import pers.di.account.common.*;
 import pers.di.common.*;
 import pers.di.dataengine.*;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 import pers.di.localstock.common.*;
 import pers.di.quantplatform.*;
 import pers.di.quantplatform_test.TestQuantSession_Simple.TestStrategy;
@@ -400,7 +400,7 @@ public class TestQuantStrategy_Standard {
 	{
 		String stockID = "000060";
 		CListObserver<TimePrice> obsTimePriceList = new CListObserver<TimePrice>();
-		int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(stockID, "2016-03-10", 
+		int errObsTimePriceList = LocalStock.instance().buildMinTimePriceListObserver(stockID, "2016-03-10", 
 				"09:00:00", "15:00:00", obsTimePriceList);
 		for(int i=0; i<obsTimePriceList.size(); i++)
 		{

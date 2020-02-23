@@ -1,4 +1,4 @@
-package pers.di.webstock.func;
+package pers.di.webstock.impl;
 
 import java.util.List;
 
@@ -9,11 +9,11 @@ import pers.di.webstock.IWebStock.RealTimeInfoLite;
 import pers.di.webstock.IWebStock.StockInfo;
 import pers.di.webstock.IWebStock.StockItem;
 import pers.di.webstock.IWebStock.TransactionRecord;
-import pers.di.webstock.func.*;
+import pers.di.webstock.impl.*;
 
-public class WebStockAPIImpl implements IWebStock {
+public class WebStockImpl implements IWebStock {
 	
-	public WebStockAPIImpl()
+	public WebStockImpl()
 	{
 		m_DataWebStockAllList = new DataWebStockAllList();
 		m_DataWebStockInfo = new DataWebStockInfo();

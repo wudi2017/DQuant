@@ -3,7 +3,7 @@ package pers.di.dataengine;
 import java.util.List;
 
 import pers.di.common.CListObserver;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 
 //data access pool
 public class DAPool {
@@ -55,7 +55,7 @@ public class DAPool {
 
 		// 构建所有股票ID
 		m_obsStockIDList = new CListObserver<String>();
-		StockDataApi.instance().buildAllStockIDObserver(m_obsStockIDList);	
+		LocalStock.instance().buildAllStockIDObserver(m_obsStockIDList);	
 		
 		m_currentDayTimePriceCache.buildAll(date, time);
 	}

@@ -6,7 +6,7 @@ import java.util.*;
 import org.json.JSONObject;
 import pers.di.common.*;
 import pers.di.dataengine.tasks.*;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 
 public class StockDataEngine {
 	private static StockDataEngine s_instance = new StockDataEngine(); 
@@ -14,7 +14,7 @@ public class StockDataEngine {
 	{
 		m_SharedSession = new SharedSession();
 		m_CDateTimeThruster = new CDateTimeThruster();
-		CLog.output("DENGINE", "DataRoot: %s", StockDataApi.instance().dataRoot());
+		CLog.output("DENGINE", "DataRoot: %s", LocalStock.instance().dataRoot());
 	}
 	public static StockDataEngine instance() {  
 		return s_instance;  
@@ -26,8 +26,8 @@ public class StockDataEngine {
 	 */
 	public boolean resetDataRoot(String dateRoot)
 	{
-		boolean bRet = StockDataApi.instance().resetDataRoot(dateRoot);
-		CLog.output("DENGINE", "ResetDataRoot: %s", StockDataApi.instance().dataRoot());
+		boolean bRet = LocalStock.instance().resetDataRoot(dateRoot);
+		CLog.output("DENGINE", "ResetDataRoot: %s", LocalStock.instance().dataRoot());
 		return bRet;
 	}
 	/*
@@ -35,7 +35,7 @@ public class StockDataEngine {
 	 */
 	public String getDataRoot()
 	{
-		return StockDataApi.instance().dataRoot();
+		return LocalStock.instance().dataRoot();
 	}
 	/*
 	 * ≈‰÷√¡øªØ“˝«Ê

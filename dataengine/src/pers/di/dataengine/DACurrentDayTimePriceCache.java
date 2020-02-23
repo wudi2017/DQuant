@@ -8,7 +8,7 @@ import java.util.Map;
 import pers.di.common.CListObserver;
 import pers.di.common.CLog;
 import pers.di.common.CUtilsDateTime;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 import pers.di.localstock.common.RealTimeInfoLite;
 import pers.di.localstock.common.TimePrice;
 
@@ -102,7 +102,7 @@ public class DACurrentDayTimePriceCache {
 					{
 						// 缓存中有数据，加载后面的部分
 						String beginTime = cObsTimePrice.get(0).time;
-						int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
+						int errObsTimePriceList = LocalStock.instance().buildMinTimePriceListObserver(
 								stockID, m_date, 
 								beginTime, m_time, cObsTimePrice);
 						if(errObsTimePriceList < 0)
@@ -114,7 +114,7 @@ public class DACurrentDayTimePriceCache {
 					else
 					{
 						// 缓存中没数据, 只从历史数据中加载当时时间的
-						int errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
+						int errObsTimePriceList = LocalStock.instance().buildMinTimePriceListObserver(
 								stockID, m_date, 
 								m_time, m_time, cObsTimePrice);
 						if(errObsTimePriceList < 0)
@@ -185,7 +185,7 @@ public class DACurrentDayTimePriceCache {
 			// 获取新数据并添加cache
 			// 添加实时数据
 			List<RealTimeInfoLite> ctnRealTimeInfos = new ArrayList<RealTimeInfoLite>();
-			int error = StockDataApi.instance().loadRealTimeInfo(stockIDsNeedUpdate, ctnRealTimeInfos);
+			int error = LocalStock.instance().loadRealTimeInfo(stockIDsNeedUpdate, ctnRealTimeInfos);
 			if(0 == error)
 			{
 				for(int i=0; i<ctnRealTimeInfos.size(); i++)

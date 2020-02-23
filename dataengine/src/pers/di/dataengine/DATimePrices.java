@@ -1,7 +1,7 @@
 package pers.di.dataengine;
 
 import pers.di.common.CListObserver;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 import pers.di.localstock.common.TimePrice;
 
 public class DATimePrices {
@@ -14,7 +14,7 @@ public class DATimePrices {
 		if(cmp < 0)
 		{
 			// 获取日期是测试日期之前的天，加载引擎数据，全天数据build
-			errObsTimePriceList = StockDataApi.instance().buildMinTimePriceListObserver(
+			errObsTimePriceList = LocalStock.instance().buildMinTimePriceListObserver(
 					stockID, date, 
 					"09:30:00", "15:00:00", m_obsTimePriceList);
 		}

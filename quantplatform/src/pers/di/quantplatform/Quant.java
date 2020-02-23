@@ -11,7 +11,7 @@ import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 import pers.di.dataengine.*;
 import pers.di.dataengine.tasks.SharedSession;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 import pers.di.localstock.common.*;
 
 public class Quant {

@@ -2,7 +2,7 @@ package pers.di.dataengine;
 
 import pers.di.common.CListObserver;
 import pers.di.common.CUtilsDateTime;
-import pers.di.localstock.StockDataApi;
+import pers.di.localstock.LocalStock;
 import pers.di.localstock.common.KLine;
 
 public class DAKLines {
@@ -12,13 +12,13 @@ public class DAKLines {
 		
 		if(pool.time().compareTo("15:10:00") > 0)
 		{
-			StockDataApi.instance().buildDayKLineListObserver(
+			LocalStock.instance().buildDayKLineListObserver(
 					stockID, "2000-01-01", pool.date(), m_obsKLineList);
 		}
 		else
 		{
 			String beforeDate = CUtilsDateTime.getDateStrForSpecifiedDateOffsetD(pool.date(), -1);
-			StockDataApi.instance().buildDayKLineListObserver(
+			LocalStock.instance().buildDayKLineListObserver(
 					stockID, "2000-01-01", beforeDate, m_obsKLineList);
 		}
 	}
