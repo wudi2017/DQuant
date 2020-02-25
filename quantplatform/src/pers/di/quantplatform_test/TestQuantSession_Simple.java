@@ -101,7 +101,7 @@ public class TestQuantSession_Simple {
 			TimePrice currentTimePrice = cTimePrices.get(cTimePrices.size()-1);
 			CTest.EXPECT_TRUE(currentTimePrice.time.equals(context.time()));
 
-			// CLog.output("TEST", "%s %s %s %.3f", StockID, ctx.date(), cTimePrice.time, cTimePrice.price);
+			//CLog.output("TEST", "%s %s %s %.3f", StockID, context.date(), currentTimePrice.time, currentTimePrice.price);
 			if(context.date().equals("2019-04-02") 
 					&& currentTimePrice.time.equals("09:30:00"))
 			{

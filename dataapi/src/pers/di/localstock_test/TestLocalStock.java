@@ -32,8 +32,8 @@ public class TestLocalStock {
 	@CTest.test
 	public static void test_updateAllLocalStocks()
 	{
-		//String dateStr = CUtilsDateTime.GetCurDateStr();
-		//LocalStock.instance().updateAllLocalStocks(dateStr);
+		String dateStr = CUtilsDateTime.GetCurDateStr();
+		LocalStock.instance().updateAllLocalStocks(dateStr);
 	}
 	
 	@CTest.test
@@ -217,6 +217,8 @@ public class TestLocalStock {
 	@CTest.test
 	public static void test_resetDataRoot()
 	{
+		String originDateRootDir = LocalStock.instance().dataRoot();
+		
 		String newRootDir = "C:\\temp\\NewRoot1";
 		CFileSystem.removeDir(newRootDir);
 		CTest.EXPECT_FALSE(CFileSystem.isDirExist(newRootDir));
@@ -241,6 +243,8 @@ public class TestLocalStock {
 		checkFileName = workDir + "\\" + stockID + "\\" + s_BaseInfoFile;
 		CTest.EXPECT_TRUE(CFileSystem.isFileExist(checkFileName));
 		
+		// revert date root to origin
+		LocalStock.instance().resetDataRoot(originDateRootDir);
 	}
 	
 	

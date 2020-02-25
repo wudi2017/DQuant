@@ -287,6 +287,8 @@ public class TestQuantStrategy_Standard {
 			
 			m_seletctID.clear();
 			
+			int iCheckCount = 0;
+			
 			// select strategy
 			List<SelectResult> cSelectResultList = new ArrayList<SelectResult>();
 			for(int i=0; i<context.pool().size(); i++)
@@ -294,17 +296,20 @@ public class TestQuantStrategy_Standard {
 				DAStock cDAStock = context.pool().get(i);
 				
 				// stock set 
-				if(cDAStock.ID().compareTo("000001") >= 0 && cDAStock.ID().compareTo("000200") <= 0 &&
+				if(cDAStock.ID().compareTo("600000") >= 0 && cDAStock.ID().compareTo("600100") <= 0 &&
 						cDAStock.dayKLines().lastDate().equals(context.date())) {	
 					
 					DAKLines cDAKLines = cDAStock.dayKLines();
 					int iSize = cDAKLines.size();
 					if(iSize > 4)
 					{
+						iCheckCount++;
+						
 						KLine cStockDayCur = cDAKLines.get(iSize-1);
 						KLine cStockDayBefore1 = cDAKLines.get(iSize-2);
 						KLine cStockDayBefore2 = cDAKLines.get(iSize-3);
 
+						// 连续两天纯阴线
 						if(cStockDayCur.close < cStockDayCur.open //当天是阴线
 								&& cStockDayCur.close < cStockDayBefore1.close //当天收盘价低于昨天收盘价
 								&& cStockDayBefore1.close < cStockDayBefore1.open // 昨天是阴线
@@ -332,7 +337,7 @@ public class TestQuantStrategy_Standard {
 			
 			// output Selected log
 			String logStr = "";
-			logStr += String.format("Selected (%d) [ ", iAddCount);
+			logStr += String.format("Checked(%d) Selected (%d) [ ", iCheckCount, iAddCount);
 			if(iAddCount == 0) logStr += "null ";
 			for(int i=0; i< iAddCount; i++)
 			{

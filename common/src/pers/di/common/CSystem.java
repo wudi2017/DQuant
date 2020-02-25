@@ -38,29 +38,27 @@ public class CSystem {
 		return s_RunSessionRoot;
 	}
 	
-	private static String initRWRootDir()
-	{
+	private static String s_RWRoot;
+	private static String s_RunSessionRoot;
+	static {
+		// init rwRoot
 		String rwRoot = CSystem.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		rwRoot = CFileSystem.getParentDir(rwRoot);
-//		rwRoot = CFileSystem.getParentDir(rwRoot);
 		rwRoot = rwRoot + "\\rw";
 		if(!CFileSystem.isDirExist(rwRoot))
 		{
 			CFileSystem.createDir(rwRoot);
 		}
-		return rwRoot;
-	}
-	private static String initRunSessionDir()
-	{
-		String rwRoot = initRWRootDir();
+		System.out.println("CSystem-Static-Init rwRoot:" + rwRoot);
+		s_RWRoot = rwRoot;
+		// init runSessionRoot
 		SimpleDateFormat sdf =new SimpleDateFormat("yyyyMMddHHmmss");
 		String runSessionRoot = rwRoot + "\\RunSession\\" + sdf.format(new Date());
 		if(!CFileSystem.isDirExist(runSessionRoot))
 		{
 			CFileSystem.createDir(runSessionRoot);
 		}
-		return runSessionRoot;
+		System.out.println("CSystem-Static-Init runSessionRoot:" + runSessionRoot);
+		s_RunSessionRoot = runSessionRoot;
 	}
-	private static String s_RWRoot = initRWRootDir();
-	private static String s_RunSessionRoot = initRunSessionDir();
 }

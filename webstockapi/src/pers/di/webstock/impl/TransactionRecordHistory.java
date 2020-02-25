@@ -131,8 +131,23 @@ public class TransactionRecordHistory extends HttpHelper
 //		return error;
 //	}
 	
-	// get the page HTML and parse it
-	// 
+
+	/*
+	 * 从网络某只股票某日内的交易细节数据
+	 * 
+	 * 返回值：
+	 *     返回0为成功，其他值为失败
+	 * 参数：
+	 *     id: "600000"
+	 *         上海股票：60****
+	 *         深圳股票：00****或30****
+	 *     date: "2018-07-17"
+	 *     container 接收容器
+	 *     
+	 * 其他：
+	 *     V3: url: e.g. "http://stock.gtimg.cn/data/index.php?appn=detail&action=download&c=sh600103&d=20170124"
+	 *     V2: url: e.g. "http://market.finance.sina.com.cn/transHis.php?symbol=sz000001&date=2018-07-17&page=3"
+	 */
 	
 	public int getTransactionRecordHistory(String id, String date, List<TransactionRecord> container)
 	{
@@ -150,7 +165,7 @@ public class TransactionRecordHistory extends HttpHelper
 		
 		int error = 0;
 		
-		// "http://market.finance.sina.com.cn/transHis.php?symbol=sz000001&date=2018-04-27&page=78";
+		// "http://market.finance.sina.com.cn/transHis.php?symbol=sz000001&date=2018-07-17&page=3"
 		String urlStr = "http://market.finance.sina.com.cn/transHis.php?symbol=";
 
 		
