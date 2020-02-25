@@ -17,27 +17,17 @@ public abstract class IAccount {
 		}
 		abstract public void onNotify(CALLBACKTYPE cb);
 	}
-	
-	public abstract boolean aceessLock();
-	public abstract boolean aceessUnLock();
 
 	public abstract String ID();
 	public abstract String date();
 	public abstract String time();
-	
 	public abstract int getMoney(CObjectContainer<Double> ctnMoney);
-	
 	public abstract int postTradeOrder(TRANACT tranact, String stockID, int amount, double price);
-	
 	public abstract int getCommissionOrderList(List<CommissionOrder> ctnList);
-	
 	public abstract int getDealOrderList(List<DealOrder> ctnList);
-	
 	public abstract int getHoldStockList(List<HoldStock> ctnList);
-	
 	public abstract void registerCallback(ICallback cb);
-	
-	
+
 	/*************************************************************************************/
 	
 	public int getTotalAssets(CObjectContainer<Double> ctnTotalAssets)
@@ -190,4 +180,7 @@ public abstract class IAccount {
 		
 		return DumpInfo;
 	}
+	
+	protected abstract boolean aceessLock();
+	protected abstract boolean aceessUnLock();
 }

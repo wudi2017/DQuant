@@ -1,19 +1,20 @@
-package pers.di.marketaccount_test;
+package pers.di.marketope_test;
 
 import java.util.*;
 
 import pers.di.account.IAccount;
+import pers.di.account.IMarketOpe;
 import pers.di.account.AccountController;
 import pers.di.account.common.HoldStock;
 import pers.di.account.common.TRANACT;
 import pers.di.account.detail.*;
 import pers.di.common.*;
-import pers.di.marketaccount.mock.MockAccountOpe;
-import pers.di.marketaccount.real.RealAccountOpe;
-import pers.di.marketaccount.real.WrapperTHSApi;
+import pers.di.marketope.mock.MockMarketOpe;
+import pers.di.marketope.real.RealMarketOpe;
+import pers.di.marketope.real.WrapperTHSApi;
 import pers.di.thsapi.*;
 
-public class TestRealAccountOpe {
+public class TestRealMarketOpe {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 	
@@ -107,9 +108,8 @@ public class TestRealAccountOpe {
 		}
 	}
 	
-	public static class TestAccReplier extends IMarketDealReplier
+	public static class TestAccReplier extends IMarketOpe.IMarketDealReplier
 	{
-
 		@Override
 		public void onDeal(TRANACT tranact, String stockID, int amount, double price, double cost) {
 			// TODO Auto-generated method stub
@@ -125,7 +125,7 @@ public class TestRealAccountOpe {
 		WrapperTHSApi.s_bMockFlag = false;
 		
 		TestAccReplier cTestAccReplier = new TestAccReplier();
-		RealAccountOpe cRealAccountOpe = new RealAccountOpe();
+		RealMarketOpe cRealAccountOpe = new RealMarketOpe();
 		cRealAccountOpe.registerDealReplier(cTestAccReplier);
 		cRealAccountOpe.start();
 
@@ -144,7 +144,7 @@ public class TestRealAccountOpe {
 	public static void test_mockaccountope_single()
 	{
 		TestAccReplier cTestAccReplier = new TestAccReplier();
-		MockAccountOpe MockAccountOpe = new MockAccountOpe();
+		MockMarketOpe MockAccountOpe = new MockMarketOpe();
 		MockAccountOpe.registerDealReplier(cTestAccReplier);
 		MockAccountOpe.start();
 
@@ -163,7 +163,7 @@ public class TestRealAccountOpe {
 	public static void testRealAccountOpe_withAccDriver()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("real001" ,  new RealAccountOpe(), true);
+		cAccountController.load("real001" ,  new RealMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		cAccountController.start();
 		
@@ -178,7 +178,7 @@ public class TestRealAccountOpe {
 	public static void test_mockaccountope_withAccDriver()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockAccountOpe(), true);
+		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		cAccountController.start();
 		
@@ -202,8 +202,8 @@ public class TestRealAccountOpe {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		CSystem.start();
-		CTest.ADD_TEST(TestRealAccountOpe.class);
-		CTest.RUN_ALL_TESTS("TestRealAccountOpe.test_realaccountope_single");
+		CTest.ADD_TEST(TestRealMarketOpe.class);
+		CTest.RUN_ALL_TESTS("TestRealMarketOpe.test_realaccountope_single");
 		CSystem.stop();
 	}
 }

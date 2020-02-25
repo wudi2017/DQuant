@@ -65,6 +65,8 @@ public class TestStockDataEngine {
 	
 	public static class EngineListenerTesterY extends IEngineListener
 	{
+		private String stockID = "600056";
+		
 		@Override
 		public void onInitialize(DAContext context)
 		{
@@ -80,7 +82,10 @@ public class TestStockDataEngine {
 		{
 			if(context.date().equals("2007-11-12"))
 			{
-				context.addCurrentDayInterestMinuteDataID("600056");
+				context.addCurrentDayInterestMinuteDataID(stockID);
+				CLog.output("TEST", "EngineListenerTesterY.onTradingDayStart ID:%s Date:%s", 
+						stockID,
+						context.date());
 			}
 		}
 		@Override
@@ -88,7 +93,6 @@ public class TestStockDataEngine {
 		{
 			if(context.date().equals("2007-11-12"))
 			{
-				String stockID = "600056";
 				DATimePrices cDATimePrices = context.pool().get(stockID).timePrices();
 				TimePrice cCurrentTimePrice =  cDATimePrices.get(cDATimePrices.size()-1);
 				CLog.output("TEST", "EngineListenerTesterY.onDayDataPush ID:%s Time:%s PriceCount:%d Price:%.3f", 

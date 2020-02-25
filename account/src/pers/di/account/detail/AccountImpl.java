@@ -14,7 +14,7 @@ import pers.di.common.CSyncObj;
 import pers.di.common.CUtilsDateTime;
 import pers.di.common.CUtilsMath;
 
-public class AccountEntity extends IAccount {
+public class AccountImpl extends IAccount {
 	
 	@Override
 	public boolean aceessLock()
@@ -271,7 +271,7 @@ public class AccountEntity extends IAccount {
 	 * ******************************************************************************************
 	 */
 	
-	public AccountEntity()
+	public AccountImpl()
 	{
 		m_cSync = new CSyncObj();
 		m_ICallback = null;

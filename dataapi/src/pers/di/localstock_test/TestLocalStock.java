@@ -11,7 +11,7 @@ import pers.di.common.CImageCurve.CurvePoint;
 import pers.di.localstock.*;
 import pers.di.localstock.common.*;
 
-public class TestStockDataApi {
+public class TestLocalStock {
 	
 	private static String s_updateFinish = "updateFinish.txt";
 	
@@ -29,11 +29,12 @@ public class TestStockDataApi {
 		CommonTestHelper.InitLocalData(s_newestDate, s_stockIDs);
 	}
 	
-//	@CTest.test
-//	public static void test_updateAllLocalStocks()
-//	{
-//		LocalStock.instance().updateAllLocalStocks("2017-08-15");
-//	}
+	@CTest.test
+	public static void test_updateAllLocalStocks()
+	{
+		//String dateStr = CUtilsDateTime.GetCurDateStr();
+		//LocalStock.instance().updateAllLocalStocks(dateStr);
+	}
 	
 	@CTest.test
 	public static void test_updateLocalStocks()
@@ -242,17 +243,11 @@ public class TestStockDataApi {
 		
 	}
 	
-	@CTest.test
-	public static void test_updateAllLocalStocks()
-	{
-		String dateStr = CUtilsDateTime.GetCurDateStr();
-		LocalStock.instance().updateAllLocalStocks(dateStr);
-	}
 	
 	public static void main(String[] args) {
 		CSystem.start();
-		CTest.ADD_TEST(TestStockDataApi.class);
-		CTest.RUN_ALL_TESTS("TestStockDataApi.test_updateAllLocalStocks");
+		CTest.ADD_TEST(TestLocalStock.class);
+		CTest.RUN_ALL_TESTS("TestLocalStock.");
 		CSystem.stop();
 	}
 }

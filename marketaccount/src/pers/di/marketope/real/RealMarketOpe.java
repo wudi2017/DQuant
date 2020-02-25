@@ -1,4 +1,4 @@
-package pers.di.marketaccount.real;
+package pers.di.marketope.real;
 
 import java.util.*;
 
@@ -9,7 +9,7 @@ import pers.di.common.*;
 import pers.di.thsapi.*;
 import pers.di.thsapi.THSApi.*;
 
-public class RealAccountOpe extends IMarketOpe {
+public class RealMarketOpe extends IMarketOpe {
 	
 	public static double s_transactionCostsRatio_TransferFee = 0.00002; // 买卖过户费比率
 	public static double s_transactionCostsRatio_Poundage = 0.00025; // 买卖手续费比率（佣金部分）
@@ -17,7 +17,7 @@ public class RealAccountOpe extends IMarketOpe {
 	
 	public static double s_transactionCostsRatio_Sell_StampDuty = 0.001; // 卖出印花税比率
 	
-	public RealAccountOpe()
+	public RealMarketOpe()
 	{
 		m_THSApiInitFlag = WrapperTHSApi.initialize();
 		CLog.output("ACCOUNT", "RealAccountOpe WrapperTHSApi.initialize m_THSApiInitFlag = %d", m_THSApiInitFlag);
@@ -340,7 +340,7 @@ public class RealAccountOpe extends IMarketOpe {
 	
 	public static class MonitorTimerThread extends CThread
 	{
-		public MonitorTimerThread(RealAccountOpe cRealAccountOpe)
+		public MonitorTimerThread(RealMarketOpe cRealAccountOpe)
 		{
 			m_RealAccountOpe = cRealAccountOpe;
 		}
@@ -354,7 +354,7 @@ public class RealAccountOpe extends IMarketOpe {
 			}
 		}
 		
-		private RealAccountOpe m_RealAccountOpe;
+		private RealMarketOpe m_RealAccountOpe;
 	}
 	
 	public static class DealMonitorItem

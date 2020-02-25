@@ -6,7 +6,7 @@ import java.util.List;
 import pers.di.localstock.common.*;
 import pers.di.webstock.WebStock;
 
-public class WebStockAPILayer {
+public class WebStockLayer {
 	public static int getAllStockList(List<StockItem> container)
 	{
 		List<pers.di.webstock.IWebStock.StockItem> ctnwsStockItem = new ArrayList<pers.di.webstock.IWebStock.StockItem>();

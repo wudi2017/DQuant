@@ -7,9 +7,9 @@ import pers.di.webstock.WebStock;
 import pers.di.common.CSystem;
 import pers.di.common.CTest;
 import pers.di.localstock.common.*;
-import pers.di.localstock.impl.WebStockAPILayer;
+import pers.di.localstock.impl.WebStockLayer;
 
-public class TestWebStockAPILayer {
+public class TestWebStockLayer {
 	
 	@CTest.test
 	public void test_getAllStockList() {
@@ -17,7 +17,7 @@ public class TestWebStockAPILayer {
 		for(int iTime=0; iTime<2; iTime++)
 		{
 			List<StockItem> ctnStockItem = new ArrayList<StockItem>();
-			int error = WebStockAPILayer.getAllStockList(ctnStockItem);
+			int error = WebStockLayer.getAllStockList(ctnStockItem);
 			if(0 == error)
 			{
 				for(int i = 0; i < ctnStockItem.size(); i++)  
@@ -40,7 +40,7 @@ public class TestWebStockAPILayer {
 	public void test_getStockInfo() {
 		String stockID = "000488";
 		StockInfo ctnStockInfo = new StockInfo();
-		int error = WebStockAPILayer.getStockInfo(stockID, ctnStockInfo);
+		int error = WebStockLayer.getStockInfo(stockID, ctnStockInfo);
 		if(0 == error)
 		{ 
 			System.out.println(ctnStockInfo.name);
@@ -65,7 +65,7 @@ public class TestWebStockAPILayer {
 	{
 		String StockID = "000488";
 		List<DividendPayout> container = new ArrayList<DividendPayout>();
-		int error = WebStockAPILayer.getDividendPayout(StockID, container);
+		int error = WebStockLayer.getDividendPayout(StockID, container);
 		if(0 == error)
 		{
 			System.out.println(String.format("DataWebStockDividendPayout.getDividendPayout %s OK!", StockID));
@@ -90,7 +90,7 @@ public class TestWebStockAPILayer {
 	public void test_getKLine()
 	{
 		List<KLine> ctnKLine = new ArrayList<KLine>();
-		int error = WebStockAPILayer.getKLine("600000", "20110523", "20190831", ctnKLine);
+		int error = WebStockLayer.getKLine("600000", "20110523", "20190831", ctnKLine);
 		if(0 == error)
 		{
 			System.out.println("List<TradeDetail> size=" + ctnKLine.size());
@@ -137,7 +137,7 @@ public class TestWebStockAPILayer {
 	public void test_getTransactionRecordHistory()
 	{
 		List<TransactionRecord> ctnTradeDetails = new ArrayList<TransactionRecord>();
-		int error = WebStockAPILayer.getTransactionRecordHistory("300163", "2012-08-21", ctnTradeDetails);
+		int error = WebStockLayer.getTransactionRecordHistory("300163", "2012-08-21", ctnTradeDetails);
 		if(0 == error)
 		{
 			System.out.println("List<TradeDetail> size=" + ctnTradeDetails.size());
@@ -184,7 +184,7 @@ public class TestWebStockAPILayer {
 			List<String> ids = new ArrayList<String>();
 			ids.add("300163");ids.add("300164");ids.add("600004");
 			List<RealTimeInfoLite> ctnRTInfos = new ArrayList<RealTimeInfoLite>();
-			int error = WebStockAPILayer.getRealTimeInfo(ids, ctnRTInfos);
+			int error = WebStockLayer.getRealTimeInfo(ids, ctnRTInfos);
 			CTest.EXPECT_LONG_EQ(error, 0);
 			CTest.EXPECT_LONG_EQ(ctnRTInfos.size(), 3);
 			
@@ -203,7 +203,7 @@ public class TestWebStockAPILayer {
 			List<String> ids = new ArrayList<String>();
 			ids.add("300163");ids.add("300164");ids.add("000003");
 			List<RealTimeInfoLite> ctnRTInfos = new ArrayList<RealTimeInfoLite>();
-			int error = WebStockAPILayer.getRealTimeInfo(ids, ctnRTInfos);
+			int error = WebStockLayer.getRealTimeInfo(ids, ctnRTInfos);
 			CTest.EXPECT_LONG_NE(error, 0);
 			CTest.EXPECT_LONG_EQ(ctnRTInfos.size(), 2);
 		}
@@ -211,8 +211,8 @@ public class TestWebStockAPILayer {
 	
 	public static void main(String[] args) {
 		CSystem.start();
-		CTest.ADD_TEST(TestWebStockAPILayer.class);
-		CTest.RUN_ALL_TESTS("TestWebStockAPILayer.test_getKLine");
+		CTest.ADD_TEST(TestWebStockLayer.class);
+		CTest.RUN_ALL_TESTS("TestWebStockLayer.");
 		CSystem.stop();
 	}
 }

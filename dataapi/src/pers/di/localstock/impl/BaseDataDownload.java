@@ -69,7 +69,7 @@ public class BaseDataDownload {
 		
 		// 更新所有k
 		List<StockItem> stockAllList = new ArrayList<StockItem>();
-		int errAllStockList = WebStockAPILayer.getAllStockList(stockAllList);
+		int errAllStockList = WebStockLayer.getAllStockList(stockAllList);
 		if(0 == errAllStockList)
 		{
 			int iAllStockListSize = stockAllList.size();
@@ -183,7 +183,7 @@ public class BaseDataDownload {
 			{
 				// 获取当前BaseInfo信息
 				StockInfo ctnStockInfo = new StockInfo();
-				int errStockInfo = WebStockAPILayer.getStockInfo(id, ctnStockInfo);
+				int errStockInfo = WebStockLayer.getStockInfo(id, ctnStockInfo);
 				if(0 == errStockInfo)
 				{
 					// 当前时间在收盘之前，网络数据有效日期为前一天（非周六周日）
@@ -235,10 +235,10 @@ public class BaseDataDownload {
 							
 							// 获取网络日K数据
 							List<KLine> ctnKLineWebNew = new ArrayList<KLine>();
-							int errKLineWebNew = WebStockAPILayer.getKLine(id, fromDateStr, toDateStr, ctnKLineWebNew);
+							int errKLineWebNew = WebStockLayer.getKLine(id, fromDateStr, toDateStr, ctnKLineWebNew);
 							// 获取网络分红派息数据
 							List<DividendPayout> ctnDividendPayoutNew = new ArrayList<DividendPayout>();
-							int errDividendPayoutNew = WebStockAPILayer.getDividendPayout(id, ctnDividendPayoutNew);
+							int errDividendPayoutNew = WebStockLayer.getDividendPayout(id, ctnDividendPayoutNew);
 							
 							if(0 == errKLineWebNew && 0 == errDividendPayoutNew)
 							// 新增日K数据获取成功
@@ -312,16 +312,16 @@ public class BaseDataDownload {
 		// 本地没有数据，需要试图重新下载
 		{	
 			StockInfo ctnStockInfoNew = new StockInfo();
-			int errStockInfoNew = WebStockAPILayer.getStockInfo(id, ctnStockInfoNew); // 获取网络基本信息数据
+			int errStockInfoNew = WebStockLayer.getStockInfo(id, ctnStockInfoNew); // 获取网络基本信息数据
 			if(0 == errStockInfoNew)
 			{
 				String curDate = CUtilsDateTime.GetCurDateStr();
 				String paramToDate = curDate.replace("-", "");
 				List<KLine> ctnKLineNew = new ArrayList<KLine>();
-				int errGetWebKLineNew = WebStockAPILayer.getKLine(id, "19900101", paramToDate, ctnKLineNew);// 获取网络日K数据
+				int errGetWebKLineNew = WebStockLayer.getKLine(id, "19900101", paramToDate, ctnKLineNew);// 获取网络日K数据
 				
 				List<DividendPayout> ctnDividendPayoutNew = new ArrayList<DividendPayout>();
-				int errDividendPayoutNew = WebStockAPILayer.getDividendPayout(id, ctnDividendPayoutNew);//获取网络分红派息数据
+				int errDividendPayoutNew = WebStockLayer.getDividendPayout(id, ctnDividendPayoutNew);//获取网络分红派息数据
 				
 				if(0 == errGetWebKLineNew 
 						&& 0 == errDividendPayoutNew 
@@ -382,7 +382,7 @@ public class BaseDataDownload {
 		String curDate = CUtilsDateTime.GetCurDateStr();
 		String paramToDate = curDate.replace("-", "");
 		List<KLine> ctnKLine = new ArrayList<KLine>();
-		int error = WebStockAPILayer.getKLine(id, "20080101", paramToDate, ctnKLine);
+		int error = WebStockLayer.getKLine(id, "20080101", paramToDate, ctnKLine);
 		if(0 == error)
 		{
 			try
@@ -411,7 +411,7 @@ public class BaseDataDownload {
 		try
 		{
 			StockInfo ctnStockInfo = new StockInfo();
-			int errStockInfo = WebStockAPILayer.getStockInfo(id, ctnStockInfo);
+			int errStockInfo = WebStockLayer.getStockInfo(id, ctnStockInfo);
 			if(0 == errStockInfo)
 			{
 				m_baseDataStorage.saveStockInfo(id, ctnStockInfo);
@@ -436,7 +436,7 @@ public class BaseDataDownload {
 	public int downloadStockDividendPayout(String id)
 	{
 		List<DividendPayout> ctnDividendPayout = new ArrayList<DividendPayout>();
-		int errDividendPayout = WebStockAPILayer.getDividendPayout(id, ctnDividendPayout);
+		int errDividendPayout = WebStockLayer.getDividendPayout(id, ctnDividendPayout);
 		if(0 == errDividendPayout)
 		{
 			try
@@ -466,7 +466,7 @@ public class BaseDataDownload {
 		s_fmt.format("@downloadStocKLineDetail stockID(%s) date(%s)\n",id,date);
 		
 		List<TransactionRecord> ctnTransactionRecord = new ArrayList<TransactionRecord>();
-		int error = WebStockAPILayer.getTransactionRecordHistory(id, date, ctnTransactionRecord);
+		int error = WebStockLayer.getTransactionRecordHistory(id, date, ctnTransactionRecord);
 		if(0 == error)
 		{
 			try

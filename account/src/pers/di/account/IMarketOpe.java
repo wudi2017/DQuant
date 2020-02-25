@@ -3,13 +3,17 @@ package pers.di.account;
 import java.util.*;
 
 import pers.di.account.common.*;
-import pers.di.account.detail.IMarketDealReplier;
 import pers.di.common.*;
 
 /*
  * implement market account interface
  */
 abstract public class IMarketOpe {
+	
+	public static abstract class IMarketDealReplier {
+		public abstract void onDeal(TRANACT tranact, String stockID, int amount, double price, double cost);
+	}
+	
 	
 	/*
 	 * 启动市场操作接口

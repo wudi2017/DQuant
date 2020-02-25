@@ -543,7 +543,7 @@ public class BaseDataLayer {
 	
 	public int getRealTimeInfo(List<String> stockIDs, List<RealTimeInfoLite> container)
 	{
-		return WebStockAPILayer.getRealTimeInfo(stockIDs, container);
+		return WebStockLayer.getRealTimeInfo(stockIDs, container);
 	}
 	
 	

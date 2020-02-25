@@ -11,7 +11,7 @@ import pers.di.common.CUtilsDateTime;
 
 public class AccountController {
 	
-	public static class InnerMarketReplier extends IMarketDealReplier
+	public static class InnerMarketReplier extends IMarketOpe.IMarketDealReplier
 	{
 		public InnerMarketReplier(AccountController cAccountController)
 		{
@@ -50,7 +50,7 @@ public class AccountController {
 				CLog.error("ACCOUNT", "AccoutDriver init cIMarketOpe.registerDealReplier failed\n");
 			}
 			
-			m_accountEntity =  new AccountEntity();
+			m_accountEntity =  new AccountImpl();
 			if(0 != m_accountEntity.load(m_dataRoot, accID, m_MarketOpe, bCreate))
 			{
 				CLog.error("ACCOUNT", "AccoutDriver init m_accountEntity.load failed\n");
@@ -234,7 +234,7 @@ public class AccountController {
 	
 	private CSyncObj m_cSync; 
 	private String m_dataRoot;
-	private AccountEntity m_accountEntity;
+	private AccountImpl m_accountEntity;
 	private FlushThread m_FlushThread;
 	private IMarketOpe m_MarketOpe;
 	private InnerMarketReplier m_innerMarketReplier;

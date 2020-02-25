@@ -1,4 +1,4 @@
-package pers.di.marketaccount.mock;
+package pers.di.marketope.mock;
 
 import java.util.*;
 
@@ -8,7 +8,7 @@ import pers.di.account.common.TRANACT;
 import pers.di.account.detail.*;
 import pers.di.common.*;
 
-public class MockAccountOpe extends IMarketOpe {
+public class MockMarketOpe extends IMarketOpe {
 	
 	public static double s_transactionCostsRatio_TransferFee = 0.00002; // 买卖过户费比率
 	public static double s_transactionCostsRatio_Poundage = 0.00025; // 买卖手续费比率（佣金部分）
