@@ -163,24 +163,22 @@ public class TestRealMarketOpe {
 	public static void testRealAccountOpe_withAccDriver()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("real001" ,  new RealMarketOpe(), true);
+		cAccountController.open("real001" ,  new RealMarketOpe(), true);
 		cAccountController.reset(10*10000f);
-		cAccountController.start();
 		
 		IAccount acc = cAccountController.account();
 		acc.postTradeOrder(TRANACT.BUY, "601988", 200, 4.0f);
 		
 		CThread.msleep(1000*60*5);
-		cAccountController.stop();
+		cAccountController.close();
 	}
 
 	@CTest.test
 	public static void test_mockaccountope_withAccDriver()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
-		cAccountController.start();
 		
 		IAccount acc = cAccountController.account();
 		
@@ -196,7 +194,7 @@ public class TestRealMarketOpe {
 		cAccountController.newDayEnd();
 		
 		CThread.msleep(1000*3);
-		cAccountController.stop();
+		cAccountController.close();
 	}
 
 	public static void main(String[] args) {

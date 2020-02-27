@@ -70,6 +70,8 @@ public class TestAccountController {
 			CTest.EXPECT_TRUE(acc.getHoldStockList(ctnHoldList) == 0);
 			CTest.EXPECT_TRUE(ctnHoldList.size() == 0);
 		}
+		
+		cAccountController.close();
 	}
 	
 	@CTest.test
@@ -125,6 +127,8 @@ public class TestAccountController {
 				}
 			}
 		}
+		
+		cAccountController.close();
 	}
 	
 	
@@ -218,6 +222,8 @@ public class TestAccountController {
 				}
 			}
 		}
+		
+		cAccountController.close();
 	}
 	
 	@CTest.test
@@ -258,6 +264,8 @@ public class TestAccountController {
 				CTest.EXPECT_DOUBLE_EQ(cHoldStock.curPrice, 3.14, 2);
 			}
 		}
+		
+		cAccountController.close();
 	}
 	
 	@CTest.test
@@ -299,6 +307,7 @@ public class TestAccountController {
 		CTest.EXPECT_TRUE(0 == cCommissionOrder1.tranAct.compareTo(TRANACT.SELL));
 		
 		cAccountController.newDayEnd();
+		cAccountController.close();
 		
 	}
 	
@@ -357,6 +366,8 @@ public class TestAccountController {
 		String dumpInfoAfterEnd = acc.dump();
 		CLog.output("TEST", "\n%s", dumpInfoAfterEnd);
 		
+		cAccountController.close();
+		
 	}
 	
 	@CTest.test
@@ -406,6 +417,8 @@ public class TestAccountController {
 			cAccountController.newDayEnd();
 		}
 		
+		cAccountController.close();
+		
 	}
 	
 	@CTest.test
@@ -448,6 +461,8 @@ public class TestAccountController {
 		CTest.EXPECT_LONG_EQ(iTest, iTestTimes);
 		
 		cAccountController.newDayEnd();
+		
+		cAccountController.close();
 	}
 	
 	@CTest.test
@@ -485,6 +500,7 @@ public class TestAccountController {
 		CTest.EXPECT_DOUBLE_EQ(cHoldStock.get().refProfitRatio(), 
 				cHoldStock.get().refProfit()/((1000*16.8f+2000*20.0f)+(1000*16.8f+2000*20.0f)*s_transactionCostsRatioBuy), 4);
 	
+		cAccountController.close();
 	}
 	
 	public static void main(String[] args) {

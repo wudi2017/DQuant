@@ -202,6 +202,8 @@ public class TestCommisionDealOrlder {
 			}
 		}
 		cAccountController.newDayEnd();
+		
+		cAccountController.close();
 	}
 	
 	
