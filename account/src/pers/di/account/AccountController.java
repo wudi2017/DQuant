@@ -10,20 +10,11 @@ import pers.di.common.CThread;
 import pers.di.common.CUtilsDateTime;
 
 public class AccountController {
-	
-	public static class InnerMarketReplier extends IMarketOpe.IMarketDealReplier
-	{
-		public InnerMarketReplier(AccountController cAccountController)
-		{
-			m_cAccountController = cAccountController;
-		}
-		@Override
-		public void onDeal(TRANACT tranact, String id, int amount, double price, double cost) {
-			m_cAccountController.onDeal(tranact, id, amount, price, cost);
-		}	
-		private AccountController m_cAccountController;
-	}
-	
+	/* 
+	 * construct
+	 * param: 
+	 *     dataRoot: account file root dir
+	 */
 	public AccountController(String dataRoot)
 	{
 		m_cSync = new CSyncObj();
@@ -34,9 +25,16 @@ public class AccountController {
 		m_innerMarketReplier = null;
 	}
 	
-	// load account entity, 
-	// if bCreate is true, will try create new account when open account failed
-	public int load(String accID, IMarketOpe cIMarketOpe, boolean bCreate)
+	/* 
+	 * load account entity from local file
+	 * param: 
+	 *     accID: account id ref to file name
+	 *     bCreate: is create new file or not
+	 *     cIMarketOpe: invoke object for market ope
+	 * notes:
+	 *     if bCreate is true, will try create new account when open account failed
+	 */
+	public int open(String ID, IMarketOpe cIMarketOpe, boolean bCreate)
 	{
 		m_cSync.Lock();
 		
@@ -51,7 +49,7 @@ public class AccountController {
 			}
 			
 			m_accountEntity =  new AccountImpl();
-			if(0 != m_accountEntity.load(m_dataRoot, accID, m_MarketOpe, bCreate))
+			if(0 != m_accountEntity.load(m_dataRoot, ID, bCreate, m_MarketOpe))
 			{
 				CLog.error("ACCOUNT", "AccoutDriver init m_accountEntity.load failed\n");
 			}
@@ -62,20 +60,22 @@ public class AccountController {
 		}
 
 		m_cSync.UnLock();
-		return 0;
-	}
-	
-	public int start()
-	{
+		
 		m_FlushThread.startThread();
 		if(null != m_MarketOpe)
 		{
 			m_MarketOpe.start();
 		}
+		
 		return 0;
 	}
 	
-	public int stop()
+	/* 
+	 * stop account
+	 * notes:
+	 *     stop market ope & stop flush file thread
+	 */
+	public int close()
 	{
 		if(null != m_MarketOpe)
 		{
@@ -85,7 +85,11 @@ public class AccountController {
 		return 0;
 	}
 	
-	// reset account entity
+	/* 
+	 * reset account
+	 * param: 
+	 *     fInitMoney : the init money for the account
+	 */
 	public int reset(double fInitMoney)
 	{
 		int iRet = -1;
@@ -95,31 +99,9 @@ public class AccountController {
 		return iRet;
 	}
 	
-	// market deal callback
-	public void onDeal(TRANACT tranact, String id, int amount, double price, double cost) 
-	{
-		m_cSync.Lock();
-		if(null != m_accountEntity)
-		{
-			m_accountEntity.onDeal(tranact, id, amount, price, cost);
-		}
-		m_cSync.UnLock();
-	}
-	
-	// get account
-	public IAccount account()
-	{
-		IAccount acc = null;
-		m_cSync.Lock();
-		if(null != m_accountEntity)
-		{
-			acc = m_accountEntity;
-		}
-		m_cSync.UnLock();
-		return acc;
-	}
-	
-	// set date time
+	/* 
+	 * set date time for the account
+	 */
 	public int setDateTime(String date, String time)
 	{
 		int iRet = -1;
@@ -132,30 +114,24 @@ public class AccountController {
 		return iRet;
 	}
 	
-	// get hold stocks
-	public int getHoldStockIDList(List<String> ctnHoldList)
+	/* 
+	 * get account interface for user
+	 */
+	public IAccount account()
 	{
-		int iRet = -1;
+		IAccount acc = null;
 		m_cSync.Lock();
-		if(null != m_accountEntity && null != ctnHoldList)
+		if(null != m_accountEntity)
 		{
-			List<HoldStock> ctnList = new ArrayList<HoldStock>();
-			int iRetGet = m_accountEntity.getHoldStockList(ctnList);
-			if(0 == iRetGet)
-			{
-				for(int i=0; i<ctnList.size(); i++)
-				{
-					HoldStock cHoldStock = ctnList.get(i);
-					ctnHoldList.add(cHoldStock.stockID);
-				}
-				iRet = 0;
-			}
+			acc = m_accountEntity;
 		}
 		m_cSync.UnLock();
-		return iRet;
+		return acc;
 	}
 	
-	// flush current price
+	/* 
+	 * flush current price
+	 */
 	public int flushCurrentPrice(String stockID, double price)
 	{
 		int iRet = -1;
@@ -167,8 +143,10 @@ public class AccountController {
 		m_cSync.UnLock();
 		return iRet;
 	}
-
-	// new day begin
+	
+	/* 
+	 * new day begin
+	 */
 	public int newDayBegin()
 	{
 		int iRet = -1;
@@ -181,7 +159,9 @@ public class AccountController {
 		return iRet;
 	}
 	
-	// new day end
+	/* 
+	 * new day end
+	 */
 	public int newDayEnd()
 	{
 		int iRet = -1;
@@ -194,6 +174,33 @@ public class AccountController {
 		return iRet;
 	}
 	
+	/*
+	 * ************************************************************************************************
+	 */
+		
+	private static class InnerMarketReplier extends IMarketOpe.IMarketDealReplier
+	{
+		public InnerMarketReplier(AccountController cAccountController)
+		{
+			m_cAccountController = cAccountController;
+		}
+		@Override
+		public void onDeal(TRANACT tranact, String id, int amount, double price, double cost) {
+			m_cAccountController.onDeal(tranact, id, amount, price, cost);
+		}	
+		private AccountController m_cAccountController;
+	}
+
+	private void onDeal(TRANACT tranact, String id, int amount, double price, double cost) 
+	{
+		m_cSync.Lock();
+		if(null != m_accountEntity)
+		{
+			m_accountEntity.onDeal(tranact, id, amount, price, cost);
+		}
+		m_cSync.UnLock();
+	}
+
 	private int commit()
 	{
 		int iRet = -1;

@@ -116,7 +116,7 @@ public class Quant {
 		m_cAccountController.setDateTime(context.date(), context.time());
 		m_cAccountController.newDayBegin();
 		List<String> ctnHoldStockIDList = new ArrayList<String>();
-		m_cAccountController.getHoldStockIDList(ctnHoldStockIDList);
+		this.getHoldStockIDList(m_cAccountController.account(), ctnHoldStockIDList);
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
@@ -151,7 +151,7 @@ public class Quant {
 			// update account stock price info
 			m_cAccountController.setDateTime(context.date(), context.time());
 			List<String> ctnHoldStockIDList = new ArrayList<String>();
-			m_cAccountController.getHoldStockIDList(ctnHoldStockIDList);
+			this.getHoldStockIDList(m_cAccountController.account(), ctnHoldStockIDList);
 			for(int i=0; i<ctnHoldStockIDList.size(); i++)
 			{
 				String sHoldStockID = ctnHoldStockIDList.get(i);
@@ -173,7 +173,7 @@ public class Quant {
 		// update account stock price info
 		m_cAccountController.setDateTime(context.date(), context.time());
 		List<String> ctnHoldStockIDList = new ArrayList<String>();
-		m_cAccountController.getHoldStockIDList(ctnHoldStockIDList);
+		this.getHoldStockIDList(m_cAccountController.account(), ctnHoldStockIDList);
 		for(int i=0; i<ctnHoldStockIDList.size(); i++)
 		{
 			String sHoldStockID = ctnHoldStockIDList.get(i);
@@ -185,6 +185,27 @@ public class Quant {
 		m_stratety.onDayFinish(m_context);
 		
 		m_cAccountController.newDayEnd();
+	}
+	
+	// get hold stocks
+	private int getHoldStockIDList(IAccount acc, List<String> ctnHoldList)
+	{
+		int iRet = -1;
+		if(null != acc && null != ctnHoldList)
+		{
+			List<HoldStock> ctnList = new ArrayList<HoldStock>();
+			int iRetGet = acc.getHoldStockList(ctnList);
+			if(0 == iRetGet)
+			{
+				for(int i=0; i<ctnList.size(); i++)
+				{
+					HoldStock cHoldStock = ctnList.get(i);
+					ctnHoldList.add(cHoldStock.stockID);
+				}
+				iRet = 0;
+			}
+		}
+		return iRet;
 	}
 	
 	private IEngineListener m_listener;

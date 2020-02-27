@@ -184,7 +184,7 @@ public class TestQuantSession_Simple {
 	public void test_QuantSession()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		if(0 != cAccountController.load("mock001" ,  new MockMarketOpe(), true)
+		if(0 != cAccountController.open("mock001" ,  new MockMarketOpe(), true)
 				|| 0 != cAccountController.reset(10*10000f))
 		{
 			CLog.error("TEST", "SampleTestStrategy AccountController ERR!");

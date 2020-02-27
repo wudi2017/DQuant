@@ -5,7 +5,6 @@ import java.util.*;
 
 import pers.di.account.IAccount;
 import pers.di.account.IMarketOpe;
-import pers.di.account.IAccount.ICallback;
 import pers.di.account.common.*;
 import pers.di.account.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
@@ -14,20 +13,9 @@ import pers.di.common.CSyncObj;
 import pers.di.common.CUtilsDateTime;
 import pers.di.common.CUtilsMath;
 
-public class AccountImpl extends IAccount {
+public class AccountImpl implements IAccount {
 	
-	@Override
-	public boolean aceessLock()
-	{
-		return m_cSync.Lock();
-	}
-	
-	@Override
-	public boolean aceessUnLock()
-	{
-		return m_cSync.UnLock();
-	}
-	
+
 	@Override
 	public String ID() {
 		
@@ -259,13 +247,6 @@ public class AccountImpl extends IAccount {
 		return 0;
 	}
 	
-	@Override
-	public void registerCallback(ICallback cb)
-	{
-		this.aceessLock();
-		m_ICallback = cb;
-		this.aceessUnLock();
-	}
 
 	/*
 	 * ******************************************************************************************
@@ -274,13 +255,12 @@ public class AccountImpl extends IAccount {
 	public AccountImpl()
 	{
 		m_cSync = new CSyncObj();
-		m_ICallback = null;
 		m_cIMarketOpe = null;
 		m_accountStore = null;
 		m_initFlag = false;
 	}
 	
-	public int load(String dataRoot, String accID, IMarketOpe cIMarketOpe, boolean bCreate)
+	public int load(String dataRoot, String accID, boolean bCreate, IMarketOpe cIMarketOpe)
 	{
 		this.aceessLock();
 		
@@ -319,9 +299,6 @@ public class AccountImpl extends IAccount {
 		m_initFlag = true;
 		CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s OK", accID);
 		
-		if(null != m_ICallback)
-			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
-		
 		this.aceessUnLock();
 		return 0;
 	}
@@ -338,9 +315,6 @@ public class AccountImpl extends IAccount {
 
 		m_accountStore.storeEntity().date = date;
 		m_accountStore.storeEntity().time = time;
-		
-		if(null != m_ICallback)
-			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
 		this.aceessUnLock();
 		return 0;
@@ -369,9 +343,6 @@ public class AccountImpl extends IAccount {
 				
 			}
 		}
-		
-		if(null != m_ICallback)
-			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
 		this.aceessUnLock();
 		return 0;
@@ -417,8 +388,6 @@ public class AccountImpl extends IAccount {
 		
 		m_accountStore.sync2File();
 		
-		if(null != m_ICallback)
-			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
 		
 		this.aceessUnLock();
 		return 0; 
@@ -563,9 +532,6 @@ public class AccountImpl extends IAccount {
 		
 		m_accountStore.sync2File();
 		
-		if(null != m_ICallback)
-			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
-		
 		this.aceessUnLock();
 	}
 	
@@ -576,11 +542,173 @@ public class AccountImpl extends IAccount {
 		m_accountStore.storeEntity().reset(fInitMoney);
 		m_accountStore.sync2File();
 		
-		if(null != m_ICallback)
-			m_ICallback.onNotify(ICallback.CALLBACKTYPE.CHANGED);
+		this.aceessUnLock();
+		return 0;
+	}
+	
+	@Override
+	public int getTotalAssets(CObjectContainer<Double> ctnTotalAssets)
+	{
+		this.aceessLock();
+		
+		int iRet = -1;
+		
+		CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
+		int iRetGetMoney = getMoney(ctnMoney);
+		
+		List<HoldStock> ctnHoldStockList = new ArrayList<HoldStock>();
+		int iRetGetHoldList = getHoldStockList(ctnHoldStockList);
+		
+		if(0==iRetGetMoney && 0==iRetGetHoldList)
+		{
+			Double dTotalAssets = ctnMoney.get();
+			for(int i=0; i<ctnHoldStockList.size(); i++)
+			{
+				dTotalAssets += ctnHoldStockList.get(i).totalAmount*ctnHoldStockList.get(i).curPrice;
+			}
+			ctnTotalAssets.set(dTotalAssets);
+			iRet = 0;
+		}
+		
+		this.aceessUnLock();
+		
+		return iRet;
+	}
+	
+	@Override
+	public int getTotalStockMarketValue(CObjectContainer<Double> ctnTotalStockMarketValue)
+	{
+		this.aceessLock();
+		
+		int iRet = -1;
+
+		List<HoldStock> ctnHoldStockList = new ArrayList<HoldStock>();
+		int iRetGetHoldList = getHoldStockList(ctnHoldStockList);
+		
+		if(0==iRetGetHoldList)
+		{
+			Double dTotalStockMarketValue = 0.0;
+			for(int i=0; i<ctnHoldStockList.size(); i++)
+			{
+				dTotalStockMarketValue += ctnHoldStockList.get(i).totalAmount*ctnHoldStockList.get(i).curPrice;
+			}
+			ctnTotalStockMarketValue.set(dTotalStockMarketValue);
+			iRet = 0;
+		}
+		
+		this.aceessUnLock();
+		
+		return iRet;
+	}
+	
+	@Override
+	public int getHoldStock(String stockID, CObjectContainer<HoldStock> ctnHoldStock)
+	{
+		this.aceessLock();
+		
+		List<HoldStock> ctnList = new ArrayList<HoldStock>();
+		int iRet = getHoldStockList(ctnList);
+		if(0 == iRet)
+		{
+			for(int i=0; i<ctnList.size(); i++)
+			{
+				if(ctnList.get(i).stockID.equals(stockID))
+				{
+					ctnHoldStock.set(ctnList.get(i));
+				}
+			}
+		}
 		
 		this.aceessUnLock();
 		return 0;
+	}
+	
+	@Override
+	public String dump()
+	{
+		this.aceessLock();
+		
+		String DumpInfo = String.format("---ACCOUNT---INFO--- %s %s", date(), time());
+		
+		CObjectContainer<Double> totalAssets = new CObjectContainer<Double>();
+		this.getTotalAssets(totalAssets);
+		CObjectContainer<Double> money = new CObjectContainer<Double>();
+		this.getMoney(money);
+		List<HoldStock> cHoldStockList = new ArrayList<HoldStock>();
+		this.getHoldStockList(cHoldStockList);
+		List<CommissionOrder> cCommissionOrderList = new ArrayList<CommissionOrder>();
+		this.getCommissionOrderList(cCommissionOrderList);
+		List<DealOrder> cDealOrderList = new ArrayList<DealOrder>();
+		this.getDealOrderList(cDealOrderList);
+		
+		// 打印资产
+		DumpInfo+=String.format("\n    -TotalAssets: %.3f", totalAssets.get());
+		DumpInfo+=String.format("\n    -Money: %.3f", money.get());
+		double fStockMarketValue = 0.0;
+		for(int i=0; i<cHoldStockList.size(); i++ )
+		{
+			HoldStock cHoldStock = cHoldStockList.get(i);
+			fStockMarketValue = fStockMarketValue + cHoldStock.totalAmount*cHoldStock.curPrice;
+		}
+		DumpInfo+=String.format("\n    -StockMarketValue: %.3f", fStockMarketValue);
+
+		// 打印持股
+		for(int i=0; i<cHoldStockList.size(); i++ )
+		{
+			HoldStock cHoldStock = cHoldStockList.get(i);
+			DumpInfo+=String.format("\n    -HoldStock: %s %d %d %.3f %.3f %.3f", 
+					cHoldStock.stockID,
+					cHoldStock.totalAmount, cHoldStock.availableAmount,
+					cHoldStock.refPrimeCostPrice, cHoldStock.curPrice, 
+					cHoldStock.totalAmount*cHoldStock.curPrice);
+		}
+				
+		// 打印委托单
+		for(int i=0; i<cCommissionOrderList.size(); i++ )
+		{
+			CommissionOrder cCommissionOrder = cCommissionOrderList.get(i);
+			String tranOpe = "BUY"; 
+			if(cCommissionOrder.tranAct == TRANACT.SELL ) tranOpe = "SELL";
+				
+			DumpInfo+=String.format("\n    -CommissionOrder: %s %s %s %s %d %.3f", 
+					cCommissionOrder.date, cCommissionOrder.time, tranOpe, cCommissionOrder.stockID, 
+					cCommissionOrder.amount, cCommissionOrder.price);
+		}
+		
+		// 打印成交单
+		for(int i=0; i<cDealOrderList.size(); i++ )
+		{
+			DealOrder cDealOrder = cDealOrderList.get(i);
+			String tranOpe = ""; 
+			if(cDealOrder.tranAct == TRANACT.BUY ) 
+			{
+				tranOpe = "BUY";
+				DumpInfo+=String.format("\n    -DealOrder: %s %s %s %s %d %.3f (BC%.3f)", 
+						cDealOrder.date, cDealOrder.time, tranOpe, cDealOrder.stockID, 
+						cDealOrder.amount, cDealOrder.price, cDealOrder.cost);
+			}
+			else if(cDealOrder.tranAct == TRANACT.SELL)
+			{
+				tranOpe = "SELL";
+				DumpInfo+=String.format("\n    -DealOrder: %s %s %s %s %d %.3f (SC-%.3f)", 
+						cDealOrder.date, cDealOrder.time, tranOpe, cDealOrder.stockID, 
+						cDealOrder.amount, cDealOrder.price, cDealOrder.cost);
+			}
+		}
+		
+		this.aceessUnLock();
+		
+		return DumpInfo;
+	}
+	
+	private boolean aceessLock()
+	{
+		return m_cSync.Lock();
+	}
+	
+	private boolean aceessUnLock()
+	{
+		return m_cSync.UnLock();
 	}
 	
 	/*
@@ -588,7 +716,6 @@ public class AccountImpl extends IAccount {
 	 */
 	
 	private CSyncObj m_cSync;
-	private ICallback m_ICallback;
 	private IMarketOpe m_cIMarketOpe;
 	private AccountStore m_accountStore;
 	private boolean m_initFlag;

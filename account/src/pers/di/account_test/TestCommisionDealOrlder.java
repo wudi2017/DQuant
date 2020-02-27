@@ -76,7 +76,7 @@ public class TestCommisionDealOrlder {
 	public static void test_commision_sort()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();

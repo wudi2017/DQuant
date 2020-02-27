@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pers.di.account.*;
-import pers.di.account.IAccount.ICallback;
 import pers.di.account.common.*;
 import pers.di.common.*;
 
@@ -15,16 +14,6 @@ public class TestAccountController {
 	
 	public static double s_transactionCostsRatioBuy = 0.02f;
 	public static double s_transactionCostsRatioSell = 0.05f;
-	
-	public static class AccountNotify implements ICallback
-	{
-
-		@Override
-		public void onNotify(CALLBACKTYPE cb) {
-			CLog.output("TEST", "AccountNotify");
-		}
-		
-	}
 	
 	public static class MockMarketOpe extends IMarketOpe
 	{
@@ -58,9 +47,8 @@ public class TestAccountController {
 	public static void test_accountDriver_reset()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		IAccount acc = cAccountController.account();
-		acc.registerCallback(new AccountNotify());
 		
 		// set default
 		{
@@ -88,7 +76,7 @@ public class TestAccountController {
 	public static void test_accountDriver_buy()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();
@@ -144,7 +132,7 @@ public class TestAccountController {
 	public static void test_accountDriver_sell()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();
@@ -236,7 +224,7 @@ public class TestAccountController {
 	public static void test_accountDriver_flushCurrentPrice()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" , new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();
@@ -276,7 +264,7 @@ public class TestAccountController {
 	public static void test_accountDriver_CommissionOrder()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();
@@ -318,7 +306,7 @@ public class TestAccountController {
 	public static void test_accountDriver_DealOrder()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();
@@ -375,7 +363,7 @@ public class TestAccountController {
 	public static void test_accountDriver_inputcheck_buy_sell()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();
@@ -424,7 +412,7 @@ public class TestAccountController {
 	public static void test_accountDriver_performance()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();
@@ -466,7 +454,7 @@ public class TestAccountController {
 	public static void test_accountDriver_totalassets_singleHoldStock_refProfit()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		cAccountController.load("mock001" ,  new MockMarketOpe(), true);
+		cAccountController.open("mock001" ,  new MockMarketOpe(), true);
 		cAccountController.reset(10*10000f);
 		
 		IAccount acc = cAccountController.account();
