@@ -6,7 +6,12 @@ import pers.di.account.common.*;
 import pers.di.common.*;
 
 /*
- * implement market account interface
+ * implement market operation interface
+ * 
+ * user could registerDealReplier to receive the deal information
+ * user call postTradeRequest and wait to market reply
+ * user could implement IMarketOpe IF 
+ * 
  */
 abstract public class IMarketOpe {
 	

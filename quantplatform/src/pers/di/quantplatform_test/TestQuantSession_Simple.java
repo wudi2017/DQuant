@@ -16,37 +16,6 @@ import pers.di.quantplatform.*;
 public class TestQuantSession_Simple {
 	
 	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
-
-	public static double s_transactionCostsRatioBuy = 0.02f;
-	public static double s_transactionCostsRatioSell = 0.05f;
-	
-	public static class MockMarketOpe extends IMarketOpe
-	{
-		@Override
-		public int start()
-		{
-			return 0;
-		}
-		
-		@Override
-		public int stop()
-		{
-			return 0;
-		}
-		
-		@Override
-		public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
-			if(tranact == TRANACT.BUY)
-			{
-				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioBuy);
-			}
-			else if(tranact == TRANACT.SELL)
-			{
-				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioSell);
-			}
-			return 0;
-		}
-	}
 	
 	@CTest.setup
 	public static void setup()
@@ -135,16 +104,19 @@ public class TestQuantSession_Simple {
 			if(context.date().compareTo("2019-04-02") == 0 &&
 					context.time().compareTo("09:30:00") == 0)
 			{
+				//CLog.output("TEST", "pushBuyOrder 500 %f", context.pool().get(StockID).price());
 				context.accountProxy().pushBuyOrder(StockID, 500, context.pool().get(StockID).price()); 
 			}
 			if(context.date().compareTo("2019-04-15") == 0 &&
 					context.time().compareTo("14:07:00") == 0)
 			{
+				//CLog.output("TEST", "pushBuyOrder 800 %f", context.pool().get(StockID).price());
 				context.accountProxy().pushBuyOrder(StockID, 800, context.pool().get(StockID).price()); 
 			}
 			if(context.date().compareTo("2019-04-29") == 0 &&
 					context.time().compareTo("15:00:00") == 0)
 			{
+				//CLog.output("TEST", "pushSellOrder 1000 %f", context.pool().get(StockID).price());
 				context.accountProxy().pushSellOrder(StockID, 1000, context.pool().get(StockID).price());
 			}
 		}
@@ -184,7 +156,7 @@ public class TestQuantSession_Simple {
 	public void test_QuantSession()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		if(0 != cAccountController.open("mock001" ,  new MockMarketOpe(), true)
+		if(0 != cAccountController.open("mock001" , true)
 				|| 0 != cAccountController.reset(10*10000f))
 		{
 			CLog.error("TEST", "SampleTestStrategy AccountController ERR!");
@@ -206,10 +178,14 @@ public class TestQuantSession_Simple {
 			CObjectContainer<Double> ctnMoney = new CObjectContainer<Double>();
 			acc.getMoney(ctnMoney);
 
-			double buyCostAll = 500*11.15*s_transactionCostsRatioBuy + 800*11.26*s_transactionCostsRatioBuy;
-			double sellCost = 1000*11.13*s_transactionCostsRatioSell;
+			double buyCostAll = getTranCost(TRANACT.BUY,500,11.15) + getTranCost(TRANACT.BUY,800,11.26);// 5.1115 5.18016
+			buyCostAll = CUtilsMath.saveNDecimal(buyCostAll, 3);
+			double sellCost = getTranCost(TRANACT.SELL,1000,11.13); // 11.3526
+			sellCost = CUtilsMath.saveNDecimal(sellCost, 3);
 			double ExpectMoney = 
 					10*10000-500*11.15-800*11.26+1000*11.13-buyCostAll-sellCost;
+			CLog.output("TEST", "ExpectMoney %f", ExpectMoney);
+			CLog.output("TEST", "ctnMoney %f", ctnMoney.get());
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), ExpectMoney, 2);
 			
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();
@@ -226,6 +202,28 @@ public class TestQuantSession_Simple {
 			CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, expectRefPrimeCostPrice, 2);
 		}
 		
+	}
+	
+	private static double getTranCost(TRANACT tranact, int amount, double price) {
+		double s_transactionCostsRatio_TransferFee = 0.00002; // 过户费比率(买卖双边收取)
+		double s_transactionCostsRatio_Poundage = 0.00025; // 手续费比率-佣金(买卖双边收取)
+		double s_transactionCosts_MinPoundage = 5.0; // 手续费最小值
+		double s_transactionCostsRatio_Sell_StampDuty = 0.001; // 印花税比率(卖单边收取)
+		// 过户费
+		double fTransferFee = s_transactionCostsRatio_TransferFee * amount * price;
+		// 佣金
+		double fPoundage = s_transactionCostsRatio_Poundage * amount * price;
+		if(fPoundage < s_transactionCosts_MinPoundage)
+		{
+			fPoundage = s_transactionCosts_MinPoundage;
+		}
+		// 本次卖出印花税
+		double fSellStampDuty = 0;
+		if(TRANACT.SELL == tranact)
+		{
+			fSellStampDuty = s_transactionCostsRatio_Sell_StampDuty * amount * price;
+		}
+		return fTransferFee + fPoundage + fSellStampDuty;
 	}
 	
 	public static void main(String[] args) {
