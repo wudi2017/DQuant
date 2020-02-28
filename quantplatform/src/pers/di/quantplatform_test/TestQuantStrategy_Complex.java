@@ -11,39 +11,7 @@ import pers.di.localstock.common.*;
 import pers.di.quantplatform.*;
 import pers.di.quantplatform_test.TestQuantSession_Simple.TestStrategy;
 
-public class TestQuantStrategy_Standard {
-	
-	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
-	public static double s_transactionCostsRatioBuy = 0.0016f;
-	public static double s_transactionCostsRatioSell = 0.0f;
-	
-	public static class MockMarketOpe extends IMarketOpe
-	{
-		@Override
-		public int start()
-		{
-			return 0;
-		}
-		
-		@Override
-		public int stop()
-		{
-			return 0;
-		}
-		
-		@Override
-		public int postTradeRequest(TRANACT tranact, String id, int amount, double price) {
-			if(tranact == TRANACT.BUY)
-			{
-				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioBuy);
-			}
-			else if(tranact == TRANACT.SELL)
-			{
-				super.dealReply(tranact, id, amount, price, amount*price*s_transactionCostsRatioSell);
-			}
-			return 0;
-		}
-	}
+public class TestQuantStrategy_Complex {
 	
 	/*
 	 * SelectResultWrapper类，用于选股优先级排序
@@ -383,7 +351,7 @@ public class TestQuantStrategy_Standard {
 	public void test_QuantStragety()
 	{
 		AccountController cAccountController = new AccountController(s_accountDataRoot);
-		if(0 != cAccountController.open("mock001" ,  new MockMarketOpe(), true)
+		if(0 != cAccountController.open("mock001", true)
 				|| 0 != cAccountController.reset(10*10000f))
 		{
 			CLog.error("TEST", "SampleTestStrategy AccountController ERR!");
@@ -398,6 +366,8 @@ public class TestQuantStrategy_Standard {
 		int iRetMoney = acc.getMoney(money);
 		CTest.EXPECT_DOUBLE_EQ(totalAssets.get(), 107575.481, 3);
 		CTest.EXPECT_DOUBLE_EQ(money.get(), 107575.481, 3);
+		
+		cAccountController.close();
 	}
 	
 	@CTest.test
@@ -418,8 +388,10 @@ public class TestQuantStrategy_Standard {
 		CSystem.start();
 //		CLog.config_setTag("TEST", false);
 //		CLog.config_setTag("ACCOUNT", false);
-		CTest.ADD_TEST(TestQuantStrategy_Standard.class);
-		CTest.RUN_ALL_TESTS("TestQuantStrategy_Standard.test_QuantStragety");
+		CTest.ADD_TEST(TestQuantStrategy_Complex.class);
+		CTest.RUN_ALL_TESTS("TestQuantStrategy_Complex.test_QuantStragety");
 		CSystem.stop();
 	}
+	
+	public static String s_accountDataRoot = CSystem.getRWRoot() + "\\account";
 }
