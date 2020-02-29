@@ -272,6 +272,8 @@ public class AccountStore {
 			{
 				e.printStackTrace();
 			}
+		} else {
+			bNeedRewriteFile = true;
 		}
 		
 		if(bNeedRewriteFile)
