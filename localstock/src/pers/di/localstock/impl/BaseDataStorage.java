@@ -51,11 +51,11 @@ public class BaseDataStorage {
 			return error;
 		}
 		
+		String tempString = null;
 		try
 		{
 			BufferedReader reader = new BufferedReader(new FileReader(cfile));
 			int line = 1;
-			String tempString = null;
             while ((tempString = reader.readLine()) != null) {
             	
 //                System.out.println("line " + line + ": " + tempString);
@@ -66,6 +66,9 @@ public class BaseDataStorage {
                 
             	KLine cKLine = new KLine();
             	String[] cols = tempString.split(",");
+            	if(cols.length != 6 || cols[cols.length-1].length() <= 0) {
+            		System.out.println("line " + line + ": " + tempString);
+            	}
             	
             	cKLine.date = cols[0];
 	        	cKLine.open = Double.parseDouble(cols[1]);
@@ -82,6 +85,7 @@ public class BaseDataStorage {
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			System.out.println("ErrorInfo: BaseDataStorage.getKLine "+ "stockID:" + id + " ParseStr:" + tempString); 
 			System.out.println(e.getMessage()); 
 			error = -1;
 			return error;
