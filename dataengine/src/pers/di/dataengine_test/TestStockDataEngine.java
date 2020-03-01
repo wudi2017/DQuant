@@ -82,24 +82,30 @@ public class TestStockDataEngine {
 		{
 			if(context.date().equals("2007-11-12"))
 			{
+				// day start, 
+				// only call addCurrentDayInterestMinuteDataID, 
+				// you could get min data in onMinuteTimePrices with IF context.pool().get(stockID).timePrices()
+				// else context.pool().get(stockID).timePrices().size() == 0
 				context.addCurrentDayInterestMinuteDataID(stockID);
 				CLog.output("TEST", "EngineListenerTesterY.onTradingDayStart ID:%s Date:%s", 
 						stockID,
 						context.date());
+				s_testCount_listenerY++;
 			}
 		}
 		@Override
 		public void onMinuteTimePrices(DAContext context)
 		{
-			if(context.date().equals("2007-11-12"))
-			{
-				DATimePrices cDATimePrices = context.pool().get(stockID).timePrices();
+			DATimePrices cDATimePrices = context.pool().get(stockID).timePrices();
+			if(cDATimePrices.size() > 0) {
 				TimePrice cCurrentTimePrice =  cDATimePrices.get(cDATimePrices.size()-1);
 				CLog.output("TEST", "EngineListenerTesterY.onDayDataPush ID:%s Time:%s PriceCount:%d Price:%.3f", 
 						stockID,
 						cCurrentTimePrice.time,
 						cDATimePrices.size(),
 						cCurrentTimePrice.price);
+				
+				s_testCount_listenerY++;
 			}
 		}
 		@Override
@@ -163,7 +169,7 @@ public class TestStockDataEngine {
 		StockDataEngine.instance().run();
 		
 		CTest.EXPECT_LONG_EQ(s_testCount_listenerX, 2);
-		CTest.EXPECT_LONG_EQ(s_testCount_listenerY, 4);
+		CTest.EXPECT_LONG_EQ(s_testCount_listenerY, 5 + 242);
 	}
 	
 	

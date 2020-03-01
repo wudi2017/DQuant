@@ -28,6 +28,11 @@ public class DAStock {
 		return obsStockInfo.get().name;
 	}
 	
+	/*
+	 * current price
+	 * if has no newest timePrices, it will return yesterday close price
+	 * if has timePrices. it will return newest timePrices price
+	 */
 	public double price()
 	{
 		double curPrice = 0.0f;

@@ -38,6 +38,10 @@ public class HoldStock {
 		refPrimeCostPrice = c.refPrimeCostPrice;
 	}
 	
+	public double marketValue() {
+		return curPrice*totalAmount;
+	}
+	
 	public double refProfit() // 参考利润值（只做本次仓位建仓后的参考盈亏金额，不计算交易费用）
 	{
 		return (curPrice - refPrimeCostPrice)*totalAmount;

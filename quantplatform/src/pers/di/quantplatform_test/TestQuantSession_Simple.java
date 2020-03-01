@@ -44,7 +44,13 @@ public class TestQuantSession_Simple {
 		@Override
 		public void onDayStart(QuantContext context) {
 			//CLog.output("TEST", "TestStrategy.onDayStart %s %s", ctx.date(), ctx.time());
-			context.addCurrentDayInterestMinuteDataID("600000");
+			if (context.date().compareTo("2019-04-02") >= 0 && context.date().compareTo("2019-04-29") <= 0) {
+				// day start, 
+				// only call addCurrentDayInterestMinuteDataID, 
+				// you could get min data in onMinuteTimePrices with IF context.pool().get(stockID).timePrices()
+				// else context.pool().get(stockID).timePrices().size() == 0
+				context.addCurrentDayInterestMinuteDataID("600000");
+			}
 			onDayBeginCalled++;
 		}
 
@@ -65,8 +71,17 @@ public class TestQuantSession_Simple {
 			String StockID = "600000";
 			
 			// 遍历某只股票某日分时线
+			// 2019-04-02 ~ 2019-04-02 has min data 600000, other day no min data 600000
+			// because call addCurrentDayInterestMinuteDataID 600000 in 2019-04-02 ~ 2019-04-02
 			DATimePrices cTimePrices = context.pool().get(StockID).timePrices();
-			CTest.EXPECT_TRUE(cTimePrices.size()!=0);
+			if (context.date().compareTo("2019-04-02") >= 0 && context.date().compareTo("2019-04-29") <= 0) {
+				CTest.EXPECT_TRUE(cTimePrices.size()!=0);
+			} else {
+				CTest.EXPECT_TRUE(cTimePrices.size()==0);
+				return;
+			}
+			
+			
 			TimePrice currentTimePrice = cTimePrices.get(cTimePrices.size()-1);
 			CTest.EXPECT_TRUE(currentTimePrice.time.equals(context.time()));
 
