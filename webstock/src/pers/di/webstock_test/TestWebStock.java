@@ -295,7 +295,7 @@ public class TestWebStock {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestWebStock.class);
-		CTest.RUN_ALL_TESTS("TestWebStock.test_getTransactionRecordHistory");
+		CTest.RUN_ALL_TESTS("TestWebStock.");
 		CSystem.stop();
 	}
 }

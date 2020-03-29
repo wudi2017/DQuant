@@ -683,7 +683,7 @@ public class AccountImpl implements IAccount {
 			if(cDealOrder.tranAct == TRANACT.BUY ) 
 			{
 				tranOpe = "BUY";
-				DumpInfo+=String.format("\n    -DealOrder: %s %s %s %s %d %.3f (BC%.3f)", 
+				DumpInfo+=String.format("\n    -DealOrder: %s %s %s %s %d %.3f (BC-%.3f)", 
 						cDealOrder.date, cDealOrder.time, tranOpe, cDealOrder.stockID, 
 						cDealOrder.amount, cDealOrder.price, cDealOrder.cost);
 			}
