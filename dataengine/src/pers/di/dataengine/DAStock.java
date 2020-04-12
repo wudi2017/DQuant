@@ -28,6 +28,30 @@ public class DAStock {
 		return obsStockInfo.get().name;
 	}
 	
+	public String date() {
+		if (m_pool.time().compareTo("09:28:00") < 0 || 
+				m_pool.time().compareTo("15:10:00") > 0) {
+			// not in transact time, return last date of dayk.
+			DAKLines cDAKLines = this.dayKLines();
+			int iSize = cDAKLines.size();
+			String dateStr = cDAKLines.get(iSize-1).date;
+			return dateStr;
+		} else {
+			/* in transact time, first try return pool date if timeprices exit,
+			 * else return last date of dayk.
+			 */
+			DATimePrices cDATimePrices = timePrices();
+			if (cDATimePrices.size() > 0) {
+				return m_pool.date();
+			} else {
+				DAKLines cDAKLines = this.dayKLines();
+				int iSize = cDAKLines.size();
+				String dateStr = cDAKLines.get(iSize-1).date;
+				return dateStr;
+			}
+		}
+	}
+	
 	/*
 	 * current price
 	 * if has no newest timePrices, it will return yesterday close price

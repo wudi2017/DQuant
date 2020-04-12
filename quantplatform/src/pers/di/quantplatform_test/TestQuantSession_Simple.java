@@ -217,6 +217,7 @@ public class TestQuantSession_Simple {
 			CTest.EXPECT_DOUBLE_EQ(cHoldStock.refPrimeCostPrice, expectRefPrimeCostPrice, 2);
 		}
 		
+		cAccountController.close();
 	}
 	
 	private static double getTranCost(TRANACT tranact, int amount, double price) {

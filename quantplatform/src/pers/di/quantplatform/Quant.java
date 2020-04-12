@@ -84,7 +84,7 @@ public class Quant {
 	
 	public void onInitialize(DAContext context)
 	{
-		CLog.output("QENGINE", "QuantSession.onInitialize");
+		CLog.output("QENGINE", "Quant.onInitialize");
 		
 		m_context.setDAContext(context);
 		
@@ -96,7 +96,7 @@ public class Quant {
 	
 	public void onUnInitialize(DAContext context)
 	{
-		CLog.output("QENGINE", "QuantSession.onUnInitialize");
+		CLog.output("QENGINE", "Quant.onUnInitialize");
 		
 		m_context.setDAContext(context);
 		
@@ -108,7 +108,7 @@ public class Quant {
 	
 	public void onTradingDayStart(DAContext context)
 	{
-		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayStart", context.date(), context.time());
+		CLog.output("QENGINE", "[%s %s] Quant.onTradingDayStart", context.date(), context.time());
 		
 		m_context.setDAContext(context);
 		
@@ -136,13 +136,13 @@ public class Quant {
 			StrategyInterestIDs += StockID  + " ";
 		}
 		
-		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayStart MinuteDataIDs StrategyInterest[%s]", 
+		CLog.output("QENGINE", "[%s %s] Quant.onTradingDayStart MinuteDataIDs StrategyInterest[%s]", 
 				context.date(), context.time(), StrategyInterestIDs);
 	}
 	
 	public void onMinuteTimePrices(DAContext context)
 	{
-		CLog.output("QENGINE", "[%s %s] QuantSession.onMinuteTimePrices ", context.date(), context.time());
+		CLog.output("QENGINE", "[%s %s] Quant.onMinuteTimePrices ", context.date(), context.time());
 		
 		if(null != m_stratety)
 		{
@@ -155,8 +155,13 @@ public class Quant {
 			for(int i=0; i<ctnHoldStockIDList.size(); i++)
 			{
 				String sHoldStockID = ctnHoldStockIDList.get(i);
-				double price = context.pool().get(sHoldStockID).price();
-				m_cAccountController.flushCurrentPrice(sHoldStockID, price);
+				DAStock cDAStock = context.pool().get(sHoldStockID);
+				if (cDAStock.date().equals(m_context.date())) {
+					double price = cDAStock.price();
+					m_cAccountController.flushCurrentPrice(sHoldStockID, price);
+				} else {
+					CLog.output("ERROR", "[%s %s] Quant.onMinuteTimePrices no timeprice for stockID:%s in Hold.", context.date(), context.time(), sHoldStockID);
+				}
 			}
 			
 			// callback for strategy onMinuteData
@@ -166,7 +171,7 @@ public class Quant {
 	
 	public void onTradingDayFinish(DAContext context)
 	{
-		CLog.output("QENGINE", "[%s %s] QuantSession.onTradingDayFinish ", context.date(), context.time());
+		CLog.output("QENGINE", "[%s %s] Quant.onTradingDayFinish ", context.date(), context.time());
 		
 		m_context.setDAContext(context);
 		
