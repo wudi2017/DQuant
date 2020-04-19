@@ -1,5 +1,6 @@
 package pers.di.dataengine;
 
+import pers.di.common.CLog;
 import pers.di.common.CObjectObserver;
 import pers.di.localstock.LocalStock;
 import pers.di.localstock.common.StockInfo;
@@ -29,27 +30,45 @@ public class DAStock {
 	}
 	
 	public String date() {
-		if (m_pool.time().compareTo("09:28:00") < 0 || 
-				m_pool.time().compareTo("15:10:00") > 0) {
-			// not in transact time, return last date of dayk.
-			DAKLines cDAKLines = this.dayKLines();
-			int iSize = cDAKLines.size();
-			String dateStr = cDAKLines.get(iSize-1).date;
-			return dateStr;
-		} else {
-			/* in transact time, first try return pool date if timeprices exit,
-			 * else return last date of dayk.
-			 */
-			DATimePrices cDATimePrices = timePrices();
-			if (cDATimePrices.size() > 0) {
-				return m_pool.date();
-			} else {
+		try {
+			if (m_pool.time().compareTo("09:28:00") < 0 || 
+					m_pool.time().compareTo("15:10:00") > 0) {
+				// not in transact time, return last date of dayk.
 				DAKLines cDAKLines = this.dayKLines();
 				int iSize = cDAKLines.size();
+				if (iSize <= 0) {
+					/* current stock first date maybe after m_pool.date(), return invalid date.*/
+//					CLog.output("ERROR", "DAStock.date size error, StockID:%s iSize=%d date:%s time:%s", 
+//							m_stockID, iSize, m_pool.date(), m_pool.time());
+					return "0000-00-00";
+				}
 				String dateStr = cDAKLines.get(iSize-1).date;
 				return dateStr;
+			} else {
+				/* in transact time, first try return pool date if timeprices exit,
+				 * else return last date of dayk.
+				 */
+				DATimePrices cDATimePrices = timePrices();
+				if (cDATimePrices.size() > 0) {
+					return m_pool.date();
+				} else {
+					DAKLines cDAKLines = this.dayKLines();
+					int iSize = cDAKLines.size();
+					if (iSize <= 0) {
+						/* current stock first date maybe after m_pool.date(), return invalid date.*/
+//						CLog.output("ERROR", "DAStock.date size error, StockID:%s iSize=%d date:%s time:%s", 
+//								m_stockID, iSize, m_pool.date(), m_pool.time());
+						return "0000-00-00";
+					}
+					String dateStr = cDAKLines.get(iSize-1).date;
+					return dateStr;
+				}
 			}
-		}
+		} catch (Exception e) {
+			CLog.output("ERROR", "DAStock.date error, StockID:%s", m_stockID);
+			e.printStackTrace();
+			return "0000-00-00";
+		} 
 	}
 	
 	/*

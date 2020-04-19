@@ -160,7 +160,9 @@ public class Quant {
 					double price = cDAStock.price();
 					m_cAccountController.flushCurrentPrice(sHoldStockID, price);
 				} else {
-					CLog.output("ERROR", "[%s %s] Quant.onMinuteTimePrices no timeprice for stockID:%s in Hold.", context.date(), context.time(), sHoldStockID);
+					/* Stock in hold list, stock lastest day not eq current day.
+					  Maybe current day for this stock is not transaction day. */
+					// CLog.output("ERROR", "[%s %s] Quant.onMinuteTimePrices no timeprice for stockID:%s in Hold.", context.date(), context.time(), sHoldStockID);
 				}
 			}
 			

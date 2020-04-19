@@ -280,61 +280,68 @@ public class LocalStockImpl implements ILocalStock {
 			
 			CListObserver<KLine> obsDayKLineList = new CListObserver<KLine>();
 			int errObsDayKLineList = this.buildDayKLineListObserver(id, date, date, obsDayKLineList);
-			if(0 == errObsDayKLineList && obsDayKLineList.size()==1)
+			if(0 == errObsDayKLineList)
 			{
-				KLine cKLine = obsDayKLineList.get(0);
-				
-				if(null != cKLine && date.length() == "0000-00-00".length())
-				{
-					// load new detail data
-					List<KLine> ctnKLine = new ArrayList<KLine>();
-					int errKLine= m_cBaseDataLayer.get1MinKLineOneDay(id, date, ctnKLine);
+				if(obsDayKLineList.size()==1) { /* this day has transaction */
 					
-					if(0 == errKLine && ctnKLine.size() != 0)
+					KLine cKLine = obsDayKLineList.get(0);
+					
+					if(null != cKLine && date.length() == "0000-00-00".length())
 					{
-						// 由于可能是复权价位，需要重新计算相对价格
-						double baseOpenPrice = cKLine.open;
-			            //System.out.println("baseOpenPrice:" + baseOpenPrice);  
-			            
-						double actruaFirstPrice = ctnKLine.get(0).open;
-						//System.out.println("actruaFirstPrice:" + actruaFirstPrice); 
+						// load new detail data
+						List<KLine> ctnKLine = new ArrayList<KLine>();
+						int errKLine= m_cBaseDataLayer.get1MinKLineOneDay(id, date, ctnKLine);
 						
-						for(int i = 0; i < ctnKLine.size(); i++)  
-				        {  
-							KLine cMinKLine = ctnKLine.get(i);  
-//				            System.out.println(cExKData.datetime + "," 
-//				            		+ cExKData.open + "," + cExKData.close + "," 
-//				            		+ cExKData.low + "," + cExKData.high + "," 
-//				            		+ cExKData.volume);  
+						if(0 == errKLine && ctnKLine.size() != 0)
+						{
+							// 由于可能是复权价位，需要重新计算相对价格
+							double baseOpenPrice = cKLine.open;
+				            //System.out.println("baseOpenPrice:" + baseOpenPrice);  
+				            
+							double actruaFirstPrice = ctnKLine.get(0).open;
+							//System.out.println("actruaFirstPrice:" + actruaFirstPrice); 
 							
-							double actrualprice = cMinKLine.close;
-							double changeper = (actrualprice - actruaFirstPrice)/actruaFirstPrice;
-							double changedprice = baseOpenPrice + baseOpenPrice * changeper;
-							
-							// 添加上下午开盘点
-							if(cMinKLine.time.compareTo("09:31:00") == 0
-									|| cMinKLine.time.compareTo("13:01:00") == 0)
-							{
-								double actrualprice_open = cMinKLine.open;
-								double changeper_open = (actrualprice_open - actruaFirstPrice)/actruaFirstPrice;
-								double changedprice_open = baseOpenPrice + baseOpenPrice * changeper_open;
+							for(int i = 0; i < ctnKLine.size(); i++)  
+					        {  
+								KLine cMinKLine = ctnKLine.get(i);  
+//					            System.out.println(cExKData.datetime + "," 
+//					            		+ cExKData.open + "," + cExKData.close + "," 
+//					            		+ cExKData.low + "," + cExKData.high + "," 
+//					            		+ cExKData.volume);  
 								
-								TimePrice cStockDayDetail = new TimePrice();
-								cStockDayDetail.price = changedprice_open;
-								String openTime = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(cMinKLine.time, -1*60);
-								cStockDayDetail.time = openTime;
-								detailDataList.add(cStockDayDetail);
-							}
-							
+								double actrualprice = cMinKLine.close;
+								double changeper = (actrualprice - actruaFirstPrice)/actruaFirstPrice;
+								double changedprice = baseOpenPrice + baseOpenPrice * changeper;
+								
+								// 添加上下午开盘点
+								if(cMinKLine.time.compareTo("09:31:00") == 0
+										|| cMinKLine.time.compareTo("13:01:00") == 0)
+								{
+									double actrualprice_open = cMinKLine.open;
+									double changeper_open = (actrualprice_open - actruaFirstPrice)/actruaFirstPrice;
+									double changedprice_open = baseOpenPrice + baseOpenPrice * changeper_open;
+									
+									TimePrice cStockDayDetail = new TimePrice();
+									cStockDayDetail.price = changedprice_open;
+									String openTime = CUtilsDateTime.getTimeStrForSpecifiedTimeOffsetS(cMinKLine.time, -1*60);
+									cStockDayDetail.time = openTime;
+									detailDataList.add(cStockDayDetail);
+								}
+								
 
-							TimePrice cStockDayDetail = new TimePrice();
-							cStockDayDetail.price = CUtilsMath.saveNDecimal(changedprice, 2);
-							cStockDayDetail.time = cMinKLine.time;
-							detailDataList.add(cStockDayDetail);
-				        } 
-						
-						m_cCache.set_stockTimeData(findKey, detailDataList);
+								TimePrice cStockDayDetail = new TimePrice();
+								cStockDayDetail.price = CUtilsMath.saveNDecimal(changedprice, 2);
+								cStockDayDetail.time = cMinKLine.time;
+								detailDataList.add(cStockDayDetail);
+					        } 
+							
+							m_cCache.set_stockTimeData(findKey, detailDataList);
+						}
 					}
+				} else { 
+					/* get kline no error, but current day is NOT transaction day */
+					error = 0;
+					return error;
 				}
 			}
 		}
