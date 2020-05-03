@@ -38,6 +38,29 @@ public class CSystem {
 		return s_RunSessionRoot;
 	}
 	
+	public static void exit(int errCode)
+	{
+		CLog.error("ERROR", "Program is exited error(%d)!\nStackTrace:\n%s\n", errCode, getCallStatck());
+		CLog.stop();
+		System.exit(errCode);
+	}
+	
+	public static String getCallStatck() {
+		String traceString = "";
+        Throwable ex = new Throwable();
+        StackTraceElement[] stackElements = ex.getStackTrace();
+        if (stackElements != null) {
+            for (int i = 0; i < stackElements.length; i++) {
+            	if(0==i){continue;} // ignore current method.
+            	traceString += stackElements[i].getFileName()+":";
+            	traceString += stackElements[i].getLineNumber()+" ";
+            	traceString += stackElements[i].getClassName()+":";
+            	traceString += stackElements[i].getMethodName()+"\n";
+            }
+        }
+        return traceString;
+    }
+	
 	private static String s_RWRoot;
 	private static String s_RunSessionRoot;
 	static {

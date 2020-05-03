@@ -10,6 +10,7 @@ import pers.di.account.detail.AccountStore.StoreEntity;
 import pers.di.common.CLog;
 import pers.di.common.CObjectContainer;
 import pers.di.common.CSyncObj;
+import pers.di.common.CSystem;
 import pers.di.common.CUtilsDateTime;
 import pers.di.common.CUtilsMath;
 
@@ -122,9 +123,10 @@ public class AccountImpl implements IAccount {
 			}
 			CObjectContainer<Double> money = new CObjectContainer<Double>();
 			this.getMoney(money);
-			if(Double.compare(money.get(), amount*price) < 0)
+			double costReservedMoney = amount*price*0.01 < 10? 10.0:amount*price*0.01;
+			if(Double.compare(money.get(), amount*price + costReservedMoney) < 0) // check money: stockMoney+reservedMoney
 			{
-				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder money error!");
+				CLog.error("ACCOUNT", "@AccountEntity CommissionOrder money error! Please reserved stock money and cost money!");
 				this.aceessUnLock();
 				return -1;
 			}
@@ -470,6 +472,7 @@ public class AccountImpl implements IAccount {
 			{
 				CLog.error("ACCOUNT", "BuyDeal Not have enough money to pay the stockmoney:%.3f cost:%.3f !! currentMoney:%.3f", 
 						price*amount, cost, m_accountStore.storeEntity().money);
+				CSystem.exit(-1);
 			}
 		}
 		else if(tranact == TRANACT.SELL)

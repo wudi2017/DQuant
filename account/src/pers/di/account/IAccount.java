@@ -7,6 +7,11 @@ import pers.di.account.common.*;
 import pers.di.common.*;
 
 public interface IAccount {
+	/*
+	 * postTradeOrder:
+	 * transaction cost would deduct from your money, 
+	 * so when you post buy order, your must reserve stockMoney & buyCostMoney, else will error exit.
+	 */
 	// base	
 	public abstract String ID();
 	public abstract String date();
