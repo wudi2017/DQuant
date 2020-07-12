@@ -161,6 +161,7 @@ public class CDateTimeThruster {
 				m_bHistoryTest = true;
 				m_beginDate = cols[1];
 				m_endDate = cols[2];
+				CLog.output("COMMON", "CDateTimeThruster config %s-%s", m_beginDate, m_endDate);
 			}
 			else if(value.contains("Realtime"))
 			{
@@ -168,7 +169,7 @@ public class CDateTimeThruster {
 			}
 			else
 			{
-				CLog.error("DataEngine", "input parameter error!");
+				CLog.error("COMMON", "input parameter error!");
 			}
 		}
 		return 0;

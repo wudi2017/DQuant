@@ -37,8 +37,17 @@ public class TranDayChecker {
 		
 		if(m_taskSharedSession.bHistoryTest)
 		{
-			if(null == m_hisTranDates)
+			/*
+			 * 如果没有交易日期表 或者 当前需要检查的日期超过了检查表中的最大日期 都需要重新初始化交易日期表.
+			 * NOTE:
+			 * 本地有上证数据K线，但History测试区间大于了上证数据K线最后一天情况：
+			 * 第一次执行时候历史交易日期表初始化为和本地上证数据K线一致，随着测试进行，当超过上证指数最后一天时，
+			 * 重新调用初始化方法，由于参数日期已经大于当前历史交易日期表最后一天，所以在初始化中进行本地数据强制更新。
+			 * 
+			 */
+			if(null == m_hisTranDates || date.compareTo(m_hisTranMaxDate) > 0 )
 			{
+				CLog.output("DENGINE", "[%s %s] TranDayChecker.check initializeHistoryTranDate (m_hisTranDates=NULL or checkDate > hisTranMaxDate)", date, time);
 				initializeHistoryTranDate(date);
 			}
 			
@@ -110,6 +119,7 @@ public class TranDayChecker {
 		CListObserver<KLine> obsKLineListSZZS = new CListObserver<KLine>();
 		int errKLineListSZZS = LocalStock.instance().buildDayKLineListObserver(
 				"999999", "1990-01-01", "2100-01-01", obsKLineListSZZS);
+		
 		if(0 != errKLineListSZZS)
 		{
 			LocalStock.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
@@ -119,6 +129,7 @@ public class TranDayChecker {
 			if(obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date.compareTo(date) < 0
 					&& obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date.compareTo(CUtilsDateTime.GetCurDateStr()) < 0)
 			{
+				CLog.output("DENGINE", "TranDayChecker  updateAllLocalStocks:%s", CUtilsDateTime.GetCurDateStr());
 				LocalStock.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
 			}
 		}
@@ -132,10 +143,15 @@ public class TranDayChecker {
 			String curDateStr = cStockDayShangZheng.date;
 			m_hisTranDates.add(curDateStr);
         }
+		if (obsKLineListSZZS.size() > 0) {
+			m_hisTranMaxDate = obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date;
+		}
+		
 	}
 	
 	private SharedSession m_taskSharedSession;
 	private Set<String> m_hisTranDates;
+	private String m_hisTranMaxDate;
 	
 	private boolean m_bIsTranDate;
 	private String m_lastValidCheckDate;
