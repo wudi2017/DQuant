@@ -73,7 +73,7 @@ public class BaseDataDownload {
 		int errAllStockList = WebStockLayer.getAllStockList(stockAllList);
 		if (0 != errAllStockList) {
 			// 网络层获取所有股票列表失败，试图本地数据加载，本地数据可以由通达信客户端把所有列表导出
-			CLog.output("DATAAPI", "WebStockLayer WebStock.getAllStockList failed, try load from local stocklist.\n");
+			CLog.error("DATAAPI", "WebStockLayer WebStock.getAllStockList failed, try load from local stocklist.\n");
 			errAllStockList = m_baseDataStorage.getStockListFromLocalFile(stockAllList);
 		}
 	

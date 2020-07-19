@@ -431,7 +431,7 @@ public class BaseDataStorage {
 		File stockListfile = new File(stocklistfilename);
 		if(!stockListfile.exists())
 		{
-			CLog.output("DATAAPI", "getStockListFromLocalFile failed, not found: %s\n", stocklistfilename);
+			CLog.error("DATAAPI", "getStockListFromLocalFile failed, not found: %s\n", stocklistfilename);
 			error = -1;
 			return error;
 		}
