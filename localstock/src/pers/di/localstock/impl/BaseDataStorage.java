@@ -436,6 +436,7 @@ public class BaseDataStorage {
 			return error;
 		}
 
+		System.out.println("getStockListFromLocalFile: " + stocklistfilename); 
 		String tempString = "";
 		try
 		{
