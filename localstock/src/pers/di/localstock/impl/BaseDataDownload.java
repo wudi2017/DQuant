@@ -62,14 +62,21 @@ public class BaseDataDownload {
 		}
 		else
 		{
-			s_fmt.format("[%s] update ERROR: %s error(%d)\n", 
+			s_fmt.format("[%s] downloadAllStockFullData ERROR: %s error(%d)\n", 
 					CUtilsDateTime.GetCurDateTimeStr(), ShangZhiId, errDownloadSZ);
+			return -10;
 		}
 		
 		
 		// 更新所有k
 		List<StockItem> stockAllList = new ArrayList<StockItem>();
 		int errAllStockList = WebStockLayer.getAllStockList(stockAllList);
+		if (0 != errAllStockList) {
+			// 网络层获取所有股票列表失败，试图本地数据加载，本地数据可以由通达信客户端把所有列表导出
+			CLog.output("DATAAPI", "WebStockLayer WebStock.getAllStockList failed, try load from local stocklist.\n");
+			errAllStockList = m_baseDataStorage.getStockListFromLocalFile(stockAllList);
+		}
+	
 		if(0 == errAllStockList)
 		{
 			int iAllStockListSize = stockAllList.size();
@@ -113,24 +120,27 @@ public class BaseDataDownload {
 			double fCostTimeAll = (CUtilsDateTime.GetCurrentTimeMillis() - lTCBegin)/1000.0f;
 			s_fmt.format("[%s] update success all %.3fs, count: %d\n", 
 					CUtilsDateTime.GetCurDateTimeStr(), fCostTimeAll, stockAllList.size()); 
+			
+			// update AllStockFullDataTimestamps
+			if(newestDate.length() == "0000-00-00".length())
+			{
+				m_baseDataStorage.saveAllStockFullDataTimestamps(newestDate);
+				return 0;
+			}
+			else
+			{
+				s_fmt.format("[%s] downloadAllStockFullData ERROR, saveAllStockFullDataTimestamps failed!\n", 
+						CUtilsDateTime.GetCurDateTimeStr());
+				return -2;
+			}
 		}
 		else
 		{
-			System.out.println("ERROR:" + errAllStockList + "\n");
+			s_fmt.format("[%s] downloadAllStockFullData ERROR, WebStockLayer.getAllStockList failed!\n", 
+					CUtilsDateTime.GetCurDateTimeStr());
+			return -1;
 		}
-		
-		if(newestDate.length() == "0000-00-00".length())
-		{
-			m_baseDataStorage.saveAllStockFullDataTimestamps(newestDate);
-		}
-		else
-		{
-			System.out.println("ERROR:" + "updateStocksFinish failed!\n");
-		}
-		
-		return 0;
 	}
-	
 
 	/*
 	 * 下载所单只股票数据到本地

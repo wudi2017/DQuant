@@ -390,7 +390,10 @@ public class BaseDataStorage {
 		return true;
 	}
 	
-	
+	/*
+	 * get local stocks form data dir that download
+	 * transfer all stock folders
+	 */
 	public int getLocalAllStock(List<StockItem> container)
 	{
 		int error = 0;
@@ -419,8 +422,78 @@ public class BaseDataStorage {
 		}
 		return error;
 	}
+	/*
+	 * get stocklist form file, that export from tongdaxin client
+	 */
+	public int getStockListFromLocalFile(List<StockItem> container) {
+		int error = 0;
+		String stocklistfilename = s_workDir + "/" + s_stocklist;
+		File stockListfile = new File(stocklistfilename);
+		if(!stockListfile.exists())
+		{
+			CLog.output("DATAAPI", "getStockListFromLocalFile failed, not found: %s\n", stocklistfilename);
+			error = -1;
+			return error;
+		}
+
+		String tempString = "";
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(stockListfile));
+			int line = 0;
+			String[] heads = null;
+			int iStockID=-1, iStockName=-1;
+            while ((tempString = reader.readLine()) != null) {
+            	
+                if(0 == line) {
+                	heads = tempString.split(",|\t");
+                	if (heads.length < 2) {
+                		throw new Exception("parse error!");
+                	}
+                	for(int i=0;i<heads.length;i++) {
+                		if(heads[i].equals("代码")) {
+                			iStockID = i;
+                		}
+                		if(heads[i].equals("名称")) {
+                			iStockName = i;
+                		}
+                	}
+                	if(-1 == iStockID || -1 == iStockName) {
+                		throw new Exception("parse error!");
+                	}
+                }
+                
+                if(0 < line) {
+	            	String[] cols = tempString.split(",|\t");
+	            	if (cols.length != heads.length) {
+	            		continue;
+	            	}
+	            	
+					StockItem cStockItem = new StockItem();
+					cStockItem.id = cols[iStockID];
+					cStockItem.name = cols[iStockName];
+					container.add(cStockItem);
+                }
+
+                line++;
+            }
+            
+            reader.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println("ErrorInfo: BaseDataStorage.getStockListFromLocalFile ParseStr " + tempString); 
+			System.out.println(e.getMessage()); 
+			error = -1;
+			return error;
+		}
+		
+		return error;
+	}
 	
 	private String s_workDir = "data";
+	private String s_stocklist = "stock_list.txt";
 	private String s_updateFinish = "updateFinish.txt";
 	
 	private String s_daykFile = "dayk.txt";
