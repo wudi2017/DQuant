@@ -30,6 +30,10 @@ public class KLine implements Comparable
 	{
 		return open>close?close:open;
 	}
+	public double midle() // 高低中点
+	{
+		return (low+high)/2;
+	}
 	public double maxWave() // 最大波动
 	{
 		return (high-low)/low;
