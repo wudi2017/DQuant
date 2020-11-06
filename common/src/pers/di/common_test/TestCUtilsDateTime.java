@@ -37,7 +37,7 @@ public class TestCUtilsDateTime {
 		{
 			testdata = testdata & CUtilsDateTime.CheckValidDate("2017-02-04");
 		}
-		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 100);
 		CLog.output("TEST", "dump:%b", testdata);
 		
 		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidDate("2016--02-04"));
@@ -87,7 +87,7 @@ public class TestCUtilsDateTime {
 		{
 			testdata = testdata & CUtilsDateTime.CheckValidTime("12:31:22");
 		}
-		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 100);
 		CLog.output("TEST", "dump:%b", testdata);
 		
 		CTest.EXPECT_FALSE(CUtilsDateTime.CheckValidTime("21::31:22"));
@@ -213,7 +213,7 @@ public class TestCUtilsDateTime {
 		{
 			stestdata = CUtilsDateTime.GetCurDateStr();
 		}
-		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 50);
+		CTest.EXPECT_TRUE(CTest.TEST_PERFORMANCE_END() < 100);
 		CLog.output("TEST", "dump[%s]", stestdata);
 	}
 	

@@ -67,12 +67,14 @@ public class StockDataEngine {
 					m_SharedSession.bHistoryTest = true;
 					m_SharedSession.beginDate = beginDate;
 					m_SharedSession.endDate = endDate;
+					CLog.warning("DENGINE", "config trigger history test: %s -> %s.", beginDate, endDate);
 				}
 			}
 			else if(value.contains("Realtime"))
 			{
 				m_SharedSession.bHistoryTest = false;
 				m_CDateTimeThruster.config("TriggerMode", "Realtime");
+				CLog.warning("DENGINE", "config trigger realtime!");
 			}
 			else
 			{

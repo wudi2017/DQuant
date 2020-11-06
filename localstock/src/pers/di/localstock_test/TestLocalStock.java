@@ -19,9 +19,9 @@ public class TestLocalStock {
 	private static String s_DividendPayoutFile = "dividendPayout.txt";
 	private static String s_BaseInfoFile = "baseInfo.txt";
 	
-	private static String s_newestDate = "2017-08-10";
+	private static String s_newestDate = "2020-11-06";
 	private static List<String> s_stockIDs = new ArrayList<String>()
-		{{add("600056");add("600000");add("300163");}};
+		{{add("601607");}};
 	
 	@CTest.setup
 	public static void setup()
@@ -251,7 +251,7 @@ public class TestLocalStock {
 	public static void main(String[] args) {
 		CSystem.start();
 		CTest.ADD_TEST(TestLocalStock.class);
-		CTest.RUN_ALL_TESTS("TestLocalStock.");
+		CTest.RUN_ALL_TESTS("TestLocalStock.test_updateLocalStocks");
 		CSystem.stop();
 	}
 }
