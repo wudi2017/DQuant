@@ -8,6 +8,7 @@ import pers.di.localstock.common.KLine;
 public class DAKLines {
 	public DAKLines(DAPool pool, String stockID)
 	{
+		m_stockID = stockID;
 		m_obsKLineList = new CListObserver<KLine>();
 		
 		if(pool.time().compareTo("15:10:00") > 0)
@@ -38,6 +39,10 @@ public class DAKLines {
 	{
 		return m_obsKLineList.get(m_obsKLineList.size()-1).close;
 	}
+	public String stockID() {
+		return m_stockID;
+	}
 	
 	private CListObserver<KLine> m_obsKLineList;
+	private String m_stockID;
 }
