@@ -15,19 +15,19 @@ public class TestCUtilsMath {
 		{
 			iTest += Math.round(pi);
 		}
-		CLog.output("TEST", "iTest %d",iTest);
+		CLog.debug("TEST", "iTest %d",iTest);
 		
 		float F1=3.1415926f;
-		CLog.output("TEST", "F1 %f",F1);
+		CLog.debug("TEST", "F1 %f",F1);
 		
 		float F2=3782.141f;
-		CLog.output("TEST", "F2 %f",F2);
+		CLog.debug("TEST", "F2 %f",F2);
 		
 		float F3=37825.141f;
-		CLog.output("TEST", "F3 %f",F3);
+		CLog.debug("TEST", "F3 %f",F3);
 		
 		double D1 = 37825.1416;
-		CLog.output("TEST", "D1 %.3f",D1);
+		CLog.debug("TEST", "D1 %.3f",D1);
 		
 //		float f1 = 10.782f;
 //		int i1 = 3200;
@@ -42,7 +42,7 @@ public class TestCUtilsMath {
 		{
 			long lt= 34502400;
 			double dt = lt/1000.0;
-			CLog.output("TEST", "ft %.3f",BigDecimal.valueOf(10.782f*3200).doubleValue());
+			CLog.debug("TEST", "ft %.3f",BigDecimal.valueOf(10.782f*3200).doubleValue());
 		}
 		
 		//for(int i=0; i<10000*1000; i++)
@@ -52,10 +52,10 @@ public class TestCUtilsMath {
 		}
 		
 		double f2 = 34502.400f;
-		CLog.output("TEST", "f2 %.3f",f2);
+		CLog.debug("TEST", "f2 %.3f",f2);
 		
 		double d2 = 34502.400;
-		CLog.output("TEST", "d2 %.3f",d2);
+		CLog.debug("TEST", "d2 %.3f",d2);
 	}
 	
 	@CTest.test
@@ -69,7 +69,7 @@ public class TestCUtilsMath {
 				S = f1*S;
 				if(S>99999) S=1.0f;
 			}
-			CLog.output("TEST", "test_math_cal S %f", S);
+			CLog.debug("TEST", "test_math_cal S %f", S);
 		}
 //		{
 //			double d1=1.234567890123;
@@ -87,21 +87,21 @@ public class TestCUtilsMath {
 	public static void test_ooo()
 	{
 		
-		CLog.output("TEST", "saveNDecimal %f\n", CUtilsMath.saveNDecimalIgnore(2.199f, 1));
-		CLog.output("TEST", "saveNDecimal %f\n", CUtilsMath.saveNDecimalIgnore(2.199f, 2));
-		CLog.output("TEST", "saveNDecimal %f\n", CUtilsMath.saveNDecimalIgnore(2.199f, 3));
+		CLog.debug("TEST", "saveNDecimal %f\n", CUtilsMath.saveNDecimalIgnore(2.199f, 1));
+		CLog.debug("TEST", "saveNDecimal %f\n", CUtilsMath.saveNDecimalIgnore(2.199f, 2));
+		CLog.debug("TEST", "saveNDecimal %f\n", CUtilsMath.saveNDecimalIgnore(2.199f, 3));
 		
 		
-		CLog.output("TEST", "randomFloat %f\n", CUtilsMath.randomFloat());
-		CLog.output("TEST", "randomFloat %f\n", CUtilsMath.randomFloat());
-		CLog.output("TEST", "randomFloat %f\n", CUtilsMath.randomFloat());
+		CLog.debug("TEST", "randomFloat %f\n", CUtilsMath.randomFloat());
+		CLog.debug("TEST", "randomFloat %f\n", CUtilsMath.randomFloat());
+		CLog.debug("TEST", "randomFloat %f\n", CUtilsMath.randomFloat());
 		
 		
 		
-		CLog.output("TEST", "saveNDecimal45 %.3f = 9.19?\n", CUtilsMath.saveNDecimal(8.35f*1.1f, 2));
-		CLog.output("TEST", "saveNDecimal45 %.3f = 27.42?\n", CUtilsMath.saveNDecimal(24.93f*1.1f, 2));
-		CLog.output("TEST", "saveNDecimal45 %.3f = 30.16?\n", CUtilsMath.saveNDecimal(27.42f*1.1f, 2));
-		CLog.output("TEST", "saveNDecimal45 %.3f = 30.18?\n", CUtilsMath.saveNDecimal(30.16f*1.1f, 2));
+		CLog.debug("TEST", "saveNDecimal45 %.3f = 9.19?\n", CUtilsMath.saveNDecimal(8.35f*1.1f, 2));
+		CLog.debug("TEST", "saveNDecimal45 %.3f = 27.42?\n", CUtilsMath.saveNDecimal(24.93f*1.1f, 2));
+		CLog.debug("TEST", "saveNDecimal45 %.3f = 30.16?\n", CUtilsMath.saveNDecimal(27.42f*1.1f, 2));
+		CLog.debug("TEST", "saveNDecimal45 %.3f = 30.18?\n", CUtilsMath.saveNDecimal(30.16f*1.1f, 2));
 		
 	}
 	

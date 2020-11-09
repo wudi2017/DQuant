@@ -127,7 +127,7 @@ public class DACurrentDayTimePriceCache {
 					if(cObsTimePrice.size() > 0)
 					{
 						TimePrice lastTimePrice =  cObsTimePrice.get(cObsTimePrice.size()-1);
-						CLog.output("DENGINE", "MinuteData %s %s (%d)...%.3f", 
+						CLog.debug("DENGINE", "MinuteData %s %s (%d)...%.3f", 
 								stockID, lastTimePrice.time,
 								cObsTimePrice.size(),lastTimePrice.price);
 					}
@@ -202,7 +202,7 @@ public class DACurrentDayTimePriceCache {
 					if(cTimePriceList.size() > 0)
 					{
 						TimePrice lastTimePrice =  cTimePriceList.get(cTimePriceList.size()-1);
-						CLog.output("DENGINE", "MinuteData %s %s (%d)...%.3f", 
+						CLog.debug("DENGINE", "MinuteData %s %s (%d)...%.3f", 
 								ctnRealTimeInfo.stockID, lastTimePrice.time,
 								cTimePriceList.size(), lastTimePrice.price);
 					}

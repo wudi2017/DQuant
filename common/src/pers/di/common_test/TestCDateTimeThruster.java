@@ -72,7 +72,7 @@ public class TestCDateTimeThruster {
 		s_CDateTimeThruster.run();
 		
 		CTest.EXPECT_LONG_EQ(testKeyList1.size(), 8856);
-		CLog.output("TEST", "test_CDateTimeThruster_History call task count %d", testKeyList1.size());
+		CLog.debug("TEST", "test_CDateTimeThruster_History call task count %d", testKeyList1.size());
 		
 		for(int i=0; i<testKeyList1.size()-1;i++)
 		{

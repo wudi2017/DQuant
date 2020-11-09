@@ -359,12 +359,12 @@ public class TestAccountController {
 		}
 		
 		String dumpInfoBeforeEnd = acc.dump();
-		CLog.output("TEST", "\n%s", dumpInfoBeforeEnd);
+		CLog.debug("TEST", "\n%s", dumpInfoBeforeEnd);
 		
 		cAccountController.newDayEnd();
 		
 		String dumpInfoAfterEnd = acc.dump();
-		CLog.output("TEST", "\n%s", dumpInfoAfterEnd);
+		CLog.debug("TEST", "\n%s", dumpInfoAfterEnd);
 		
 		cAccountController.close();
 		
@@ -510,7 +510,7 @@ public class TestAccountController {
 		CLog.config_setTag("ACCOUNT", false);
 		CTest.ADD_TEST(TestAccountController.class);
 		CTest.RUN_ALL_TESTS("TestAccountController.");
-		CLog.output("TEST", "END");
+		CLog.debug("TEST", "END");
 		CSystem.stop();
 	}
 }

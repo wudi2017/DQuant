@@ -199,8 +199,8 @@ public class TestQuantSession_Simple {
 			sellCost = CUtilsMath.saveNDecimal(sellCost, 3);
 			double ExpectMoney = 
 					10*10000-500*11.15-800*11.26+1000*11.13-buyCostAll-sellCost;
-			CLog.output("TEST", "ExpectMoney %f", ExpectMoney);
-			CLog.output("TEST", "ctnMoney %f", ctnMoney.get());
+			CLog.debug("TEST", "ExpectMoney %f", ExpectMoney);
+			CLog.debug("TEST", "ctnMoney %f", ctnMoney.get());
 			CTest.EXPECT_DOUBLE_EQ(ctnMoney.get(), ExpectMoney, 2);
 			
 			List<HoldStock> ctnHoldList = new ArrayList<HoldStock>();

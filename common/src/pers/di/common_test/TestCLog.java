@@ -20,11 +20,11 @@ public class TestCLog {
 		long test_cnt = 10000*5;
 		for(int i=0; i<test_cnt; i++)
 		{
-			CLog.output("TAG1", "testlog TAG1 string abcdedf1 %d!\n", i);
+			CLog.debug("TAG1", "testlog TAG1 string abcdedf1 %d!\n", i);
 		}
 		long cost = CTest.TEST_PERFORMANCE_END();
 		CTest.EXPECT_TRUE(cost < 1000);
-		CLog.output("TAG1", "dump[%d] \n", cost);
+		CLog.debug("TAG1", "dump[%d] \n", cost);
 	}
 	public static void main(String[] args) {
 		

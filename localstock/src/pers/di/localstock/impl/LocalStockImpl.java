@@ -46,7 +46,7 @@ public class LocalStockImpl implements ILocalStock {
 	{
 		if(null == m_cCache.localLatestDate)
 		{
-			CLog.output("DATAAPI","StockDataApi.getUpdatedStocksDate\n");
+			CLog.debug("DATAAPI","StockDataApi.getUpdatedStocksDate\n");
 			CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
 			int errAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
 			if(0 == errAllStockFullDataTimestamps)
@@ -56,18 +56,18 @@ public class LocalStockImpl implements ILocalStock {
 			else
 			{
 				m_cCache.localLatestDate = "0000-00-00";
-				CLog.output("DATAAPI", "StockDataApi.getUpdatedStocksDate failed, reset to %s \n", m_cCache.localLatestDate);
+				CLog.warning("DATAAPI", "StockDataApi.getUpdatedStocksDate failed, reset to %s \n", m_cCache.localLatestDate);
 			}
 		}
 		
 		if(m_cCache.localLatestDate.compareTo(dateStr) >= 0)
 		{
-			CLog.output("DATAAPI", "update success! (current is newest, local: %s)\n", m_cCache.localLatestDate);
+			CLog.info("DATAAPI", "update success! (current is newest, local: %s)\n", m_cCache.localLatestDate);
 		}
 		else
 		{
-			int iUpdateCnt = m_cBaseDataLayer.updateLocalAllStocKLine(dateStr);
-			CLog.output("DATAAPI", "update success to date: %s (count: %d)\n", m_cCache.localLatestDate, iUpdateCnt);
+			int ret = m_cBaseDataLayer.updateLocalAllStocKLine(dateStr);
+			CLog.info("DATAAPI", "update success to date: %s errcode:%d\n", dateStr, ret);
 			m_cCache.clearAllCache();
 		}
 		
@@ -80,40 +80,19 @@ public class LocalStockImpl implements ILocalStock {
 	@Override
 	public int updateLocalStocks(String stockID, String dateStr)
 	{
-		if(null == m_cCache.localLatestDate)
-		{
-			CLog.output("DATAAPI","StockDataApi.getUpdatedStocksDate\n");
-			CObjectContainer<String> ctnAllStockFullDataTimestamps = new CObjectContainer<String>();
-			int errAllStockFullDataTimestamps = m_cBaseDataLayer.getAllStockFullDataTimestamps(ctnAllStockFullDataTimestamps);
-			if(0 == errAllStockFullDataTimestamps)
-			{
-				m_cCache.localLatestDate = ctnAllStockFullDataTimestamps.get();
-			}
-			else
-			{
-				CLog.output("DATAAPI", "StockDataApi.getUpdatedStocksDate failed! \n", m_cCache.localLatestDate);
-			}
-		}
+		// 更新单只股票数据 不影响m_cCache.localLatestDate
+		CObjectContainer<Integer> ctnCount = new CObjectContainer<Integer>();
+		int errCount = m_cBaseDataLayer.updateLocaStocKLine(stockID, ctnCount);
 		
-		if(m_cCache.localLatestDate.compareTo(dateStr) >= 0)
+		if(0 == errCount)
 		{
-			CLog.output("DATAAPI", "update %s success! (current is newest, local: %s)\n",stockID, m_cCache.localLatestDate);
+			CLog.info("DATAAPI", "update %s success to newest (count: %d)\n", stockID, ctnCount.get());
 		}
 		else
 		{
-			// 更新单只股票数据 不影响m_cCache.localLatestDate
-			CObjectContainer<Integer> ctnCount = new CObjectContainer<Integer>();
-			int errCount = m_cBaseDataLayer.updateLocaStocKLine(stockID, ctnCount);
-			
-			if(0 == errCount)
-			{
-				CLog.output("DATAAPI", "update %s success to date: %s (count: %d)\n", stockID, ctnCount.get());
-			}
-			else
-			{
-				CLog.error("STOCK", "update %s failed \n", errCount);
-			}
+			CLog.error("DATAAPI", "update %s failed \n", errCount);
 		}
+		
 		return 0;
 	}
 	
@@ -149,7 +128,7 @@ public class LocalStockImpl implements ILocalStock {
 			}
 			else
 			{
-				CLog.error("STOCK", "DataEngine.getLocalAllStock error(%d) \n", error);
+				CLog.error("DATAAPI", "DataEngine.getLocalAllStock error(%d) \n", error);
 			}
 		}
 		return error;
@@ -180,7 +159,7 @@ public class LocalStockImpl implements ILocalStock {
 			}
 			else
 			{
-				//BLog.error("STOCK", "DataEngine.getBaseInfo error(%d) \n", cResultStockBaseData.error);
+				//BLog.error("DATAAPI", "DataEngine.getBaseInfo error(%d) \n", cResultStockBaseData.error);
 			}
 		}
 			

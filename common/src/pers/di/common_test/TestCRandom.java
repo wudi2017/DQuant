@@ -14,7 +14,7 @@ public class TestCRandom {
 		ri = CRandom.randomInteger();
 		ri = CRandom.randomInteger();
 		ri = CRandom.randomInteger();
-		CLog.output("TEST", "%d", ri);
+		CLog.debug("TEST", "%d", ri);
 	}
 	
 	public static void main(String[] args) {

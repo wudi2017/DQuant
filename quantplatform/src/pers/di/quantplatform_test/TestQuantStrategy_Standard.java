@@ -225,7 +225,7 @@ public class TestQuantStrategy_Standard {
 				}
 				else
 				{
-					CLog.output("TEST", "getTotalAssets failed\n");
+					CLog.debug("TEST", "getTotalAssets failed\n");
 				}
 			}
 		}
@@ -349,10 +349,10 @@ public class TestQuantStrategy_Standard {
 				}
 			}
 			logStr += String.format("]");
-			CLog.output("TEST", "%s", logStr);
+			CLog.debug("TEST", "%s", logStr);
 			// output acc info
 			String accInfo = context.accountProxy().dump();
-			CLog.output("TEST", "dump account\n%s", accInfo);
+			CLog.debug("TEST", "dump account\n%s", accInfo);
 			
 //			// test check
 //			if(context.date().equals("2016-03-11"))
@@ -410,7 +410,7 @@ public class TestQuantStrategy_Standard {
 		for(int i=0; i<obsTimePriceList.size(); i++)
 		{
 			TimePrice cTimePrice = obsTimePriceList.get(i);
-			CLog.output("TEST", "%s %.3f", cTimePrice.time, cTimePrice.price);
+			CLog.debug("TEST", "%s %.3f", cTimePrice.time, cTimePrice.price);
 		}
 	}
 	

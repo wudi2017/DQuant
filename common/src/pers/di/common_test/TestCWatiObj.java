@@ -10,12 +10,12 @@ public class TestCWatiObj {
 		@Override
 		public void run()
 		{
-			CLog.output("TEST", "TestThread run begin");
+			CLog.debug("TEST", "TestThread run begin");
 			CThread.msleep(5000);
 			s_cCWaitObject.Notify();
 			CThread.msleep(200);
 			s_cCWaitObject.Notify();
-			CLog.output("TEST", "TestThread run end");
+			CLog.debug("TEST", "TestThread run end");
 		}
 	}
 	@CTest.test
@@ -25,17 +25,17 @@ public class TestCWatiObj {
 		cThread.start();
 		
 		CThread.msleep(200);
-		CLog.output("TEST", "CWaitObject.Wait ...1");
+		CLog.debug("TEST", "CWaitObject.Wait ...1");
 		CTest.EXPECT_TRUE(s_cCWaitObject.Wait(Long.MAX_VALUE));
-		CLog.output("TEST", "CWaitObject.Wait ...1 Return");
+		CLog.debug("TEST", "CWaitObject.Wait ...1 Return");
 		
-		CLog.output("TEST", "CWaitObject.Wait ...2");
+		CLog.debug("TEST", "CWaitObject.Wait ...2");
 		CTest.EXPECT_TRUE(s_cCWaitObject.Wait(Long.MAX_VALUE));
-		CLog.output("TEST", "CWaitObject.Wait ...2 Return");
+		CLog.debug("TEST", "CWaitObject.Wait ...2 Return");
 		
-		CLog.output("TEST", "CWaitObject.Wait ...2");
+		CLog.debug("TEST", "CWaitObject.Wait ...2");
 		CTest.EXPECT_FALSE(s_cCWaitObject.Wait(200));
-		CLog.output("TEST", "CWaitObject.Wait ...2 Return");
+		CLog.debug("TEST", "CWaitObject.Wait ...2 Return");
 		
 	}
 	

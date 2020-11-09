@@ -87,7 +87,7 @@ public class TestStockDataEngine {
 				// you could get min data in onMinuteTimePrices with IF context.pool().get(stockID).timePrices()
 				// else context.pool().get(stockID).timePrices().size() == 0
 				context.addCurrentDayInterestMinuteDataID(stockID);
-				CLog.output("TEST", "EngineListenerTesterY.onTradingDayStart ID:%s Date:%s", 
+				CLog.debug("TEST", "EngineListenerTesterY.onTradingDayStart ID:%s Date:%s", 
 						stockID,
 						context.date());
 				s_testCount_listenerY++;
@@ -99,7 +99,7 @@ public class TestStockDataEngine {
 			DATimePrices cDATimePrices = context.pool().get(stockID).timePrices();
 			if(cDATimePrices.size() > 0) {
 				TimePrice cCurrentTimePrice =  cDATimePrices.get(cDATimePrices.size()-1);
-				CLog.output("TEST", "EngineListenerTesterY.onDayDataPush ID:%s Time:%s PriceCount:%d Price:%.3f", 
+				CLog.debug("TEST", "EngineListenerTesterY.onDayDataPush ID:%s Time:%s PriceCount:%d Price:%.3f", 
 						stockID,
 						cCurrentTimePrice.time,
 						cDATimePrices.size(),
@@ -177,18 +177,18 @@ public class TestStockDataEngine {
 	{
 		public void onTradingDayStart(DAContext context)
 		{
-			CLog.output("TEST", "EngineListenerTesterZ.onNewDayStart %s %s", context.date(), context.time());
-			CLog.output("TEST", "    pool.size %d", context.pool().size());
+			CLog.debug("TEST", "EngineListenerTesterZ.onNewDayStart %s %s", context.date(), context.time());
+			CLog.debug("TEST", "    pool.size %d", context.pool().size());
 		}
 		
 		public void onMinuteTimePrices(DAContext context)
 		{
-			CLog.output("TEST", "EngineListenerTesterZ.onDayDataPush %s %s", context.date(), context.time());
+			CLog.debug("TEST", "EngineListenerTesterZ.onDayDataPush %s %s", context.date(), context.time());
 		}
 		
 		public void onTradingDayFinish(DAContext context)
 		{
-			CLog.output("TEST", "EngineListenerTesterZ.onNewDayFinish %s %s", context.date(), context.time());
+			CLog.debug("TEST", "EngineListenerTesterZ.onNewDayFinish %s %s", context.date(), context.time());
 		}
 	}
 	

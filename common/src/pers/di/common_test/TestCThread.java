@@ -10,10 +10,10 @@ public class TestCThread {
 	{
 		@Override
 		public void run() {
-			CLog.output("TEST", "TestThread Run");
+			CLog.debug("TEST", "TestThread Run");
 			while(!checkQuit())
 			{
-				CLog.output("TEST", "TestThread Running...");
+				CLog.debug("TEST", "TestThread Running...");
 				iRun = 1;
 				Wait(Long.MAX_VALUE);
 			}

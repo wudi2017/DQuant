@@ -84,7 +84,7 @@ public class Quant {
 	
 	public void onInitialize(DAContext context)
 	{
-		CLog.output("QENGINE", "Quant.onInitialize");
+		CLog.debug("QENGINE", "Quant.onInitialize");
 		
 		m_context.setDAContext(context);
 		
@@ -96,7 +96,7 @@ public class Quant {
 	
 	public void onUnInitialize(DAContext context)
 	{
-		CLog.output("QENGINE", "Quant.onUnInitialize");
+		CLog.debug("QENGINE", "Quant.onUnInitialize");
 		
 		m_context.setDAContext(context);
 		
@@ -108,7 +108,7 @@ public class Quant {
 	
 	public void onTradingDayStart(DAContext context)
 	{
-		CLog.output("QENGINE", "[%s %s] Quant.onTradingDayStart", context.date(), context.time());
+		CLog.debug("QENGINE", "[%s %s] Quant.onTradingDayStart", context.date(), context.time());
 		
 		m_context.setDAContext(context);
 		
@@ -136,13 +136,13 @@ public class Quant {
 			StrategyInterestIDs += StockID  + " ";
 		}
 		
-		CLog.output("QENGINE", "[%s %s] Quant.onTradingDayStart MinuteDataIDs StrategyInterest[%s]", 
+		CLog.debug("QENGINE", "[%s %s] Quant.onTradingDayStart MinuteDataIDs StrategyInterest[%s]", 
 				context.date(), context.time(), StrategyInterestIDs);
 	}
 	
 	public void onMinuteTimePrices(DAContext context)
 	{
-		CLog.output("QENGINE", "[%s %s] Quant.onMinuteTimePrices ", context.date(), context.time());
+		CLog.debug("QENGINE", "[%s %s] Quant.onMinuteTimePrices ", context.date(), context.time());
 		
 		if(null != m_stratety)
 		{
@@ -173,7 +173,7 @@ public class Quant {
 	
 	public void onTradingDayFinish(DAContext context)
 	{
-		CLog.output("QENGINE", "[%s %s] Quant.onTradingDayFinish ", context.date(), context.time());
+		CLog.debug("QENGINE", "[%s %s] Quant.onTradingDayFinish ", context.date(), context.time());
 		
 		m_context.setDAContext(context);
 		

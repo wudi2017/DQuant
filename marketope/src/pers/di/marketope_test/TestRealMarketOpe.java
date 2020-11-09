@@ -23,44 +23,44 @@ public class TestRealMarketOpe {
 	public static void testTHSApi()
 	{
 		Formatter fmt = new Formatter(System.out);
-		CLog.output("TEST", "### main begin\n");
+		CLog.debug("TEST", "### main begin\n");
 		
 		// 初始化测试
 		{
 			int iInitRet = THSApi.initialize();
-			CLog.output("TEST", "CATHSAccount.initialize err(%d)", iInitRet);
+			CLog.debug("TEST", "CATHSAccount.initialize err(%d)", iInitRet);
 		}
 		        
 		// 可用资金测试
 		{
 			THSApi.ObjectContainer<Float> container = new THSApi.ObjectContainer<Float>();
 	        int ret = THSApi.getAvailableMoney(container);
-	        CLog.output("TEST", "CATHSAccount.getAvailableMoney err(%d) AvailableMoney(%.2f)", ret, container.get());
+	        CLog.debug("TEST", "CATHSAccount.getAvailableMoney err(%d) AvailableMoney(%.2f)", ret, container.get());
 		}
 
 		// 总资产测试
 		{
 			THSApi.ObjectContainer<Float> container = new THSApi.ObjectContainer<Float>();
 	        int ret =  THSApi.getTotalAssets(container);
-	        CLog.output("TEST", "CATHSAccount.getTotalAssets err(%d) TotalAssets(%.2f)", ret, container.get());
+	        CLog.debug("TEST", "CATHSAccount.getTotalAssets err(%d) TotalAssets(%.2f)", ret, container.get());
 		}
 
 		// 所有股票总市值测试
 		{
 			THSApi.ObjectContainer<Float> container = new THSApi.ObjectContainer<Float>();
 	        int ret =  THSApi.getAllStockMarketValue(container);
-	        CLog.output("TEST", "CATHSAccount.getAllStockMarketValue err(%d) AllStockMarketValue(%.2f)", ret, container.get());
+	        CLog.debug("TEST", "CATHSAccount.getAllStockMarketValue err(%d) AllStockMarketValue(%.2f)", ret, container.get());
 		}
 
 		// 持股列表测试
 		{
 			List<THSApi.HoldStock> container = new ArrayList<THSApi.HoldStock>();
 	        int ret = THSApi.getHoldStockList(container);
-	        CLog.output("TEST", "CATHSAccount.getHoldStockList err(%d) resultList size(%d)", ret, container.size());
+	        CLog.debug("TEST", "CATHSAccount.getHoldStockList err(%d) resultList size(%d)", ret, container.size());
 	        for(int i=0;i<container.size();i++)
 	        {
 	        	THSApi.HoldStock cHoldStock = container.get(i);
-	        	CLog.output("TEST", "    {%s %d %d %.3f %.3f %.3f}", cHoldStock.stockID, cHoldStock.totalAmount, cHoldStock.availableAmount,
+	        	CLog.debug("TEST", "    {%s %d %d %.3f %.3f %.3f}", cHoldStock.stockID, cHoldStock.totalAmount, cHoldStock.availableAmount,
 	        			cHoldStock.refProfitLoss, cHoldStock.refPrimeCostPrice, cHoldStock.curPrice);
 	        }
 		}
@@ -70,11 +70,11 @@ public class TestRealMarketOpe {
 		{
 			List<THSApi.CommissionOrder> container = new ArrayList<THSApi.CommissionOrder>();
 	        int ret = THSApi.getCommissionOrderList(container);
-	        CLog.output("TEST", "CATHSAccount.getCommissionOrderList err(%d) resultList size(%d)", ret, container.size());
+	        CLog.debug("TEST", "CATHSAccount.getCommissionOrderList err(%d) resultList size(%d)", ret, container.size());
 	        for(int i=0;i<container.size();i++)
 	        {
 	        	THSApi.CommissionOrder cCommissionOrder = container.get(i);
-	        	CLog.output("TEST", "    {%s %s %s %d %.3f %d %.3f}", cCommissionOrder.time, cCommissionOrder.stockID, cCommissionOrder.tranAct.toString(), 
+	        	CLog.debug("TEST", "    {%s %s %s %d %.3f %d %.3f}", cCommissionOrder.time, cCommissionOrder.stockID, cCommissionOrder.tranAct.toString(), 
 	        			cCommissionOrder.commissionAmount, cCommissionOrder.commissionPrice,
 	        			cCommissionOrder.dealAmount, cCommissionOrder.dealPrice);
 	        }
@@ -86,11 +86,11 @@ public class TestRealMarketOpe {
 		{
 			List<THSApi.DealOrder> container = new ArrayList<THSApi.DealOrder>();
 	        int ret = THSApi.getDealOrderList(container);
-	        CLog.output("TEST", "CATHSAccount.getDealOrderList err(%d) resultList size(%d)", ret, container.size());
+	        CLog.debug("TEST", "CATHSAccount.getDealOrderList err(%d) resultList size(%d)", ret, container.size());
 	        for(int i=0;i<container.size();i++)
 	        {
 	        	THSApi.DealOrder cDealOrder = container.get(i);
-	        	CLog.output("TEST", "    {%s %s %s %d %.3f}", cDealOrder.time, cDealOrder.stockID, cDealOrder.tranAct.toString(), 
+	        	CLog.debug("TEST", "    {%s %s %s %d %.3f}", cDealOrder.time, cDealOrder.stockID, cDealOrder.tranAct.toString(), 
 	        			cDealOrder.dealAmount, cDealOrder.dealPrice);
 	        }
 		}
@@ -113,7 +113,7 @@ public class TestRealMarketOpe {
 		@Override
 		public void onDeal(TRANACT tranact, String stockID, int amount, double price, double cost) {
 			// TODO Auto-generated method stub
-			CLog.output("TEST", "TestAccReplier.onDeal tranact:%s stockID:%s amount:%d price:%.3f cost:%.3f" , 
+			CLog.debug("TEST", "TestAccReplier.onDeal tranact:%s stockID:%s amount:%d price:%.3f cost:%.3f" , 
 					tranact.toString(), stockID, amount, price, cost);
 		}
 		
@@ -130,7 +130,7 @@ public class TestRealMarketOpe {
 		cRealAccountOpe.start();
 
 		int iBuy = cRealAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 20000, 2.0f);
-		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iBuy);
+		CLog.debug("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iBuy);
 	
 //		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 2.1f);
 //		CLog.output("TEST", "testRealAccountOpe.postTradeRequest iBuy(%d)", iSell);
@@ -149,7 +149,7 @@ public class TestRealMarketOpe {
 		MockAccountOpe.start();
 
 		int iBuy = MockAccountOpe.postTradeRequest(TRANACT.BUY, "601988", 20000, 2.0f);
-		CLog.output("TEST", "test_mockaccountope.postTradeRequest iBuy(%d)", iBuy);
+		CLog.debug("TEST", "test_mockaccountope.postTradeRequest iBuy(%d)", iBuy);
 		
 //		int iSell = cRealAccountOpe.postTradeRequest(TRANACT.SELL, "601988", 200, 4.1f);
 //		CLog.output("TEST", "test_mockaccountope.postTradeRequest iBuy(%d)", iSell);

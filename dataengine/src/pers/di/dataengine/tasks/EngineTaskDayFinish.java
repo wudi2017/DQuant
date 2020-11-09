@@ -17,7 +17,7 @@ public class EngineTaskDayFinish extends CDateTimeThruster.ScheduleTask
 		{
 			return;
 		}
-		CLog.output("DENGINE", "[%s %s] EngineTaskDayFinish", date, time);
+		CLog.debug("DENGINE", "[%s %s] EngineTaskDayFinish", date, time);
 		
 		// callback listener onMinuteTimePrices
 		for(int i=0; i<m_taskSharedSession.listeners.size(); i++)

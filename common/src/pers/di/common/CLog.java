@@ -32,21 +32,34 @@ import org.xml.sax.InputSource;
 import pers.di.common.CQThread.CQThreadRequest;
 
 public class CLog {
+	
+	static enum LOGLEVEL {
+		ERROR,
+		WARNING,
+		INFO,
+		DEBUG,
+	};
 
 	/*
 	 * LogOutRequest
 	 */
 	private static class LogOutRequest extends CQThreadRequest 
 	{
-		public LogOutRequest(String logbuf)
+		public LogOutRequest(String datetime, LOGLEVEL loglevel, String logtag, String logbuf)
 		{
+			m_datetime = datetime;
+			m_loglevel = loglevel;
+			m_logTag = logtag;
 			m_logbuf = logbuf;
 		}
 		@Override
 		public void doAction() {
 			// TODO Auto-generated method stub
-			CLog.implLogOutput(m_logbuf); 
+			CLog.implLogOutput(m_datetime, m_loglevel, m_logTag, m_logbuf); 
 		}
+		private String m_datetime;
+		private LOGLEVEL m_loglevel;
+		private String m_logTag;
 		private String m_logbuf;
 	}
 	
@@ -307,54 +320,72 @@ public class CLog {
 	public static void error(String target, String format, Object... args)
 	{
 		String logstr = String.format(format, args);
-		output("ERROR", "(%s) %s", target, logstr);
+		output(LOGLEVEL.ERROR, target, logstr);
 	}
 	
 	public static void warning(String target, String format, Object... args)
 	{
 		String logstr = String.format(format, args);
-		output("WARNING", "(%s) %s", target, logstr);
+		output(LOGLEVEL.WARNING, target, logstr);
 	}
 	
-	
-	public static void output(String target, String format, Object... args)
+	public static void info(String target, String format, Object... args)
 	{
+		String logstr = String.format(format, args);
+		output(LOGLEVEL.INFO, target, logstr);
+	}
+	
+	public static void debug(String target, String format, Object... args)
+	{
+		String logstr = String.format(format, args);
+		output(LOGLEVEL.DEBUG, target, logstr);
+	}
+	
+	private static void output(LOGLEVEL level, String target, String logstr)
+	{
+		// check is or NOT output log
 		s_syncObjForTagMap.Lock();
 		if(null != target && "" != target && !s_tagMap.containsKey(target))
 		{
 			s_tagMap.put(target, false);
 		}
-		
-		if(!s_tagMap.containsKey(target) || s_tagMap.get(target) == false)
-		{
-			s_syncObjForTagMap.UnLock();
-			return;
+		if (LOGLEVEL.ERROR == level || LOGLEVEL.WARNING == level) { // level ERROR WARNING must output
+			// do nothing
+		} else {
+			if (true == s_levelMap.get(level)) { // the level is enabled, then check tag switch
+				if(!s_tagMap.containsKey(target) || s_tagMap.get(target) == false)
+				{
+					s_syncObjForTagMap.UnLock();
+					return;
+				}
+			} else {
+				s_syncObjForTagMap.UnLock();
+				return;
+			}
 		}
 		s_syncObjForTagMap.UnLock();
 		
 		// dir file name check
 		if(null == s_strLogDirName) s_strLogDirName = "output";
 		if(null == s_strLogName) s_strLogName = "default.log";
-		
-		String logstr = String.format(format, args);
 
 		String curDateTimeStr = CUtilsDateTime.GetCurDateTimeStr();
 		Long TC = CUtilsDateTime.GetCurrentTimeMillis();
-		String fullLogStr = String.format("[%s.%03d][%10s] %s\n", curDateTimeStr, TC%1000, target, logstr);
+		String datetime = String.format("%s.%03d", curDateTimeStr, TC%1000);
 		
 //		String fullLogStr = "[" + curDateTimeStr + "." + TC + "] " + target + " " + logstr;
 		
 //		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 //		String fullLogStr = String.format("[%s][%10s] %s", sdf.format(CUtilsDateTime.GetCurDate()), target, logstr);
 		
+		LogOutRequest cLogOutRequest = new LogOutRequest(datetime, level, target, logstr);
 		if(s_bStarted)
 		{
-			LogOutRequest cLogOutRequest = new LogOutRequest(fullLogStr);
 			s_LogWorkQThread.postRequest(cLogOutRequest);
 		}
 		else
 		{
-			CLog.implLogOutput(fullLogStr); // 无log工作线程直接输出
+			cLogOutRequest.doAction(); // 无log工作线程直接输出
 		}
 	}
 	
@@ -377,8 +408,30 @@ public class CLog {
 		}
 	}
 	
-	private static void implLogOutput(String logbuf)
+	private static String cvtLogLevel2Str(LOGLEVEL loglevel) 
 	{
+		switch(loglevel) {
+			case ERROR:
+				return "E";
+			case WARNING:
+				return "W";
+			case INFO: 
+				return "I";
+			case DEBUG: 
+				return "D";
+			default: 
+				return "X";
+		}
+	}
+	private static void implLogOutput(String datetime, LOGLEVEL loglevel, String logtag, String logstr)
+	{
+		String logbuf = null;
+		if (logstr.endsWith("\n")) {
+			logbuf = String.format("%s %s %s : %s", datetime, cvtLogLevel2Str(loglevel), logtag, logstr);
+		} else {
+			logbuf = String.format("%s %s %s : %s\n", datetime, cvtLogLevel2Str(loglevel), logtag, logstr);
+		}
+		
 		String currentOutputContent = null;
 		
 		if(s_bStarted)
@@ -436,11 +489,17 @@ public class CLog {
 	static private String s_strLogName = "default.log";
 	static private String s_strConfig = "config";
 	static private String s_strLogConfigName = "log_config.xml";
+	static private Map<LOGLEVEL, Boolean> s_levelMap = new HashMap<LOGLEVEL, Boolean>() {
+		{
+			put(LOGLEVEL.ERROR, true);
+			put(LOGLEVEL.WARNING, true);
+			put(LOGLEVEL.INFO, true);
+			put(LOGLEVEL.DEBUG, true);
+		}
+	};
 	static private Map<String, Boolean> s_tagMap = new HashMap<String, Boolean>() {
 		{
 			put("TEST", true);
-			put("ERROR", true);
-			put("WARNING", true);
 		}
 	};
 	static private CSyncObj s_syncObjForTagMap = new CSyncObj();

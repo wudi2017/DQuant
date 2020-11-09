@@ -47,7 +47,7 @@ public class TranDayChecker {
 			 */
 			if(null == m_hisTranDates || date.compareTo(m_hisTranMaxDate) > 0 )
 			{
-				CLog.output("DENGINE", "[%s %s] TranDayChecker.check initializeHistoryTranDate (m_hisTranDates=NULL or checkDate > hisTranMaxDate)", date, time);
+				CLog.info("DENGINE", "[%s %s] TranDayChecker.check initializeHistoryTranDate (m_hisTranDates=NULL or checkDate > hisTranMaxDate)", date, time);
 				initializeHistoryTranDate(date);
 			}
 			
@@ -108,7 +108,7 @@ public class TranDayChecker {
 		
 		m_bIsTranDate = bIsTranDate;
 		m_lastValidCheckDate = date;
-		CLog.output("DENGINE", "[%s %s] TranDayChecker.check = %b", date, time, bIsTranDate);
+		CLog.debug("DENGINE", "[%s %s] TranDayChecker.check = %b", date, time, bIsTranDate);
 		
 		return bIsTranDate;
 	}
@@ -129,7 +129,7 @@ public class TranDayChecker {
 			if(obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date.compareTo(date) < 0
 					&& obsKLineListSZZS.get(obsKLineListSZZS.size()-1).date.compareTo(CUtilsDateTime.GetCurDateStr()) < 0)
 			{
-				CLog.output("DENGINE", "TranDayChecker  updateAllLocalStocks:%s", CUtilsDateTime.GetCurDateStr());
+				CLog.info("DENGINE", "TranDayChecker  updateAllLocalStocks:%s", CUtilsDateTime.GetCurDateStr());
 				LocalStock.instance().updateAllLocalStocks(CUtilsDateTime.GetCurDateStr());
 			}
 		}

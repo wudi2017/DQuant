@@ -305,7 +305,7 @@ public class AccountStore {
 		File cfile=new File(m_accXMLFile);
 		if(!cfile.exists())
 		{
-			CLog.output("ACCOUNT", "AccountStore storeInit (no file)\n");
+			CLog.debug("ACCOUNT", "AccountStore storeInit (no file)\n");
 			return false; // 没有文件 load失败
 		}
 		
@@ -324,7 +324,7 @@ public class AccountStore {
 			//fmt.format("XML:\n" + xmlStr);
 			if(xmlStr.length()<=0)
 			{
-				CLog.output("ACCOUNT", "AccountStore storeInit (no content)\n");
+				CLog.debug("ACCOUNT", "AccountStore storeInit (no content)\n");
 				return false; // 没有内容 load失败
 			}
 			
@@ -338,7 +338,7 @@ public class AccountStore {
 		    // 检查返回数据有效性
 		    if(!rootElement.getTagName().contains("account")) 
 			{
-		    	CLog.output("ACCOUNT", "AccountStore storeInit (no account root)\n");
+		    	CLog.debug("ACCOUNT", "AccountStore storeInit (no account root)\n");
 				return false; // 没有root load失败
 			}
 		    

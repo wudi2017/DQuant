@@ -21,7 +21,7 @@ public class CEventSys {
 	
 	public static boolean start()
 	{
-		CLog.output("COMMON", "BL_EventSys Initialized...\n");
+		CLog.debug("COMMON", "BL_EventSys Initialized...\n");
 		try {
 			// init context
 			s_context = ZMQ.context(1);
@@ -36,7 +36,7 @@ public class CEventSys {
 	
 	public static boolean stop()
 	{
-		CLog.output("COMMON", "BL_EventSys UnInitialize...\n");
+		CLog.debug("COMMON", "BL_EventSys UnInitialize...\n");
 
 		// stop all receiver
 		for(int i=0; i< CEventSys.s_receiverList.size(); i++)
@@ -78,13 +78,13 @@ public class CEventSys {
 			s_PubSync.Lock();
 			if(null == jsonObj) 
 			{
-				CLog.output("COMMON", "Sender EvName(%s) jsonObj(null)\n", name);
+				CLog.debug("COMMON", "Sender EvName(%s) jsonObj(null)\n", name);
 				s_PubSocket.send(name.getBytes(), ZMQ.SNDMORE); 
 				s_PubSocket.send("null".getBytes(), 0);
 			}
 			else
 			{
-				CLog.output("COMMON", "Sender EvName(%s) Data(...)\n", name);
+				CLog.debug("COMMON", "Sender EvName(%s) Data(...)\n", name);
 				s_PubSocket.send(name.getBytes(), ZMQ.SNDMORE); 
 				s_PubSocket.send(jsonObj.toString().getBytes(), 0);
 			}
@@ -111,7 +111,7 @@ public class CEventSys {
 			@Override
 	        public void run()
 	        {
-				CLog.output("COMMON", "EventReceiver(%s) thread running.\n",  m_receiver.m_ReceiverName);
+				CLog.debug("COMMON", "EventReceiver(%s) thread running.\n",  m_receiver.m_ReceiverName);
 				while(!m_receiver.m_Quit){
 					
 					m_receiver.m_SubSync.Lock();
@@ -122,7 +122,7 @@ public class CEventSys {
 					byte[] jsonObjBytes = m_receiver.m_SubSocket.recv(0);
 					String jsonObjStr = new String(jsonObjBytes);
 					
-					CLog.output("COMMON", "Receiver(%s) EvName(%s) jsonObj(...)\n", m_receiver.m_ReceiverName, name);
+					CLog.debug("COMMON", "Receiver(%s) EvName(%s) jsonObj(...)\n", m_receiver.m_ReceiverName, name);
 					
 					// ÍË³öÃüÁî
 					if((s_QuitCmdPrefix+m_receiver.m_ReceiverName).compareTo(name) == 0)
@@ -151,7 +151,7 @@ public class CEventSys {
 					
 				}
 				m_receiver.m_SubSocket.close();
-				CLog.output("COMMON", "EventReceiver(%s) thread exit!\n", m_receiver.m_ReceiverName);
+				CLog.debug("COMMON", "EventReceiver(%s) thread exit!\n", m_receiver.m_ReceiverName);
 	        }
 			public EventReceiver m_receiver;
 		}
@@ -198,7 +198,7 @@ public class CEventSys {
 					m_cbMap.put(name, new FuncObj(obj, md));
 				}
 				m_SubSocket.subscribe(name.getBytes());
-				CLog.output("COMMON", "%s Subscribe %s\n", m_ReceiverName, name);
+				CLog.debug("COMMON", "%s Subscribe %s\n", m_ReceiverName, name);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -207,14 +207,14 @@ public class CEventSys {
 		
 		public boolean startReceive()
 		{
-			CLog.output("COMMON", "EventReceiver(%s) startReceive\n", m_ReceiverName);
+			CLog.debug("COMMON", "EventReceiver(%s) startReceive\n", m_ReceiverName);
 			m_receiverThread.start();
 			return true;
 		}
 		
 		public boolean stopReceive()
 		{
-			CLog.output("COMMON", "EventReceiver(%s) stopReceive\n", m_ReceiverName);
+			CLog.debug("COMMON", "EventReceiver(%s) stopReceive\n", m_ReceiverName);
 			EventSender cSender = new EventSender();
 			cSender.Send(s_QuitCmdPrefix+m_ReceiverName, null);
 			try {

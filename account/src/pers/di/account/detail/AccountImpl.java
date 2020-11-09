@@ -108,7 +108,7 @@ public class AccountImpl implements IAccount {
 			return -1;
 		}
 		
-		CLog.output("ACCOUNT", "@AccountEntity CommissionOrder [%s %s] [%s %s %d %.3f]",
+		CLog.debug("ACCOUNT", "@AccountEntity CommissionOrder [%s %s] [%s %s %d %.3f]",
 				m_accountStore.storeEntity().date, m_accountStore.storeEntity().time,
 				tranact.toString(), stockID, amount, price);
 
@@ -283,7 +283,7 @@ public class AccountImpl implements IAccount {
 				}
 				else
 				{
-					CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!", accID);
+					CLog.debug("ACCOUNT", "@AccountEntity initialize AccountID:%s err!", accID);
 					
 					this.aceessUnLock();
 					return -1;
@@ -291,7 +291,7 @@ public class AccountImpl implements IAccount {
 			}
 			else
 			{
-				CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s err!", accID);
+				CLog.debug("ACCOUNT", "@AccountEntity initialize AccountID:%s err!", accID);
 				
 				this.aceessUnLock();
 				return -1;
@@ -299,7 +299,7 @@ public class AccountImpl implements IAccount {
 		}
 		
 		m_initFlag = true;
-		CLog.output("ACCOUNT", "@AccountEntity initialize AccountID:%s OK", accID);
+		CLog.debug("ACCOUNT", "@AccountEntity initialize AccountID:%s OK", accID);
 		
 		this.aceessUnLock();
 		return 0;
@@ -528,7 +528,7 @@ public class AccountImpl implements IAccount {
 		dealOrder.cost = cost;
 		m_accountStore.storeEntity().dealOrderList.add(dealOrder);
 				
-		CLog.output("ACCOUNT", "@AccountEntity DealOrder [%s %s] [%s %s %d %.3f %.3f(%.3f) %.3f]",
+		CLog.debug("ACCOUNT", "@AccountEntity DealOrder [%s %s] [%s %s %d %.3f %.3f(%.3f) %.3f]",
 				m_accountStore.storeEntity().date, m_accountStore.storeEntity().time,
 				tranact.toString(), stockID, amount, price,
 				amount*price, cost, m_accountStore.storeEntity().money);

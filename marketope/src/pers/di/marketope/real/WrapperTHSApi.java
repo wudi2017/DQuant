@@ -26,7 +26,7 @@ public class WrapperTHSApi {
 		s_iInitialize_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.initialize called %d times", s_iInitialize_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.initialize called %d times", s_iInitialize_calledTimes);
 			return 0;
 		}
 		else
@@ -40,7 +40,7 @@ public class WrapperTHSApi {
 		s_iGetAvailableMoney_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.getAvailableMoney called %d times", s_iGetAvailableMoney_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.getAvailableMoney called %d times", s_iGetAvailableMoney_calledTimes);
 			return 0;
 		}
 		else
@@ -54,7 +54,7 @@ public class WrapperTHSApi {
 		s_iGetTotalAssets_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.getTotalAssets called %d times", s_iGetTotalAssets_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.getTotalAssets called %d times", s_iGetTotalAssets_calledTimes);
 			if(1 == s_iGetTotalAssets_calledTimes)
 			{
 				totalAssets.set(100000.0f);
@@ -72,7 +72,7 @@ public class WrapperTHSApi {
 		s_iGetAllStockMarketValue_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.getAllStockMarketValue called %d times", s_iGetAllStockMarketValue_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.getAllStockMarketValue called %d times", s_iGetAllStockMarketValue_calledTimes);
 			return 0;
 		}
 		else
@@ -86,7 +86,7 @@ public class WrapperTHSApi {
 		s_iGetHoldStockList_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.getHoldStockList called %d times", s_iGetHoldStockList_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.getHoldStockList called %d times", s_iGetHoldStockList_calledTimes);
 			return 0;
 		}
 		else
@@ -100,7 +100,7 @@ public class WrapperTHSApi {
 		s_iGetCommissionOrderList_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.getCommissionOrderList called %d times", s_iGetCommissionOrderList_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.getCommissionOrderList called %d times", s_iGetCommissionOrderList_calledTimes);
 			
 			if(s_iGetCommissionOrderList_calledTimes <= 3)
 			{
@@ -220,7 +220,7 @@ public class WrapperTHSApi {
 		s_iGetDealOrderList_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.getDealOrderList called %d times", s_iGetDealOrderList_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.getDealOrderList called %d times", s_iGetDealOrderList_calledTimes);
 			return 0;
 		}
 		else
@@ -234,7 +234,7 @@ public class WrapperTHSApi {
 		s_iBuyStock_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.buyStock called %d times", s_iBuyStock_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.buyStock called %d times", s_iBuyStock_calledTimes);
 			return 0;
 		}
 		else
@@ -248,7 +248,7 @@ public class WrapperTHSApi {
 		s_iSellStock_calledTimes++;
 		if(s_bMockFlag)
 		{
-			CLog.output("TEST", "WrapperTHSApi.sellStock called %d times", s_iSellStock_calledTimes);
+			CLog.debug("TEST", "WrapperTHSApi.sellStock called %d times", s_iSellStock_calledTimes);
 			return 0;
 		}
 		else

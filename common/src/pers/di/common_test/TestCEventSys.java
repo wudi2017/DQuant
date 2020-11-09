@@ -22,7 +22,7 @@ public class TestCEventSys {
 			cRecever.startReceive();
 		}
 		public void recv_notifytest1(JSONObject jsonObj) {
-			CLog.output("TEST", "Module1 RECV notifytest1 jsonObj[%s]\n", jsonObj.toString());
+			CLog.debug("TEST", "Module1 RECV notifytest1 jsonObj[%s]\n", jsonObj.toString());
 		}
 		public EventReceiver cRecever;
 	}
@@ -37,17 +37,17 @@ public class TestCEventSys {
 			cRecever.startReceive();
 		}
 		public void recv_notifytest1(JSONObject jsonObj) {
-			CLog.output("TEST", "Module2 RECV notifytest1 jsonObj[%s]\n", jsonObj.toString());
+			CLog.debug("TEST", "Module2 RECV notifytest1 jsonObj[%s]\n", jsonObj.toString());
 		}
 		public void recv_notifytest2(JSONObject jsonObj) {
-			CLog.output("TEST", "Module2 RECV notifytest2 jsonObj[%s]\n", jsonObj.toString());
+			CLog.debug("TEST", "Module2 RECV notifytest2 jsonObj[%s]\n", jsonObj.toString());
 		}
 		public EventReceiver cRecever;
 	}
 	
 	public static void test_eventsys()
 	{
-		CLog.output("TEST", "TestCEventSys begin\n");
+		CLog.debug("TEST", "TestCEventSys begin\n");
 		
 		CEventSys.start();
 		
@@ -75,7 +75,7 @@ public class TestCEventSys {
 		
 		CEventSys.stop();
 		
-		CLog.output("TEST", "TestCEventSys end\n");
+		CLog.debug("TEST", "TestCEventSys end\n");
 	}
 	
 	public static void test_protobuf()

@@ -14,7 +14,7 @@ public class StockDataEngine {
 	{
 		m_SharedSession = new SharedSession();
 		m_CDateTimeThruster = new CDateTimeThruster();
-		CLog.output("DENGINE", "DataRoot: %s", LocalStock.instance().dataRoot());
+		CLog.info("DENGINE", "DataRoot: %s", LocalStock.instance().dataRoot());
 	}
 	public static StockDataEngine instance() {  
 		return s_instance;  
@@ -27,7 +27,7 @@ public class StockDataEngine {
 	public boolean resetDataRoot(String dateRoot)
 	{
 		boolean bRet = LocalStock.instance().resetDataRoot(dateRoot);
-		CLog.output("DENGINE", "ResetDataRoot: %s", LocalStock.instance().dataRoot());
+		CLog.info("DENGINE", "ResetDataRoot: %s", LocalStock.instance().dataRoot());
 		return bRet;
 	}
 	/*

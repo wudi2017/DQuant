@@ -7,7 +7,7 @@ public class TestCSyncObj {
 	
 	public static void main(String[] args) {
 		
-		CLog.output("TEST", "TestCSyncObj begin\n");
+		CLog.debug("TEST", "TestCSyncObj begin\n");
 		
 		CSyncObj cSync = new CSyncObj();
 		
@@ -15,6 +15,6 @@ public class TestCSyncObj {
 		
 		cSync.UnLock();
 	
-		CLog.output("TEST", "TestCSyncObj end\n");
+		CLog.debug("TEST", "TestCSyncObj end\n");
 	}
 }

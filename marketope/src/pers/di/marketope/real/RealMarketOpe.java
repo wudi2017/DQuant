@@ -20,7 +20,7 @@ public class RealMarketOpe extends IMarketOpe {
 	public RealMarketOpe()
 	{
 		m_THSApiInitFlag = WrapperTHSApi.initialize();
-		CLog.output("ACCOUNT", "RealAccountOpe WrapperTHSApi.initialize m_THSApiInitFlag = %d", m_THSApiInitFlag);
+		CLog.debug("ACCOUNT", "RealAccountOpe WrapperTHSApi.initialize m_THSApiInitFlag = %d", m_THSApiInitFlag);
 		m_dealMonitorMap = new HashMap<String, DealMonitorItem>();
 		m_sync = new CSyncObj();
 		m_MonitorTimerThread = new MonitorTimerThread(this);
@@ -33,7 +33,7 @@ public class RealMarketOpe extends IMarketOpe {
 	public int start()
 	{
 		m_MonitorTimerThread.startThread();
-		CLog.output("ACCOUNT", "RealAccountOpe start");
+		CLog.debug("ACCOUNT", "RealAccountOpe start");
 		return 0;
 	}
 	
@@ -41,7 +41,7 @@ public class RealMarketOpe extends IMarketOpe {
 	public int stop()
 	{
 		m_MonitorTimerThread.stopThread();
-		CLog.output("ACCOUNT", "RealAccountOpe stop");
+		CLog.debug("ACCOUNT", "RealAccountOpe stop");
 		return 0;
 	}
 
@@ -67,7 +67,7 @@ public class RealMarketOpe extends IMarketOpe {
 		if(tranact.equals(TRANACT.BUY))
 		{
 			int iBuyRet = WrapperTHSApi.buyStock(id, amount, (float)price);
-			CLog.output("ACCOUNT", " @RealAccountOpe pushBuyOrder err(%d) [%s %d %.3f %.3f] \n", 
+			CLog.debug("ACCOUNT", " @RealAccountOpe pushBuyOrder err(%d) [%s %d %.3f %.3f] \n", 
 					iBuyRet,
 					id, amount, price, amount*price);
 			if(0 != iBuyRet)
@@ -78,7 +78,7 @@ public class RealMarketOpe extends IMarketOpe {
 		if(tranact.equals(TRANACT.SELL))
 		{
 			int iSellRet = WrapperTHSApi.sellStock(id, amount, (float)price);
-			CLog.output("ACCOUNT", " @RealAccountOpe pushSellOrder err(%d) [%s %d %.3f %.3f] \n", 
+			CLog.debug("ACCOUNT", " @RealAccountOpe pushSellOrder err(%d) [%s %d %.3f %.3f] \n", 
 					iSellRet,
 					id, amount, price, amount*price);
 			if(0 != iSellRet)
@@ -234,7 +234,7 @@ public class RealMarketOpe extends IMarketOpe {
 				// check dealcallback
     			if(null != cRealCommision)
     			{
-    				CLog.output("ACCOUNT", "CommissionKey:%s dealAmountCallback:%d (commissionAmount:%d dealAmount:%d)", 
+    				CLog.debug("ACCOUNT", "CommissionKey:%s dealAmountCallback:%d (commissionAmount:%d dealAmount:%d)", 
     						CommissionKey, cDealMonitorItem.dealAmountCallback, cRealCommision.commissionAmount, cRealCommision.dealAmount);
 					  
 					if(cRealCommision.dealAmount > cDealMonitorItem.dealAmountCallback) // 存在新成交，需要回调

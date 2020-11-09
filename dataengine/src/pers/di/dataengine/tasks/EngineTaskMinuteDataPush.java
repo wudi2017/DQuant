@@ -17,7 +17,7 @@ public class EngineTaskMinuteDataPush extends CDateTimeThruster.ScheduleTask
 		{
 			return;
 		}
-		CLog.output("DENGINE", "[%s %s] EngineTaskMinuteDataPush", date, time);
+		CLog.debug("DENGINE", "[%s %s] EngineTaskMinuteDataPush", date, time);
 		
 		// callback listener onMinuteTimePrices
 		for(int i=0; i<m_taskSharedSession.listeners.size(); i++)

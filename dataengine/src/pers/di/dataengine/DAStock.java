@@ -65,7 +65,7 @@ public class DAStock {
 				}
 			}
 		} catch (Exception e) {
-			CLog.output("ERROR", "DAStock.date error, StockID:%s", m_stockID);
+			CLog.debug("ERROR", "DAStock.date error, StockID:%s", m_stockID);
 			e.printStackTrace();
 			return "0000-00-00";
 		} 

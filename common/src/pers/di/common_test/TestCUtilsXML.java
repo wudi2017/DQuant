@@ -8,6 +8,6 @@ public class TestCUtilsXML {
 		String xmlStr = "<a><b></b></a>";
 		String xmlStrFmt = CUtilsXML.format(xmlStr);
 		
-		CLog.output("TEST", "%s", xmlStrFmt);
+		CLog.debug("TEST", "%s", xmlStrFmt);
 	}
 }
