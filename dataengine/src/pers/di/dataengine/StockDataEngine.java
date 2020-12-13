@@ -42,6 +42,7 @@ public class StockDataEngine {
 	 * 
 	 * key: "TriggerMode" 触发模式
 	 *     value: "HistoryTest XXXX-XX-XX XXXX-XXXX-XX" 历史回测
+	 *     value: "HistoryTest XXXX-XX-XX" 历史回测
 	 *     value: "Realtime" 实时
 	 */
 	public int config(String key, String value)
@@ -51,8 +52,19 @@ public class StockDataEngine {
 			if(value.contains("HistoryTest"))
 			{	
 				String[] cols = value.split(" ");
-				String beginDate = cols[1];
-				String endDate = cols[2];
+				String beginDate = "";
+				String endDate = "";
+				if (2 == cols.length) {
+					beginDate = cols[1];
+					endDate = beginDate;
+				} else if (3 == cols.length) {
+					beginDate = cols[1];
+					endDate = cols[2];
+				} else {
+					CLog.error("DENGINE", "input parameter error! configStr:%s", value);
+					m_SharedSession.bConfigFailed = true;
+				}
+				
 				
 				// 初始化历史交易日表
 				if( !CUtilsDateTime.CheckValidDate(beginDate) 

@@ -158,9 +158,22 @@ public class CDateTimeThruster {
 			if(value.contains("HistoryTest"))
 			{
 				String[] cols = value.split(" ");
+				String beginDate = "";
+				String endDate = "";
+				if (2 == cols.length) {
+					beginDate = cols[1];
+					endDate = beginDate;
+				} else if (3 == cols.length) {
+					beginDate = cols[1];
+					endDate = cols[2];
+				} else {
+					CLog.error("COMMON", "input parameter error! configStr:%s", value);
+					return -1;
+				}
+				
 				m_bHistoryTest = true;
-				m_beginDate = cols[1];
-				m_endDate = cols[2];
+				m_beginDate = beginDate;
+				m_endDate = endDate;
 				CLog.debug("COMMON", "CDateTimeThruster config %s-%s", m_beginDate, m_endDate);
 			}
 			else if(value.contains("Realtime"))
